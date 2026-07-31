@@ -1,4 +1,5 @@
 import json
+import os
 
 from collectors.dart import get_financial
 from collectors.market import get_market_data
@@ -12,11 +13,11 @@ from predictors.long_term import predict_long
 
 
 
-def run(company, code):
+def run(company, dart_code, kis_code):
 
 
     financial_raw = get_financial(
-        code
+        dart_code
     )
 
 
@@ -26,7 +27,7 @@ def run(company, code):
 
 
     market = get_market_data(
-        "005930"
+        kis_code
     )
 
 
@@ -54,14 +55,19 @@ def run(company, code):
     )
 
 
-    result = {
+    return {
+
 
         "기업명":
         company,
 
 
-        "기업코드":
-        code,
+        "DART기업코드":
+        dart_code,
+
+
+        "KIS종목코드":
+        kis_code,
 
 
         "재무분석":
@@ -77,6 +83,7 @@ def run(company, code):
 
 
         "주가예측":
+
         {
 
             "단기1~5일":
@@ -95,9 +102,6 @@ def run(company, code):
     }
 
 
-    return result
-
-
 
 if __name__ == "__main__":
 
@@ -106,9 +110,41 @@ if __name__ == "__main__":
 
         "삼성전자",
 
-        "00126380"
+        "00126380",
+
+        "005930"
 
     )
+
+
+    os.makedirs(
+        "output",
+        exist_ok=True
+    )
+
+
+    with open(
+
+        "output/samsung.json",
+
+        "w",
+
+        encoding="utf-8"
+
+    ) as f:
+
+
+        json.dump(
+
+            result,
+
+            f,
+
+            ensure_ascii=False,
+
+            indent=2
+
+        )
 
 
     print(
