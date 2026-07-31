@@ -3,9 +3,8 @@ import os
 from datetime import datetime
 
 
-from collectors.dart import get_financial_data
+from collectors.dart import get_financial
 from collectors.market import get_market_data
-
 
 from analyzers.valuation import calculate_value
 
@@ -41,49 +40,69 @@ def save_output(data):
 
 
 
-def main():
+def parse_financial(raw):
 
+    return {
 
-    print(
-        "START ENGINE"
-    )
+        "원본": raw,
 
+        "재무지표": {
 
+            "ROE":0,
+            "부채비율":0,
+            "영업이익률":0,
+            "순이익률":0
 
-    result = {
+        },
 
-        "기업명":
-        STOCK_NAME,
+        "성장지표": {
 
-        "DART기업코드":
-        DART_CODE,
+            "매출3년성장률":0,
+            "영업이익3년성장률":0,
+            "순이익3년성장률":0
 
-        "KIS종목코드":
-        STOCK_CODE
+        }
 
     }
 
 
 
 
-    # =========================
-    # DART 재무
-    # =========================
+def main():
+
+
+    result = {
+
+        "기업명": STOCK_NAME,
+
+        "DART기업코드": DART_CODE,
+
+        "KIS종목코드": STOCK_CODE
+
+    }
+
+
+
+    # =====================
+    # DART
+    # =====================
 
     try:
 
-        financial = get_financial_data(
+        dart_raw = get_financial(
             DART_CODE
+        )
+
+
+        financial = parse_financial(
+            dart_raw
         )
 
 
     except Exception as e:
 
         financial = {
-
-            "error":
-            str(e)
-
+            "error":str(e)
         }
 
 
@@ -93,9 +112,9 @@ def main():
 
 
 
-    # =========================
-    # KIS 시장
-    # =========================
+    # =====================
+    # KIS
+    # =====================
 
     try:
 
@@ -107,10 +126,7 @@ def main():
     except Exception as e:
 
         market = {
-
-            "error":
-            str(e)
-
+            "error":str(e)
         }
 
 
@@ -120,10 +136,9 @@ def main():
 
 
 
-
-    # =========================
+    # =====================
     # 가치평가
-    # =========================
+    # =====================
 
     try:
 
@@ -147,23 +162,6 @@ def main():
 
 
 
-
-
-    # =========================
-    # 예측
-    # =========================
-
-    result["주가예측"] = {
-
-        "상태":
-        "예측모듈 연결 대기"
-
-    }
-
-
-
-
-
     result["생성시간"] = (
         datetime.now()
         .isoformat()
@@ -171,12 +169,9 @@ def main():
 
 
 
-
-
     save_output(
         result
     )
-
 
 
     print(
