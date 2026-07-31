@@ -1,8 +1,11 @@
 name: Stock Analysis Engine
 
 on:
+
   workflow_dispatch:
+
   schedule:
+    # 매일 한국시간 오전 9시 실행
     - cron: "0 0 * * *"
 
 
@@ -12,25 +15,54 @@ jobs:
 
     runs-on: ubuntu-latest
 
+
     steps:
 
-    - name: Checkout
+
+    # 1. 저장소 가져오기
+    - name: Checkout repository
       uses: actions/checkout@v4
 
 
+
+    # 2. Python 설치
     - name: Setup Python
       uses: actions/setup-python@v5
+
       with:
         python-version: "3.11"
 
 
+
+    # 3. 라이브러리 설치
     - name: Install packages
-      run:
+
+      run: |
+
         pip install -r requirements.txt
 
 
-    - name: Run engine
+
+    # 4. 분석 엔진 실행
+    - name: Run stock analysis engine
+
       env:
+
         DART_API_KEY: ${{ secrets.DART_API_KEY }}
-      run:
+
+      run: |
+
         python main.py
+
+
+
+    # 5. 생성된 JSON 자동 저장
+    - name: Save analysis result
+
+      uses: stefanzweifel/git-auto-commit-action@v5
+
+      with:
+
+        commit_message: "Update stock analysis result"
+
+        file_pattern: output/*.json
