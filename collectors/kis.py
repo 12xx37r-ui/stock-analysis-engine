@@ -4,7 +4,6 @@ import json
 import os
 from datetime import datetime
 
-
 from config import (
     KIS_APP_KEY,
     KIS_APP_SECRET,
@@ -14,123 +13,20 @@ from config import (
 
 ACCESS_TOKEN = None
 
-TOKEN_FILE = "kis_token.json"
-
 
 # =========================
-# Token Load
+# Token
 # =========================
 
-def load_token():
+def get_access_token():
 
     global ACCESS_TOKEN
 
 
-    if not os.path.exists(TOKEN_FILE):
-        return None
-
-
-    try:
-
-        with open(
-            TOKEN_FILE,
-            "r",
-            encoding="utf-8"
-        ) as f:
-
-            data = json.load(f)
-
-
-        token = data.get(
-            "access_token"
-        )
-
-
-        if token:
-
-            ACCESS_TOKEN = token
-
-            print(
-                "TOKEN LOADED FROM FILE"
-            )
-
-            return token
-
-
-    except Exception as e:
-
-        print(
-            "TOKEN LOAD ERROR:",
-            e
-        )
-
-
-    return None
-
-
-
-# =========================
-# Token Save
-# =========================
-
-def save_token(token):
-
-    try:
-
-        with open(
-            TOKEN_FILE,
-            "w",
-            encoding="utf-8"
-        ) as f:
-
-            json.dump(
-                {
-                    "access_token": token,
-                    "saved_at": datetime.now().isoformat()
-                },
-                f,
-                ensure_ascii=False,
-                indent=2
-            )
-
-
-    except Exception as e:
-
-        print(
-            "TOKEN SAVE ERROR:",
-            e
-        )
-
-
-
-# =========================
-# Access Token
-# =========================
-
-def get_access_token(force=False):
-
-    global ACCESS_TOKEN
-
-
-    if ACCESS_TOKEN and not force:
+    if ACCESS_TOKEN:
 
         return ACCESS_TOKEN
 
-
-
-    if not force:
-
-        token = load_token()
-
-        if token:
-
-            return token
-
-
-
-    print(
-        "REQUEST NEW TOKEN"
-    )
 
 
     url = (
@@ -154,7 +50,6 @@ def get_access_token(force=False):
     }
 
 
-
     try:
 
         response = requests.post(
@@ -171,23 +66,15 @@ def get_access_token(force=False):
         data = response.json()
 
 
-        print(
-            "TOKEN RESPONSE:",
-            data
-        )
-
 
         token = data.get(
             "access_token"
         )
 
 
-
         if token:
 
             ACCESS_TOKEN = token
-
-            save_token(token)
 
             print(
                 "TOKEN CREATED: True"
@@ -195,6 +82,12 @@ def get_access_token(force=False):
 
             return token
 
+
+
+        print(
+            "TOKEN ERROR:",
+            data
+        )
 
 
     except Exception as e:
@@ -205,15 +98,24 @@ def get_access_token(force=False):
         )
 
 
-    ACCESS_TOKEN = None
-
     return None
 
 
 
 
+
+def clear_token():
+
+    global ACCESS_TOKEN
+
+    ACCESS_TOKEN = None
+
+
+
+
+
 # =========================
-# KIS Request
+# Request
 # =========================
 
 def kis_request(
@@ -223,55 +125,40 @@ def kis_request(
 ):
 
 
-    global ACCESS_TOKEN
-
-
-
     for retry in range(3):
 
 
         token = get_access_token()
 
 
-
         if not token:
 
+            clear_token()
 
-            token = get_access_token(
-                force=True
-            )
+            time.sleep(2)
 
-
-            if not token:
-
-                return {
-
-                    "rt_cd":
-                    "TOKEN_ERROR",
-
-                    "msg1":
-                    "토큰 발급 실패",
-
-                    "output":[]
-
-                }
-
+            continue
 
 
 
         headers = {
 
+
             "authorization":
             "Bearer " + token,
+
 
             "appkey":
             KIS_APP_KEY,
 
+
             "appsecret":
             KIS_APP_SECRET,
 
+
             "tr_id":
             tr_id,
+
 
             "custtype":
             "P"
@@ -283,9 +170,7 @@ def kis_request(
         try:
 
 
-            # KIS 호출 제한 대응
-
-            time.sleep(2)
+            time.sleep(1)
 
 
 
@@ -302,21 +187,8 @@ def kis_request(
             )
 
 
+
             data = response.json()
-
-
-
-            print(
-                "KIS DEBUG:",
-                data.get(
-                    "rt_cd",
-                    ""
-                ),
-                data.get(
-                    "msg1",
-                    ""
-                )
-            )
 
 
 
@@ -335,13 +207,17 @@ def kis_request(
 
                 "EGW00201" in msg
 
-                or "초당 거래건수" in msg
+                or
+
+                "초당 거래건수" in msg
 
             ):
+
 
                 print(
                     "KIS RATE LIMIT WAIT"
                 )
+
 
                 time.sleep(5)
 
@@ -350,33 +226,30 @@ def kis_request(
 
 
 
+
             # 토큰 만료
 
             if (
 
+                "TOKEN" in msg.upper()
+
+                or
+
                 "토큰" in msg
-
-                or "TOKEN" in msg.upper()
-
-                or "접근토큰" in msg
 
             ):
 
 
                 print(
-                    "TOKEN EXPIRED RETRY"
+                    "TOKEN REISSUE"
                 )
 
 
-                ACCESS_TOKEN = None
-
-
-                get_access_token(
-                    force=True
-                )
-
+                clear_token()
 
                 continue
+
+
 
 
 
@@ -385,11 +258,12 @@ def kis_request(
 
 
 
+
         except Exception as e:
 
 
             print(
-                "KIS REQUEST ERROR:",
+                "KIS ERROR:",
                 e
             )
 
@@ -398,17 +272,22 @@ def kis_request(
 
 
 
+
+
     return {
 
         "rt_cd":
-        "REQUEST_ERROR",
+        "ERROR",
 
         "msg1":
-        "KIS 요청 실패",
+        "KIS REQUEST FAILED",
 
         "output":[]
 
     }
+
+
+
 
 
 
@@ -446,6 +325,9 @@ def get_stock_price(stock_code):
         {}
 
     )
+
+
+
 
 
 
@@ -493,8 +375,11 @@ def get_investor_trade(stock_code):
 
 
     output = data.get(
+
         "output",
+
         []
+
     )
 
 
@@ -502,7 +387,8 @@ def get_investor_trade(stock_code):
     row = {}
 
 
-    if isinstance(output, list) and len(output) > 0:
+
+    if isinstance(output,list) and len(output)>0:
 
         row = output[0]
 
@@ -512,13 +398,10 @@ def get_investor_trade(stock_code):
 
 
         "원본응답":
-
         data,
 
 
-
         "외국인순매수":
-
         float(
             row.get(
                 "frgn_ntby_qty",
@@ -527,9 +410,7 @@ def get_investor_trade(stock_code):
         ),
 
 
-
         "기관순매수":
-
         float(
             row.get(
                 "orgn_ntby_qty",
@@ -538,9 +419,7 @@ def get_investor_trade(stock_code):
         ),
 
 
-
         "개인순매수":
-
         float(
             row.get(
                 "prsn_ntby_qty",
