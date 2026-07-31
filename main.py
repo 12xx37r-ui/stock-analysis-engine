@@ -1,179 +1,244 @@
-from collectors.kis import (
-    get_stock_price,
-    get_investor_trade
-)
+import json
+import os
+from datetime import datetime
+
+
+from collectors.company import get_company_code
+from collectors.dart import get_financial_data
+from collectors.market import get_market_data
+
+
+from analyzers.buffett import analyze_buffett
+from analyzers.value import analyze_value
+
+
+from predictors.stock_predictor import predict_stock
 
 
 
-def get_market_data(stock_code):
+# =========================
+# 기본 종목
+# =========================
+
+STOCK_NAME = "삼성전자"
+STOCK_CODE = "005930"
+DART_CODE = "00126380"
 
 
-    price = get_stock_price(
-        stock_code
+
+# =========================
+# JSON 저장
+# =========================
+
+def save_output(data):
+
+    os.makedirs(
+        "output",
+        exist_ok=True
     )
 
 
-    investor = get_investor_trade(
-        stock_code
+    filename = (
+        "output/"
+        + STOCK_CODE
+        + "_analysis.json"
     )
 
 
+    with open(
+        filename,
+        "w",
+        encoding="utf-8"
+    ) as f:
 
-    return {
-
-
-        "현재가":
-        float(
-            price.get(
-                "stck_prpr",
-                0
-            )
-        ),
-
-
-
-        "전일대비":
-        float(
-            price.get(
-                "prdy_vrss",
-                0
-            )
-        ),
+        json.dump(
+            data,
+            f,
+            ensure_ascii=False,
+            indent=2
+        )
 
 
 
-        "등락률":
-        float(
-            price.get(
-                "prdy_ctrt",
-                0
-            )
-        ),
+# =========================
+# Main
+# =========================
+
+def main():
 
 
-
-        "거래량":
-        int(
-            price.get(
-                "acml_vol",
-                0
-            )
-        ),
+    print(
+        "START ENGINE"
+    )
 
 
-
-        "시가":
-        float(
-            price.get(
-                "stck_oprc",
-                0
-            )
-        ),
+    result = {
 
 
-
-        "고가":
-        float(
-            price.get(
-                "stck_hgpr",
-                0
-            )
-        ),
+        "기업명":
+        STOCK_NAME,
 
 
-
-        "저가":
-        float(
-            price.get(
-                "stck_lwpr",
-                0
-            )
-        ),
+        "DART기업코드":
+        DART_CODE,
 
 
-
-        "PER":
-        float(
-            price.get(
-                "per",
-                0
-            )
-        ),
-
-
-
-        "PBR":
-        float(
-            price.get(
-                "pbr",
-                0
-            )
-        ),
-
-
-
-        "EPS":
-        float(
-            price.get(
-                "eps",
-                0
-            )
-        ),
-
-
-
-        "BPS":
-        float(
-            price.get(
-                "bps",
-                0
-            )
-        ),
-
-
-
-        "시가총액":
-        float(
-            price.get(
-                "hts_avls",
-                0
-            )
-        ),
-
-
-
-        "수급":
-        {
-
-
-            "외국인순매수":
-            investor.get(
-                "외국인순매수",
-                0
-            ),
-
-
-
-            "기관순매수":
-            investor.get(
-                "기관순매수",
-                0
-            ),
-
-
-
-            "개인순매수":
-            investor.get(
-                "개인순매수",
-                0
-            )
-
-
-        },
-
-
-
-        "데이터출처":
-        "한국투자증권 KIS"
+        "KIS종목코드":
+        STOCK_CODE
 
     }
+
+
+
+    # -------------------------
+    # DART 재무
+    # -------------------------
+
+    try:
+
+        finance = get_financial_data(
+            DART_CODE
+        )
+
+
+    except Exception as e:
+
+        finance = {
+
+            "error":
+            str(e)
+
+        }
+
+
+
+    result["재무분석"] = finance
+
+
+
+    # -------------------------
+    # 버핏 분석
+    # -------------------------
+
+    try:
+
+        result["버핏평가"] = analyze_buffett(
+            finance
+        )
+
+
+    except Exception as e:
+
+        result["버핏평가"] = {
+
+            "error":
+            str(e)
+
+        }
+
+
+
+
+    # -------------------------
+    # KIS 시장 데이터
+    # -------------------------
+
+    try:
+
+        market = get_market_data(
+            STOCK_CODE
+        )
+
+
+    except Exception as e:
+
+        market = {
+
+            "error":
+            str(e)
+
+        }
+
+
+
+    result["시장정보"] = market
+
+
+
+
+    # -------------------------
+    # 가치평가
+    # -------------------------
+
+    try:
+
+        result["가치평가"] = analyze_value(
+            market,
+            finance
+        )
+
+
+    except Exception as e:
+
+        result["가치평가"] = {
+
+            "error":
+            str(e)
+
+        }
+
+
+
+
+    # -------------------------
+    # 주가 예측
+    # -------------------------
+
+    try:
+
+        result["주가예측"] = predict_stock(
+            market,
+            finance
+        )
+
+
+    except Exception as e:
+
+        result["주가예측"] = {
+
+            "error":
+            str(e)
+
+        }
+
+
+
+
+    result["생성시간"] = (
+        datetime.now()
+        .isoformat()
+    )
+
+
+
+    save_output(
+        result
+    )
+
+
+
+    print(
+        json.dumps(
+            result,
+            ensure_ascii=False,
+            indent=2
+        )
+    )
+
+
+
+
+
+if __name__ == "__main__":
+
+    main()
