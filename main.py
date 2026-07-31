@@ -4,9 +4,10 @@ from datetime import datetime
 
 
 from collectors.dart import get_financial
-from analyzers.financial import analyze_financial
 from collectors.market import get_market_data
 
+
+from analyzers.financial import analyze_financial
 from analyzers.valuation import calculate_value
 
 
@@ -14,6 +15,7 @@ from analyzers.valuation import calculate_value
 STOCK_NAME = "삼성전자"
 STOCK_CODE = "005930"
 DART_CODE = "00126380"
+
 
 
 
@@ -41,9 +43,11 @@ def save_output(data):
 
 
 
-
-
 def main():
+
+
+    print("START ENGINE")
+
 
 
     result = {
@@ -59,25 +63,27 @@ def main():
 
 
     # =====================
-    # DART
+    # DART 재무
     # =====================
 
     try:
-        
-dart_raw = get_financial(
-    DART_CODE
-)
+
+        dart_raw = get_financial(
+            DART_CODE
+        )
 
 
-financial = analyze_financial(
-    dart_raw
-)
-      
+        financial = analyze_financial(
+            dart_raw
+        )
+
 
     except Exception as e:
 
         financial = {
-            "error":str(e)
+
+            "error": str(e)
+
         }
 
 
@@ -87,8 +93,9 @@ financial = analyze_financial(
 
 
 
+
     # =====================
-    # KIS
+    # KIS 시장 데이터
     # =====================
 
     try:
@@ -101,12 +108,15 @@ financial = analyze_financial(
     except Exception as e:
 
         market = {
-            "error":str(e)
+
+            "error": str(e)
+
         }
 
 
 
     result["시장정보"] = market
+
 
 
 
@@ -117,7 +127,7 @@ financial = analyze_financial(
 
     try:
 
-        result["가치평가"] = calculate_value(
+        value = calculate_value(
 
             financial,
 
@@ -128,12 +138,17 @@ financial = analyze_financial(
 
     except Exception as e:
 
-        result["가치평가"] = {
+        value = {
 
-            "error":
-            str(e)
+            "error": str(e)
 
         }
+
+
+
+    result["가치평가"] = value
+
+
 
 
 
@@ -147,6 +162,7 @@ financial = analyze_financial(
     save_output(
         result
     )
+
 
 
     print(
