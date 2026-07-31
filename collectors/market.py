@@ -1,19 +1,11 @@
-from collectors.kis import (
-    get_stock_price,
-    get_stock_finance
-)
+from collectors.kis import get_stock_price
 
 
 
 def get_market_data(stock_code):
 
 
-    price=get_stock_price(
-        stock_code
-    )
-
-
-    finance=get_stock_finance(
+    data = get_stock_price(
         stock_code
     )
 
@@ -25,7 +17,7 @@ def get_market_data(stock_code):
         "현재가":
 
         float(
-            price.get(
+            data.get(
                 "stck_prpr",
                 0
             )
@@ -36,7 +28,7 @@ def get_market_data(stock_code):
         "전일대비":
 
         float(
-            price.get(
+            data.get(
                 "prdy_vrss",
                 0
             )
@@ -47,7 +39,7 @@ def get_market_data(stock_code):
         "등락률":
 
         float(
-            price.get(
+            data.get(
                 "prdy_ctrt",
                 0
             )
@@ -58,7 +50,7 @@ def get_market_data(stock_code):
         "거래량":
 
         int(
-            price.get(
+            data.get(
                 "acml_vol",
                 0
             )
@@ -69,7 +61,7 @@ def get_market_data(stock_code):
         "시가":
 
         float(
-            price.get(
+            data.get(
                 "stck_oprc",
                 0
             )
@@ -80,7 +72,7 @@ def get_market_data(stock_code):
         "고가":
 
         float(
-            price.get(
+            data.get(
                 "stck_hgpr",
                 0
             )
@@ -91,7 +83,7 @@ def get_market_data(stock_code):
         "저가":
 
         float(
-            price.get(
+            data.get(
                 "stck_lwpr",
                 0
             )
@@ -102,7 +94,7 @@ def get_market_data(stock_code):
         "PER":
 
         float(
-            finance.get(
+            data.get(
                 "per",
                 0
             )
@@ -113,7 +105,7 @@ def get_market_data(stock_code):
         "PBR":
 
         float(
-            finance.get(
+            data.get(
                 "pbr",
                 0
             )
@@ -124,7 +116,7 @@ def get_market_data(stock_code):
         "EPS":
 
         float(
-            finance.get(
+            data.get(
                 "eps",
                 0
             )
@@ -135,7 +127,7 @@ def get_market_data(stock_code):
         "BPS":
 
         float(
-            finance.get(
+            data.get(
                 "bps",
                 0
             )
@@ -146,8 +138,8 @@ def get_market_data(stock_code):
         "시가총액":
 
         float(
-            finance.get(
-                "stck_avls",
+            data.get(
+                "hts_avls",
                 0
             )
         ),
