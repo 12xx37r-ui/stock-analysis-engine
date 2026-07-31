@@ -3,6 +3,7 @@ name: run-engine
 on:
   workflow_dispatch:
 
+
 jobs:
 
   run:
@@ -34,6 +35,32 @@ jobs:
         with:
 
           python-version: "3.11"
+
+
+      - name: Check Secrets
+
+        run: |
+
+          if [ -z "$KIS_APP_KEY" ]; then
+
+            echo "KIS_APP_KEY 없음"
+
+          else
+
+            echo "KIS_APP_KEY 있음"
+
+          fi
+
+
+          if [ -z "$KIS_APP_SECRET" ]; then
+
+            echo "KIS_APP_SECRET 없음"
+
+          else
+
+            echo "KIS_APP_SECRET 있음"
+
+          fi
 
 
       - name: Install
