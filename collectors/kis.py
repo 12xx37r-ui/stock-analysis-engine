@@ -1,5 +1,4 @@
 import requests
-
 from config import (
     KIS_APP_KEY,
     KIS_APP_SECRET,
@@ -10,33 +9,28 @@ from config import (
 
 def get_access_token():
 
-
-    url = (
-        f"{KIS_BASE_URL}/oauth2/tokenP"
-    )
-
+    url = f"{KIS_BASE_URL}/oauth2/tokenP"
 
     body = {
 
-        "grant_type":
-        "client_credentials",
-
-        "appkey":
-        KIS_APP_KEY,
-
-        "appsecret":
-        KIS_APP_SECRET
+        "grant_type": "client_credentials",
+        "appkey": KIS_APP_KEY,
+        "appsecret": KIS_APP_SECRET
 
     }
 
 
-    r = requests.post(
+    response = requests.post(
         url,
-        json=body
+        json=body,
+        timeout=10
     )
 
 
-    return r.json().get(
+    data=response.json()
+
+
+    return data.get(
         "access_token"
     )
 
@@ -46,20 +40,32 @@ def get_access_token():
 def get_stock_price(stock_code):
 
 
-    token = get_access_token()
+    token=get_access_token()
+
+
+    if not token:
+
+        return {
+
+            "오류":
+            "토큰 발급 실패"
+
+        }
+
 
 
     url = (
-        f"{KIS_BASE_URL}/uapi/domestic-stock/v1/"
+        f"{KIS_BASE_URL}"
+        "/uapi/domestic-stock/v1/"
         "quotations/inquire-price"
     )
 
 
-    headers = {
+    headers={
 
 
         "authorization":
-        "Bearer " + token,
+        "Bearer "+token,
 
 
         "appkey":
@@ -71,12 +77,17 @@ def get_stock_price(stock_code):
 
 
         "tr_id":
-        "FHKST01010100"
+        "FHKST01010100",
+
+
+        "custtype":
+        "P"
 
     }
 
 
-    params = {
+
+    params={
 
 
         "FID_COND_MRKT_DIV_CODE":
@@ -90,13 +101,15 @@ def get_stock_price(stock_code):
 
 
 
-    response = requests.get(
+    response=requests.get(
 
         url,
 
         headers=headers,
 
-        params=params
+        params=params,
+
+        timeout=10
 
     )
 
@@ -105,56 +118,23 @@ def get_stock_price(stock_code):
 
 
 
-    output=data.get(
-        "output",
-        {}
-    )
-
-
     return {
 
 
-        "현재가":
-        float(
-            output.get(
-                "stck_prpr",
-                0
-            )
-        ),
+        "KIS응답코드":
+        data.get("rt_cd"),
 
 
-        "전일대비":
-        float(
-            output.get(
-                "prdy_vrss",
-                0
-            )
-        ),
+        "KIS메시지":
+        data.get("msg1"),
 
 
-        "등락률":
-        float(
-            output.get(
-                "prdy_ctrt",
-                0
-            )
-        ),
+        "종목코드":
+        stock_code,
 
 
-        "거래량":
-        int(
-            output.get(
-                "acml_vol",
-                0
-            )
-        ),
+        "원본":
+        data.get("output",{})
 
-
-        "시가총액":
-        0,
-
-
-        "데이터출처":
-        "한국투자증권 KIS"
 
     }
