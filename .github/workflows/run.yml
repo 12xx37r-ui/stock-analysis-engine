@@ -1,72 +1,50 @@
-name: Stock Analysis Engine
+name: run-engine
 
 on:
-
   workflow_dispatch:
-
-
-permissions:
-
-  contents: write
-
 
 jobs:
 
-  run-engine:
+  run:
 
     runs-on: ubuntu-latest
+
+
+    env:
+
+      DART_API_KEY: ${{ secrets.DART_API_KEY }}
+
+      KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+
+      KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
 
 
     steps:
 
 
-    - name: Checkout
+      - name: Checkout
 
-      uses: actions/checkout@v4
-
-
-
-    - name: Setup Python
-
-      uses: actions/setup-python@v5
-
-      with:
-
-        python-version: "3.11"
+        uses: actions/checkout@v4
 
 
+      - name: Setup Python
 
-    - name: Install packages
+        uses: actions/setup-python@v5
 
-      run: |
+        with:
 
-        pip install -r requirements.txt
-
-
-
-    - name: Run engine
-
-      env:
-
-        DART_API_KEY: ${{ secrets.DART_API_KEY }}
-
-        KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
-
-        KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+          python-version: "3.11"
 
 
-      run: |
+      - name: Install
 
-        python main.py
+        run: |
+
+          pip install -r requirements.txt
 
 
+      - name: Run python
 
-    - name: Save result
+        run: |
 
-      uses: stefanzweifel/git-auto-commit-action@v5
-
-      with:
-
-        commit_message: "Update analysis result"
-
-        file_pattern: output/*.json
+          python main.py
