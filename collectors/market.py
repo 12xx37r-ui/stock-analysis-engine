@@ -4,6 +4,7 @@ from collectors.kis import (
 )
 
 
+
 def get_market_data(stock_code):
 
 
@@ -15,6 +16,7 @@ def get_market_data(stock_code):
     investor = get_investor_trade(
         stock_code
     )
+
 
 
     return {
@@ -29,6 +31,7 @@ def get_market_data(stock_code):
         ),
 
 
+
         "전일대비":
         float(
             price.get(
@@ -36,6 +39,7 @@ def get_market_data(stock_code):
                 0
             )
         ),
+
 
 
         "등락률":
@@ -47,6 +51,7 @@ def get_market_data(stock_code):
         ),
 
 
+
         "거래량":
         int(
             price.get(
@@ -54,6 +59,7 @@ def get_market_data(stock_code):
                 0
             )
         ),
+
 
 
         "시가":
@@ -65,6 +71,7 @@ def get_market_data(stock_code):
         ),
 
 
+
         "고가":
         float(
             price.get(
@@ -72,6 +79,7 @@ def get_market_data(stock_code):
                 0
             )
         ),
+
 
 
         "저가":
@@ -83,6 +91,7 @@ def get_market_data(stock_code):
         ),
 
 
+
         "PER":
         float(
             price.get(
@@ -90,6 +99,7 @@ def get_market_data(stock_code):
                 0
             )
         ),
+
 
 
         "PBR":
@@ -101,6 +111,7 @@ def get_market_data(stock_code):
         ),
 
 
+
         "EPS":
         float(
             price.get(
@@ -108,6 +119,7 @@ def get_market_data(stock_code):
                 0
             )
         ),
+
 
 
         "BPS":
@@ -119,6 +131,7 @@ def get_market_data(stock_code):
         ),
 
 
+
         "시가총액":
         float(
             price.get(
@@ -128,9 +141,36 @@ def get_market_data(stock_code):
         ),
 
 
-        # KIS 원본 + 파싱값 유지
+
         "수급":
-        investor,
+        {
+
+
+            "외국인순매수":
+            investor.get(
+                "외국인순매수",
+                0
+            ),
+
+
+
+            "기관순매수":
+            investor.get(
+                "기관순매수",
+                0
+            ),
+
+
+
+            "개인순매수":
+            investor.get(
+                "개인순매수",
+                0
+            )
+
+
+        },
+
 
 
         "데이터출처":
