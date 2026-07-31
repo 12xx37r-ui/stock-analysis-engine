@@ -6,6 +6,7 @@ def get_market_data(stock_code):
 
     try:
 
+
         headers = {
 
             "User-Agent":
@@ -15,8 +16,9 @@ def get_market_data(stock_code):
 
 
         url = (
-            f"https://query1.finance.yahoo.com/v8/finance/chart/"
+            "https://query1.finance.yahoo.com/v8/finance/chart/"
             f"{stock_code}.KS"
+            "?range=5d&interval=1d"
         )
 
 
@@ -27,30 +29,20 @@ def get_market_data(stock_code):
         )
 
 
-        data = response.json()
+        data=response.json()
 
 
-        result = data["chart"]["result"][0]
-
-        meta = result["meta"]
+        result=data["chart"]["result"][0]
 
 
-        price = meta.get(
-            "regularMarketPrice",
-            0
-        )
+        meta=result["meta"]
 
 
-        previous = meta.get(
-            "previousClose",
-            0
-        )
+        prices=result["indicators"]["quote"][0]["close"]
 
 
-        currency = meta.get(
-            "currency",
-            "KRW"
-        )
+        price=prices[-1]
+
 
 
         return {
@@ -61,11 +53,7 @@ def get_market_data(stock_code):
 
 
             "전일종가":
-            previous,
-
-
-            "통화":
-            currency,
+            prices[-2],
 
 
             "데이터출처":
@@ -83,9 +71,6 @@ def get_market_data(stock_code):
 
 
             "현재가":0,
-
-
-            "전일종가":0,
 
 
             "오류":
