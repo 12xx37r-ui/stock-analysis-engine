@@ -180,9 +180,9 @@ def get_investor_trade(stock_code):
     )
 
 
-
-    output = data.get(
-        "output",
+    # KIS 투자자 데이터는 output2 배열
+    output2 = data.get(
+        "output2",
         []
     )
 
@@ -190,10 +190,9 @@ def get_investor_trade(stock_code):
     row = {}
 
 
-    if isinstance(output, list) and len(output) > 0:
+    if isinstance(output2, list) and len(output2) > 0:
 
-        row = output[0]
-
+        row = output2[0]
 
 
     return {
@@ -204,7 +203,6 @@ def get_investor_trade(stock_code):
 
 
         "외국인순매수":
-
         float(
             row.get(
                 "frgn_ntby_qty",
@@ -214,7 +212,6 @@ def get_investor_trade(stock_code):
 
 
         "기관순매수":
-
         float(
             row.get(
                 "orgn_ntby_qty",
@@ -224,7 +221,6 @@ def get_investor_trade(stock_code):
 
 
         "개인순매수":
-
         float(
             row.get(
                 "prsn_ntby_qty",
