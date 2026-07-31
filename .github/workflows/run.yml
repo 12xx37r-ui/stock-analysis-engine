@@ -1,17 +1,27 @@
 name: Stock Analysis Engine
 
+
 on:
 
   workflow_dispatch:
 
   schedule:
-    # 매일 한국시간 오전 9시 실행
+
     - cron: "0 0 * * *"
+
+
+
+permissions:
+
+  contents: write
+
 
 
 jobs:
 
+
   run-engine:
+
 
     runs-on: ubuntu-latest
 
@@ -19,22 +29,26 @@ jobs:
     steps:
 
 
-    # 1. 저장소 가져오기
     - name: Checkout repository
+
       uses: actions/checkout@v4
 
+      with:
+
+        token: ${{ secrets.GITHUB_TOKEN }}
 
 
-    # 2. Python 설치
+
     - name: Setup Python
+
       uses: actions/setup-python@v5
 
       with:
+
         python-version: "3.11"
 
 
 
-    # 3. 라이브러리 설치
     - name: Install packages
 
       run: |
@@ -43,7 +57,6 @@ jobs:
 
 
 
-    # 4. 분석 엔진 실행
     - name: Run stock analysis engine
 
       env:
@@ -56,7 +69,6 @@ jobs:
 
 
 
-    # 5. 생성된 JSON 자동 저장
     - name: Save analysis result
 
       uses: stefanzweifel/git-auto-commit-action@v5
