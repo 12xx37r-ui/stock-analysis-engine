@@ -1,6 +1,6 @@
 import json
 
-from collectors.dart import get_financial_data
+from collectors.dart import get_financial
 from collectors.market import get_market_data
 
 from analyzers.financial import analyze_financial
@@ -15,7 +15,7 @@ from predictors.long_term import predict_long
 def run(company, code):
 
 
-    financial_raw = get_financial_data(
+    financial_raw = get_financial(
         code
     )
 
@@ -26,7 +26,7 @@ def run(company, code):
 
 
     market = get_market_data(
-        code
+        "005930"
     )
 
 
@@ -54,9 +54,7 @@ def run(company, code):
     )
 
 
-
     result = {
-
 
         "기업명":
         company,
@@ -79,7 +77,6 @@ def run(company, code):
 
 
         "주가예측":
-
         {
 
             "단기1~5일":
@@ -102,7 +99,6 @@ def run(company, code):
 
 
 
-
 if __name__ == "__main__":
 
 
@@ -110,7 +106,7 @@ if __name__ == "__main__":
 
         "삼성전자",
 
-        "005930"
+        "00126380"
 
     )
 
