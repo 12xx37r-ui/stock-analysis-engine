@@ -1,4 +1,5 @@
 import requests
+
 from config import (
     KIS_APP_KEY,
     KIS_APP_SECRET,
@@ -29,56 +30,31 @@ def get_access_token():
 
     data=response.json()
 
-
     return data.get(
         "access_token"
     )
 
 
 
-
-def get_stock_price(stock_code):
+def kis_request(tr_id, path, params):
 
 
     token=get_access_token()
 
 
-    if not token:
-
-        return {
-
-            "오류":
-            "토큰 발급 실패"
-
-        }
-
-
-
-    url = (
-        f"{KIS_BASE_URL}"
-        "/uapi/domestic-stock/v1/"
-        "quotations/inquire-price"
-    )
-
-
     headers={
-
 
         "authorization":
         "Bearer "+token,
 
-
         "appkey":
         KIS_APP_KEY,
-
 
         "appsecret":
         KIS_APP_SECRET,
 
-
         "tr_id":
-        "FHKST01010100",
-
+        tr_id,
 
         "custtype":
         "P"
@@ -86,19 +62,7 @@ def get_stock_price(stock_code):
     }
 
 
-
-    params={
-
-
-        "FID_COND_MRKT_DIV_CODE":
-        "J",
-
-
-        "FID_INPUT_ISCD":
-        stock_code
-
-    }
-
+    url=KIS_BASE_URL + path
 
 
     response=requests.get(
@@ -114,27 +78,62 @@ def get_stock_price(stock_code):
     )
 
 
-    data=response.json()
+    return response.json()
 
 
 
-    return {
+# 현재가 조회
+
+def get_stock_price(stock_code):
 
 
-        "KIS응답코드":
-        data.get("rt_cd"),
+    data=kis_request(
+
+        "FHKST01010100",
+
+        "/uapi/domestic-stock/v1/quotations/inquire-price",
+
+        {
+
+            "FID_COND_MRKT_DIV_CODE":"J",
+
+            "FID_INPUT_ISCD":stock_code
+
+        }
+
+    )
 
 
-        "KIS메시지":
-        data.get("msg1"),
+    return data.get(
+        "output",
+        {}
+    )
 
 
-        "종목코드":
-        stock_code,
+
+# PER/PBR/EPS/BPS 조회
+
+def get_stock_finance(stock_code):
 
 
-        "원본":
-        data.get("output",{})
+    data=kis_request(
+
+        "FHKST01010400",
+
+        "/uapi/domestic-stock/v1/quotations/search-info",
+
+        {
+
+            "PRDT_TYPE_CD":"300",
+
+            "PDNO":stock_code
+
+        }
+
+    )
 
 
-    }
+    return data.get(
+        "output",
+        {}
+    )
