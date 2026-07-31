@@ -1,6 +1,5 @@
 import requests
 import time
-from datetime import datetime
 
 from config import (
     KIS_APP_KEY,
@@ -19,7 +18,6 @@ def get_access_token():
 
 
     if ACCESS_TOKEN:
-
         return ACCESS_TOKEN
 
 
@@ -87,20 +85,6 @@ def kis_request(
 
 
 
-    if not token:
-
-        return {
-
-            "rt_cd":
-            "TOKEN_ERROR",
-
-            "msg1":
-            "access_token 없음"
-
-        }
-
-
-
     headers = {
 
 
@@ -132,37 +116,24 @@ def kis_request(
 
 
 
-    for retry in range(2):
-
-
-        response = requests.get(
-
-            KIS_BASE_URL + path,
-
-            headers=headers,
-
-            params=params,
-
-            timeout=10
-
-        )
-
-
-        data = response.json()
+    time.sleep(0.5)
 
 
 
-        if data.get("msg_cd") != "EGW00201":
+    response = requests.get(
 
-            return data
+        KIS_BASE_URL + path,
+
+        headers=headers,
+
+        params=params,
+
+        timeout=10
+
+    )
 
 
-
-        time.sleep(1)
-
-
-
-    return data
+    return response.json()
 
 
 
@@ -205,19 +176,9 @@ def get_stock_price(stock_code):
 def get_investor_trade(stock_code):
 
 
-    time.sleep(1)
-
-
-    today = datetime.now().strftime(
-
-        "%Y%m%d"
-
-    )
-
-
     data = kis_request(
 
-        "FHPTJ04130000",
+        "FHPTJ04160001",
 
         "/uapi/domestic-stock/v1/quotations/inquire-investor",
 
@@ -227,17 +188,12 @@ def get_investor_trade(stock_code):
             "J",
 
             "FID_INPUT_ISCD":
-            stock_code,
-
-            "FID_INPUT_DATE_1":
-            today,
-
-            "FID_ORG_ADJ_PRC":
-            "0"
+            stock_code
 
         }
 
     )
+
 
 
     output = data.get(
@@ -249,10 +205,12 @@ def get_investor_trade(stock_code):
     )
 
 
+
     row = {}
 
 
-    if isinstance(output,list) and len(output)>0:
+
+    if isinstance(output, list) and len(output) > 0:
 
         row = output[0]
 
