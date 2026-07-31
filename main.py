@@ -4,6 +4,7 @@ from datetime import datetime
 
 
 from collectors.dart import get_financial
+from analyzers.financial import analyze_financial
 from collectors.market import get_market_data
 
 from analyzers.valuation import calculate_value
@@ -40,32 +41,6 @@ def save_output(data):
 
 
 
-def parse_financial(raw):
-
-    return {
-
-        "원본": raw,
-
-        "재무지표": {
-
-            "ROE":0,
-            "부채비율":0,
-            "영업이익률":0,
-            "순이익률":0
-
-        },
-
-        "성장지표": {
-
-            "매출3년성장률":0,
-            "영업이익3년성장률":0,
-            "순이익3년성장률":0
-
-        }
-
-    }
-
-
 
 
 def main():
@@ -88,16 +63,16 @@ def main():
     # =====================
 
     try:
+        
+dart_raw = get_financial(
+    DART_CODE
+)
 
-        dart_raw = get_financial(
-            DART_CODE
-        )
 
-
-        financial = parse_financial(
-            dart_raw
-        )
-
+financial = analyze_financial(
+    dart_raw
+)
+      
 
     except Exception as e:
 
