@@ -1,6 +1,9 @@
 from collectors.company import find_company_code
 from collectors.dart import get_financial
+from collectors.price import get_price
+
 from analyzers.financial import analyze_financial
+from analyzers.valuation import calculate_value
 
 import json
 import os
@@ -9,12 +12,6 @@ import os
 
 def run(company):
 
-    print(
-        f"{company} 분석 시작"
-    )
-
-
-    # 1. 기업코드 조회
 
     corp_code = find_company_code(
         company
@@ -24,21 +21,12 @@ def run(company):
     if corp_code is None:
 
         return {
-
-            "error":
-            "기업코드를 찾을 수 없습니다."
-
+            "error":"기업코드 없음"
         }
 
 
 
-    print(
-        "기업코드:",
-        corp_code
-    )
-
-
-    # 2. DART 재무 데이터 수집
+    # DART 재무
 
     dart_data = get_financial(
         corp_code
@@ -48,22 +36,38 @@ def run(company):
     if dart_data.get("status") != "000":
 
         return {
-
-            "error":
-            dart_data
-
+            "error":dart_data
         }
 
 
 
-    # 3. 재무 분석
+    # 재무 분석
 
-    analysis = analyze_financial(
+    financial = analyze_financial(
         dart_data
     )
 
 
+
+    # 가격 데이터
+
+    price = get_price(
+        corp_code
+    )
+
+
+
+    # 적정가 계산
+
+    valuation = calculate_value(
+        financial,
+        price
+    )
+
+
+
     result={
+
 
         "기업명":
         company,
@@ -73,8 +77,17 @@ def run(company):
         corp_code,
 
 
-        "분석결과":
-        analysis
+        "재무분석":
+        financial,
+
+
+        "가격정보":
+        price,
+
+
+        "가치평가":
+        valuation
+
 
     }
 
@@ -104,7 +117,6 @@ if __name__ == "__main__":
     )
 
 
-    # 결과 저장
 
     os.makedirs(
         "output",
