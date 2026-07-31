@@ -38,6 +38,7 @@ def kis_request(tr_id, path, params):
     if not token:
         return {}
 
+
     headers = {
 
         "authorization":
@@ -126,36 +127,36 @@ def get_investor_trade(stock_code):
     )
 
 
-    print("KIS 투자자 원본:")
-    print(data)
-
-
     output = data.get(
         "output",
         []
     )
 
 
-    if not output:
+    if isinstance(output, list) and len(output) > 0:
 
-        return {
+        row = output[0]
 
-            "외국인순매수":0,
+    elif isinstance(output, dict):
 
-            "기관순매수":0,
+        row = output
 
-            "개인순매수":0
+    else:
 
-        }
+        row = {}
 
-
-    row = output[0]
 
 
     return {
 
 
+        "원본응답":
+
+        data,
+
+
         "외국인순매수":
+
         float(
             row.get(
                 "frgn_ntby_qty",
@@ -165,6 +166,7 @@ def get_investor_trade(stock_code):
 
 
         "기관순매수":
+
         float(
             row.get(
                 "orgn_ntby_qty",
@@ -174,6 +176,7 @@ def get_investor_trade(stock_code):
 
 
         "개인순매수":
+
         float(
             row.get(
                 "prsn_ntby_qty",
