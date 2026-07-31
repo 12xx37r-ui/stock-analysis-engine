@@ -1,1 +1,5 @@
-DART_API_KEY = "09db7606fd5fc9afccf83754a8fc2f1ccb078225"
+import os
+
+DART_API_KEY=os.getenv(
+    "DART_API_KEY"
+)
