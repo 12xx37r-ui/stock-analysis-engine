@@ -1,3 +1,7 @@
+from predictors.score_config import SHORT_WEIGHT
+
+
+
 def predict_short(financial, market):
 
 
@@ -6,12 +10,20 @@ def predict_short(financial, market):
     reasons = []
 
 
-    # 1. 기술/거래량 20점
+    detail = {}
+
+
+
+    # 1. 기술·거래량 20점
+
+    tech_score = 0
+
 
     change = market.get(
         "등락률",
         0
     )
+
 
     volume = market.get(
         "거래량",
@@ -21,139 +33,104 @@ def predict_short(financial, market):
 
     if change > 0:
 
-        score += 10
+        tech_score += 10
 
         reasons.append(
-            "주가 상승 흐름"
+            "단기 상승 흐름"
         )
+
 
     elif change < 0:
 
-        score -= 10
+        tech_score -= 10
 
         reasons.append(
-            "주가 하락 흐름"
+            "단기 하락 흐름"
         )
 
 
     if volume > 0:
 
-        score += 10
+        tech_score += 10
 
         reasons.append(
             "거래량 확인"
         )
 
 
-
-    # 2. 재무 모멘텀 20점
-
-    growth = financial.get(
-        "성장지표",
-        {}
-    )
-
-
-    profit_growth = growth.get(
-        "영업이익3년성장률",
-        0
-    )
-
-
-    if profit_growth > 20:
-
-        score += 10
-
-        reasons.append(
-            "영업이익 성장"
-        )
-
-
-    elif profit_growth < 0:
-
-        score -= 10
-
-        reasons.append(
-            "영업이익 감소"
-        )
+    detail["기술거래량"] = tech_score
 
 
 
-    # 3. 밸류 부담 20점
+    # 2. 파생·프로그램 30점 (KIS 연결 예정)
 
-    per = market.get(
-        "PER",
-        0
-    )
-
-
-    if per > 30:
-
-        score -= 10
-
-        reasons.append(
-            "높은 PER 부담"
-        )
-
-
-    elif per > 0 and per < 15:
-
-        score += 10
-
-        reasons.append(
-            "낮은 PER"
-        )
-
-
-
-    # 4. 재무 안정성 20점
-
-    roe = financial.get(
-        "재무지표",
-        {}
-    ).get(
-        "ROE",
-        0
-    )
-
-
-    debt = financial.get(
-        "재무지표",
-        {}
-    ).get(
-        "부채비율",
-        0
-    )
-
-
-    if roe >= 15:
-
-        score += 10
-
-        reasons.append(
-            "높은 ROE"
-        )
-
-
-    if debt < 50:
-
-        score += 10
-
-        reasons.append(
-            "낮은 부채"
-        )
-
-
-
-    # 5. 수급/뉴스 자리 확보 (KIS 연결 예정)
+    detail["파생프로그램"] = 0
 
     reasons.append(
-        "외국인·기관·프로그램 데이터 연결 예정"
+        "선물·프로그램 데이터 연결 예정"
     )
 
 
 
-    score=max(
+    # 3. 외국인·기관 수급 25점 (KIS 연결 예정)
+
+    detail["외국인기관수급"] = 0
+
+    reasons.append(
+        "외국인·기관 수급 데이터 연결 예정"
+    )
+
+
+
+    # 4. 환율·글로벌 15점
+
+    detail["환율글로벌"] = 0
+
+    reasons.append(
+        "환율·미국시장 데이터 연결 예정"
+    )
+
+
+
+    # 5. 뉴스공시 10점
+
+    detail["뉴스공시"] = 0
+
+    reasons.append(
+        "뉴스·공시 데이터 연결 예정"
+    )
+
+
+
+    # 가중치 적용
+
+    total = 0
+
+
+    for key, value in detail.items():
+
+        weight = SHORT_WEIGHT.get(
+            key,
+            0
+        )
+
+
+        if value > 0:
+
+            total += weight
+
+
+        elif value < 0:
+
+            total -= weight
+
+
+
+    score = 50 + total
+
+
+
+    score = max(
         0,
         min(
             score,
@@ -176,6 +153,10 @@ def predict_short(financial, market):
 
         "상승확률":
         score,
+
+
+        "세부점수":
+        detail,
 
 
         "근거":
