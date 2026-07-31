@@ -1,7 +1,6 @@
-def safe_float(value):
+def num(value):
 
     try:
-
         if value is None:
             return 0
 
@@ -12,291 +11,249 @@ def safe_float(value):
         )
 
     except:
-
         return 0
 
 
 
-def get_account(data, name):
-
-    result=[]
+def find_account(data, name):
 
     for item in data.get("list", []):
 
         if item.get("account_nm") == name:
 
-            result.append(item)
+            return item
 
-    return result
-
-
-
-def get_year_values(data, account):
-
-    values={}
-
-    items=get_account(
-        data,
-        account
-    )
-
-
-    for item in items:
-
-        year=item.get(
-            "bsns_year"
-        )
-
-        amount=safe_float(
-            item.get(
-                "thstrm_amount"
-            )
-        )
-
-        if year:
-
-            values[year]=amount
-
-
-    return values
+    return None
 
 
 
-def growth_rate(old,new):
+def growth(current, previous):
 
-    if old <=0:
-
+    if previous <= 0:
         return 0
 
-    return (
-        (new-old)
-        /
-        old
-    )*100
+    return ((current - previous) / previous) * 100
 
 
 
 def analyze_financial(data):
 
 
-    # ======================
-    # 계정 추출
-    # ======================
+    # -----------------
+    # 계정 가져오기
+    # -----------------
 
-
-    revenue=get_year_values(
+    revenue=find_account(
         data,
         "매출액"
     )
 
-
-    operating=get_year_values(
+    operating=find_account(
         data,
         "영업이익"
     )
 
-
-    net_income=get_year_values(
+    net=find_account(
         data,
         "당기순이익(손실)"
     )
 
-
-    assets=get_account(
+    equity=find_account(
         data,
-        "자산총계"
+        "자본총계"
     )
 
-
-    debt=get_account(
+    debt=find_account(
         data,
         "부채총계"
     )
 
 
-    equity=get_account(
-        data,
-        "자본총계"
+
+    # -----------------
+    # 금액
+    # -----------------
+
+    sales_now=num(
+        revenue.get("thstrm_amount")
+        if revenue else 0
+    )
+
+    sales_prev=num(
+        revenue.get("frmtrm_amount")
+        if revenue else 0
+    )
+
+
+    sales_old=num(
+        revenue.get("bfefrmtrm_amount")
+        if revenue else 0
     )
 
 
 
-    latest_revenue=max(
-        revenue.values()
-        if revenue
-        else [0]
+    op_now=num(
+        operating.get("thstrm_amount")
+        if operating else 0
     )
 
-
-    latest_operating=max(
-        operating.values()
-        if operating
-        else [0]
+    op_prev=num(
+        operating.get("frmtrm_amount")
+        if operating else 0
     )
 
-
-    latest_net=max(
-        net_income.values()
-        if net_income
-        else [0]
+    op_old=num(
+        operating.get("bfefrmtrm_amount")
+        if operating else 0
     )
 
 
 
-    total_debt=safe_float(
-        debt[0]["thstrm_amount"]
+    net_now=num(
+        net.get("thstrm_amount")
+        if net else 0
+    )
+
+    net_prev=num(
+        net.get("frmtrm_amount")
+        if net else 0
+    )
+
+    net_old=num(
+        net.get("bfefrmtrm_amount")
+        if net else 0
+    )
+
+
+
+    equity_now=num(
+        equity.get("thstrm_amount")
+        if equity else 0
+    )
+
+    debt_now=num(
+        debt.get("thstrm_amount")
         if debt else 0
     )
 
 
-    total_equity=safe_float(
-        equity[0]["thstrm_amount"]
-        if equity else 0
-    )
 
-
-
-    # ======================
-    # 재무 계산
-    # ======================
-
+    # -----------------
+    # 지표 계산
+    # -----------------
 
     roe=0
 
-    if total_equity:
+    if equity_now:
 
-        roe=(
-            latest_net /
-            total_equity
-        )*100
+        roe=(net_now/equity_now)*100
 
 
 
     debt_ratio=0
 
-    if total_equity:
+    if equity_now:
 
-        debt_ratio=(
-            total_debt /
-            total_equity
-        )*100
+        debt_ratio=(debt_now/equity_now)*100
 
 
 
-    operating_margin=0
+    op_margin=0
 
-    if latest_revenue:
+    if sales_now:
 
-        operating_margin=(
-            latest_operating /
-            latest_revenue
-        )*100
+        op_margin=(op_now/sales_now)*100
 
 
 
     net_margin=0
 
-    if latest_revenue:
+    if sales_now:
 
-        net_margin=(
-            latest_net /
-            latest_revenue
-        )*100
+        net_margin=(net_now/sales_now)*100
 
 
 
-    years=sorted(
-        revenue.keys()
+    # 성장률
+
+    sales_growth=growth(
+        sales_now,
+        sales_old
     )
 
 
-    revenue_growth=0
-    operating_growth=0
-    net_growth=0
+    op_growth=growth(
+        op_now,
+        op_old
+    )
 
 
-    if len(years)>=2:
-
-        old=years[0]
-        new=years[-1]
-
-
-        revenue_growth=growth_rate(
-            revenue[old],
-            revenue[new]
-        )
-
-
-        if old in operating and new in operating:
-
-            operating_growth=growth_rate(
-                operating[old],
-                operating[new]
-            )
-
-
-        if old in net_income and new in net_income:
-
-            net_growth=growth_rate(
-                net_income[old],
-                net_income[new]
-            )
+    net_growth=growth(
+        net_now,
+        net_old
+    )
 
 
 
-    # ======================
-    # 버핏형 점수
-    # ======================
-
+    # -----------------
+    # 버핏 평가
+    # -----------------
 
     score=0
 
-
     good=[]
 
-    warning=[]
+    bad=[]
 
 
 
-    # ROE
+    # 수익성
 
     if roe>=15:
 
         score+=20
 
         good.append(
-            "ROE가 15% 이상으로 자기자본 활용 능력이 우수합니다."
+            "ROE가 높아 자기자본 활용 능력이 우수합니다."
+        )
+
+    elif roe>=10:
+
+        score+=10
+
+        good.append(
+            "ROE는 양호하지만 최고 수준은 아닙니다."
         )
 
     else:
 
-        warning.append(
-            f"ROE {roe:.2f}%로 버핏 기준 15%에는 부족합니다."
+        bad.append(
+            f"ROE {roe:.2f}%로 수익성 개선이 필요합니다."
         )
 
 
 
-    # 부채
+    # 재무안정성
 
     if debt_ratio<=50:
 
-        score+=15
+        score+=20
 
         good.append(
-            "부채비율이 낮아 재무 안정성이 좋습니다."
+            "부채비율이 낮아 재무 안전성이 좋습니다."
         )
 
     else:
 
-        warning.append(
-            f"부채비율 {debt_ratio:.2f}%로 관리가 필요합니다."
+        bad.append(
+            "부채 부담이 높은 편입니다."
         )
 
 
 
     # 성장
 
-    if revenue_growth>10:
+    if sales_growth>10:
 
         score+=15
 
@@ -306,45 +263,41 @@ def analyze_financial(data):
 
     else:
 
-        warning.append(
-            "매출 성장성이 강하지 않습니다."
+        bad.append(
+            "매출 성장성이 강한지 확인이 필요합니다."
         )
 
 
 
-    if operating_growth>10:
+    if op_growth>10:
+
+        score+=20
+
+        good.append(
+            "영업이익 성장성이 우수합니다."
+        )
+
+    else:
+
+        bad.append(
+            "영업이익 성장성이 약합니다."
+        )
+
+
+
+    # 마진
+
+    if op_margin>=10:
 
         score+=15
 
         good.append(
-            "영업이익 성장성이 좋습니다."
-        )
-
-    else:
-
-        warning.append(
-            "영업이익 성장 확인이 필요합니다."
+            "영업이익률이 좋아 높은 수익성을 보여줍니다."
         )
 
 
 
-    if operating_margin>=10:
-
-        score+=10
-
-        good.append(
-            "영업이익률이 우수해 돈을 남기는 힘이 있습니다."
-        )
-
-    else:
-
-        warning.append(
-            "영업이익률 개선이 필요합니다."
-        )
-
-
-
-    # 최종판정
+    # 등급
 
     if score>=75:
 
@@ -352,11 +305,11 @@ def analyze_financial(data):
 
     elif score>=55:
 
-        grade="관찰 가치 기업"
+        grade="투자검토 가능"
 
     else:
 
-        grade="조건 부족"
+        grade="조건 미달"
 
 
 
@@ -365,50 +318,37 @@ def analyze_financial(data):
 
         "재무지표":{
 
-            "ROE":
-            round(roe,2),
+            "ROE":round(roe,2),
 
-            "부채비율":
-            round(debt_ratio,2),
+            "부채비율":round(debt_ratio,2),
 
-            "영업이익률":
-            round(operating_margin,2),
+            "영업이익률":round(op_margin,2),
 
-            "순이익률":
-            round(net_margin,2)
+            "순이익률":round(net_margin,2)
 
         },
 
 
         "성장지표":{
 
-            "매출성장률":
-            round(revenue_growth,2),
+            "매출3년성장률":round(sales_growth,2),
 
-            "영업이익성장률":
-            round(operating_growth,2),
+            "영업이익3년성장률":round(op_growth,2),
 
-            "순이익성장률":
-            round(net_growth,2)
+            "순이익3년성장률":round(net_growth,2)
 
         },
 
 
         "버핏평가":{
 
-            "점수":
-            score,
+            "점수":score,
 
-            "판정":
-            grade,
+            "판정":grade,
 
+            "좋은점":good,
 
-            "좋은점":
-            good,
-
-
-            "주의점":
-            warning
+            "주의점":bad
 
         },
 
@@ -416,29 +356,26 @@ def analyze_financial(data):
         "투자자해설":{
 
             "ROE":
-            "ROE는 회사가 주주의 돈을 이용해 얼마나 효율적으로 이익을 만드는지 보여주는 지표입니다.",
+            "ROE는 회사가 주주의 돈을 이용해 얼마나 많은 이익을 만드는지 나타냅니다. 높을수록 자본 활용 능력이 좋습니다.",
 
 
             "부채비율":
-            "부채비율은 회사가 빚에 얼마나 의존하는지 보여줍니다. 낮을수록 재무 안전성이 높습니다.",
+            "부채비율은 회사가 가진 자기 돈 대비 빚의 규모입니다. 낮을수록 경기 침체에도 버틸 힘이 있습니다.",
 
 
             "영업이익률":
-            "영업이익률은 물건을 팔고 실제 얼마의 이익이 남는지 보여주는 기업 경쟁력 지표입니다."
+            "영업이익률은 물건을 팔고 비용을 제외한 뒤 얼마가 남는지를 보여주는 기업 경쟁력 지표입니다."
 
         },
 
 
         "원본":{
 
-            "매출":
-            latest_revenue,
+            "매출":sales_now,
 
-            "영업이익":
-            latest_operating,
+            "영업이익":op_now,
 
-            "순이익":
-            latest_net
+            "순이익":net_now
 
         }
 
