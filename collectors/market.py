@@ -1,66 +1,35 @@
-import requests
+from pykrx import stock
 
 
 def get_market_data(stock_code):
 
     try:
 
-        headers = {
-            "User-Agent": "Mozilla/5.0"
-        }
+        today = stock.get_nearest_business_day_in_a_week()
 
 
-        url = (
-            "https://query1.finance.yahoo.com/v8/finance/chart/"
-            f"{stock_code}.KS"
-            "?range=1d&interval=1m"
+        df = stock.get_market_ohlcv(
+            today,
+            today,
+            stock_code
         )
 
 
-        response = requests.get(
-            url,
-            headers=headers,
-            timeout=10
+        price = int(
+            df["종가"].iloc[0]
         )
-
-
-        data = response.json()
-
-
-        result = data["chart"]["result"][0]
-
-
-        quote = result["indicators"]["quote"][0]
-
-
-        prices = quote["close"]
-
-
-        prices = [
-            p for p in prices
-            if p is not None
-        ]
-
-
-        if not prices:
-
-            raise Exception(
-                "가격 데이터 없음"
-            )
-
-
-        current_price = prices[-1]
-
 
 
         return {
 
+
             "현재가":
-            round(current_price,2),
+            price,
 
 
             "데이터출처":
-            "Yahoo Finance 1분봉"
+            "KRX pykrx"
+
 
         }
 
@@ -71,7 +40,9 @@ def get_market_data(stock_code):
 
         return {
 
+
             "현재가":0,
+
 
             "오류":
             str(e)
