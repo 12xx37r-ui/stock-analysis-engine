@@ -1,6 +1,7 @@
 name: run-engine
 
 on:
+
   workflow_dispatch:
 
 
@@ -20,12 +21,14 @@ jobs:
       KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
 
 
+
     steps:
 
 
       - name: Checkout
 
         uses: actions/checkout@v4
+
 
 
       - name: Setup Python
@@ -37,30 +40,17 @@ jobs:
           python-version: "3.11"
 
 
-      - name: Check Secrets
 
-        run: |
+      - name: Restore KIS token
 
-          if [ -z "$KIS_APP_KEY" ]; then
+        uses: actions/cache@v4
 
-            echo "KIS_APP_KEY 없음"
+        with:
 
-          else
+          path: kis_token.json
 
-            echo "KIS_APP_KEY 있음"
+          key: kis-token-cache
 
-          fi
-
-
-          if [ -z "$KIS_APP_SECRET" ]; then
-
-            echo "KIS_APP_SECRET 없음"
-
-          else
-
-            echo "KIS_APP_SECRET 있음"
-
-          fi
 
 
       - name: Install
@@ -68,6 +58,7 @@ jobs:
         run: |
 
           pip install -r requirements.txt
+
 
 
       - name: Run python
