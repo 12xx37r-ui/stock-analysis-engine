@@ -1,4 +1,5 @@
 import requests
+import time
 from datetime import datetime
 
 from config import (
@@ -11,12 +12,16 @@ from config import (
 ACCESS_TOKEN = None
 
 
+
 def get_access_token():
 
     global ACCESS_TOKEN
 
+
     if ACCESS_TOKEN:
+
         return ACCESS_TOKEN
+
 
 
     url = (
@@ -69,6 +74,8 @@ def get_access_token():
 
 
 
+
+
 def kis_request(
     tr_id,
     path,
@@ -77,6 +84,7 @@ def kis_request(
 
 
     token = get_access_token()
+
 
 
     if not token:
@@ -95,39 +103,68 @@ def kis_request(
 
     headers = {
 
+
         "authorization":
+
         "Bearer " + token,
 
+
         "appkey":
+
         KIS_APP_KEY,
 
+
         "appsecret":
+
         KIS_APP_SECRET,
 
+
         "tr_id":
+
         tr_id,
 
+
         "custtype":
+
         "P"
 
     }
 
 
 
-    response = requests.get(
-
-        KIS_BASE_URL + path,
-
-        headers=headers,
-
-        params=params,
-
-        timeout=10
-
-    )
+    for retry in range(2):
 
 
-    return response.json()
+        response = requests.get(
+
+            KIS_BASE_URL + path,
+
+            headers=headers,
+
+            params=params,
+
+            timeout=10
+
+        )
+
+
+        data = response.json()
+
+
+
+        if data.get("msg_cd") != "EGW00201":
+
+            return data
+
+
+
+        time.sleep(1)
+
+
+
+    return data
+
+
 
 
 
@@ -163,11 +200,18 @@ def get_stock_price(stock_code):
 
 
 
+
+
 def get_investor_trade(stock_code):
 
 
+    time.sleep(1)
+
+
     today = datetime.now().strftime(
+
         "%Y%m%d"
+
     )
 
 
@@ -208,7 +252,7 @@ def get_investor_trade(stock_code):
     row = {}
 
 
-    if isinstance(output, list) and len(output) > 0:
+    if isinstance(output,list) and len(output)>0:
 
         row = output[0]
 
