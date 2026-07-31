@@ -1,6 +1,9 @@
 import requests
 import time
-from datetime import datetime
+import os
+import json
+from datetime import datetime, timedelta
+
 
 from config import (
     KIS_APP_KEY,
@@ -9,67 +12,45 @@ from config import (
 )
 
 
-def get_access_token():
 
-    url = (
-        KIS_BASE_URL
-        +
-        "/oauth2/tokenP"
-    )
+TOKEN_FILE = "kis_token.json"
 
 
-    body = {
 
-        "grant_type":
-        "client_credentials",
+def load_token():
 
-        "appkey":
-        KIS_APP_KEY,
+    if not os.path.exists(TOKEN_FILE):
 
-        "appsecret":
-        KIS_APP_SECRET
-
-    }
+        return None
 
 
     try:
 
-        response = requests.post(
-            url,
-            json=body,
-            timeout=10
+        with open(
+            TOKEN_FILE,
+            "r",
+            encoding="utf-8"
+        ) as f:
+
+            data = json.load(f)
+
+
+
+        expire = datetime.fromisoformat(
+            data["expire"]
         )
 
 
-        data = response.json()
+        if datetime.now() < expire:
+
+            return data["access_token"]
 
 
-        token = data.get(
-            "access_token"
-        )
 
+    except Exception:
 
-        if token:
+        pass
 
-            print(
-                "TOKEN CREATED: True"
-            )
-
-            return token
-
-
-        print(
-            "TOKEN CREATE FAILED:",
-            data
-        )
-
-
-    except Exception as e:
-
-        print(
-            "TOKEN REQUEST ERROR:",
-            e
-        )
 
 
     return None
@@ -78,65 +59,312 @@ def get_access_token():
 
 
 
+def save_token(token):
+
+
+    data = {
+
+
+        "access_token":
+        token,
+
+
+        "expire":
+        (
+            datetime.now()
+            +
+            timedelta(hours=23)
+        ).isoformat()
+
+
+    }
+
+
+    with open(
+
+        TOKEN_FILE,
+
+        "w",
+
+        encoding="utf-8"
+
+    ) as f:
+
+
+        json.dump(
+
+            data,
+
+            f,
+
+            ensure_ascii=False
+
+        )
+
+
+
+
+
+
+
+def get_access_token(force=False):
+
+
+    if not force:
+
+
+        token = load_token()
+
+
+        if token:
+
+            return token
+
+
+
+
+
+    url = (
+
+        KIS_BASE_URL
+
+        +
+
+        "/oauth2/tokenP"
+
+    )
+
+
+
+    body = {
+
+
+        "grant_type":
+
+        "client_credentials",
+
+
+        "appkey":
+
+        KIS_APP_KEY,
+
+
+        "appsecret":
+
+        KIS_APP_SECRET
+
+
+    }
+
+
+
+
+
+    response = requests.post(
+
+        url,
+
+        json=body,
+
+        timeout=10
+
+    )
+
+
+
+    data = response.json()
+
+
+
+    token = data.get(
+
+        "access_token"
+
+    )
+
+
+
+    if token:
+
+
+        save_token(
+
+            token
+
+        )
+
+
+        print(
+
+            "TOKEN CREATED: True"
+
+        )
+
+
+        return token
+
+
+
+    print(
+
+        "TOKEN ERROR",
+
+        data
+
+    )
+
+
+    return None
+
+
+
+
+
+
+
+
 def kis_request(
+
     tr_id,
+
     path,
+
     params
+
 ):
 
 
-    for attempt in range(2):
-
-
-        token = get_access_token()
-
-
-        if not token:
-
-            return {
-
-                "rt_cd":
-                "TOKEN_ERROR",
-
-                "msg1":
-                "토큰 발급 실패",
-
-                "output":[]
-
-            }
+    token = get_access_token()
 
 
 
-        headers = {
+    if not token:
 
 
-            "authorization":
-            "Bearer " + token,
+        return {
 
 
-            "appkey":
-            KIS_APP_KEY,
+            "rt_cd":
+
+            "TOKEN_ERROR",
 
 
-            "appsecret":
-            KIS_APP_SECRET,
+            "msg1":
+
+            "토큰 발급 실패",
 
 
-            "tr_id":
-            tr_id,
-
-
-            "custtype":
-            "P"
+            "output":[]
 
         }
 
 
 
-        try:
 
 
-            time.sleep(0.5)
+    headers = {
+
+
+        "authorization":
+
+        "Bearer "
+
+        +
+
+        token,
+
+
+        "appkey":
+
+        KIS_APP_KEY,
+
+
+        "appsecret":
+
+        KIS_APP_SECRET,
+
+
+        "tr_id":
+
+        tr_id,
+
+
+        "custtype":
+
+        "P"
+
+
+    }
+
+
+
+    time.sleep(0.5)
+
+
+
+    response = requests.get(
+
+        KIS_BASE_URL + path,
+
+        headers=headers,
+
+        params=params,
+
+        timeout=10
+
+    )
+
+
+
+    data = response.json()
+
+
+
+    # 토큰 만료
+
+    if data.get("rt_cd") != "0":
+
+
+        msg = str(
+
+            data.get(
+
+                "msg1",
+
+                ""
+
+            )
+
+        )
+
+
+        if (
+
+            "TOKEN" in msg.upper()
+
+            or
+
+            "토큰" in msg
+
+        ):
+
+
+            token = get_access_token(
+
+                force=True
+
+            )
+
+
+            headers["authorization"] = (
+
+                "Bearer "
+
+                +
+
+                token
+
+            )
 
 
             response = requests.get(
@@ -156,65 +384,9 @@ def kis_request(
 
 
 
-            # 정상
-
-            if data.get("rt_cd") == "0":
-
-                return data
+    return data
 
 
-
-            msg = str(
-                data.get(
-                    "msg1",
-                    ""
-                )
-            )
-
-
-            print(
-                "KIS ERROR:",
-                msg
-            )
-
-
-            # 토큰 관련이면 재시도
-
-            if (
-                "TOKEN" in msg.upper()
-                or
-                "토큰" in msg
-            ):
-
-                continue
-
-
-
-            return data
-
-
-
-        except Exception as e:
-
-
-            print(
-                "KIS REQUEST ERROR:",
-                e
-            )
-
-
-
-    return {
-
-        "rt_cd":
-        "REQUEST_ERROR",
-
-        "msg1":
-        "KIS 요청 실패",
-
-        "output":[]
-
-    }
 
 
 
@@ -227,19 +399,28 @@ def get_stock_price(stock_code):
 
     data = kis_request(
 
+
         "FHKST01010100",
+
 
         "/uapi/domestic-stock/v1/quotations/inquire-price",
 
+
         {
 
+
             "FID_COND_MRKT_DIV_CODE":
+
             "J",
 
+
             "FID_INPUT_ISCD":
+
             stock_code
 
+
         }
+
 
     )
 
@@ -259,47 +440,68 @@ def get_stock_price(stock_code):
 
 
 
+
 def get_investor_trade(stock_code):
 
 
     today = datetime.now().strftime(
+
         "%Y%m%d"
+
     )
+
 
 
     data = kis_request(
 
 
+
         "FHPTJ04160001",
+
 
 
         "/uapi/domestic-stock/v1/quotations/inquire-investor",
 
 
+
         {
 
+
             "FID_COND_MRKT_DIV_CODE":
+
             "J",
 
 
+
             "FID_INPUT_ISCD":
+
             stock_code,
 
 
+
             "FID_INPUT_DATE_1":
+
             today,
 
 
+
             "FID_ORG_ADJ_PRC":
+
             "0",
 
 
+
             "FID_ETC_CLS_CODE":
+
             "00"
+
 
         }
 
+
+
     )
+
 
 
     output = data.get(
@@ -311,14 +513,15 @@ def get_investor_trade(stock_code):
     )
 
 
+
     row = {}
 
 
-    if isinstance(output, list):
 
-        if len(output) > 0:
+    if isinstance(output,list) and len(output)>0:
 
-            row = output[0]
+        row = output[0]
+
 
 
 
@@ -326,7 +529,9 @@ def get_investor_trade(stock_code):
 
 
         "원본응답":
+
         data,
+
 
 
         "외국인순매수":
@@ -344,6 +549,7 @@ def get_investor_trade(stock_code):
         ),
 
 
+
         "기관순매수":
 
         float(
@@ -359,6 +565,7 @@ def get_investor_trade(stock_code):
         ),
 
 
+
         "개인순매수":
 
         float(
@@ -372,5 +579,6 @@ def get_investor_trade(stock_code):
             )
 
         )
+
 
     }
