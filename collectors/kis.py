@@ -7,22 +7,22 @@ from config import (
 )
 
 
-
 def get_access_token():
 
     url = f"{KIS_BASE_URL}/oauth2/tokenP"
 
-
     body = {
 
-        "grant_type": "client_credentials",
+        "grant_type":
+        "client_credentials",
 
-        "appkey": KIS_APP_KEY,
+        "appkey":
+        KIS_APP_KEY,
 
-        "appsecret": KIS_APP_SECRET
+        "appsecret":
+        KIS_APP_SECRET
 
     }
-
 
     response = requests.post(
         url,
@@ -30,9 +30,7 @@ def get_access_token():
         timeout=10
     )
 
-
-    data = response.json()
-
+    data=response.json()
 
     return data.get(
         "access_token"
@@ -42,20 +40,16 @@ def get_access_token():
 
 def kis_request(tr_id, path, params):
 
-
-    token = get_access_token()
-
+    token=get_access_token()
 
     if not token:
-
         return {}
 
 
-
-    headers = {
+    headers={
 
         "authorization":
-        "Bearer " + token,
+        "Bearer "+token,
 
         "appkey":
         KIS_APP_KEY,
@@ -72,12 +66,10 @@ def kis_request(tr_id, path, params):
     }
 
 
-
-    url = KIS_BASE_URL + path
-
+    url=KIS_BASE_URL+path
 
 
-    response = requests.get(
+    response=requests.get(
 
         url,
 
@@ -94,12 +86,10 @@ def kis_request(tr_id, path, params):
 
 
 
-# 현재가 + 기본지표
-
 def get_stock_price(stock_code):
 
 
-    data = kis_request(
+    return kis_request(
 
         "FHKST01010100",
 
@@ -115,10 +105,98 @@ def get_stock_price(stock_code):
 
         }
 
-    )
+    ).get(
 
-
-    return data.get(
         "output",
+
         {}
+
     )
+
+
+
+# 투자자별 매매동향
+
+def get_investor_trade(stock_code):
+
+
+    data=kis_request(
+
+        "FHPTJ04160001",
+
+        "/uapi/domestic-stock/v1/quotations/inquire-investor",
+
+        {
+
+            "FID_COND_MRKT_DIV_CODE":
+            "J",
+
+            "FID_INPUT_ISCD":
+            stock_code,
+
+            "FID_PERIOD_DIV_CODE":
+            "D",
+
+            "FID_ORG_ADJ_PRC":
+            "0"
+
+        }
+
+    )
+
+
+    output=data.get(
+        "output",
+        []
+    )
+
+
+    if not output:
+
+        return {
+
+            "외국인순매수":0,
+
+            "기관순매수":0,
+
+            "개인순매수":0
+
+        }
+
+
+    row=output[0]
+
+
+    return {
+
+
+        "외국인순매수":
+
+        float(
+            row.get(
+                "frgn_ntby_qty",
+                0
+            )
+        ),
+
+
+        "기관순매수":
+
+        float(
+            row.get(
+                "orgn_ntby_qty",
+                0
+            )
+        ),
+
+
+        "개인순매수":
+
+        float(
+            row.get(
+                "prsn_ntby_qty",
+                0
+            )
+        )
+
+    }
