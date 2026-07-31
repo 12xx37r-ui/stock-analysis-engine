@@ -1,156 +1,179 @@
-import json
-import os
-
-from collectors.dart import get_financial
-from collectors.market import get_market_data
-
-from analyzers.financial import analyze_financial
-from analyzers.valuation import calculate_value
-
-from predictors.short_term import predict_short
-from predictors.mid_term import predict_mid
-from predictors.long_term import predict_long
+from collectors.kis import (
+    get_stock_price,
+    get_investor_trade
+)
 
 
 
-def run(company, dart_code, kis_code):
+def get_market_data(stock_code):
 
 
-    financial_raw = get_financial(
-        dart_code
+    price = get_stock_price(
+        stock_code
     )
 
 
-    financial = analyze_financial(
-        financial_raw
+    investor = get_investor_trade(
+        stock_code
     )
 
-
-    market = get_market_data(
-        kis_code
-    )
-
-
-    valuation = calculate_value(
-        financial,
-        market
-    )
-
-
-    short = predict_short(
-        financial,
-        market
-    )
-
-
-    mid = predict_mid(
-        financial,
-        market
-    )
-
-
-    long = predict_long(
-        financial,
-        valuation
-    )
 
 
     return {
 
 
-        "기업명":
-        company,
+        "현재가":
+        float(
+            price.get(
+                "stck_prpr",
+                0
+            )
+        ),
 
 
-        "DART기업코드":
-        dart_code,
+
+        "전일대비":
+        float(
+            price.get(
+                "prdy_vrss",
+                0
+            )
+        ),
 
 
-        "KIS종목코드":
-        kis_code,
+
+        "등락률":
+        float(
+            price.get(
+                "prdy_ctrt",
+                0
+            )
+        ),
 
 
-        "재무분석":
-        financial,
+
+        "거래량":
+        int(
+            price.get(
+                "acml_vol",
+                0
+            )
+        ),
 
 
-        "시장정보":
-        market,
+
+        "시가":
+        float(
+            price.get(
+                "stck_oprc",
+                0
+            )
+        ),
 
 
-        "가치평가":
-        valuation,
+
+        "고가":
+        float(
+            price.get(
+                "stck_hgpr",
+                0
+            )
+        ),
 
 
-        "주가예측":
 
+        "저가":
+        float(
+            price.get(
+                "stck_lwpr",
+                0
+            )
+        ),
+
+
+
+        "PER":
+        float(
+            price.get(
+                "per",
+                0
+            )
+        ),
+
+
+
+        "PBR":
+        float(
+            price.get(
+                "pbr",
+                0
+            )
+        ),
+
+
+
+        "EPS":
+        float(
+            price.get(
+                "eps",
+                0
+            )
+        ),
+
+
+
+        "BPS":
+        float(
+            price.get(
+                "bps",
+                0
+            )
+        ),
+
+
+
+        "시가총액":
+        float(
+            price.get(
+                "hts_avls",
+                0
+            )
+        ),
+
+
+
+        "수급":
         {
 
-            "단기1~5일":
-            short,
+
+            "외국인순매수":
+            investor.get(
+                "외국인순매수",
+                0
+            ),
 
 
-            "중기1~8주":
-            mid,
+
+            "기관순매수":
+            investor.get(
+                "기관순매수",
+                0
+            ),
 
 
-            "장기6~18개월":
-            long
 
-        }
+            "개인순매수":
+            investor.get(
+                "개인순매수",
+                0
+            )
+
+
+        },
+
+
+
+        "데이터출처":
+        "한국투자증권 KIS"
 
     }
-
-
-
-if __name__ == "__main__":
-
-
-    result = run(
-
-        "삼성전자",
-
-        "00126380",
-
-        "005930"
-
-    )
-
-
-    os.makedirs(
-        "output",
-        exist_ok=True
-    )
-
-
-    with open(
-
-        "output/samsung.json",
-
-        "w",
-
-        encoding="utf-8"
-
-    ) as f:
-
-
-        json.dump(
-
-            result,
-
-            f,
-
-            ensure_ascii=False,
-
-            indent=2
-
-        )
-
-
-    print(
-        json.dumps(
-            result,
-            ensure_ascii=False,
-            indent=2
-        )
-    )
