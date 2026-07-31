@@ -128,29 +128,9 @@ def get_market_data(stock_code):
         ),
 
 
-        "수급": {
-
-            "외국인순매수":
-            investor.get(
-                "외국인순매수",
-                0
-            ),
-
-
-            "기관순매수":
-            investor.get(
-                "기관순매수",
-                0
-            ),
-
-
-            "개인순매수":
-            investor.get(
-                "개인순매수",
-                0
-            )
-
-        },
+        # KIS 원본 + 파싱값 유지
+        "수급":
+        investor,
 
 
         "데이터출처":
