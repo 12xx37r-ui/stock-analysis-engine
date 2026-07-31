@@ -7,13 +7,7 @@ from collectors.dart import get_financial_data
 from collectors.market import get_market_data
 
 
-from analyzers.financial import *
-from analyzers.valuation import *
-
-
-from predictors.short_term import *
-from predictors.mid_term import *
-from predictors.long_term import *
+from analyzers.valuation import calculate_value
 
 
 
@@ -50,6 +44,12 @@ def save_output(data):
 def main():
 
 
+    print(
+        "START ENGINE"
+    )
+
+
+
     result = {
 
         "기업명":
@@ -65,28 +65,37 @@ def main():
 
 
 
-    # DART
+
+    # =========================
+    # DART 재무
+    # =========================
 
     try:
 
-        finance = get_financial_data(
+        financial = get_financial_data(
             DART_CODE
         )
 
+
     except Exception as e:
 
-        finance = {
-            "error":str(e)
+        financial = {
+
+            "error":
+            str(e)
+
         }
 
 
 
-    result["재무분석"] = finance
+    result["재무분석"] = financial
 
 
 
 
-    # KIS
+    # =========================
+    # KIS 시장
+    # =========================
 
     try:
 
@@ -94,10 +103,14 @@ def main():
             STOCK_CODE
         )
 
+
     except Exception as e:
 
         market = {
-            "error":str(e)
+
+            "error":
+            str(e)
+
         }
 
 
@@ -107,68 +120,63 @@ def main():
 
 
 
+
+    # =========================
     # 가치평가
+    # =========================
 
     try:
 
-        result["가치평가"] = valuation(
-            market,
-            finance
+        result["가치평가"] = calculate_value(
+
+            financial,
+
+            market
+
         )
+
 
     except Exception as e:
 
         result["가치평가"] = {
-            "error":str(e)
-        }
 
-
-
-
-
-    # 단기
-
-    try:
-
-        result["주가예측"] = {
-
-            "단기1~5일":
-            short_term(
-                market
-            ),
-
-            "중기1~8주":
-            mid_term(
-                market,
-                finance
-            ),
-
-            "장기6~18개월":
-            long_term(
-                market,
-                finance
-            )
+            "error":
+            str(e)
 
         }
 
 
-    except Exception as e:
-
-        result["주가예측"] = {
-            "error":str(e)
-        }
 
 
 
+    # =========================
+    # 예측
+    # =========================
+
+    result["주가예측"] = {
+
+        "상태":
+        "예측모듈 연결 대기"
+
+    }
 
 
-    result["생성시간"] = datetime.now().isoformat()
+
+
+
+    result["생성시간"] = (
+        datetime.now()
+        .isoformat()
+    )
+
+
 
 
 
     save_output(
         result
     )
+
 
 
     print(
