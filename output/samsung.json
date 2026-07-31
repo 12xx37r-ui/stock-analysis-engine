@@ -38,7 +38,7 @@
   },
   "시장정보": {
     "현재가": 0,
-    "오류": "index -1 is out of bounds for axis 0 with size 0"
+    "오류": "'chart'"
   },
   "가치평가": {
     "현재가": 0.0,
