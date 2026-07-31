@@ -8,23 +8,60 @@ from config import (
 
 
 
+TOKEN = None
+
+
+
 def get_access_token():
 
-    url = f"{KIS_BASE_URL}/oauth2/tokenP"
+
+    global TOKEN
+
+
+    if TOKEN:
+
+        return TOKEN
+
+
+
+    if not KIS_APP_KEY or not KIS_APP_SECRET:
+
+        print("KIS KEY 없음")
+
+        return None
+
+
+
+    url = (
+
+        KIS_BASE_URL
+
+        +
+
+        "/oauth2/tokenP"
+
+    )
 
 
     body = {
 
+
         "grant_type":
+
         "client_credentials",
 
+
         "appkey":
+
         KIS_APP_KEY,
 
+
         "appsecret":
+
         KIS_APP_SECRET
 
     }
+
 
 
     response = requests.post(
@@ -38,39 +75,49 @@ def get_access_token():
     )
 
 
-    data = response.json()
+    print("TOKEN RESPONSE")
+
+    print(response.text)
 
 
-    return data.get(
+
+    data=response.json()
+
+
+
+    TOKEN=data.get(
+
         "access_token"
+
     )
 
 
 
-def kis_request(tr_id, path, params):
+    return TOKEN
 
 
-    token = get_access_token()
+
+
+
+def kis_request(tr_id,path,params):
+
+
+    token=get_access_token()
+
 
 
     if not token:
 
-        return {
-
-            "rt_cd":"TOKEN_ERROR",
-
-            "msg1":"토큰 발급 실패"
-
-        }
+        return {}
 
 
 
-    headers = {
+    headers={
 
 
         "authorization":
 
-        "Bearer " + token,
+        "Bearer "+token,
 
 
         "appkey":
@@ -96,9 +143,9 @@ def kis_request(tr_id, path, params):
 
 
 
-    response = requests.get(
+    response=requests.get(
 
-        KIS_BASE_URL + path,
+        KIS_BASE_URL+path,
 
         headers=headers,
 
@@ -113,10 +160,12 @@ def kis_request(tr_id, path, params):
 
 
 
+
+
 def get_stock_price(stock_code):
 
 
-    data = kis_request(
+    data=kis_request(
 
         "FHKST01010100",
 
@@ -124,14 +173,9 @@ def get_stock_price(stock_code):
 
         {
 
-            "FID_COND_MRKT_DIV_CODE":
+        "FID_COND_MRKT_DIV_CODE":"J",
 
-            "J",
-
-
-            "FID_INPUT_ISCD":
-
-            stock_code
+        "FID_INPUT_ISCD":stock_code
 
         }
 
@@ -148,10 +192,12 @@ def get_stock_price(stock_code):
 
 
 
+
+
 def get_investor_trade(stock_code):
 
 
-    data = kis_request(
+    data=kis_request(
 
         "FHPTJ04040000",
 
@@ -159,118 +205,25 @@ def get_investor_trade(stock_code):
 
         {
 
-            "FID_COND_MRKT_DIV_CODE":
+        "FID_COND_MRKT_DIV_CODE":"J",
 
-            "J",
-
-
-            "FID_INPUT_ISCD":
-
-            stock_code
+        "FID_INPUT_ISCD":stock_code
 
         }
 
     )
 
 
-
-    output = data.get(
-
-        "output",
-
-        []
-
-    )
-
-
-
-    if isinstance(output, list) and len(output) > 0:
-
-        row = output[0]
-
-
-    elif isinstance(output, dict):
-
-        row = output
-
-
-    else:
-
-        row = {}
-
-
-
     return {
 
 
-        "원본응답":
-
-        {
-
-            "rt_cd":
-
-            data.get("rt_cd"),
+        "원본응답":data,
 
 
-            "msg_cd":
+        "외국인순매수":0,
 
-            data.get("msg_cd"),
+        "기관순매수":0,
 
-
-            "msg1":
-
-            data.get("msg1"),
-
-
-            "output":
-
-            output
-
-        },
-
-
-        "외국인순매수":
-
-        float(
-
-            row.get(
-
-                "frgn_ntby_qty",
-
-                0
-
-            )
-
-        ),
-
-
-        "기관순매수":
-
-        float(
-
-            row.get(
-
-                "orgn_ntby_qty",
-
-                0
-
-            )
-
-        ),
-
-
-        "개인순매수":
-
-        float(
-
-            row.get(
-
-                "prsn_ntby_qty",
-
-                0
-
-            )
-
-        )
+        "개인순매수":0
 
     }
