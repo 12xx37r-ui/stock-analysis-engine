@@ -21,28 +21,40 @@ def load_token():
 
     global ACCESS_TOKEN
 
-    if os.path.exists(TOKEN_FILE):
+    if not os.path.exists(TOKEN_FILE):
+        return None
 
-        try:
+    try:
 
-            with open(
-                TOKEN_FILE,
-                "r",
-                encoding="utf-8"
-            ) as f:
+        with open(
+            TOKEN_FILE,
+            "r",
+            encoding="utf-8"
+        ) as f:
 
-                data = json.load(f)
+            data = json.load(f)
 
-                ACCESS_TOKEN = data.get(
-                    "access_token"
+            token = data.get(
+                "access_token"
+            )
+
+            if token:
+
+                ACCESS_TOKEN = token
+
+                print(
+                    "TOKEN LOADED FROM FILE"
                 )
 
-                if ACCESS_TOKEN:
-                    return ACCESS_TOKEN
+                return token
 
-        except Exception:
 
-            pass
+    except Exception as e:
+
+        print(
+            "TOKEN LOAD ERROR:",
+            e
+        )
 
 
     return None
@@ -50,20 +62,40 @@ def load_token():
 
 
 
+
 def save_token(token):
 
-    with open(
-        TOKEN_FILE,
-        "w",
-        encoding="utf-8"
-    ) as f:
+    try:
 
-        json.dump(
-            {
-                "access_token": token
-            },
-            f
+        with open(
+            TOKEN_FILE,
+            "w",
+            encoding="utf-8"
+        ) as f:
+
+            json.dump(
+                {
+                    "access_token": token,
+                    "saved_at": datetime.now().isoformat()
+                },
+                f,
+                ensure_ascii=False,
+                indent=2
+            )
+
+
+        print(
+            "TOKEN SAVED"
         )
+
+
+    except Exception as e:
+
+        print(
+            "TOKEN SAVE ERROR:",
+            e
+        )
+
 
 
 
@@ -90,6 +122,11 @@ def get_access_token(force=False):
 
 
 
+    print(
+        "REQUEST NEW TOKEN"
+    )
+
+
     url = (
         KIS_BASE_URL
         +
@@ -112,48 +149,67 @@ def get_access_token(force=False):
 
 
 
-    response = requests.post(
+    try:
 
-        url,
+        response = requests.post(
 
-        json=body,
+            url,
 
-        timeout=10
+            json=body,
 
-    )
+            timeout=10
 
-
-    data = response.json()
-
-
-
-    token = data.get(
-        "access_token"
-    )
-
-
-
-    if token:
-
-        ACCESS_TOKEN = token
-
-        save_token(token)
-
-        print(
-            "TOKEN CREATED: True"
         )
 
-        return token
+
+        print(
+            "TOKEN HTTP:",
+            response.status_code
+        )
+
+
+        data = response.json()
+
+
+        print(
+            "TOKEN RESPONSE:",
+            data
+        )
+
+
+        token = data.get(
+            "access_token"
+        )
+
+
+        if token:
+
+            ACCESS_TOKEN = token
+
+            save_token(token)
+
+            print(
+                "TOKEN CREATED: True"
+            )
+
+            return token
 
 
 
-    print(
-        "TOKEN ERROR:",
-        data
-    )
+    except Exception as e:
+
+        print(
+            "TOKEN REQUEST ERROR:",
+            e
+        )
+
+
+
+    ACCESS_TOKEN = None
 
 
     return None
+
 
 
 
@@ -168,6 +224,7 @@ def kis_request(
 
 
     token = get_access_token()
+
 
 
     if not token:
@@ -188,17 +245,22 @@ def kis_request(
 
     headers = {
 
+
         "authorization":
         "Bearer " + token,
+
 
         "appkey":
         KIS_APP_KEY,
 
+
         "appsecret":
         KIS_APP_SECRET,
 
+
         "tr_id":
         tr_id,
+
 
         "custtype":
         "P"
@@ -207,25 +269,64 @@ def kis_request(
 
 
 
-    time.sleep(0.5)
+    try:
+
+
+        time.sleep(0.5)
+
+
+        response = requests.get(
+
+            KIS_BASE_URL + path,
+
+            headers=headers,
+
+            params=params,
+
+            timeout=10
+
+        )
+
+
+        data = response.json()
 
 
 
-    response = requests.get(
-
-        KIS_BASE_URL + path,
-
-        headers=headers,
-
-        params=params,
-
-        timeout=10
-
-    )
+        if data.get("rt_cd") != "0":
 
 
+            print(
+                "KIS API ERROR:",
+                data
+            )
 
-    return response.json()
+
+        return data
+
+
+
+
+    except Exception as e:
+
+
+        print(
+            "KIS REQUEST ERROR:",
+            e
+        )
+
+
+        return {
+
+            "rt_cd":
+            "REQUEST_ERROR",
+
+            "msg1":
+            str(e),
+
+            "output":[]
+
+        }
+
 
 
 
@@ -255,9 +356,14 @@ def get_stock_price(stock_code):
 
 
     return data.get(
+
         "output",
+
         {}
+
     )
+
+
 
 
 
@@ -270,7 +376,6 @@ def get_investor_trade(stock_code):
     today = datetime.now().strftime(
         "%Y%m%d"
     )
-
 
 
     data = kis_request(
@@ -287,11 +392,14 @@ def get_investor_trade(stock_code):
             "FID_INPUT_ISCD":
             stock_code,
 
+
             "FID_INPUT_DATE_1":
             today,
 
+
             "FID_ORG_ADJ_PRC":
             "0",
+
 
             "FID_ETC_CLS_CODE":
             "00"
@@ -301,10 +409,12 @@ def get_investor_trade(stock_code):
     )
 
 
-
     output = data.get(
+
         "output",
+
         []
+
     )
 
 
@@ -325,6 +435,7 @@ def get_investor_trade(stock_code):
 
 
         "외국인순매수":
+
         float(
             row.get(
                 "frgn_ntby_qty",
@@ -333,7 +444,9 @@ def get_investor_trade(stock_code):
         ),
 
 
+
         "기관순매수":
+
         float(
             row.get(
                 "orgn_ntby_qty",
@@ -342,7 +455,9 @@ def get_investor_trade(stock_code):
         ),
 
 
+
         "개인순매수":
+
         float(
             row.get(
                 "prsn_ntby_qty",
