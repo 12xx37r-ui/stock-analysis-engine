@@ -1,12 +1,10 @@
 import requests
 
 
-
 def get_market_data(stock_code):
 
 
     try:
-
 
         headers = {
 
@@ -16,24 +14,25 @@ def get_market_data(stock_code):
         }
 
 
-
-        # 현재가
-
-        chart_url = (
+        url = (
             f"https://query1.finance.yahoo.com/v8/finance/chart/"
             f"{stock_code}.KS"
         )
 
 
-        chart = requests.get(
-            chart_url,
+        response = requests.get(
+            url,
             headers=headers,
             timeout=10
-        ).json()
+        )
 
 
+        data = response.json()
 
-        meta = chart["chart"]["result"][0]["meta"]
+
+        result = data["chart"]["result"][0]
+
+        meta = result["meta"]
 
 
         price = meta.get(
@@ -42,42 +41,15 @@ def get_market_data(stock_code):
         )
 
 
-
-        # quote API
-
-        quote_url = (
-            "https://query1.finance.yahoo.com/v7/finance/quote?"
-            f"symbols={stock_code}.KS"
-        )
-
-
-        quote = requests.get(
-            quote_url,
-            headers=headers,
-            timeout=10
-        ).json()
-
-
-
-        result = quote["quoteResponse"]["result"][0]
-
-
-
-        market_cap = result.get(
-            "marketCap",
+        previous = meta.get(
+            "previousClose",
             0
         )
 
 
-        per = result.get(
-            "trailingPE",
-            0
-        )
-
-
-        eps = result.get(
-            "epsTrailingTwelveMonths",
-            0
+        currency = meta.get(
+            "currency",
+            "KRW"
         )
 
 
@@ -88,20 +60,17 @@ def get_market_data(stock_code):
             price,
 
 
-            "시가총액":
-            market_cap,
+            "전일종가":
+            previous,
 
 
-            "PER":
-            per,
-
-
-            "EPS":
-            eps,
+            "통화":
+            currency,
 
 
             "데이터출처":
-            "Yahoo Finance"
+            "Yahoo Finance chart"
+
 
         }
 
@@ -116,13 +85,7 @@ def get_market_data(stock_code):
             "현재가":0,
 
 
-            "시가총액":0,
-
-
-            "PER":0,
-
-
-            "EPS":0,
+            "전일종가":0,
 
 
             "오류":
