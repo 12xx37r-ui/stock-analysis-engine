@@ -12,11 +12,9 @@ from config import (
 )
 
 
-
 ACCESS_TOKEN = None
 
 TOKEN_FILE = "kis_token.json"
-
 
 
 # =========================
@@ -29,9 +27,7 @@ def load_token():
 
 
     if not os.path.exists(TOKEN_FILE):
-
         return None
-
 
 
     try:
@@ -73,8 +69,6 @@ def load_token():
 
 
 
-
-
 # =========================
 # Token Save
 # =========================
@@ -89,22 +83,14 @@ def save_token(token):
             encoding="utf-8"
         ) as f:
 
-
             json.dump(
-
                 {
                     "access_token": token,
-                    "saved_at":
-                    datetime.now().isoformat()
-
+                    "saved_at": datetime.now().isoformat()
                 },
-
                 f,
-
                 ensure_ascii=False,
-
                 indent=2
-
             )
 
 
@@ -117,8 +103,6 @@ def save_token(token):
 
 
 
-
-
 # =========================
 # Access Token
 # =========================
@@ -126,7 +110,6 @@ def save_token(token):
 def get_access_token(force=False):
 
     global ACCESS_TOKEN
-
 
 
     if ACCESS_TOKEN and not force:
@@ -145,11 +128,9 @@ def get_access_token(force=False):
 
 
 
-
     print(
         "REQUEST NEW TOKEN"
     )
-
 
 
     url = (
@@ -157,7 +138,6 @@ def get_access_token(force=False):
         +
         "/oauth2/tokenP"
     )
-
 
 
     body = {
@@ -191,6 +171,11 @@ def get_access_token(force=False):
         data = response.json()
 
 
+        print(
+            "TOKEN RESPONSE:",
+            data
+        )
+
 
         token = data.get(
             "access_token"
@@ -200,28 +185,15 @@ def get_access_token(force=False):
 
         if token:
 
-
             ACCESS_TOKEN = token
 
-
             save_token(token)
-
-
 
             print(
                 "TOKEN CREATED: True"
             )
 
-
             return token
-
-
-
-
-        print(
-            "TOKEN ERROR:",
-            data
-        )
 
 
 
@@ -233,12 +205,9 @@ def get_access_token(force=False):
         )
 
 
-
     ACCESS_TOKEN = None
 
-
     return None
-
 
 
 
@@ -268,39 +237,41 @@ def kis_request(
         if not token:
 
 
-            return {
+            token = get_access_token(
+                force=True
+            )
 
-                "rt_cd":
-                "TOKEN_ERROR",
 
-                "msg1":
-                "토큰 발급 실패",
+            if not token:
 
-                "output":[]
+                return {
 
-            }
+                    "rt_cd":
+                    "TOKEN_ERROR",
+
+                    "msg1":
+                    "토큰 발급 실패",
+
+                    "output":[]
+
+                }
 
 
 
 
         headers = {
 
-
             "authorization":
             "Bearer " + token,
-
 
             "appkey":
             KIS_APP_KEY,
 
-
             "appsecret":
             KIS_APP_SECRET,
 
-
             "tr_id":
             tr_id,
-
 
             "custtype":
             "P"
@@ -309,13 +280,12 @@ def kis_request(
 
 
 
-
         try:
 
 
-            # KIS 호출 간격
+            # KIS 호출 제한 대응
 
-            time.sleep(1)
+            time.sleep(2)
 
 
 
@@ -332,14 +302,18 @@ def kis_request(
             )
 
 
-
             data = response.json()
 
 
 
-            rt_cd = str(
+            print(
+                "KIS DEBUG:",
                 data.get(
                     "rt_cd",
+                    ""
+                ),
+                data.get(
+                    "msg1",
                     ""
                 )
             )
@@ -347,60 +321,54 @@ def kis_request(
 
 
             msg = str(
-
                 data.get(
                     "msg1",
                     ""
                 )
-
             )
 
 
 
-
-            # 초당 제한
+            # 호출 제한
 
             if (
 
                 "EGW00201" in msg
 
-                or
-
-                "초당 거래건수" in msg
+                or "초당 거래건수" in msg
 
             ):
-
 
                 print(
                     "KIS RATE LIMIT WAIT"
                 )
 
-
                 time.sleep(5)
-
 
                 continue
 
 
 
 
-
-            # 토큰 문제
+            # 토큰 만료
 
             if (
 
-                "TOKEN" in msg.upper()
-
-                or
-
                 "토큰" in msg
+
+                or "TOKEN" in msg.upper()
+
+                or "접근토큰" in msg
 
             ):
 
 
                 print(
-                    "TOKEN EXPIRED"
+                    "TOKEN EXPIRED RETRY"
                 )
+
+
+                ACCESS_TOKEN = None
 
 
                 get_access_token(
@@ -412,10 +380,7 @@ def kis_request(
 
 
 
-
-
             return data
-
 
 
 
@@ -433,23 +398,17 @@ def kis_request(
 
 
 
-
     return {
-
 
         "rt_cd":
         "REQUEST_ERROR",
 
-
         "msg1":
         "KIS 요청 실패",
-
 
         "output":[]
 
     }
-
-
 
 
 
@@ -469,19 +428,15 @@ def get_stock_price(stock_code):
 
         {
 
-
             "FID_COND_MRKT_DIV_CODE":
             "J",
-
 
             "FID_INPUT_ISCD":
             stock_code
 
-
         }
 
     )
-
 
 
     return data.get(
@@ -491,9 +446,6 @@ def get_stock_price(stock_code):
         {}
 
     )
-
-
-
 
 
 
@@ -513,49 +465,36 @@ def get_investor_trade(stock_code):
 
     data = kis_request(
 
-
         "FHPTJ04160001",
-
 
         "/uapi/domestic-stock/v1/quotations/inquire-investor",
 
-
         {
-
 
             "FID_COND_MRKT_DIV_CODE":
             "J",
 
-
             "FID_INPUT_ISCD":
             stock_code,
-
 
             "FID_INPUT_DATE_1":
             today,
 
-
             "FID_ORG_ADJ_PRC":
             "0",
-
 
             "FID_ETC_CLS_CODE":
             "00"
 
-
         }
-
 
     )
 
 
 
     output = data.get(
-
         "output",
-
         []
-
     )
 
 
@@ -563,14 +502,9 @@ def get_investor_trade(stock_code):
     row = {}
 
 
+    if isinstance(output, list) and len(output) > 0:
 
-    if isinstance(output,list):
-
-        if len(output)>0:
-
-            row = output[0]
-
-
+        row = output[0]
 
 
 
@@ -586,15 +520,10 @@ def get_investor_trade(stock_code):
         "외국인순매수":
 
         float(
-
             row.get(
-
                 "frgn_ntby_qty",
-
                 0
-
             )
-
         ),
 
 
@@ -602,15 +531,10 @@ def get_investor_trade(stock_code):
         "기관순매수":
 
         float(
-
             row.get(
-
                 "orgn_ntby_qty",
-
                 0
-
             )
-
         ),
 
 
@@ -618,16 +542,10 @@ def get_investor_trade(stock_code):
         "개인순매수":
 
         float(
-
             row.get(
-
                 "prsn_ntby_qty",
-
                 0
-
             )
-
         )
-
 
     }
