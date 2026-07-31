@@ -1,11 +1,15 @@
 import requests
-import json
-import os
-from config import KIS_APP_KEY, KIS_APP_SECRET, KIS_BASE_URL
+
+from config import (
+    KIS_APP_KEY,
+    KIS_APP_SECRET,
+    KIS_BASE_URL
+)
 
 
 
 def get_access_token():
+
 
     url = (
         f"{KIS_BASE_URL}/oauth2/tokenP"
@@ -26,17 +30,13 @@ def get_access_token():
     }
 
 
-    response = requests.post(
+    r = requests.post(
         url,
-        json=body,
-        timeout=10
+        json=body
     )
 
 
-    data=response.json()
-
-
-    return data.get(
+    return r.json().get(
         "access_token"
     )
 
@@ -46,30 +46,20 @@ def get_access_token():
 def get_stock_price(stock_code):
 
 
-    token=get_access_token()
-
-
-    if token is None:
-
-        return {
-
-            "오류":
-            "토큰 발급 실패"
-
-        }
-
+    token = get_access_token()
 
 
     url = (
-        f"{KIS_BASE_URL}/uapi/domestic-stock/v1/quotations/inquire-price"
+        f"{KIS_BASE_URL}/uapi/domestic-stock/v1/"
+        "quotations/inquire-price"
     )
 
 
-    headers={
+    headers = {
 
 
         "authorization":
-        f"Bearer {token}",
+        "Bearer " + token,
 
 
         "appkey":
@@ -86,7 +76,7 @@ def get_stock_price(stock_code):
     }
 
 
-    params={
+    params = {
 
 
         "FID_COND_MRKT_DIV_CODE":
@@ -100,15 +90,13 @@ def get_stock_price(stock_code):
 
 
 
-    response=requests.get(
+    response = requests.get(
 
         url,
 
         headers=headers,
 
-        params=params,
-
-        timeout=10
+        params=params
 
     )
 
@@ -130,6 +118,24 @@ def get_stock_price(stock_code):
         float(
             output.get(
                 "stck_prpr",
+                0
+            )
+        ),
+
+
+        "전일대비":
+        float(
+            output.get(
+                "prdy_vrss",
+                0
+            )
+        ),
+
+
+        "등락률":
+        float(
+            output.get(
+                "prdy_ctrt",
                 0
             )
         ),
