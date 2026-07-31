@@ -41,6 +41,8 @@ jobs:
 
 
 
+      # 기존 KIS 토큰 복원
+
       - name: Restore KIS token
 
         uses: actions/cache@v4
@@ -49,7 +51,7 @@ jobs:
 
           path: kis_token.json
 
-          key: kis-token-cache
+          key: kis-token-cache-v1
 
 
 
@@ -66,3 +68,17 @@ jobs:
         run: |
 
           python main.py
+
+
+
+      # 실행 중 새로 생성된 토큰 저장
+
+      - name: Save KIS token
+
+        uses: actions/cache/save@v4
+
+        with:
+
+          path: kis_token.json
+
+          key: kis-token-cache-v1
