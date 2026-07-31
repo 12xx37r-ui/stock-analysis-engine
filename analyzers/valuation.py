@@ -1,167 +1,124 @@
 def calculate_value(financial, market):
 
+    price = market.get("현재가", 0)
 
-    current_price = market.get(
-        "현재가",
-        0
-    )
+    eps = market.get("EPS", 0)
 
+    bps = market.get("BPS", 0)
 
-    real_per = market.get(
-        "PER",
-        0
-    )
+    per = market.get("PER", 0)
+
+    pbr = market.get("PBR", 0)
 
 
-    real_pbr = market.get(
-        "PBR",
-        0
-    )
-
-
-    eps = market.get(
-        "EPS",
-        0
-    )
-
-
-    bps = market.get(
-        "BPS",
-        0
-    )
-
-
-
-    # 버핏형 보수 가치평가
-
-    per_target = 15
-
-    pbr_target = 1.5
-
-
-
-    per_value = 0
+    # 보수 가치
+    conservative = 0
 
     if eps > 0:
-
-        per_value = eps * per_target
-
-
-
-    pbr_value = 0
+        conservative += eps * 12
 
     if bps > 0:
-
-        pbr_value = bps * pbr_target
-
+        conservative += bps * 1.0
 
 
-    values=[]
-
-
-    if per_value > 0:
-
-        values.append(
-            per_value
-        )
-
-
-    if pbr_value > 0:
-
-        values.append(
-            pbr_value
-        )
+    if conservative > 0:
+        conservative /= 2
 
 
 
-    fair_value = 0
+    # 기본 가치
+    normal = 0
+
+    if eps > 0:
+        normal += eps * 15
+
+    if bps > 0:
+        normal += bps * 1.5
 
 
-    if values:
+    if normal > 0:
+        normal /= 2
 
-        fair_value = sum(values)/len(values)
+
+
+    # 성장 가치
+    roe = financial.get(
+        "재무지표",
+        {}
+    ).get(
+        "ROE",
+        0
+    )
+
+
+    growth = normal
+
+
+    if roe >= 15:
+
+        growth *= 1.3
+
+    elif roe >= 10:
+
+        growth *= 1.15
 
 
 
     gap = 0
 
-
-    if current_price > 0 and fair_value > 0:
+    if price > 0 and growth > 0:
 
         gap = (
-            (fair_value-current_price)
+            (growth-price)
             /
-            current_price
-        )*100
+            price
+        ) * 100
 
 
 
-    if gap >= 20:
+    if gap >= 30:
 
-        judgment="저평가"
+        result="강한 저평가"
 
+    elif gap >= 10:
 
-    elif gap <= -20:
+        result="저평가"
 
-        judgment="고평가"
+    elif gap <= -30:
 
+        result="고평가"
 
     else:
 
-        judgment="적정"
+        result="적정"
 
 
 
     return {
 
+        "현재가": price,
 
-        "현재가":
+        "실제PER": per,
 
-        current_price,
+        "실제PBR": pbr,
 
+        "EPS": eps,
 
-        "실제PER":
+        "BPS": bps,
 
-        real_per,
+        "보수적적정가":
+        round(conservative,2),
 
+        "기본적정가":
+        round(normal,2),
 
-        "실제PBR":
-
-        real_pbr,
-
-
-        "EPS":
-
-        eps,
-
-
-        "BPS":
-
-        bps,
-
-
-        "PER기준적정가":
-
-        round(per_value,2),
-
-
-        "PBR기준적정가":
-
-        round(pbr_value,2),
-
-
-        "재무적정가":
-
-        round(fair_value,2),
-
+        "성장반영적정가":
+        round(growth,2),
 
         "현재가대비":
-
         round(gap,2),
 
-
         "판단":
-
-        judgment
+        result
 
     }
