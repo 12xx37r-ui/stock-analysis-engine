@@ -1,26 +1,16 @@
-from analyzers.financial import analyze_financial
-from analyzers.valuation import calculate_value
+from collectors.company import find_company_code
+from collectors.dart import get_financial
 
 
-def run(company):
-
-    result = {}
-
-    result["company"] = company
-
-    financial = analyze_financial(company)
-
-    result["financial"] = financial
-
-    valuation = calculate_value(financial)
-
-    result["valuation"] = valuation
-
-    return result
+company="삼성전자"
 
 
-if __name__ == "__main__":
+corp_code=find_company_code(company)
 
-    data = run("삼성전자")
 
-    print(data)
+financial=get_financial(
+    corp_code
+)
+
+
+print(financial)
