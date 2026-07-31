@@ -3,6 +3,7 @@ import json
 
 def find_company_code(name):
 
+
     with open(
         "data/corp_codes.json",
         encoding="utf-8"
@@ -11,11 +12,15 @@ def find_company_code(name):
         companies=json.load(f)
 
 
+
     for company in companies:
 
-        if company["corp_name"] == name:
+
+        if name in company["corp_name"]:
+
 
             return company["corp_code"]
+
 
 
     return None
