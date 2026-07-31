@@ -3,22 +3,17 @@ import requests
 
 def get_market_data(stock_code):
 
-
     try:
 
-
         headers = {
-
-            "User-Agent":
-            "Mozilla/5.0"
-
+            "User-Agent": "Mozilla/5.0"
         }
 
 
         url = (
             "https://query1.finance.yahoo.com/v8/finance/chart/"
             f"{stock_code}.KS"
-            "?range=5d&interval=1d"
+            "?range=1d&interval=1m"
         )
 
 
@@ -29,36 +24,43 @@ def get_market_data(stock_code):
         )
 
 
-        data=response.json()
+        data = response.json()
 
 
-        result=data["chart"]["result"][0]
+        result = data["chart"]["result"][0]
 
 
-        meta=result["meta"]
+        quote = result["indicators"]["quote"][0]
 
 
-        prices=result["indicators"]["quote"][0]["close"]
+        prices = quote["close"]
 
 
-        price=prices[-1]
+        prices = [
+            p for p in prices
+            if p is not None
+        ]
+
+
+        if not prices:
+
+            raise Exception(
+                "가격 데이터 없음"
+            )
+
+
+        current_price = prices[-1]
 
 
 
         return {
 
-
             "현재가":
-            price,
-
-
-            "전일종가":
-            prices[-2],
+            round(current_price,2),
 
 
             "데이터출처":
-            "Yahoo Finance chart"
-
+            "Yahoo Finance 1분봉"
 
         }
 
@@ -69,9 +71,7 @@ def get_market_data(stock_code):
 
         return {
 
-
             "현재가":0,
-
 
             "오류":
             str(e)
