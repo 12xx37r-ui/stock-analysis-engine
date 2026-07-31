@@ -7,34 +7,60 @@ def safe(value):
 
 
 
-def calculate_value(financial, price):
+def calculate_value(financial, market):
 
 
     current_price = safe(
-        price.get("현재가")
+        market.get("현재가")
     )
 
 
-    per = safe(
-        price.get("PER")
+    net_income = safe(
+        financial["원본"].get("순이익")
     )
 
 
-    pbr = safe(
-        price.get("PBR")
+    revenue = safe(
+        financial["원본"].get("매출")
     )
 
 
-    eps = safe(
-        price.get("EPS")
+    equity = 0
+
+
+    debt_ratio = safe(
+        financial["재무지표"].get("부채비율")
     )
 
 
-    bps = safe(
-        price.get("BPS")
-    )
+    # 삼성전자 기준 발행주식수
+    # 이후 DART 주식수 API 연결 예정
+
+    shares = 5969782550
 
 
+
+    # EPS 계산
+
+    eps = 0
+
+    if shares > 0:
+
+        eps = net_income / shares
+
+
+
+    # PER 계산
+
+    per = 0
+
+    if eps > 0 and current_price > 0:
+
+        per = current_price / eps
+
+
+
+    # PER 적정가
 
     per_value = 0
 
@@ -44,11 +70,26 @@ def calculate_value(financial, price):
 
 
 
-    pbr_value = 0
+    # 성장 반영 가치
 
-    if bps > 0:
+    growth = financial["성장지표"].get(
+        "영업이익3년성장률",
+        0
+    )
 
-        pbr_value = bps * 1.5
+
+    growth_value = 0
+
+
+    if eps > 0:
+
+        if growth > 100:
+
+            growth_value = eps * 20
+
+        else:
+
+            growth_value = eps * 15
 
 
 
@@ -60,13 +101,13 @@ def calculate_value(financial, price):
         values.append(per_value)
 
 
-    if pbr_value > 0:
+    if growth_value > 0:
 
-        values.append(pbr_value)
+        values.append(growth_value)
 
 
 
-    fair_value=0
+    fair_value = 0
 
 
     if values:
@@ -78,9 +119,9 @@ def calculate_value(financial, price):
     discount=0
 
 
-    if current_price > 0:
+    if current_price > 0 and fair_value > 0:
 
-        discount=(
+        discount = (
             (fair_value-current_price)
             /
             current_price
@@ -92,27 +133,30 @@ def calculate_value(financial, price):
 
 
         "현재가":
+        round(current_price,2),
 
-        current_price,
+
+        "EPS":
+        round(eps,2),
 
 
-        "PER기준가":
+        "PER":
+        round(per,2),
 
+
+        "PER기준적정가":
         round(per_value,2),
 
 
-        "PBR기준가":
-
-        round(pbr_value,2),
+        "성장반영적정가":
+        round(growth_value,2),
 
 
         "재무적정가":
-
         round(fair_value,2),
 
 
         "현재가대비":
-
         round(discount,2),
 
 
