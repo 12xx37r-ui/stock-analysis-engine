@@ -62,40 +62,23 @@ def load_token():
 
 
 
-
 def save_token(token):
 
-    try:
+    with open(
+        TOKEN_FILE,
+        "w",
+        encoding="utf-8"
+    ) as f:
 
-        with open(
-            TOKEN_FILE,
-            "w",
-            encoding="utf-8"
-        ) as f:
-
-            json.dump(
-                {
-                    "access_token": token,
-                    "saved_at": datetime.now().isoformat()
-                },
-                f,
-                ensure_ascii=False,
-                indent=2
-            )
-
-
-        print(
-            "TOKEN SAVED"
+        json.dump(
+            {
+                "access_token": token,
+                "saved_at": datetime.now().isoformat()
+            },
+            f,
+            ensure_ascii=False,
+            indent=2
         )
-
-
-    except Exception as e:
-
-        print(
-            "TOKEN SAVE ERROR:",
-            e
-        )
-
 
 
 
@@ -118,7 +101,6 @@ def get_access_token(force=False):
         if token:
 
             return token
-
 
 
 
@@ -149,68 +131,46 @@ def get_access_token(force=False):
 
 
 
-    try:
+    response = requests.post(
 
-        response = requests.post(
+        url,
 
-            url,
+        json=body,
 
-            json=body,
+        timeout=10
 
-            timeout=10
-
-        )
+    )
 
 
-        print(
-            "TOKEN HTTP:",
-            response.status_code
-        )
+    data = response.json()
 
 
-        data = response.json()
+    token = data.get(
+        "access_token"
+    )
 
 
-        print(
-            "TOKEN RESPONSE:",
-            data
-        )
+    if token:
 
+        ACCESS_TOKEN = token
 
-        token = data.get(
-            "access_token"
-        )
-
-
-        if token:
-
-            ACCESS_TOKEN = token
-
-            save_token(token)
-
-            print(
-                "TOKEN CREATED: True"
-            )
-
-            return token
-
-
-
-    except Exception as e:
+        save_token(token)
 
         print(
-            "TOKEN REQUEST ERROR:",
-            e
+            "TOKEN CREATED: True"
         )
 
+        return token
 
 
-    ACCESS_TOKEN = None
+
+    print(
+        "TOKEN ERROR:",
+        data
+    )
 
 
     return None
-
-
 
 
 
@@ -224,7 +184,6 @@ def kis_request(
 
 
     token = get_access_token()
-
 
 
     if not token:
@@ -269,65 +228,23 @@ def kis_request(
 
 
 
-    try:
+    time.sleep(0.5)
 
 
-        time.sleep(0.5)
+    response = requests.get(
+
+        KIS_BASE_URL + path,
+
+        headers=headers,
+
+        params=params,
+
+        timeout=10
+
+    )
 
 
-        response = requests.get(
-
-            KIS_BASE_URL + path,
-
-            headers=headers,
-
-            params=params,
-
-            timeout=10
-
-        )
-
-
-        data = response.json()
-
-
-
-        if data.get("rt_cd") != "0":
-
-
-            print(
-                "KIS API ERROR:",
-                data
-            )
-
-
-        return data
-
-
-
-
-    except Exception as e:
-
-
-        print(
-            "KIS REQUEST ERROR:",
-            e
-        )
-
-
-        return {
-
-            "rt_cd":
-            "REQUEST_ERROR",
-
-            "msg1":
-            str(e),
-
-            "output":[]
-
-        }
-
-
+    return response.json()
 
 
 
@@ -368,8 +285,6 @@ def get_stock_price(stock_code):
 
 
 
-
-
 def get_investor_trade(stock_code):
 
 
@@ -392,14 +307,11 @@ def get_investor_trade(stock_code):
             "FID_INPUT_ISCD":
             stock_code,
 
-
             "FID_INPUT_DATE_1":
             today,
 
-
             "FID_ORG_ADJ_PRC":
             "0",
-
 
             "FID_ETC_CLS_CODE":
             "00"
@@ -409,12 +321,13 @@ def get_investor_trade(stock_code):
     )
 
 
+
+    # ★ 수정 부분
+    # KIS는 output2 사용
+
     output = data.get(
-
-        "output",
-
+        "output2",
         []
-
     )
 
 
@@ -427,6 +340,31 @@ def get_investor_trade(stock_code):
 
 
 
+    foreign = float(
+        row.get(
+            "frgn_ntby_qty",
+            0
+        )
+    )
+
+
+    institution = float(
+        row.get(
+            "orgn_ntby_qty",
+            0
+        )
+    )
+
+
+    personal = float(
+        row.get(
+            "prsn_ntby_qty",
+            0
+        )
+    )
+
+
+
     return {
 
 
@@ -435,35 +373,15 @@ def get_investor_trade(stock_code):
 
 
         "외국인순매수":
-
-        float(
-            row.get(
-                "frgn_ntby_qty",
-                0
-            )
-        ),
-
+        foreign,
 
 
         "기관순매수":
-
-        float(
-            row.get(
-                "orgn_ntby_qty",
-                0
-            )
-        ),
-
+        institution,
 
 
         "개인순매수":
-
-        float(
-            row.get(
-                "prsn_ntby_qty",
-                0
-            )
-        )
+        personal
 
 
     }
