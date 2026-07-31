@@ -1,5 +1,4 @@
 import requests
-import time
 
 from config import DART_API_KEY
 
@@ -44,65 +43,75 @@ def get_financial(
 
 
 
-    for retry in range(3):
-
-        try:
+    try:
 
 
-            response = requests.get(
+        response = requests.get(
 
-                url,
+            url,
 
-                params=params,
+            params=params,
 
-                timeout=30
+            timeout=30
 
-            )
+        )
 
 
-            data = response.json()
+        response.raise_for_status()
 
 
 
-            # DART 정상 응답
-
-            if data.get("status") == "000":
-
-
-                return data
+        data = response.json()
 
 
 
-            print(
-                "DART 응답 오류:",
-                data
-            )
-
-
-        except Exception as e:
-
-
-            print(
-                "DART 요청 실패:",
-                retry + 1,
-                e
-            )
+        return data
 
 
 
-        time.sleep(3)
+    except requests.exceptions.Timeout:
+
+
+        print(
+            "DART TIMEOUT"
+        )
+
+
+        return {
+
+            "status":
+            "error",
+
+            "message":
+            "DART timeout",
+
+            "list":
+            []
+
+        }
 
 
 
-    return {
+    except Exception as e:
 
-        "status":
-        "999",
 
-        "message":
-        "DART API 요청 실패",
+        print(
 
-        "list":
-        []
+            "DART REQUEST ERROR:",
+            e
 
-    }
+        )
+
+
+        return {
+
+            "status":
+            "error",
+
+            "message":
+            str(e),
+
+            "list":
+            []
+
+        }
