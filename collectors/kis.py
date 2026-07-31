@@ -30,7 +30,6 @@ def get_access_token(force=False):
     )
 
 
-
     body = {
 
         "grant_type":
@@ -45,61 +44,50 @@ def get_access_token(force=False):
     }
 
 
+    try:
 
-    for retry in range(3):
+        response = requests.post(
 
-        try:
+            url,
 
-            response = requests.post(
+            json=body,
 
-                url,
+            timeout=10
 
-                json=body,
-
-                timeout=10
-
-            )
+        )
 
 
-            data = response.json()
+        data = response.json()
 
 
-
-            token = data.get(
-                "access_token"
-            )
-
+        token = data.get(
+            "access_token"
+        )
 
 
-            if token:
+        if token:
 
-                ACCESS_TOKEN = token
-
-                print(
-                    "TOKEN CREATED: True"
-                )
-
-                return ACCESS_TOKEN
-
-
+            ACCESS_TOKEN = token
 
             print(
-                "TOKEN ERROR:",
-                data
+                "TOKEN CREATED: True"
             )
 
+            return ACCESS_TOKEN
 
 
-        except Exception as e:
-
-            print(
-                "TOKEN REQUEST ERROR:",
-                e
-            )
+        print(
+            "TOKEN RESPONSE ERROR:",
+            data
+        )
 
 
+    except Exception as e:
 
-        time.sleep(2)
+        print(
+            "TOKEN REQUEST ERROR:",
+            e
+        )
 
 
 
@@ -134,7 +122,9 @@ def kis_request(
             "TOKEN_ERROR",
 
             "msg1":
-            "토큰 발급 실패"
+            "토큰 발급 실패",
+
+            "output":[]
 
         }
 
@@ -167,96 +157,54 @@ def kis_request(
 
 
 
-
-    for retry in range(2):
-
-
-        try:
-
-
-            time.sleep(0.5)
+    time.sleep(0.5)
 
 
 
-            response = requests.get(
-
-                KIS_BASE_URL + path,
-
-                headers=headers,
-
-                params=params,
-
-                timeout=10
-
-            )
+    try:
 
 
+        response = requests.get(
 
-            data = response.json()
+            KIS_BASE_URL + path,
 
+            headers=headers,
 
+            params=params,
 
-            # 토큰 만료 또는 오류
+            timeout=10
 
-            if data.get("rt_cd") != "0":
-
-
-                msg = str(
-                    data.get(
-                        "msg1",
-                        ""
-                    )
-                )
+        )
 
 
-                if (
-                    "TOKEN" in msg.upper()
-                    or
-                    "토큰" in msg
-                ):
-
-                    get_access_token(
-                        force=True
-                    )
-
-
-                    headers["authorization"] = (
-                        "Bearer "
-                        +
-                        ACCESS_TOKEN
-                    )
-
-                    continue
+        data = response.json()
 
 
 
-            return data
+        return data
 
 
 
-        except Exception as e:
+    except Exception as e:
 
 
-            print(
-                "KIS REQUEST ERROR:",
-                e
-            )
+        print(
+            "KIS REQUEST ERROR:",
+            e
+        )
 
 
-            time.sleep(2)
+        return {
 
+            "rt_cd":
+            "REQUEST_ERROR",
 
+            "msg1":
+            str(e),
 
+            "output":[]
 
-    return {
-
-        "rt_cd":
-        "REQUEST_ERROR",
-
-        "msg1":
-        "KIS 요청 실패"
-
-    }
+        }
 
 
 
@@ -278,7 +226,6 @@ def get_stock_price(stock_code):
 
         {
 
-
             "FID_COND_MRKT_DIV_CODE":
             "J",
 
@@ -290,7 +237,6 @@ def get_stock_price(stock_code):
 
 
     )
-
 
 
     return data.get(
@@ -307,14 +253,11 @@ def get_stock_price(stock_code):
 
 
 
-
 def get_investor_trade(stock_code):
 
 
     today = datetime.now().strftime(
-
         "%Y%m%d"
-
     )
 
 
@@ -350,12 +293,10 @@ def get_investor_trade(stock_code):
             "FID_ETC_CLS_CODE":
             "00"
 
-
         }
 
 
     )
-
 
 
 
@@ -373,10 +314,11 @@ def get_investor_trade(stock_code):
 
 
 
-    if isinstance(output, list) and len(output) > 0:
+    if isinstance(output,list):
 
-        row = output[0]
+        if len(output)>0:
 
+            row = output[0]
 
 
 
@@ -432,6 +374,5 @@ def get_investor_trade(stock_code):
             )
 
         )
-
 
     }
