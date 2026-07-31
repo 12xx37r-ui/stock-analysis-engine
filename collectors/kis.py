@@ -12,23 +12,35 @@ def get_access_token():
 
     url = f"{KIS_BASE_URL}/oauth2/tokenP"
 
+
     body = {
 
         "grant_type": "client_credentials",
+
         "appkey": KIS_APP_KEY,
+
         "appsecret": KIS_APP_SECRET
 
     }
 
 
     response = requests.post(
+
         url,
+
         json=body,
+
         timeout=10
+
     )
 
 
     data=response.json()
+
+
+    print("KIS TOKEN RESPONSE")
+    print(data)
+
 
     return data.get(
         "access_token"
@@ -42,19 +54,35 @@ def kis_request(tr_id, path, params):
     token=get_access_token()
 
 
+    if not token:
+
+        return {
+
+            "error":
+            "TOKEN_FAIL"
+
+        }
+
+
+
     headers={
+
 
         "authorization":
         "Bearer "+token,
 
+
         "appkey":
         KIS_APP_KEY,
+
 
         "appsecret":
         KIS_APP_SECRET,
 
+
         "tr_id":
         tr_id,
+
 
         "custtype":
         "P"
@@ -62,7 +90,9 @@ def kis_request(tr_id, path, params):
     }
 
 
+
     url=KIS_BASE_URL + path
+
 
 
     response=requests.get(
@@ -81,8 +111,6 @@ def kis_request(tr_id, path, params):
     return response.json()
 
 
-
-# 현재가 조회
 
 def get_stock_price(stock_code):
 
@@ -110,8 +138,6 @@ def get_stock_price(stock_code):
     )
 
 
-
-# PER/PBR/EPS/BPS 조회
 
 def get_stock_finance(stock_code):
 
