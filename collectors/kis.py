@@ -29,27 +29,16 @@ def get_access_token():
 
 
     body = {
-
-        "grant_type":
-        "client_credentials",
-
-        "appkey":
-        KIS_APP_KEY,
-
-        "appsecret":
-        KIS_APP_SECRET
-
+        "grant_type": "client_credentials",
+        "appkey": KIS_APP_KEY,
+        "appsecret": KIS_APP_SECRET
     }
 
 
     response = requests.post(
-
         url,
-
         json=body,
-
         timeout=10
-
     )
 
 
@@ -78,7 +67,6 @@ def kis_request(
     path,
     params
 ):
-
 
     token = get_access_token()
 
@@ -148,11 +136,8 @@ def get_stock_price(stock_code):
 
 
     return data.get(
-
         "output",
-
         {}
-
     )
 
 
@@ -185,19 +170,20 @@ def get_investor_trade(stock_code):
             today,
 
             "FID_ORG_ADJ_PRC":
-            "0"
+            "0",
+
+            "FID_ETC_CLS_CODE":
+            "00"
 
         }
 
     )
 
 
+
     output = data.get(
-
         "output",
-
         []
-
     )
 
 
@@ -209,13 +195,16 @@ def get_investor_trade(stock_code):
         row = output[0]
 
 
+
     return {
+
 
         "원본응답":
         data,
 
 
         "외국인순매수":
+
         float(
             row.get(
                 "frgn_ntby_qty",
@@ -225,6 +214,7 @@ def get_investor_trade(stock_code):
 
 
         "기관순매수":
+
         float(
             row.get(
                 "orgn_ntby_qty",
@@ -234,6 +224,7 @@ def get_investor_trade(stock_code):
 
 
         "개인순매수":
+
         float(
             row.get(
                 "prsn_ntby_qty",
