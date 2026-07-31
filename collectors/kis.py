@@ -1,5 +1,7 @@
 import requests
 import time
+import json
+import os
 from datetime import datetime
 
 from config import (
@@ -11,6 +13,59 @@ from config import (
 
 ACCESS_TOKEN = None
 
+TOKEN_FILE = "kis_token.json"
+
+
+
+def load_token():
+
+    global ACCESS_TOKEN
+
+    if os.path.exists(TOKEN_FILE):
+
+        try:
+
+            with open(
+                TOKEN_FILE,
+                "r",
+                encoding="utf-8"
+            ) as f:
+
+                data = json.load(f)
+
+                ACCESS_TOKEN = data.get(
+                    "access_token"
+                )
+
+                if ACCESS_TOKEN:
+                    return ACCESS_TOKEN
+
+        except Exception:
+
+            pass
+
+
+    return None
+
+
+
+
+def save_token(token):
+
+    with open(
+        TOKEN_FILE,
+        "w",
+        encoding="utf-8"
+    ) as f:
+
+        json.dump(
+            {
+                "access_token": token
+            },
+            f
+        )
+
+
 
 
 def get_access_token(force=False):
@@ -19,15 +74,19 @@ def get_access_token(force=False):
 
 
     if ACCESS_TOKEN and not force:
+
         return ACCESS_TOKEN
 
 
 
-    if not KIS_APP_KEY or not KIS_APP_SECRET:
+    if not force:
 
-        print("KIS KEY 없음")
+        token = load_token()
 
-        return None
+        if token:
+
+            return token
+
 
 
 
@@ -36,7 +95,6 @@ def get_access_token(force=False):
         +
         "/oauth2/tokenP"
     )
-
 
 
     body = {
@@ -54,85 +112,48 @@ def get_access_token(force=False):
 
 
 
-    try:
+    response = requests.post(
 
-        response = requests.post(
+        url,
 
-            url,
+        json=body,
 
-            json=body,
+        timeout=10
 
-            timeout=10
-
-        )
+    )
 
 
-        data = response.json()
+    data = response.json()
 
 
 
-        token = data.get(
-            "access_token"
-        )
+    token = data.get(
+        "access_token"
+    )
 
 
 
-        if token:
+    if token:
 
+        ACCESS_TOKEN = token
 
-            ACCESS_TOKEN = token
-
-
-            print(
-                "TOKEN CREATED: True"
-            )
-
-
-            return ACCESS_TOKEN
-
-
+        save_token(token)
 
         print(
-            "===== KIS TOKEN ERROR ====="
+            "TOKEN CREATED: True"
         )
 
-
-        print(data)
-
-
-        print(
-            "APPKEY LENGTH:",
-            len(KIS_APP_KEY)
-        )
-
-
-        print(
-            "SECRET LENGTH:",
-            len(KIS_APP_SECRET)
-        )
-
-
-        print(
-            "=========================="
-        )
+        return token
 
 
 
-    except Exception as e:
-
-
-        print(
-            "TOKEN REQUEST ERROR:",
-            e
-        )
-
-
-
-    ACCESS_TOKEN = None
+    print(
+        "TOKEN ERROR:",
+        data
+    )
 
 
     return None
-
 
 
 
@@ -146,16 +167,10 @@ def kis_request(
 ):
 
 
-    global ACCESS_TOKEN
-
-
-
     token = get_access_token()
 
 
-
     if not token:
-
 
         return {
 
@@ -171,25 +186,19 @@ def kis_request(
 
 
 
-
     headers = {
-
 
         "authorization":
         "Bearer " + token,
 
-
         "appkey":
         KIS_APP_KEY,
-
 
         "appsecret":
         KIS_APP_SECRET,
 
-
         "tr_id":
         tr_id,
-
 
         "custtype":
         "P"
@@ -198,63 +207,25 @@ def kis_request(
 
 
 
-    try:
-
-
-        time.sleep(0.5)
+    time.sleep(0.5)
 
 
 
-        response = requests.get(
+    response = requests.get(
 
-            KIS_BASE_URL + path,
+        KIS_BASE_URL + path,
 
-            headers=headers,
+        headers=headers,
 
-            params=params,
+        params=params,
 
-            timeout=10
+        timeout=10
 
-        )
-
-
-
-        data = response.json()
+    )
 
 
 
-        return data
-
-
-
-    except Exception as e:
-
-
-
-        print(
-            "KIS REQUEST ERROR:",
-            e
-        )
-
-
-
-        return {
-
-
-            "rt_cd":
-            "REQUEST_ERROR",
-
-
-            "msg1":
-            str(e),
-
-
-            "output":[]
-
-        }
-
-
-
+    return response.json()
 
 
 
@@ -266,42 +237,27 @@ def get_stock_price(stock_code):
 
     data = kis_request(
 
-
         "FHKST01010100",
-
 
         "/uapi/domestic-stock/v1/quotations/inquire-price",
 
-
         {
-
 
             "FID_COND_MRKT_DIV_CODE":
             "J",
-
 
             "FID_INPUT_ISCD":
             stock_code
 
         }
 
-
     )
-
 
 
     return data.get(
-
         "output",
-
         {}
-
     )
-
-
-
-
-
 
 
 
@@ -312,71 +268,52 @@ def get_investor_trade(stock_code):
 
 
     today = datetime.now().strftime(
-
         "%Y%m%d"
-
     )
 
 
 
     data = kis_request(
 
-
         "FHPTJ04160001",
-
 
         "/uapi/domestic-stock/v1/quotations/inquire-investor",
 
-
         {
-
 
             "FID_COND_MRKT_DIV_CODE":
             "J",
 
-
             "FID_INPUT_ISCD":
             stock_code,
-
 
             "FID_INPUT_DATE_1":
             today,
 
-
             "FID_ORG_ADJ_PRC":
             "0",
-
 
             "FID_ETC_CLS_CODE":
             "00"
 
         }
 
-
     )
 
 
 
     output = data.get(
-
         "output",
-
         []
-
     )
-
 
 
     row = {}
 
 
+    if isinstance(output,list) and len(output)>0:
 
-    if isinstance(output, list):
-
-        if len(output) > 0:
-
-            row = output[0]
-
+        row = output[0]
 
 
 
@@ -388,49 +325,29 @@ def get_investor_trade(stock_code):
 
 
         "외국인순매수":
-
         float(
-
             row.get(
-
                 "frgn_ntby_qty",
-
                 0
-
             )
-
         ),
-
 
 
         "기관순매수":
-
         float(
-
             row.get(
-
                 "orgn_ntby_qty",
-
                 0
-
             )
-
         ),
 
 
-
         "개인순매수":
-
         float(
-
             row.get(
-
                 "prsn_ntby_qty",
-
                 0
-
             )
-
         )
 
 
