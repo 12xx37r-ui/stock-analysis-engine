@@ -1,3 +1,7 @@
+from predictors.score_config import LONG_WEIGHT
+
+
+
 def predict_long(financial, valuation):
 
 
@@ -5,8 +9,14 @@ def predict_long(financial, valuation):
 
     reasons = []
 
+    detail = {}
 
-    # 1. 향후 이익 방향 30점
+
+
+    # 1. 이익 방향 30점
+
+    profit_score = 0
+
 
     growth = financial.get(
         "성장지표",
@@ -28,46 +38,49 @@ def predict_long(financial, valuation):
 
     if profit_growth > 20:
 
-        score += 15
+        profit_score += 15
 
         reasons.append(
-            "영업이익 성장성 우수"
+            "영업이익 성장"
         )
 
 
     if net_growth > 20:
 
-        score += 15
+        profit_score += 15
 
         reasons.append(
-            "순이익 성장성 우수"
+            "순이익 성장"
         )
 
 
     if profit_growth < 0:
 
-        score -= 15
+        profit_score -= 15
 
         reasons.append(
             "이익 감소"
         )
 
 
+    detail["이익방향"] = profit_score
 
-    # 2. 산업 사이클 / 경쟁력 자리
+
+
+    # 2. 산업 사이클 25점 (추후 연결)
+
+    detail["산업사이클"] = 0
 
     reasons.append(
         "산업 사이클 데이터 연결 예정"
     )
 
 
-    reasons.append(
-        "시장점유율 데이터 연결 예정"
-    )
-
-
 
     # 3. 가치평가 20점
+
+    value_score = 0
+
 
     gap = valuation.get(
         "현재가대비",
@@ -77,69 +90,90 @@ def predict_long(financial, valuation):
 
     if gap > 20:
 
-        score += 20
+        value_score = 20
 
         reasons.append(
-            "적정가 대비 저평가"
+            "저평가 구간"
         )
 
 
     elif gap < -30:
 
-        score -= 20
+        value_score = -20
 
         reasons.append(
-            "적정가 대비 고평가"
+            "고평가 부담"
         )
 
 
+    detail["가치평가"] = value_score
 
-    # 4. 재무 안정성 15점
 
-    roe = financial.get(
-        "재무지표",
-        {}
-    ).get(
-        "ROE",
-        0
+
+    # 4. 경쟁력 10점 (추후 연결)
+
+    detail["경쟁력"] = 0
+
+    reasons.append(
+        "시장점유율 데이터 연결 예정"
     )
 
 
-    debt = financial.get(
-        "재무지표",
-        {}
-    ).get(
-        "부채비율",
-        0
+
+    # 5. 현금흐름 10점 (추후 연결)
+
+    detail["현금흐름"] = 0
+
+    reasons.append(
+        "현금흐름 데이터 연결 예정"
     )
 
 
-    if roe >= 15:
 
-        score += 10
+    # 6. 주주환원 5점 (추후 연결)
 
-        reasons.append(
-            "높은 ROE"
+    detail["주주환원"] = 0
+
+    reasons.append(
+        "배당·자사주 데이터 연결 예정"
+    )
+
+
+
+    total = 0
+
+
+    for key, value in detail.items():
+
+        weight = LONG_WEIGHT.get(
+            key,
+            0
         )
 
 
-    if debt < 50:
+        if value > 0:
 
-        score += 5
-
-        reasons.append(
-            "재무 안정성"
-        )
+            total += weight
 
 
+        elif value < 0:
 
-    score=max(
+            total -= weight
+
+
+
+    score = 50 + total
+
+
+
+    score = max(
         0,
         min(
             score,
             100
         )
     )
+
 
 
     return {
@@ -155,6 +189,10 @@ def predict_long(financial, valuation):
 
         "상승확률":
         score,
+
+
+        "세부점수":
+        detail,
 
 
         "근거":
