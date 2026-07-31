@@ -25,21 +25,13 @@ def get_access_token():
 
 
     response = requests.post(
-
         url,
-
         json=body,
-
         timeout=10
-
     )
 
 
-    data=response.json()
-
-
-    print("KIS TOKEN RESPONSE")
-    print(data)
+    data = response.json()
 
 
     return data.get(
@@ -51,38 +43,28 @@ def get_access_token():
 def kis_request(tr_id, path, params):
 
 
-    token=get_access_token()
+    token = get_access_token()
 
 
     if not token:
 
-        return {
-
-            "error":
-            "TOKEN_FAIL"
-
-        }
+        return {}
 
 
 
-    headers={
-
+    headers = {
 
         "authorization":
-        "Bearer "+token,
-
+        "Bearer " + token,
 
         "appkey":
         KIS_APP_KEY,
 
-
         "appsecret":
         KIS_APP_SECRET,
 
-
         "tr_id":
         tr_id,
-
 
         "custtype":
         "P"
@@ -91,11 +73,11 @@ def kis_request(tr_id, path, params):
 
 
 
-    url=KIS_BASE_URL + path
+    url = KIS_BASE_URL + path
 
 
 
-    response=requests.get(
+    response = requests.get(
 
         url,
 
@@ -112,10 +94,12 @@ def kis_request(tr_id, path, params):
 
 
 
+# 현재가 + 기본지표
+
 def get_stock_price(stock_code):
 
 
-    data=kis_request(
+    data = kis_request(
 
         "FHKST01010100",
 
@@ -123,36 +107,11 @@ def get_stock_price(stock_code):
 
         {
 
-            "FID_COND_MRKT_DIV_CODE":"J",
+            "FID_COND_MRKT_DIV_CODE":
+            "J",
 
-            "FID_INPUT_ISCD":stock_code
-
-        }
-
-    )
-
-
-    return data.get(
-        "output",
-        {}
-    )
-
-
-
-def get_stock_finance(stock_code):
-
-
-    data=kis_request(
-
-        "FHKST01010400",
-
-        "/uapi/domestic-stock/v1/quotations/search-info",
-
-        {
-
-            "PRDT_TYPE_CD":"300",
-
-            "PDNO":stock_code
+            "FID_INPUT_ISCD":
+            stock_code
 
         }
 
