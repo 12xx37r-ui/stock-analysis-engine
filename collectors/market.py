@@ -1,16 +1,11 @@
 import requests
 
 
+
 def get_market_data(stock_code):
 
 
     try:
-
-        url = (
-            f"https://query1.finance.yahoo.com/v10/finance/quoteSummary/"
-            f"{stock_code}.KS"
-            "?modules=price,defaultKeyStatistics,financialData"
-        )
 
 
         headers = {
@@ -21,56 +16,67 @@ def get_market_data(stock_code):
         }
 
 
-        response=requests.get(
-            url,
+
+        # 현재가
+
+        chart_url = (
+            f"https://query1.finance.yahoo.com/v8/finance/chart/"
+            f"{stock_code}.KS"
+        )
+
+
+        chart = requests.get(
+            chart_url,
             headers=headers,
             timeout=10
-        )
+        ).json()
 
 
-        data=response.json()
+
+        meta = chart["chart"]["result"][0]["meta"]
 
 
-        result=data["quoteSummary"]["result"][0]
-
-
-        price=result["price"]
-
-        stats=result["defaultKeyStatistics"]
-
-
-        current_price=price.get(
+        price = meta.get(
             "regularMarketPrice",
-            {}
-        ).get(
-            "raw",
             0
         )
 
 
-        market_cap=price.get(
+
+        # quote API
+
+        quote_url = (
+            "https://query1.finance.yahoo.com/v7/finance/quote?"
+            f"symbols={stock_code}.KS"
+        )
+
+
+        quote = requests.get(
+            quote_url,
+            headers=headers,
+            timeout=10
+        ).json()
+
+
+
+        result = quote["quoteResponse"]["result"][0]
+
+
+
+        market_cap = result.get(
             "marketCap",
-            {}
-        ).get(
-            "raw",
             0
         )
 
 
-        per=stats.get(
+        per = result.get(
             "trailingPE",
-            {}
-        ).get(
-            "raw",
             0
         )
 
 
-        eps=stats.get(
-            "trailingEps",
-            {}
-        ).get(
-            "raw",
+        eps = result.get(
+            "epsTrailingTwelveMonths",
             0
         )
 
@@ -79,7 +85,7 @@ def get_market_data(stock_code):
 
 
             "현재가":
-            current_price,
+            price,
 
 
             "시가총액":
@@ -100,6 +106,7 @@ def get_market_data(stock_code):
         }
 
 
+
     except Exception as e:
 
 
@@ -107,6 +114,9 @@ def get_market_data(stock_code):
 
 
             "현재가":0,
+
+
+            "시가총액":0,
 
 
             "PER":0,
