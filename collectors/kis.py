@@ -11,26 +11,18 @@ from config import (
 ACCESS_TOKEN = None
 
 
-
 def get_access_token():
 
     global ACCESS_TOKEN
 
-
     if ACCESS_TOKEN:
-
         return ACCESS_TOKEN
 
 
-
     url = (
-
         KIS_BASE_URL
-
         +
-
         "/oauth2/tokenP"
-
     )
 
 
@@ -63,9 +55,7 @@ def get_access_token():
 
 
     ACCESS_TOKEN = data.get(
-
         "access_token"
-
     )
 
 
@@ -79,8 +69,6 @@ def get_access_token():
 
 
 
-
-
 def kis_request(
     tr_id,
     path,
@@ -89,7 +77,6 @@ def kis_request(
 
 
     token = get_access_token()
-
 
 
     if not token:
@@ -108,29 +95,19 @@ def kis_request(
 
     headers = {
 
-
         "authorization":
-
         "Bearer " + token,
 
-
         "appkey":
-
         KIS_APP_KEY,
 
-
         "appsecret":
-
         KIS_APP_SECRET,
 
-
         "tr_id":
-
         tr_id,
 
-
         "custtype":
-
         "P"
 
     }
@@ -151,8 +128,6 @@ def kis_request(
 
 
     return response.json()
-
-
 
 
 
@@ -188,22 +163,17 @@ def get_stock_price(stock_code):
 
 
 
-
-
 def get_investor_trade(stock_code):
 
 
     today = datetime.now().strftime(
-
         "%Y%m%d"
-
     )
-
 
 
     data = kis_request(
 
-        "FHPTJ04160001",
+        "FHPTJ04130000",
 
         "/uapi/domestic-stock/v1/quotations/inquire-investor",
 
@@ -216,12 +186,14 @@ def get_investor_trade(stock_code):
             stock_code,
 
             "FID_INPUT_DATE_1":
-            today
+            today,
+
+            "FID_ORG_ADJ_PRC":
+            "0"
 
         }
 
     )
-
 
 
     output = data.get(
@@ -233,9 +205,7 @@ def get_investor_trade(stock_code):
     )
 
 
-
     row = {}
-
 
 
     if isinstance(output, list) and len(output) > 0:
