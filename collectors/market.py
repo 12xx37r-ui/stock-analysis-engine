@@ -12,67 +12,9 @@ def get_market_data(stock_code):
     )
 
 
-    investor_raw = get_investor_trade(
+    investor = get_investor_trade(
         stock_code
     )
-
-
-    # KIS 투자자 원본 파싱
-    investor = {
-
-        "외국인순매수": 0,
-
-        "기관순매수": 0,
-
-        "개인순매수": 0
-
-    }
-
-
-    try:
-
-        output2 = investor_raw.get(
-            "output2",
-            []
-        )
-
-
-        if len(output2) > 0:
-
-            today = output2[0]
-
-
-            investor["외국인순매수"] = int(
-                today.get(
-                    "frgn_ntby_qty",
-                    0
-                )
-            )
-
-
-            investor["기관순매수"] = int(
-                today.get(
-                    "orgn_ntby_qty",
-                    0
-                )
-            )
-
-
-            investor["개인순매수"] = int(
-                today.get(
-                    "prsn_ntby_qty",
-                    0
-                )
-            )
-
-
-    except Exception as e:
-
-        print(
-            "투자자 데이터 파싱 오류:",
-            e
-        )
-
 
 
     return {
@@ -186,8 +128,29 @@ def get_market_data(stock_code):
         ),
 
 
-        "수급":
-        investor,
+        "수급": {
+
+            "외국인순매수":
+            investor.get(
+                "외국인순매수",
+                0
+            ),
+
+
+            "기관순매수":
+            investor.get(
+                "기관순매수",
+                0
+            ),
+
+
+            "개인순매수":
+            investor.get(
+                "개인순매수",
+                0
+            )
+
+        },
 
 
         "데이터출처":
