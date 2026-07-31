@@ -3,32 +3,25 @@ import os
 from datetime import datetime
 
 
-from collectors.company import get_company_code
 from collectors.dart import get_financial_data
 from collectors.market import get_market_data
 
 
-from analyzers.buffett import analyze_buffett
-from analyzers.value import analyze_value
+from analyzers.financial import *
+from analyzers.valuation import *
 
 
-from predictors.stock_predictor import predict_stock
+from predictors.short_term import *
+from predictors.mid_term import *
+from predictors.long_term import *
 
 
-
-# =========================
-# 기본 종목
-# =========================
 
 STOCK_NAME = "삼성전자"
 STOCK_CODE = "005930"
 DART_CODE = "00126380"
 
 
-
-# =========================
-# JSON 저장
-# =========================
 
 def save_output(data):
 
@@ -38,15 +31,8 @@ def save_output(data):
     )
 
 
-    filename = (
-        "output/"
-        + STOCK_CODE
-        + "_analysis.json"
-    )
-
-
     with open(
-        filename,
+        "output/result.json",
         "w",
         encoding="utf-8"
     ) as f:
@@ -60,28 +46,17 @@ def save_output(data):
 
 
 
-# =========================
-# Main
-# =========================
 
 def main():
 
 
-    print(
-        "START ENGINE"
-    )
-
-
     result = {
-
 
         "기업명":
         STOCK_NAME,
 
-
         "DART기업코드":
         DART_CODE,
-
 
         "KIS종목코드":
         STOCK_CODE
@@ -90,9 +65,7 @@ def main():
 
 
 
-    # -------------------------
-    # DART 재무
-    # -------------------------
+    # DART
 
     try:
 
@@ -100,14 +73,10 @@ def main():
             DART_CODE
         )
 
-
     except Exception as e:
 
         finance = {
-
-            "error":
-            str(e)
-
+            "error":str(e)
         }
 
 
@@ -116,32 +85,8 @@ def main():
 
 
 
-    # -------------------------
-    # 버핏 분석
-    # -------------------------
 
-    try:
-
-        result["버핏평가"] = analyze_buffett(
-            finance
-        )
-
-
-    except Exception as e:
-
-        result["버핏평가"] = {
-
-            "error":
-            str(e)
-
-        }
-
-
-
-
-    # -------------------------
-    # KIS 시장 데이터
-    # -------------------------
+    # KIS
 
     try:
 
@@ -149,14 +94,10 @@ def main():
             STOCK_CODE
         )
 
-
     except Exception as e:
 
         market = {
-
-            "error":
-            str(e)
-
+            "error":str(e)
         }
 
 
@@ -166,65 +107,68 @@ def main():
 
 
 
-    # -------------------------
     # 가치평가
-    # -------------------------
 
     try:
 
-        result["가치평가"] = analyze_value(
+        result["가치평가"] = valuation(
             market,
             finance
         )
 
-
     except Exception as e:
 
         result["가치평가"] = {
-
-            "error":
-            str(e)
-
+            "error":str(e)
         }
 
 
 
 
-    # -------------------------
-    # 주가 예측
-    # -------------------------
+
+    # 단기
 
     try:
 
-        result["주가예측"] = predict_stock(
-            market,
-            finance
-        )
+        result["주가예측"] = {
+
+            "단기1~5일":
+            short_term(
+                market
+            ),
+
+            "중기1~8주":
+            mid_term(
+                market,
+                finance
+            ),
+
+            "장기6~18개월":
+            long_term(
+                market,
+                finance
+            )
+
+        }
 
 
     except Exception as e:
 
         result["주가예측"] = {
-
-            "error":
-            str(e)
-
+            "error":str(e)
         }
 
 
 
 
-    result["생성시간"] = (
-        datetime.now()
-        .isoformat()
-    )
+
+    result["생성시간"] = datetime.now().isoformat()
 
 
 
     save_output(
         result
     )
-
 
 
     print(
