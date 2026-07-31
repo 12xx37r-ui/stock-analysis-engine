@@ -62,6 +62,7 @@ def load_token():
 
 
 
+
 def save_token(token):
 
     with open(
@@ -79,6 +80,73 @@ def save_token(token):
             ensure_ascii=False,
             indent=2
         )
+
+
+
+
+
+def request_new_token():
+
+    global ACCESS_TOKEN
+
+
+    url = (
+        KIS_BASE_URL
+        +
+        "/oauth2/tokenP"
+    )
+
+
+    body = {
+
+        "grant_type":
+        "client_credentials",
+
+        "appkey":
+        KIS_APP_KEY,
+
+        "appsecret":
+        KIS_APP_SECRET
+
+    }
+
+
+    response = requests.post(
+        url,
+        json=body,
+        timeout=10
+    )
+
+
+    data = response.json()
+
+
+    token = data.get(
+        "access_token"
+    )
+
+
+    if token:
+
+        ACCESS_TOKEN = token
+
+        save_token(token)
+
+        print(
+            "TOKEN CREATED: True"
+        )
+
+        return token
+
+
+    print(
+        "TOKEN ERROR:",
+        data
+    )
+
+
+    return None
+
 
 
 
@@ -109,68 +177,7 @@ def get_access_token(force=False):
     )
 
 
-    url = (
-        KIS_BASE_URL
-        +
-        "/oauth2/tokenP"
-    )
-
-
-    body = {
-
-        "grant_type":
-        "client_credentials",
-
-        "appkey":
-        KIS_APP_KEY,
-
-        "appsecret":
-        KIS_APP_SECRET
-
-    }
-
-
-
-    response = requests.post(
-
-        url,
-
-        json=body,
-
-        timeout=10
-
-    )
-
-
-    data = response.json()
-
-
-    token = data.get(
-        "access_token"
-    )
-
-
-    if token:
-
-        ACCESS_TOKEN = token
-
-        save_token(token)
-
-        print(
-            "TOKEN CREATED: True"
-        )
-
-        return token
-
-
-
-    print(
-        "TOKEN ERROR:",
-        data
-    )
-
-
-    return None
+    return request_new_token()
 
 
 
@@ -183,7 +190,11 @@ def kis_request(
 ):
 
 
+    global ACCESS_TOKEN
+
+
     token = get_access_token()
+
 
 
     if not token:
@@ -202,24 +213,20 @@ def kis_request(
 
 
 
-    headers = {
 
+    headers = {
 
         "authorization":
         "Bearer " + token,
 
-
         "appkey":
         KIS_APP_KEY,
-
 
         "appsecret":
         KIS_APP_SECRET,
 
-
         "tr_id":
         tr_id,
-
 
         "custtype":
         "P"
@@ -228,23 +235,94 @@ def kis_request(
 
 
 
-    time.sleep(0.5)
+    for retry in range(2):
+
+        try:
+
+            response = requests.get(
+
+                KIS_BASE_URL + path,
+
+                headers=headers,
+
+                params=params,
+
+                timeout=10
+
+            )
 
 
-    response = requests.get(
-
-        KIS_BASE_URL + path,
-
-        headers=headers,
-
-        params=params,
-
-        timeout=10
-
-    )
+            data = response.json()
 
 
-    return response.json()
+
+            if data.get("rt_cd") != "0":
+
+
+                msg = str(
+                    data.get(
+                        "msg1",
+                        ""
+                    )
+                )
+
+
+                if (
+                    "TOKEN" in msg.upper()
+                    or
+                    "토큰" in msg
+                ):
+
+
+                    print(
+                        "TOKEN INVALID - REFRESH"
+                    )
+
+
+                    token = get_access_token(
+                        force=True
+                    )
+
+
+                    headers["authorization"] = (
+                        "Bearer "
+                        +
+                        token
+                    )
+
+
+                    continue
+
+
+
+            return data
+
+
+
+        except Exception as e:
+
+            print(
+                "KIS REQUEST ERROR:",
+                e
+            )
+
+            time.sleep(2)
+
+
+
+    return {
+
+        "rt_cd":
+        "REQUEST_ERROR",
+
+        "msg1":
+        "KIS 요청 실패",
+
+        "output":[]
+
+    }
+
+
 
 
 
@@ -273,11 +351,8 @@ def get_stock_price(stock_code):
 
 
     return data.get(
-
         "output",
-
         {}
-
     )
 
 
@@ -322,46 +397,20 @@ def get_investor_trade(stock_code):
 
 
 
-    # ★ 수정 부분
-    # KIS는 output2 사용
-
     output = data.get(
         "output2",
         []
     )
 
 
+
     row = {}
+
 
 
     if isinstance(output,list) and len(output)>0:
 
         row = output[0]
-
-
-
-    foreign = float(
-        row.get(
-            "frgn_ntby_qty",
-            0
-        )
-    )
-
-
-    institution = float(
-        row.get(
-            "orgn_ntby_qty",
-            0
-        )
-    )
-
-
-    personal = float(
-        row.get(
-            "prsn_ntby_qty",
-            0
-        )
-    )
 
 
 
@@ -373,15 +422,33 @@ def get_investor_trade(stock_code):
 
 
         "외국인순매수":
-        foreign,
+
+        float(
+            row.get(
+                "frgn_ntby_qty",
+                0
+            )
+        ),
 
 
         "기관순매수":
-        institution,
+
+        float(
+            row.get(
+                "orgn_ntby_qty",
+                0
+            )
+        ),
 
 
         "개인순매수":
-        personal
+
+        float(
+            row.get(
+                "prsn_ntby_qty",
+                0
+            )
+        )
 
 
     }
