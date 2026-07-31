@@ -13,16 +13,14 @@ def get_access_token():
 
     body = {
 
-        "grant_type":
-        "client_credentials",
+        "grant_type": "client_credentials",
 
-        "appkey":
-        KIS_APP_KEY,
+        "appkey": KIS_APP_KEY,
 
-        "appsecret":
-        KIS_APP_SECRET
+        "appsecret": KIS_APP_SECRET
 
     }
+
 
     response = requests.post(
         url,
@@ -30,9 +28,8 @@ def get_access_token():
         timeout=10
     )
 
-    data=response.json()
 
-    return data.get(
+    return response.json().get(
         "access_token"
     )
 
@@ -40,16 +37,20 @@ def get_access_token():
 
 def kis_request(tr_id, path, params):
 
-    token=get_access_token()
+
+    token = get_access_token()
+
 
     if not token:
+
         return {}
 
 
-    headers={
+
+    headers = {
 
         "authorization":
-        "Bearer "+token,
+        "Bearer " + token,
 
         "appkey":
         KIS_APP_KEY,
@@ -66,12 +67,9 @@ def kis_request(tr_id, path, params):
     }
 
 
-    url=KIS_BASE_URL+path
+    response = requests.get(
 
-
-    response=requests.get(
-
-        url,
+        KIS_BASE_URL + path,
 
         headers=headers,
 
@@ -89,7 +87,7 @@ def kis_request(tr_id, path, params):
 def get_stock_price(stock_code):
 
 
-    return kis_request(
+    data = kis_request(
 
         "FHKST01010100",
 
@@ -97,30 +95,26 @@ def get_stock_price(stock_code):
 
         {
 
-            "FID_COND_MRKT_DIV_CODE":
-            "J",
+            "FID_COND_MRKT_DIV_CODE":"J",
 
-            "FID_INPUT_ISCD":
-            stock_code
+            "FID_INPUT_ISCD":stock_code
 
         }
-
-    ).get(
-
-        "output",
-
-        {}
 
     )
 
 
+    return data.get(
+        "output",
+        {}
+    )
 
-# 투자자별 매매동향
+
 
 def get_investor_trade(stock_code):
 
 
-    data=kis_request(
+    data = kis_request(
 
         "FHPTJ04160001",
 
@@ -128,21 +122,23 @@ def get_investor_trade(stock_code):
 
         {
 
-            "FID_COND_MRKT_DIV_CODE":
-            "J",
+            "FID_COND_MRKT_DIV_CODE":"J",
 
-            "FID_INPUT_ISCD":
-            stock_code,
+            "FID_INPUT_ISCD":stock_code,
 
-            "FID_PERIOD_DIV_CODE":
-            "D",
+            "FID_PERIOD_DIV_CODE":"D",
 
-            "FID_ORG_ADJ_PRC":
-            "0"
+            "FID_ORG_ADJ_PRC":"0"
 
         }
 
     )
+
+
+    print("KIS 투자자 원본:")
+
+    print(data)
+
 
 
     output=data.get(
@@ -151,20 +147,18 @@ def get_investor_trade(stock_code):
     )
 
 
-    if not output:
+    if isinstance(output,list) and len(output)>0:
 
-        return {
+        row=output[0]
 
-            "외국인순매수":0,
+    elif isinstance(output,dict):
 
-            "기관순매수":0,
+        row=output
 
-            "개인순매수":0
+    else:
 
-        }
+        row={}
 
-
-    row=output[0]
 
 
     return {
@@ -175,7 +169,10 @@ def get_investor_trade(stock_code):
         float(
             row.get(
                 "frgn_ntby_qty",
-                0
+                row.get(
+                    "frgn_ntby_tr_pbmn",
+                    0
+                )
             )
         ),
 
@@ -185,7 +182,10 @@ def get_investor_trade(stock_code):
         float(
             row.get(
                 "orgn_ntby_qty",
-                0
+                row.get(
+                    "orgn_ntby_tr_pbmn",
+                    0
+                )
             )
         ),
 
@@ -195,7 +195,10 @@ def get_investor_trade(stock_code):
         float(
             row.get(
                 "prsn_ntby_qty",
-                0
+                row.get(
+                    "prsn_ntby_tr_pbmn",
+                    0
+                )
             )
         )
 
