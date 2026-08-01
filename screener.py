@@ -1163,6 +1163,11 @@ def parse_arguments():
         choices=(
             "auto",
             "semiconductor",
+            "automotive",
+            "battery",
+            "biotechnology",
+            "construction",
+            "finance",
             "none",
         ),
         help=(
