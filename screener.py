@@ -795,6 +795,8 @@ def analyze_one_stock(
         market,
         fundamentals_analysis,
         fundamentals_bundle,
+        industry_analysis,
+        industry_bundle,
     )
 
     prediction = predict_stock(

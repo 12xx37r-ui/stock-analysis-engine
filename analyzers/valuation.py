@@ -127,11 +127,15 @@ def calculate_value(
     market: Dict[str, Any],
     fundamentals_analysis: Optional[Dict[str, Any]] = None,
     fundamentals_bundle: Optional[Dict[str, Any]] = None,
+    industry_analysis: Optional[Dict[str, Any]] = None,
+    industry_bundle: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     financial = safe_dict(financial)
     market = safe_dict(market)
     fundamentals_analysis = safe_dict(fundamentals_analysis)
     fundamentals_bundle = safe_dict(fundamentals_bundle)
+    industry_analysis = safe_dict(industry_analysis)
+    industry_bundle = safe_dict(industry_bundle)
 
     metrics = safe_dict(financial.get("재무지표"))
     growth = safe_dict(financial.get("성장지표"))
@@ -294,21 +298,118 @@ def calculate_value(
     else:
         judgment = "적정"
 
-    confidence = 45
-    if eps > 0:
+    # 가치신뢰도는 단순 자료 개수가 아니라 독립 검증자료와
+    # 모형 합의도, 실적 안정성, 산업·컨센서스 반영 여부를 함께 평가한다.
+    earnings_quality = safe_float(earnings_analysis.get("데이터품질"), quarter["quality"])
+    cash_quality_score = safe_float(cash_quality.get("데이터품질"), 0.0)
+
+    industry_status = str(industry_analysis.get("분석상태", "")).strip()
+    industry_code = str(industry_bundle.get("산업코드", "")).strip().lower()
+    industry_phase = str(industry_analysis.get("산업국면", "")).strip()
+    industry_available = (
+        industry_status == "정상"
+        and industry_code not in {"", "none", "auto", "미분류"}
+        and industry_phase not in {"", "미분류", "판정불가"}
+    )
+
+    consensus_available = bool(
+        forward_direction.get("애널리스트컨센서스반영")
+        or safe_float(forward_direction.get("컨센서스데이터품질"), 0.0) > 0
+    )
+
+    model_dispersion = 0.0
+    if len(available_values) >= 2 and min(available_values) > 0:
+        model_dispersion = max(available_values) / min(available_values)
+
+    confidence = 35
+
+    if price > 0 and eps > 0 and bps > 0:
         confidence += 10
-    if bps > 0:
-        confidence += 8
-    if periods:
+    elif price > 0 and (eps > 0 or bps > 0):
+        confidence += 5
+
+    if roe != 0 or operating_margin != 0 or net_margin != 0:
+        confidence += 7
+
+    if len(periods) >= 6:
         confidence += 12
+    elif len(periods) >= 4:
+        confidence += 9
+    elif periods:
+        confidence += 5
+
     if quarter["quality"] >= 70:
         confidence += 8
-    if len(available_values) >= 4:
-        confidence += 10
-    if abs(gap) <= 150:
+    elif quarter["quality"] >= 35:
         confidence += 4
-    confidence = int(clamp(confidence, 35, 95))
 
+    if earnings_quality >= 80:
+        confidence += 6
+    elif earnings_quality >= 50:
+        confidence += 3
+
+    if cash_quality_score >= 80:
+        confidence += 5
+    elif cash_quality_score >= 50:
+        confidence += 3
+
+    if len(available_values) >= 4:
+        confidence += 4
+
+    if model_dispersion > 0:
+        if model_dispersion <= 1.35:
+            confidence += 7
+        elif model_dispersion <= 1.70:
+            confidence += 4
+        elif model_dispersion <= 2.20:
+            confidence += 1
+        elif model_dispersion >= 3.00:
+            confidence -= 8
+        else:
+            confidence -= 3
+
+    confidence_reasons = []
+    confidence_cap_reasons = []
+
+    if industry_available:
+        confidence += 6
+        confidence_reasons.append("산업 선행·사이클 자료 반영")
+    else:
+        confidence -= 6
+        confidence_cap_reasons.append("산업 선행·사이클 미반영")
+
+    if consensus_available:
+        confidence += 5
+        confidence_reasons.append("애널리스트 컨센서스 반영")
+    else:
+        confidence -= 5
+        confidence_cap_reasons.append("애널리스트 컨센서스 미반영")
+
+    if transition_direction == "실적 안정/혼합" and transition_strength < 25:
+        confidence += 4
+    elif transition_direction == "실적 급상승 전환":
+        confidence -= 3
+        confidence_reasons.append("최근 실적 급상승으로 추정오차 확대")
+    elif transition_direction == "실적 급하락 전환":
+        confidence -= 5
+        confidence_reasons.append("최근 실적 급하락으로 추정오차 확대")
+
+    if earnings_signal <= -40 or forward_signal <= -30:
+        confidence -= 3
+
+    confidence = int(clamp(confidence, 30, 95))
+
+    # 산업 또는 컨센서스가 빠진 상태에서는 기관급 A등급을 허용하지 않는다.
+    confidence_cap = 95
+    if not industry_available and not consensus_available:
+        confidence_cap = 79
+    elif not industry_available or not consensus_available:
+        confidence_cap = 84
+
+    if transition_direction != "실적 안정/혼합" and confidence_cap > 82:
+        confidence_cap = 82
+
+    confidence = min(confidence, confidence_cap)
     confidence_grade = "A" if confidence >= 85 else "B" if confidence >= 70 else "C" if confidence >= 55 else "D"
 
     notes = []
@@ -347,5 +448,11 @@ def calculate_value(
         "분기순이익성장률": round(quarter["net_yoy"], 2),
         "가치신뢰도": confidence,
         "가치신뢰도등급": confidence_grade,
+        "가치신뢰도상한": confidence_cap,
+        "가치신뢰도근거": confidence_reasons,
+        "가치신뢰도상한사유": confidence_cap_reasons,
+        "산업자료반영": industry_available,
+        "컨센서스반영": consensus_available,
+        "모형분산배수": round(model_dispersion, 3),
         "설명": notes,
     }
