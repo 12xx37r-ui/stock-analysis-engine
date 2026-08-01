@@ -1,79 +1,70 @@
-import requests
-import time
 import json
 import os
-from datetime import datetime
+import time
+from datetime import datetime, timedelta, timezone
 
+import requests
 
 from config import (
     KIS_APP_KEY,
     KIS_APP_SECRET,
-    KIS_BASE_URL
+    KIS_BASE_URL,
 )
 
 
-
 ACCESS_TOKEN = None
-
 TOKEN_FILE = "kis_token.json"
+KST = timezone(timedelta(hours=9))
 
 
+def safe_float(value):
 
+    try:
+
+        if value in (None, ""):
+            return 0.0
+
+        return float(value)
+
+    except (TypeError, ValueError):
+        return 0.0
 
 
 def load_token():
 
     global ACCESS_TOKEN
 
-
     if not os.path.exists(TOKEN_FILE):
-
         return None
-
-
 
     try:
 
         with open(
             TOKEN_FILE,
             "r",
-            encoding="utf-8"
-        ) as f:
+            encoding="utf-8",
+        ) as file:
 
-            data = json.load(f)
+            data = json.load(file)
 
-
-
-        token = data.get(
-            "access_token"
-        )
-
+        token = data.get("access_token")
 
         if token:
 
             ACCESS_TOKEN = token
 
-            print(
-                "TOKEN LOADED"
-            )
+            print("TOKEN LOADED")
 
             return token
 
-
-
-    except Exception as e:
+    except Exception as error:
 
         print(
-            "TOKEN LOAD ERROR",
-            e
+            "TOKEN LOAD ERROR:",
+            error,
         )
 
-
-
     return None
-
-
-
 
 
 def save_token(token):
@@ -83,557 +74,337 @@ def save_token(token):
         with open(
             TOKEN_FILE,
             "w",
-            encoding="utf-8"
-        ) as f:
-
+            encoding="utf-8",
+        ) as file:
 
             json.dump(
-
                 {
                     "access_token": token,
-                    "saved_at":
-                    datetime.now().isoformat()
+                    "saved_at": datetime.now(KST).isoformat(),
                 },
-
-                f,
-
-                indent=2
-
+                file,
+                ensure_ascii=False,
+                indent=2,
             )
 
-
-    except Exception as e:
+    except Exception as error:
 
         print(
-            "TOKEN SAVE ERROR",
-            e
+            "TOKEN SAVE ERROR:",
+            error,
         )
 
 
+def clear_token():
 
+    global ACCESS_TOKEN
 
+    ACCESS_TOKEN = None
 
+    try:
+
+        if os.path.exists(TOKEN_FILE):
+            os.remove(TOKEN_FILE)
+
+    except Exception as error:
+
+        print(
+            "TOKEN FILE DELETE ERROR:",
+            error,
+        )
 
 
 def get_access_token(force=False):
 
-
     global ACCESS_TOKEN
 
-
-
     if ACCESS_TOKEN and not force:
-
         return ACCESS_TOKEN
-
-
-
 
     if not force:
 
-        token = load_token()
+        saved_token = load_token()
 
-        if token:
+        if saved_token:
+            return saved_token
 
-            return token
-
-
-
-
-
-    print(
-        "REQUEST TOKEN"
-    )
-
-
+    print("REQUEST TOKEN")
 
     url = (
         KIS_BASE_URL
-        +
-        "/oauth2/tokenP"
+        + "/oauth2/tokenP"
     )
 
-
-
     body = {
-
-
-        "grant_type":
-
-        "client_credentials",
-
-
-        "appkey":
-
-        KIS_APP_KEY,
-
-
-        "appsecret":
-
-        KIS_APP_SECRET
-
+        "grant_type": "client_credentials",
+        "appkey": KIS_APP_KEY,
+        "appsecret": KIS_APP_SECRET,
     }
-
-
-
-
 
     try:
 
-
         response = requests.post(
-
             url,
-
             json=body,
-
-            timeout=10
-
+            timeout=15,
         )
 
-
+        response.raise_for_status()
 
         data = response.json()
 
-
-
-        token = data.get(
-            "access_token"
-        )
-
-
+        token = data.get("access_token")
 
         if token:
 
-
             ACCESS_TOKEN = token
-
 
             save_token(token)
 
-
-            print(
-                "TOKEN OK"
-            )
-
+            print("TOKEN OK")
 
             return token
 
-
-
-
-
         print(
-
-            "TOKEN FAIL",
-
-            data
-
+            "TOKEN FAIL:",
+            data.get("error_description")
+            or data.get("msg1")
+            or data,
         )
 
-
-
-
-    except Exception as e:
-
+    except Exception as error:
 
         print(
-
-            "TOKEN ERROR",
-
-            e
-
+            "TOKEN ERROR:",
+            error,
         )
-
-
-
 
     ACCESS_TOKEN = None
-
 
     return None
 
 
-
-
-
-
-
 def kis_request(
-
     tr_id,
-
     path,
-
-    params
-
+    params,
 ):
 
+    global ACCESS_TOKEN
 
+    token_reissued = False
 
-    for retry in range(3):
-
+    for attempt in range(3):
 
         token = get_access_token()
 
-
-
         if not token:
 
-
             return {
-
-                "rt_cd":
-
-                "TOKEN_ERROR",
-
-
-                "msg1":
-
-                "토큰 실패",
-
-
-                "output":[]
-
+                "rt_cd": "TOKEN_ERROR",
+                "msg_cd": "",
+                "msg1": "토큰 발급 실패",
+                "output": [],
             }
 
-
-
-
         headers = {
-
-
-            "authorization":
-
-            "Bearer " + token,
-
-
-            "appkey":
-
-            KIS_APP_KEY,
-
-
-            "appsecret":
-
-            KIS_APP_SECRET,
-
-
-            "tr_id":
-
-            tr_id,
-
-
-            "custtype":
-
-            "P"
-
+            "authorization": "Bearer " + token,
+            "appkey": KIS_APP_KEY,
+            "appsecret": KIS_APP_SECRET,
+            "tr_id": tr_id,
+            "custtype": "P",
         }
-
-
-
 
         try:
 
-
-            time.sleep(1.2)
-
-
+            time.sleep(1.5)
 
             response = requests.get(
-
                 KIS_BASE_URL + path,
-
                 headers=headers,
-
                 params=params,
-
-                timeout=10
-
+                timeout=15,
             )
 
-
+            response.raise_for_status()
 
             data = response.json()
 
-
-
-            msg = str(
-
+            msg_code = str(
                 data.get(
-
-                    "msg1",
-
-                    ""
-
+                    "msg_cd",
+                    "",
                 )
-
             )
 
-
-
-            if "초당" in msg:
-
-
-                print(
-
-                    "RATE LIMIT"
-
+            message = str(
+                data.get(
+                    "msg1",
+                    "",
                 )
+            )
 
+            rate_limited = (
+                msg_code == "EGW00201"
+                or "초당 거래건수" in message
+                or "초당" in message
+            )
 
-                time.sleep(5)
+            if rate_limited:
 
+                print("KIS RATE LIMIT WAIT")
+
+                time.sleep(
+                    5 + attempt
+                )
 
                 continue
 
+            token_error = (
+                "토큰" in message
+                or "TOKEN" in message.upper()
+                or msg_code in {
+                    "EGW00121",
+                    "EGW00122",
+                    "EGW00123",
+                }
+            )
 
+            if token_error and not token_reissued:
 
+                print("TOKEN REISSUE")
 
-            if "토큰" in msg:
+                clear_token()
 
+                token_reissued = True
 
-                get_access_token(
-
-                    True
-
+                new_token = get_access_token(
+                    force=True
                 )
 
+                if not new_token:
+
+                    return {
+                        "rt_cd": "TOKEN_ERROR",
+                        "msg_cd": msg_code,
+                        "msg1": "토큰 재발급 실패",
+                        "output": [],
+                    }
 
                 continue
-
-
-
 
             return data
 
-
-
-
-        except Exception as e:
-
+        except Exception as error:
 
             print(
-
-                "REQUEST ERROR",
-
-                e
-
+                "KIS REQUEST ERROR:",
+                error,
             )
 
-
-            time.sleep(3)
-
-
-
-
+            time.sleep(
+                2 + attempt
+            )
 
     return {
-
-
-        "rt_cd":
-
-        "ERROR",
-
-
-        "msg1":
-
-        "REQUEST FAILED",
-
-
-        "output":[]
-
+        "rt_cd": "REQUEST_ERROR",
+        "msg_cd": "",
+        "msg1": "KIS 요청 실패",
+        "output": [],
     }
-    def get_stock_price(stock_code):
 
+
+def get_stock_price(stock_code):
 
     data = kis_request(
-
         "FHKST01010100",
-
         "/uapi/domestic-stock/v1/quotations/inquire-price",
-
         {
-
-
-            "FID_COND_MRKT_DIV_CODE":
-
-            "J",
-
-
-            "FID_INPUT_ISCD":
-
-            stock_code
-
-        }
-
+            "FID_COND_MRKT_DIV_CODE": "J",
+            "FID_INPUT_ISCD": stock_code,
+        },
     )
 
-
-
-    return data.get(
-
+    output = data.get(
         "output",
-
-        {}
-
+        {},
     )
 
+    if isinstance(output, dict):
+        return output
 
-
-
-
+    return {}
 
 
 def get_investor_trade(stock_code):
 
-
-    today = datetime.now().strftime(
-
+    today = datetime.now(
+        KST
+    ).strftime(
         "%Y%m%d"
-
     )
-
-
 
     data = kis_request(
-
-
         "FHPTJ04160001",
-
-
         "/uapi/domestic-stock/v1/quotations/inquire-investor",
-
-
         {
-
-
-            "FID_COND_MRKT_DIV_CODE":
-
-            "J",
-
-
-
-            "FID_INPUT_ISCD":
-
-            stock_code,
-
-
-
-            "FID_INPUT_DATE_1":
-
-            today,
-
-
-
-            "FID_ORG_ADJ_PRC":
-
-            "0",
-
-
-
-            "FID_ETC_CLS_CODE":
-
-            "00"
-
-        }
-
+            "FID_COND_MRKT_DIV_CODE": "J",
+            "FID_INPUT_ISCD": stock_code,
+            "FID_INPUT_DATE_1": today,
+            "FID_ORG_ADJ_PRC": "0",
+            "FID_ETC_CLS_CODE": "00",
+        },
     )
-
-
-
-
 
     output = data.get(
-
-        "output",
-
-        []
-
+        "output2",
+        [],
     )
 
+    if not isinstance(output, list) or not output:
 
-
-    if not output:
-
-
-        output = data.get(
-
-            "output2",
-
-            []
-
+        fallback = data.get(
+            "output",
+            [],
         )
 
+        if isinstance(fallback, list):
+            output = fallback
+        else:
+            output = []
 
-
-
-
-    row = {}
-
-
-
-    if isinstance(output, list) and len(output) > 0:
-
-
-        row = output[0]
-
-
-
-
+    row = (
+        output[0]
+        if output
+        else {}
+    )
 
     return {
-
-
-        "원본응답":
-
-        data,
-
-
-
-        "외국인순매수":
-
-        float(
-
+        "외국인순매수": safe_float(
             row.get(
-
-                "frgn_ntby_qty",
-
-                0
-
+                "frgn_ntby_qty"
             )
-
         ),
-
-
-
-        "기관순매수":
-
-        float(
-
+        "기관순매수": safe_float(
             row.get(
-
-                "orgn_ntby_qty",
-
-                0
-
+                "orgn_ntby_qty"
             )
-
         ),
-
-
-
-        "개인순매수":
-
-        float(
-
+        "개인순매수": safe_float(
             row.get(
-
-                "prsn_ntby_qty",
-
-                0
-
+                "prsn_ntby_qty"
             )
-
-        )
-
+        ),
+        "조회일": row.get(
+            "stck_bsop_date",
+            "",
+        ),
+        "응답상태": data.get(
+            "rt_cd",
+            "",
+        ),
+        "응답메시지": data.get(
+            "msg1",
+            "",
+        ),
     }
