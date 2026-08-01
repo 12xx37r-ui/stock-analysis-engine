@@ -1,5 +1,5 @@
 """
-주가예측 순방향 검증기 V1
+주가예측 순방향 검증기 V1.1
 
 역할
 - screen-stocks 실행 결과의 예측 스냅샷을 누적 저장
@@ -23,6 +23,12 @@
 
     python forward_test.py \
         --evaluate-only \
+        --store data/forward_tests.json \
+        --report output/forward_test_report.json
+
+    python forward_test.py \
+        --record-only \
+        --screener-file output/screener.json \
         --store data/forward_tests.json \
         --report output/forward_test_report.json
 """
@@ -1457,6 +1463,14 @@ def parse_arguments():
         ),
     )
 
+    parser.add_argument(
+        "--record-only",
+        action="store_true",
+        help=(
+            "새 예측만 기록하고 가격 평가는 생략"
+        ),
+    )
+
     return parser.parse_args()
 
 
@@ -1470,6 +1484,15 @@ def main() -> int:
     report_path = Path(
         args.report
     )
+
+    if (
+        args.evaluate_only
+        and args.record_only
+    ):
+        raise RuntimeError(
+            "--evaluate-only와 --record-only는 "
+            "동시에 사용할 수 없습니다."
+        )
 
     store = load_store(
         store_path
@@ -1494,11 +1517,16 @@ def main() -> int:
             stock_data_list,
         )
 
-    evaluated_count, failures = (
-        evaluate_store(
-            store
+    if args.record_only:
+        evaluated_count = 0
+        failures = []
+
+    else:
+        evaluated_count, failures = (
+            evaluate_store(
+                store
+            )
         )
-    )
 
     store[
         "최종갱신시각"
