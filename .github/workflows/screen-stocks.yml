@@ -65,6 +65,11 @@ jobs:
             --stock-codes "$STOCK_CODES" \
             --industry-code "$INDUSTRY_CODE"
 
+      - name: Validate screener output
+        run: |
+          python validate_screener.py \
+            --stock-codes "$STOCK_CODES"
+
       - name: Upload screener results
         uses: actions/upload-artifact@v5
         with:
