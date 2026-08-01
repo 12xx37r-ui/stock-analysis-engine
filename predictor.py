@@ -299,41 +299,36 @@ def accumulated_supply_signal(market):
 def program_signal(market):
     history = get_history(market)
     program = history["program"]
+    price = history["price"]
 
     quantity_5 = safe_float(program.get("프로그램순매수수량5일"))
     quantity_20 = safe_float(program.get("프로그램순매수수량20일"))
     amount_5 = safe_float(program.get("프로그램순매수금액5일"))
     amount_20 = safe_float(program.get("프로그램순매수금액20일"))
+    average_volume_20 = safe_float(price.get("20일평균거래량"))
 
-    signal = 0.0
+    denominator_5 = average_volume_20 * 5.0
+    denominator_20 = average_volume_20 * 20.0
+    ratio_5 = quantity_5 / denominator_5 if denominator_5 > 0 else 0.0
+    ratio_20 = quantity_20 / denominator_20 if denominator_20 > 0 else 0.0
 
-    primary_5 = amount_5 if amount_5 != 0 else quantity_5
-    primary_20 = amount_20 if amount_20 != 0 else quantity_20
+    if average_volume_20 > 0:
+        signal_5 = clamp(ratio_5 / 0.02 * 45.0, -45.0, 45.0)
+        signal_20 = clamp(ratio_20 / 0.02 * 55.0, -55.0, 55.0)
+        signal = normalize_signal(signal_5 + signal_20)
+    else:
+        signal = 0.0
+        if quantity_5 > 0:
+            signal += 25.0
+        elif quantity_5 < 0:
+            signal -= 25.0
+        if quantity_20 > 0:
+            signal += 35.0
+        elif quantity_20 < 0:
+            signal -= 35.0
+        signal = normalize_signal(signal)
 
-    if primary_5 > 0:
-        signal += 35
-    elif primary_5 < 0:
-        signal -= 35
-
-    if primary_20 > 0:
-        signal += 45
-    elif primary_20 < 0:
-        signal -= 45
-
-    if (
-        primary_5 != 0
-        and primary_20 != 0
-        and (primary_5 > 0) == (primary_20 > 0)
-    ):
-        signal += 20 if primary_5 > 0 else -20
-
-    signal = normalize_signal(signal)
-
-    count = int(
-        safe_float(
-            history["status"].get("프로그램데이터개수")
-        )
-    )
+    count = int(safe_float(history["status"].get("프로그램데이터개수")))
 
     if count >= 20:
         quality = 0.70
@@ -344,6 +339,9 @@ def program_signal(market):
     else:
         quality = 0.0
 
+    if quality > 0 and average_volume_20 <= 0:
+        quality = min(quality, 0.35)
+
     return {
         "signal": signal,
         "quality": quality,
@@ -351,8 +349,12 @@ def program_signal(market):
         "quantity_20": quantity_20,
         "amount_5": amount_5,
         "amount_20": amount_20,
+        "ratio_5": ratio_5,
+        "ratio_20": ratio_20,
+        "average_volume_20": average_volume_20,
         "count": count,
     }
+
 
 
 def historical_technical_signal(market):
@@ -840,10 +842,12 @@ def calculate_short_term(
             SHORT_WEIGHTS["파생시장·프로그램"],
             signal=program["signal"],
             quality=program["quality"],
-            source="KIS 시장 프로그램매매",
+            source="KIS 종목별 프로그램매매",
             note=(
                 f"5일 수량 {program['quantity_5']:.0f}, "
-                f"20일 수량 {program['quantity_20']:.0f}"
+                f"20일 수량 {program['quantity_20']:.0f}, "
+                f"5일 거래량대비 {program['ratio_5'] * 100:.3f}%, "
+                f"20일 거래량대비 {program['ratio_20'] * 100:.3f}%"
             ),
         ),
         build_factor(
@@ -1459,7 +1463,7 @@ def predict_stock(
 
     return {
         "엔진버전": (
-            "6.0.0-fundamentals-industry"
+            "6.1.0-stock-program"
         ),
         "단기1~5일": short_term,
         "중기1~8주": mid_term,
@@ -1548,7 +1552,8 @@ def predict_stock(
         },
         "주의": (
             "미수집 요소는 추정하지 않고 중립 처리한다. "
-            "프로그램매매는 시장 전체 신호이며 종목별 프로그램 수급이 아니다. "
+            "파생시장·프로그램 요소에는 현재 종목별 프로그램매매만 반영하며 "
+            "파생시장 데이터는 아직 미반영이다. "
             "공시 신호는 제목 기반 규칙형 분석이다. "
             "향후이익 방향은 최신 실적과 현금창출력 기반 대용지표이며 "
             "애널리스트 컨센서스는 아직 반영되지 않았다. "
