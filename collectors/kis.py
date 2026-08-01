@@ -4,6 +4,7 @@ import json
 import os
 from datetime import datetime
 
+
 from config import (
     KIS_APP_KEY,
     KIS_APP_SECRET,
@@ -11,21 +12,127 @@ from config import (
 )
 
 
+
 ACCESS_TOKEN = None
 
+TOKEN_FILE = "kis_token.json"
 
-# =========================
-# Token
-# =========================
 
-def get_access_token():
+
+def load_token():
 
     global ACCESS_TOKEN
 
 
-    if ACCESS_TOKEN:
+    if not os.path.exists(TOKEN_FILE):
+
+        return None
+
+
+    try:
+
+        with open(
+            TOKEN_FILE,
+            "r",
+            encoding="utf-8"
+        ) as f:
+
+            data = json.load(f)
+
+
+        token = data.get(
+            "access_token"
+        )
+
+
+        if token:
+
+            ACCESS_TOKEN = token
+
+            print(
+                "TOKEN LOADED"
+            )
+
+            return token
+
+
+    except Exception as e:
+
+        print(
+            "TOKEN LOAD ERROR",
+            e
+        )
+
+
+    return None
+
+
+
+
+
+def save_token(token):
+
+    try:
+
+        with open(
+            TOKEN_FILE,
+            "w",
+            encoding="utf-8"
+        ) as f:
+
+            json.dump(
+
+                {
+                    "access_token": token,
+                    "saved_at":
+                    datetime.now().isoformat()
+                },
+
+                f,
+
+                indent=2
+
+            )
+
+
+    except Exception as e:
+
+        print(
+            "TOKEN SAVE ERROR",
+            e
+        )
+
+
+
+
+
+
+def get_access_token(force=False):
+
+    global ACCESS_TOKEN
+
+
+
+    if ACCESS_TOKEN and not force:
 
         return ACCESS_TOKEN
+
+
+
+    if not force:
+
+        token = load_token()
+
+        if token:
+
+            return token
+
+
+
+
+    print(
+        "REQUEST TOKEN"
+    )
 
 
 
@@ -34,6 +141,7 @@ def get_access_token():
         +
         "/oauth2/tokenP"
     )
+
 
 
     body = {
@@ -48,6 +156,7 @@ def get_access_token():
         KIS_APP_SECRET
 
     }
+
 
 
     try:
@@ -72,12 +181,15 @@ def get_access_token():
         )
 
 
+
         if token:
 
             ACCESS_TOKEN = token
 
+            save_token(token)
+
             print(
-                "TOKEN CREATED: True"
+                "TOKEN OK"
             )
 
             return token
@@ -85,18 +197,22 @@ def get_access_token():
 
 
         print(
-            "TOKEN ERROR:",
+            "TOKEN FAIL",
             data
         )
+
 
 
     except Exception as e:
 
         print(
-            "TOKEN REQUEST ERROR:",
+            "TOKEN ERROR",
             e
         )
 
+
+
+    ACCESS_TOKEN = None
 
     return None
 
@@ -104,19 +220,6 @@ def get_access_token():
 
 
 
-def clear_token():
-
-    global ACCESS_TOKEN
-
-    ACCESS_TOKEN = None
-
-
-
-
-
-# =========================
-# Request
-# =========================
 
 def kis_request(
     tr_id,
@@ -131,13 +234,18 @@ def kis_request(
         token = get_access_token()
 
 
+
         if not token:
 
-            clear_token()
+            return {
 
-            time.sleep(2)
+                "rt_cd":"TOKEN_ERROR",
 
-            continue
+                "msg1":"토큰 실패",
+
+                "output":[]
+
+            }
 
 
 
@@ -170,8 +278,7 @@ def kis_request(
         try:
 
 
-            time.sleep(1)
-
+            time.sleep(1.2)
 
 
             response = requests.get(
@@ -201,23 +308,11 @@ def kis_request(
 
 
 
-            # 호출 제한
-
-            if (
-
-                "EGW00201" in msg
-
-                or
-
-                "초당 거래건수" in msg
-
-            ):
-
+            if "초당" in msg:
 
                 print(
-                    "KIS RATE LIMIT WAIT"
+                    "RATE LIMIT"
                 )
-
 
                 time.sleep(5)
 
@@ -226,29 +321,13 @@ def kis_request(
 
 
 
+            if "토큰" in msg:
 
-            # 토큰 만료
-
-            if (
-
-                "TOKEN" in msg.upper()
-
-                or
-
-                "토큰" in msg
-
-            ):
-
-
-                print(
-                    "TOKEN REISSUE"
+                get_access_token(
+                    True
                 )
 
-
-                clear_token()
-
                 continue
-
 
 
 
@@ -258,12 +337,11 @@ def kis_request(
 
 
 
-
         except Exception as e:
 
 
             print(
-                "KIS ERROR:",
+                "REQUEST ERROR",
                 e
             )
 
@@ -273,14 +351,11 @@ def kis_request(
 
 
 
-
     return {
 
-        "rt_cd":
-        "ERROR",
+        "rt_cd":"ERROR",
 
-        "msg1":
-        "KIS REQUEST FAILED",
+        "msg1":"REQUEST FAILED",
 
         "output":[]
 
@@ -292,9 +367,7 @@ def kis_request(
 
 
 
-# =========================
-# Price
-# =========================
+
 
 def get_stock_price(stock_code):
 
@@ -307,8 +380,10 @@ def get_stock_price(stock_code):
 
         {
 
+
             "FID_COND_MRKT_DIV_CODE":
             "J",
+
 
             "FID_INPUT_ISCD":
             stock_code
@@ -316,6 +391,7 @@ def get_stock_price(stock_code):
         }
 
     )
+
 
 
     return data.get(
@@ -331,10 +407,6 @@ def get_stock_price(stock_code):
 
 
 
-
-# =========================
-# Investor
-# =========================
 
 def get_investor_trade(stock_code):
 
@@ -353,17 +425,22 @@ def get_investor_trade(stock_code):
 
         {
 
+
             "FID_COND_MRKT_DIV_CODE":
             "J",
+
 
             "FID_INPUT_ISCD":
             stock_code,
 
+
             "FID_INPUT_DATE_1":
             today,
 
+
             "FID_ORG_ADJ_PRC":
             "0",
+
 
             "FID_ETC_CLS_CODE":
             "00"
@@ -375,11 +452,8 @@ def get_investor_trade(stock_code):
 
 
     output = data.get(
-
         "output",
-
         []
-
     )
 
 
