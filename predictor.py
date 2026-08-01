@@ -653,12 +653,73 @@ def valuation_signal(valuation):
     }
 
 
-def calculate_short_term(market):
+def external_signal(
+    analysis,
+    signal_key,
+    quality_key,
+):
+    if not isinstance(analysis, dict):
+        return {
+            "signal": 0.0,
+            "quality": 0.0,
+            "status": "미수집",
+        }
+
+    signal = normalize_signal(
+        safe_float(
+            analysis.get(signal_key)
+        )
+    )
+
+    quality = clamp(
+        safe_float(
+            analysis.get(quality_key)
+        )
+        / 100.0,
+        0.0,
+        1.0,
+    )
+
+    return {
+        "signal": signal,
+        "quality": quality,
+        "status": str(
+            analysis.get(
+                "분석상태",
+                "미수집",
+            )
+        ),
+    }
+
+
+def disclosure_signal(
+    disclosure_analysis,
+):
+    return external_signal(
+        disclosure_analysis,
+        "신호",
+        "데이터품질",
+    )
+
+
+def calculate_short_term(
+    market,
+    disclosure_analysis=None,
+    global_analysis=None,
+):
     reasons = []
 
     program = program_signal(market)
     current_supply = current_supply_signal(market)
     technical = combined_short_technical_signal(market)
+    global_market = external_signal(
+        global_analysis,
+        "단기신호",
+        "단기데이터품질",
+    )
+    disclosure = disclosure_signal(
+        disclosure_analysis
+    )
 
     if program["signal"] >= 20:
         add_reason(reasons, "시장 프로그램매매가 순매수 우위")
@@ -688,6 +749,16 @@ def calculate_short_term(market):
         add_reason(reasons, "일봉·당일 가격 모멘텀이 매우 약함")
     elif technical["signal"] <= -20:
         add_reason(reasons, "일봉·당일 가격 흐름이 하락")
+
+    if global_market["signal"] >= 20:
+        add_reason(reasons, "환율·미국시장·반도체·VIX 환경이 우호적")
+    elif global_market["signal"] <= -20:
+        add_reason(reasons, "환율·미국시장·반도체·VIX 환경이 비우호적")
+
+    if disclosure["signal"] >= 20:
+        add_reason(reasons, "최근 공시 이벤트가 긍정적")
+    elif disclosure["signal"] <= -20:
+        add_reason(reasons, "최근 공시 이벤트가 부정적")
 
     factors = [
         build_factor(
@@ -728,26 +799,53 @@ def calculate_short_term(market):
         build_factor(
             "환율·글로벌",
             SHORT_WEIGHTS["환율·글로벌"],
-            source="미수집",
-            note="원달러·미국지수·반도체지수 연결 전",
+            signal=global_market["signal"],
+            quality=global_market["quality"],
+            source="Yahoo 글로벌시장 분석",
+            note=(
+                f"분석상태 {global_market['status']}, "
+                f"신호 {global_market['signal']:.2f}"
+            ),
         ),
         build_factor(
             "뉴스·공시",
             SHORT_WEIGHTS["뉴스·공시"],
-            source="미수집",
-            note="뉴스·DART 공시 이벤트 분석 연결 전",
+            signal=disclosure["signal"],
+            quality=disclosure["quality"],
+            source="OpenDART 최근 공시",
+            note=(
+                f"분석상태 {disclosure['status']}, "
+                f"신호 {disclosure['signal']:.2f}"
+            ),
         ),
     ]
 
-    return finalize_prediction("1~5일", factors, reasons)
+    return finalize_prediction(
+        "1~5일",
+        factors,
+        reasons,
+    )
 
 
-def calculate_mid_term(market, financial):
+def calculate_mid_term(
+    market,
+    financial,
+    disclosure_analysis=None,
+    global_analysis=None,
+):
     reasons = []
 
     earnings = earnings_signal(financial)
     accumulated = accumulated_supply_signal(market)
     historical = historical_technical_signal(market)
+    global_macro = external_signal(
+        global_analysis,
+        "중기신호",
+        "중기데이터품질",
+    )
+    disclosure = disclosure_signal(
+        disclosure_analysis
+    )
 
     if earnings["signal"] >= 60:
         add_reason(reasons, "매출·영업이익·순이익 성장 흐름이 강함")
@@ -765,6 +863,16 @@ def calculate_mid_term(market, financial):
         add_reason(reasons, "20일·60일 가격추세가 우호적")
     elif historical["signal"] <= -20:
         add_reason(reasons, "20일·60일 가격추세가 비우호적")
+
+    if global_macro["signal"] >= 20:
+        add_reason(reasons, "원달러·미국금리·글로벌 추세가 우호적")
+    elif global_macro["signal"] <= -20:
+        add_reason(reasons, "원달러·미국금리·글로벌 추세가 비우호적")
+
+    if disclosure["signal"] >= 20:
+        add_reason(reasons, "최근 공시 이벤트가 중기 방향에 긍정적")
+    elif disclosure["signal"] <= -20:
+        add_reason(reasons, "최근 공시 이벤트가 중기 방향에 부정적")
 
     factors = [
         build_factor(
@@ -795,8 +903,13 @@ def calculate_mid_term(market, financial):
         build_factor(
             "환율·금리·거시",
             MID_WEIGHTS["환율·금리·거시"],
-            source="미수집",
-            note="원달러·국채금리·거시엔진 연결 전",
+            signal=global_macro["signal"],
+            quality=global_macro["quality"],
+            source="Yahoo 환율·미국금리·글로벌시장",
+            note=(
+                f"분석상태 {global_macro['status']}, "
+                f"신호 {global_macro['signal']:.2f}"
+            ),
         ),
         build_factor(
             "가격추세",
@@ -812,12 +925,21 @@ def calculate_mid_term(market, financial):
         build_factor(
             "뉴스·공시",
             MID_WEIGHTS["뉴스·공시"],
-            source="미수집",
-            note="실적발표·수주·증설·규제 이벤트 연결 전",
+            signal=disclosure["signal"],
+            quality=disclosure["quality"],
+            source="OpenDART 최근 공시",
+            note=(
+                f"분석상태 {disclosure['status']}, "
+                f"신호 {disclosure['signal']:.2f}"
+            ),
         ),
     ]
 
-    return finalize_prediction("1~8주", factors, reasons)
+    return finalize_prediction(
+        "1~8주",
+        factors,
+        reasons,
+    )
 
 
 def calculate_long_term(financial, valuation):
@@ -897,45 +1019,101 @@ def calculate_long_term(financial, valuation):
         ),
     ]
 
-    return finalize_prediction("6~18개월", factors, reasons)
+    return finalize_prediction(
+        "6~18개월",
+        factors,
+        reasons,
+    )
 
 
-def predict_stock(market, financial, value):
-    short_term = calculate_short_term(market)
-    mid_term = calculate_mid_term(market, financial)
-    long_term = calculate_long_term(financial, value)
+def predict_stock(
+    market,
+    financial,
+    value,
+    disclosure_analysis=None,
+    global_analysis=None,
+):
+    short_term = calculate_short_term(
+        market,
+        disclosure_analysis=disclosure_analysis,
+        global_analysis=global_analysis,
+    )
+
+    mid_term = calculate_mid_term(
+        market,
+        financial,
+        disclosure_analysis=disclosure_analysis,
+        global_analysis=global_analysis,
+    )
+
+    long_term = calculate_long_term(
+        financial,
+        value,
+    )
 
     supply = market.get("수급", {}) or {}
     history = get_history(market)
 
+    disclosure_ok = (
+        isinstance(disclosure_analysis, dict)
+        and disclosure_analysis.get("분석상태") == "정상"
+    )
+
+    global_ok = (
+        isinstance(global_analysis, dict)
+        and global_analysis.get("분석상태") == "정상"
+    )
+
     return {
-        "엔진버전": "4.0.0-history-integrated",
+        "엔진버전": "5.0.0-full-signal-integration",
         "단기1~5일": short_term,
         "중기1~8주": mid_term,
         "장기6~18개월": long_term,
         "데이터완전성": {
-            "KIS현재가": bool(safe_float(market.get("현재가"))),
+            "KIS현재가": bool(
+                safe_float(
+                    market.get("현재가")
+                )
+            ),
             "KIS당일수급": any(
-                safe_float(supply.get(key)) != 0
+                safe_float(
+                    supply.get(key)
+                )
+                != 0
                 for key in (
                     "외국인순매수",
                     "기관순매수",
                     "개인순매수",
                 )
             ),
-            "KIS일봉": bool(history["price"]),
-            "KIS누적수급": bool(history["investor"]),
-            "KIS프로그램매매": bool(history["program"]),
-            "DART재무": bool(financial.get("재무지표")),
-            "DART성장": bool(financial.get("성장지표")),
+            "KIS일봉": bool(
+                history["price"]
+            ),
+            "KIS누적수급": bool(
+                history["investor"]
+            ),
+            "KIS프로그램매매": bool(
+                history["program"]
+            ),
+            "DART재무": bool(
+                financial.get(
+                    "재무지표"
+                )
+            ),
+            "DART성장": bool(
+                financial.get(
+                    "성장지표"
+                )
+            ),
+            "DART최근공시": disclosure_ok,
+            "글로벌시장": global_ok,
             "가치평가": bool(value),
-            "환율글로벌": False,
             "산업선행지표": False,
-            "뉴스공시": False,
         },
         "주의": (
             "미수집 요소는 추정하지 않고 중립 처리한다. "
             "프로그램매매는 시장 전체 신호이며 종목별 프로그램 수급이 아니다. "
+            "공시 신호는 제목 기반 규칙형 분석이다. "
             "상승확률은 데이터 커버리지에 따라 50% 방향으로 축소된 모델 확률이다."
         ),
     }
