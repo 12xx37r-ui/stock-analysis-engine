@@ -101,6 +101,17 @@ jobs:
             --store data/forward_tests.json \
             --report output/forward_test_report.json
 
+      - name: Build calibration report
+        run: |
+          python calibration_monitor.py \
+            --store data/forward_tests.json \
+            --report output/calibration_report.json
+
+      - name: Validate calibration report
+        run: |
+          python validate_calibration_report.py \
+            --report output/calibration_report.json
+
       - name: Commit forward test store
         shell: bash
         run: |
@@ -124,6 +135,7 @@ jobs:
             output/screener.json
             output/screener.csv
             output/forward_test_report.json
+            output/calibration_report.json
             output/*.json
           if-no-files-found: error
           retention-days: 30
