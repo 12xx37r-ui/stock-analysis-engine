@@ -1,5 +1,5 @@
 """
-주간 순방향 표본수집 실행기 V1
+주간 순방향 표본수집 실행기 V1.1
 
 산업별 배치를 순차 실행해:
 1. 스크리너 실행 및 검증
@@ -22,6 +22,11 @@ import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, List
+
+from collectors.kis import (
+    get_access_token,
+    get_token_failure_message,
+)
 
 
 KST = timezone(
@@ -240,6 +245,23 @@ def main() -> int:
     python = sys.executable
 
     try:
+        print()
+        print(
+            "KIS PREFLIGHT CHECK"
+        )
+
+        token = get_access_token()
+
+        if not token:
+            raise RuntimeError(
+                "KIS 인증 서버 연결 실패: "
+                + get_token_failure_message()
+            )
+
+        print(
+            "KIS PREFLIGHT OK"
+        )
+
         for batch_name in selected_names:
             detail = safe_dict(
                 batches[

@@ -16,6 +16,14 @@ ACCESS_TOKEN = None
 TOKEN_FILE = "kis_token.json"
 KST = timezone(timedelta(hours=9))
 
+TOKEN_FAILURE_UNTIL = 0.0
+TOKEN_FAILURE_MESSAGE = ""
+TOKEN_FAILURE_LOGGED = False
+TOKEN_FAILURE_COOLDOWN_SECONDS = 300
+TOKEN_REQUEST_ATTEMPTS = 2
+TOKEN_CONNECT_TIMEOUT = 8
+TOKEN_READ_TIMEOUT = 20
+
 
 def safe_float(value):
     try:
@@ -81,11 +89,74 @@ def clear_token():
         print("TOKEN FILE DELETE ERROR:", error)
 
 
+def clear_token_failure():
+    global TOKEN_FAILURE_UNTIL
+    global TOKEN_FAILURE_MESSAGE
+    global TOKEN_FAILURE_LOGGED
+
+    TOKEN_FAILURE_UNTIL = 0.0
+    TOKEN_FAILURE_MESSAGE = ""
+    TOKEN_FAILURE_LOGGED = False
+
+
+def mark_token_failure(message):
+    global TOKEN_FAILURE_UNTIL
+    global TOKEN_FAILURE_MESSAGE
+    global TOKEN_FAILURE_LOGGED
+
+    TOKEN_FAILURE_UNTIL = (
+        time.monotonic()
+        + TOKEN_FAILURE_COOLDOWN_SECONDS
+    )
+    TOKEN_FAILURE_MESSAGE = str(
+        message
+        or "토큰 발급 실패"
+    )
+    TOKEN_FAILURE_LOGGED = False
+
+
+def token_failure_active():
+    return (
+        time.monotonic()
+        < TOKEN_FAILURE_UNTIL
+    )
+
+
+def get_token_failure_message():
+    return (
+        TOKEN_FAILURE_MESSAGE
+        or "토큰 발급 실패"
+    )
+
+
 def get_access_token(force=False):
     global ACCESS_TOKEN
+    global TOKEN_FAILURE_LOGGED
 
     if ACCESS_TOKEN and not force:
         return ACCESS_TOKEN
+
+    if not KIS_APP_KEY or not KIS_APP_SECRET:
+        message = (
+            "KIS_APP_KEY 또는 "
+            "KIS_APP_SECRET가 없습니다."
+        )
+        mark_token_failure(message)
+        print("TOKEN CONFIG ERROR:", message)
+        return None
+
+    if (
+        not force
+        and token_failure_active()
+    ):
+        if not TOKEN_FAILURE_LOGGED:
+            print(
+                "TOKEN COOLDOWN ACTIVE:",
+                get_token_failure_message(),
+            )
+            TOKEN_FAILURE_LOGGED = True
+
+        return None
 
     if not force:
         saved_token = load_token()
@@ -93,7 +164,8 @@ def get_access_token(force=False):
         if saved_token:
             return saved_token
 
-    print("REQUEST TOKEN")
+    if force:
+        clear_token_failure()
 
     url = KIS_BASE_URL + "/oauth2/tokenP"
 
@@ -103,34 +175,80 @@ def get_access_token(force=False):
         "appsecret": KIS_APP_SECRET,
     }
 
-    try:
-        response = requests.post(
-            url,
-            json=body,
-            timeout=15,
-        )
-        response.raise_for_status()
+    last_error = ""
 
-        data = response.json()
-        token = data.get("access_token")
-
-        if token:
-            ACCESS_TOKEN = token
-            save_token(token)
-            print("TOKEN OK")
-            return token
-
+    for attempt in range(
+        1,
+        TOKEN_REQUEST_ATTEMPTS + 1,
+    ):
         print(
-            "TOKEN FAIL:",
-            data.get("error_description")
-            or data.get("msg1")
-            or data,
+            "REQUEST TOKEN",
+            f"{attempt}/{TOKEN_REQUEST_ATTEMPTS}",
         )
 
-    except Exception as error:
-        print("TOKEN ERROR:", error)
+        try:
+            response = requests.post(
+                url,
+                json=body,
+                timeout=(
+                    TOKEN_CONNECT_TIMEOUT,
+                    TOKEN_READ_TIMEOUT,
+                ),
+            )
+
+            response.raise_for_status()
+
+            data = response.json()
+            token = data.get("access_token")
+
+            if token:
+                ACCESS_TOKEN = token
+                clear_token_failure()
+                save_token(token)
+                print("TOKEN OK")
+                return token
+
+            last_error = str(
+                data.get("error_description")
+                or data.get("msg1")
+                or data
+            )
+
+            print(
+                "TOKEN FAIL:",
+                last_error,
+            )
+
+            break
+
+        except Exception as error:
+            last_error = (
+                f"{type(error).__name__}: "
+                f"{error}"
+            )
+
+            print(
+                "TOKEN ERROR:",
+                last_error,
+            )
+
+            if attempt < TOKEN_REQUEST_ATTEMPTS:
+                wait_seconds = 3
+                print(
+                    "TOKEN RETRY WAIT:",
+                    wait_seconds,
+                )
+                time.sleep(
+                    wait_seconds
+                )
 
     ACCESS_TOKEN = None
+
+    mark_token_failure(
+        last_error
+        or "토큰 발급 실패"
+    )
+
     return None
 
 
@@ -313,6 +431,22 @@ def get_investor_trade(stock_code):
                 query_date,
                 last_message,
             )
+
+            if data.get(
+                "rt_cd"
+            ) in {
+                "TOKEN_ERROR",
+                "REQUEST_ERROR",
+            }:
+                print(
+                    "INVESTOR DATA ABORT:",
+                    data.get(
+                        "rt_cd"
+                    ),
+                    last_message,
+                )
+                break
+
             continue
 
         foreign_net = safe_float(row.get("frgn_ntby_qty"))

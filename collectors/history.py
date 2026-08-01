@@ -1,5 +1,5 @@
 """
-KIS 과거 데이터 수집기 V2.3
+KIS 과거 데이터 수집기 V2.4
 
 기능
 1. 종목 일봉 및 기술지표
@@ -842,14 +842,30 @@ def get_investor_daily_history(
         )
 
         if not rows:
+            response_code = safe_text(
+                data.get(
+                    "rt_cd"
+                )
+            )
+
             print(
                 "INVESTOR HISTORY EMPTY:",
                 query_date,
-                safe_text(
-                    data.get("rt_cd")
-                ),
+                response_code,
                 last_message,
             )
+
+            if response_code in {
+                "TOKEN_ERROR",
+                "REQUEST_ERROR",
+            }:
+                print(
+                    "INVESTOR HISTORY ABORT:",
+                    response_code,
+                    last_message,
+                )
+                break
+
             continue
 
         def cumulative(
@@ -1048,7 +1064,30 @@ def get_program_trade_history(
         rows = sorted(rows_by_date.values(), key=lambda item: item["날짜"])
 
         if not rows:
-            print("PROGRAM HISTORY EMPTY:", query_date or "LATEST", safe_text(data.get("rt_cd")), last_message)
+            response_code = safe_text(
+                data.get(
+                    "rt_cd"
+                )
+            )
+
+            print(
+                "PROGRAM HISTORY EMPTY:",
+                query_date or "LATEST",
+                response_code,
+                last_message,
+            )
+
+            if response_code in {
+                "TOKEN_ERROR",
+                "REQUEST_ERROR",
+            }:
+                print(
+                    "PROGRAM HISTORY ABORT:",
+                    response_code,
+                    last_message,
+                )
+                break
+
             continue
 
         count = len(rows)
