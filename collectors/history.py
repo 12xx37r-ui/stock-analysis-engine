@@ -1,5 +1,5 @@
 """
-KIS 과거 데이터 수집기 V2.1
+KIS 과거 데이터 수집기 V2.2
 
 기능
 1. 종목 일봉 및 기술지표
@@ -682,6 +682,53 @@ def get_daily_price_history(
     }
 
 
+
+def recent_business_dates(
+    maximum_days: int = 10,
+) -> List[str]:
+    """
+    오늘부터 과거 방향으로 최근 평일 날짜를 반환한다.
+
+    KIS 종목별 투자자매매동향(일별)은 입력 날짜가 휴장일이면
+    빈 응답이나 오류가 발생할 수 있으므로 최근 평일부터 조회한다.
+    """
+    maximum_days = max(
+        safe_int(
+            maximum_days,
+            10,
+        ),
+        1,
+    )
+
+    current_date = datetime.now(
+        KST
+    ).date()
+
+    dates: List[str] = []
+    offset = 0
+
+    while (
+        len(dates) < maximum_days
+        and offset < 30
+    ):
+        target_date = (
+            current_date
+            - timedelta(days=offset)
+        )
+
+        offset += 1
+
+        if target_date.weekday() >= 5:
+            continue
+
+        dates.append(
+            target_date.strftime(
+                "%Y%m%d"
+            )
+        )
+
+    return dates
+
 def get_investor_daily_history(
     stock_code: str,
 ) -> Dict[str, Any]:
@@ -691,177 +738,209 @@ def get_investor_daily_history(
             message="종목코드가 비어 있습니다.",
         )
 
-    query_date = datetime.now(
-        KST
-    ).strftime(
-        "%Y%m%d"
-    )
+    last_data: Dict[str, Any] = {}
+    last_message = ""
+    last_query_date = ""
 
-    data = safe_kis_request(
-        "FHPTJ04160001",
-        (
-            "/uapi/domestic-stock/v1/"
-            "quotations/"
-            "investor-trade-by-stock-daily"
-        ),
-        {
-            "FID_COND_MRKT_DIV_CODE": "J",
-            "FID_INPUT_ISCD": stock_code,
-            "FID_INPUT_DATE_1": query_date,
-            "FID_ORG_ADJ_PRC": "",
-            "FID_ETC_CLS_CODE": "",
-        },
-    )
-
-    raw_rows = collect_response_rows(
-        data
-    )
-
-    rows_by_date: Dict[
-        str,
-        Dict[str, Any],
-    ] = {}
-
-    for row in raw_rows:
-        date = safe_text(
-            first_value(
-                row,
-                (
-                    "stck_bsop_date",
-                    "bsop_date",
-                    "date",
-                ),
-                "",
-            )
+    for query_date in recent_business_dates(
+        maximum_days=10,
+    ):
+        data = safe_kis_request(
+            "FHPTJ04160001",
+            (
+                "/uapi/domestic-stock/v1/"
+                "quotations/"
+                "investor-trade-by-stock-daily"
+            ),
+            {
+                "FID_COND_MRKT_DIV_CODE": "J",
+                "FID_INPUT_ISCD": stock_code,
+                "FID_INPUT_DATE_1": query_date,
+                "FID_ORG_ADJ_PRC": "",
+                "FID_ETC_CLS_CODE": "",
+            },
         )
 
-        if not date:
+        last_data = data
+        last_query_date = query_date
+        last_message = safe_text(
+            data.get("msg1")
+        )
+
+        raw_rows = collect_response_rows(
+            data
+        )
+
+        rows_by_date: Dict[
+            str,
+            Dict[str, Any],
+        ] = {}
+
+        for row in raw_rows:
+            date = safe_text(
+                first_value(
+                    row,
+                    (
+                        "stck_bsop_date",
+                        "bsop_date",
+                        "date",
+                    ),
+                    "",
+                )
+            )
+
+            if not date:
+                continue
+
+            normalized = {
+                "날짜": date,
+                "외국인순매수": safe_float(
+                    first_value(
+                        row,
+                        (
+                            "frgn_ntby_qty",
+                            "frgn_ntby_vol",
+                        ),
+                    )
+                ),
+                "기관순매수": safe_float(
+                    first_value(
+                        row,
+                        (
+                            "orgn_ntby_qty",
+                            "inst_ntby_qty",
+                        ),
+                    )
+                ),
+                "개인순매수": safe_float(
+                    first_value(
+                        row,
+                        (
+                            "prsn_ntby_qty",
+                            "individual_ntby_qty",
+                        ),
+                    )
+                ),
+            }
+
+            if not any(
+                normalized[key] != 0
+                for key in (
+                    "외국인순매수",
+                    "기관순매수",
+                    "개인순매수",
+                )
+            ):
+                continue
+
+            rows_by_date[date] = normalized
+
+        rows = sorted(
+            rows_by_date.values(),
+            key=lambda item: item["날짜"],
+        )
+
+        if not rows:
+            print(
+                "INVESTOR HISTORY EMPTY:",
+                query_date,
+                safe_text(
+                    data.get("rt_cd")
+                ),
+                last_message,
+            )
             continue
 
-        normalized = {
-            "날짜": date,
-            "외국인순매수": safe_float(
-                first_value(
-                    row,
-                    (
-                        "frgn_ntby_qty",
-                        "frgn_ntby_vol",
-                    ),
+        def cumulative(
+            key: str,
+            period: int,
+        ) -> float:
+            return sum(
+                safe_float(
+                    row.get(key)
                 )
+                for row in rows[-period:]
+            )
+
+        count = len(rows)
+
+        foreign_5 = cumulative(
+            "외국인순매수",
+            5,
+        )
+        foreign_20 = cumulative(
+            "외국인순매수",
+            20,
+        )
+        institution_5 = cumulative(
+            "기관순매수",
+            5,
+        )
+        institution_20 = cumulative(
+            "기관순매수",
+            20,
+        )
+
+        print(
+            "INVESTOR HISTORY OK:",
+            query_date,
+            count,
+        )
+
+        return {
+            "응답상태": safe_text(
+                data.get("rt_cd")
             ),
-            "기관순매수": safe_float(
-                first_value(
-                    row,
-                    (
-                        "orgn_ntby_qty",
-                        "inst_ntby_qty",
-                    ),
-                )
+            "응답메시지": last_message,
+            "데이터상태": response_status(
+                data,
+                count,
             ),
-            "개인순매수": safe_float(
-                first_value(
-                    row,
-                    (
-                        "prsn_ntby_qty",
-                        "individual_ntby_qty",
-                    ),
-                )
-            ),
+            "조회기준일": query_date,
+            "데이터개수": count,
+            "최초일": rows[0]["날짜"],
+            "최종일": rows[-1]["날짜"],
+            "누적": {
+                "외국인5일": foreign_5,
+                "외국인20일": foreign_20,
+                "기관5일": institution_5,
+                "기관20일": institution_20,
+                "개인5일": cumulative(
+                    "개인순매수",
+                    5,
+                ),
+                "개인20일": cumulative(
+                    "개인순매수",
+                    20,
+                ),
+                "외국인기관합산5일": (
+                    foreign_5
+                    + institution_5
+                ),
+                "외국인기관합산20일": (
+                    foreign_20
+                    + institution_20
+                ),
+            },
+            "일별수급": rows,
         }
 
-        if not any(
-            normalized[key] != 0
-            for key in (
-                "외국인순매수",
-                "기관순매수",
-                "개인순매수",
-            )
-        ):
-            continue
-
-        rows_by_date[date] = normalized
-
-    rows = sorted(
-        rows_by_date.values(),
-        key=lambda item: item["날짜"],
+    result = empty_investor_result(
+        code=safe_text(
+            last_data.get("rt_cd"),
+            "NO_DATA",
+        ),
+        message=(
+            last_message
+            or "최근 평일 기준 투자자 일별 수급 데이터가 없습니다."
+        ),
     )
 
-    def cumulative(
-        key: str,
-        period: int,
-    ) -> float:
-        return sum(
-            safe_float(
-                row.get(key)
-            )
-            for row in rows[-period:]
-        )
-
-    count = len(rows)
-
-    foreign_5 = cumulative(
-        "외국인순매수",
-        5,
-    )
-    foreign_20 = cumulative(
-        "외국인순매수",
-        20,
-    )
-    institution_5 = cumulative(
-        "기관순매수",
-        5,
-    )
-    institution_20 = cumulative(
-        "기관순매수",
-        20,
+    result["조회기준일"] = (
+        last_query_date
     )
 
-    return {
-        "응답상태": safe_text(
-            data.get("rt_cd")
-        ),
-        "응답메시지": safe_text(
-            data.get("msg1")
-        ),
-        "데이터상태": response_status(
-            data,
-            count,
-        ),
-        "데이터개수": count,
-        "최초일": (
-            rows[0]["날짜"]
-            if rows
-            else ""
-        ),
-        "최종일": (
-            rows[-1]["날짜"]
-            if rows
-            else ""
-        ),
-        "누적": {
-            "외국인5일": foreign_5,
-            "외국인20일": foreign_20,
-            "기관5일": institution_5,
-            "기관20일": institution_20,
-            "개인5일": cumulative(
-                "개인순매수",
-                5,
-            ),
-            "개인20일": cumulative(
-                "개인순매수",
-                20,
-            ),
-            "외국인기관합산5일": (
-                foreign_5
-                + institution_5
-            ),
-            "외국인기관합산20일": (
-                foreign_20
-                + institution_20
-            ),
-        },
-        "일별수급": rows,
-    }
+    return result
 
 
 def detect_program_net_values(
