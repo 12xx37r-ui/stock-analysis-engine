@@ -13,15 +13,13 @@ from collectors.kis import (
 )
 
 
-from financial import (
+from analyzers.financial import (
     analyze_financial
 )
 
-
-from value import (
+from analyzers.valuation import (
     calculate_value
 )
-
 
 from predictor import (
     predict_stock
