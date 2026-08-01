@@ -1,5 +1,5 @@
 """
-KIS 과거 데이터 수집기 V2.2
+KIS 과거 데이터 수집기 V2.3
 
 기능
 1. 종목 일봉 및 기술지표
@@ -336,20 +336,20 @@ def empty_investor_result(
 
 
 def empty_program_result(
-    market_code: str = "K",
+    stock_code: str = "",
     code: str = "NOT_COLLECTED",
     message: str = "",
 ) -> Dict[str, Any]:
     return {
-        "시장": (
-            "KOSDAQ"
-            if market_code == "Q"
-            else "KOSPI"
-        ),
+        "종목코드": stock_code,
+        "수집구분": "종목별 프로그램매매",
         "응답상태": code,
         "응답메시지": message,
         "데이터상태": "실패",
         "데이터개수": 0,
+        "조회기준일": "",
+        "최초일": "",
+        "최종일": "",
         "누적": {
             "프로그램순매수수량5일": 0.0,
             "프로그램순매수수량20일": 0.0,
@@ -358,6 +358,7 @@ def empty_program_result(
         },
         "일별프로그램": [],
     }
+
 
 
 def get_daily_price_history(
@@ -943,221 +944,143 @@ def get_investor_daily_history(
     return result
 
 
-def detect_program_net_values(
-    row: Dict[str, Any],
-) -> Tuple[float, float]:
-    quantity_keys = (
-        "whol_ntby_qty",
-        "pgtr_ntby_qty",
-        "total_ntby_qty",
-        "ntby_qty",
-    )
-
-    amount_keys = (
-        "whol_ntby_tr_pbmn",
-        "pgtr_ntby_tr_pbmn",
-        "total_ntby_tr_pbmn",
-        "ntby_tr_pbmn",
-    )
-
-    net_quantity = safe_float(
-        first_value(
-            row,
-            quantity_keys,
-        )
-    )
-
-    net_amount = safe_float(
-        first_value(
-            row,
-            amount_keys,
-        )
-    )
-
-    if (
-        net_quantity == 0
-        and net_amount == 0
-    ):
-        for key, value in row.items():
-            lowered = key.lower()
-
-            if "ntby" not in lowered:
-                continue
-
-            numeric = safe_float(value)
-
-            if numeric == 0:
-                continue
-
-            if (
-                "qty" in lowered
-                or "vol" in lowered
-            ):
-                net_quantity = numeric
-
-            if (
-                "pbmn" in lowered
-                or "amt" in lowered
-            ):
-                net_amount = numeric
-
-    return (
-        net_quantity,
-        net_amount,
-    )
-
-
 def get_program_trade_history(
+    stock_code: str,
     market_code: str = "K",
     calendar_days: int = DEFAULT_PROGRAM_DAYS,
 ) -> Dict[str, Any]:
-    market_code = safe_text(
-        market_code,
-        "K",
-    ).upper()
+    """
+    KIS 종목별 프로그램매매추이(일별).
 
-    if market_code not in {
-        "K",
-        "Q",
-    }:
-        market_code = "K"
+    공식 API
+    - TR ID: FHPPG04650201
+    - URL: /uapi/domestic-stock/v1/quotations/program-trade-by-stock-daily
 
-    calendar_days = max(
-        safe_int(
-            calendar_days,
-            DEFAULT_PROGRAM_DAYS,
-        ),
-        20,
-    )
+    점수에는 정확한 종목별 순매수수량만 사용한다.
+    금액은 출력·확인용으로 보존하고 점수 계산에는 사용하지 않는다.
+    """
+    del market_code
+    del calendar_days
 
-    end_date = datetime.now(
-        KST
-    ).date()
+    stock_code = safe_text(stock_code)
 
-    start_date = (
-        end_date
-        - timedelta(
-            days=calendar_days
+    if not stock_code:
+        return empty_program_result(
+            stock_code=stock_code,
+            code="INVALID_STOCK_CODE",
+            message="종목코드가 비어 있습니다.",
         )
+
+    query_dates = ["", *recent_business_dates(maximum_days=5)]
+    last_data: Dict[str, Any] = {}
+    last_message = ""
+    last_query_date = ""
+
+    quantity_keys = (
+        "whol_smtn_ntby_qty",
+        "whol_ntby_qty",
+    )
+    amount_keys = (
+        "whol_smtn_ntby_tr_pbmn",
+        "whol_ntby_tr_pbmn",
+    )
+    sell_quantity_keys = (
+        "whol_smtn_seln_qty",
+        "whol_seln_qty",
+    )
+    buy_quantity_keys = (
+        "whol_smtn_shnu_qty",
+        "whol_shnu_qty",
+    )
+    sell_amount_keys = (
+        "whol_smtn_seln_tr_pbmn",
+        "whol_seln_tr_pbmn",
+    )
+    buy_amount_keys = (
+        "whol_smtn_shnu_tr_pbmn",
+        "whol_shnu_tr_pbmn",
     )
 
-    data = safe_kis_request(
-        "FHPPG04600001",
-        (
-            "/uapi/domestic-stock/v1/"
-            "quotations/"
-            "comp-program-trade-daily"
-        ),
-        {
-            "FID_COND_MRKT_DIV_CODE": "J",
-            "FID_MRKT_CLS_CODE": market_code,
-            "FID_INPUT_DATE_1": (
-                start_date.strftime(
-                    "%Y%m%d"
+    for query_date in query_dates:
+        data = safe_kis_request(
+            "FHPPG04650201",
+            "/uapi/domestic-stock/v1/quotations/program-trade-by-stock-daily",
+            {
+                "FID_COND_MRKT_DIV_CODE": "J",
+                "FID_INPUT_ISCD": stock_code,
+                "FID_INPUT_DATE_1": query_date,
+            },
+        )
+
+        last_data = data
+        last_message = safe_text(data.get("msg1"))
+        last_query_date = query_date
+        raw_rows = collect_response_rows(data)
+        rows_by_date: Dict[str, Dict[str, Any]] = {}
+
+        for row in raw_rows:
+            date = safe_text(first_value(row, ("stck_bsop_date", "bsop_date", "date"), ""))
+            has_program_field = any(
+                key in row
+                for key in (
+                    *quantity_keys,
+                    *amount_keys,
+                    *sell_quantity_keys,
+                    *buy_quantity_keys,
+                    *sell_amount_keys,
+                    *buy_amount_keys,
                 )
-            ),
-            "FID_INPUT_DATE_2": (
-                end_date.strftime(
-                    "%Y%m%d"
-                )
-            ),
-        },
-    )
-
-    raw_rows = collect_response_rows(
-        data
-    )
-
-    rows_by_date: Dict[
-        str,
-        Dict[str, Any],
-    ] = {}
-
-    for row in raw_rows:
-        date = safe_text(
-            first_value(
-                row,
-                (
-                    "stck_bsop_date",
-                    "bsop_date",
-                    "date",
-                ),
-                "",
             )
-        )
 
-        if not date:
+            if not date or not has_program_field:
+                continue
+
+            rows_by_date[date] = {
+                "날짜": date,
+                "프로그램매도수량": safe_float(first_value(row, sell_quantity_keys)),
+                "프로그램매수수량": safe_float(first_value(row, buy_quantity_keys)),
+                "프로그램순매수수량": safe_float(first_value(row, quantity_keys)),
+                "프로그램매도금액": safe_float(first_value(row, sell_amount_keys)),
+                "프로그램매수금액": safe_float(first_value(row, buy_amount_keys)),
+                "프로그램순매수금액": safe_float(first_value(row, amount_keys)),
+            }
+
+        rows = sorted(rows_by_date.values(), key=lambda item: item["날짜"])
+
+        if not rows:
+            print("PROGRAM HISTORY EMPTY:", query_date or "LATEST", safe_text(data.get("rt_cd")), last_message)
             continue
 
-        (
-            net_quantity,
-            net_amount,
-        ) = detect_program_net_values(
-            row
-        )
+        count = len(rows)
+        print("PROGRAM HISTORY OK:", query_date or "LATEST", count)
 
-        rows_by_date[date] = {
-            "날짜": date,
-            "프로그램순매수수량": (
-                net_quantity
-            ),
-            "프로그램순매수금액": (
-                net_amount
-            ),
+        return {
+            "종목코드": stock_code,
+            "수집구분": "종목별 프로그램매매",
+            "응답상태": safe_text(data.get("rt_cd")),
+            "응답메시지": last_message,
+            "데이터상태": response_status(data, count),
+            "데이터개수": count,
+            "조회기준일": query_date,
+            "최초일": rows[0]["날짜"],
+            "최종일": rows[-1]["날짜"],
+            "누적": {
+                "프로그램순매수수량5일": sum(row["프로그램순매수수량"] for row in rows[-5:]),
+                "프로그램순매수수량20일": sum(row["프로그램순매수수량"] for row in rows[-20:]),
+                "프로그램순매수금액5일": sum(row["프로그램순매수금액"] for row in rows[-5:]),
+                "프로그램순매수금액20일": sum(row["프로그램순매수금액"] for row in rows[-20:]),
+            },
+            "일별프로그램": rows,
         }
 
-    rows = sorted(
-        rows_by_date.values(),
-        key=lambda item: item["날짜"],
+    result = empty_program_result(
+        stock_code=stock_code,
+        code=safe_text(last_data.get("rt_cd"), "NO_DATA"),
+        message=last_message or "최근 종목별 프로그램매매 데이터가 없습니다.",
     )
+    result["조회기준일"] = last_query_date
+    return result
 
-    count = len(rows)
-
-    return {
-        "시장": (
-            "KOSDAQ"
-            if market_code == "Q"
-            else "KOSPI"
-        ),
-        "응답상태": safe_text(
-            data.get("rt_cd")
-        ),
-        "응답메시지": safe_text(
-            data.get("msg1")
-        ),
-        "데이터상태": response_status(
-            data,
-            count,
-        ),
-        "데이터개수": count,
-        "누적": {
-            "프로그램순매수수량5일": sum(
-                row[
-                    "프로그램순매수수량"
-                ]
-                for row in rows[-5:]
-            ),
-            "프로그램순매수수량20일": sum(
-                row[
-                    "프로그램순매수수량"
-                ]
-                for row in rows[-20:]
-            ),
-            "프로그램순매수금액5일": sum(
-                row[
-                    "프로그램순매수금액"
-                ]
-                for row in rows[-5:]
-            ),
-            "프로그램순매수금액20일": sum(
-                row[
-                    "프로그램순매수금액"
-                ]
-                for row in rows[-20:]
-            ),
-        },
-        "일별프로그램": rows,
-    }
 
 
 def safe_collect(
@@ -1278,11 +1201,12 @@ def get_history_bundle(
     program_history = safe_collect(
         "PROGRAM",
         lambda: get_program_trade_history(
-            market_code=market_code
+            stock_code=stock_code,
+            market_code=market_code,
         ),
         lambda code, message: (
             empty_program_result(
-                market_code=market_code,
+                stock_code=stock_code,
                 code=code,
                 message=message,
             )
