@@ -23,6 +23,11 @@ from value import (
 )
 
 
+from predictor import (
+    predict_stock
+)
+
+
 
 COMPANY = "삼성전자"
 
@@ -60,7 +65,6 @@ def get_market_data(stock_code):
         ),
 
 
-
         "전일대비":
         float(
             price.get(
@@ -68,7 +72,6 @@ def get_market_data(stock_code):
                 0
             )
         ),
-
 
 
         "등락률":
@@ -80,7 +83,6 @@ def get_market_data(stock_code):
         ),
 
 
-
         "거래량":
         int(
             price.get(
@@ -88,7 +90,6 @@ def get_market_data(stock_code):
                 0
             )
         ),
-
 
 
         "시가":
@@ -100,7 +101,6 @@ def get_market_data(stock_code):
         ),
 
 
-
         "고가":
         float(
             price.get(
@@ -108,7 +108,6 @@ def get_market_data(stock_code):
                 0
             )
         ),
-
 
 
         "저가":
@@ -120,7 +119,6 @@ def get_market_data(stock_code):
         ),
 
 
-
         "PER":
         float(
             price.get(
@@ -128,7 +126,6 @@ def get_market_data(stock_code):
                 0
             )
         ),
-
 
 
         "PBR":
@@ -140,7 +137,6 @@ def get_market_data(stock_code):
         ),
 
 
-
         "EPS":
         float(
             price.get(
@@ -150,7 +146,6 @@ def get_market_data(stock_code):
         ),
 
 
-
         "BPS":
         float(
             price.get(
@@ -158,7 +153,6 @@ def get_market_data(stock_code):
                 0
             )
         ),
-
 
 
         "시가총액":
@@ -196,7 +190,6 @@ def get_market_data(stock_code):
             )
 
         },
-
 
 
         "데이터출처":
@@ -238,11 +231,16 @@ def main():
 
 
     value = calculate_value(
-
         financial,
-
         market
+    )
 
+
+
+    prediction = predict_stock(
+        market,
+        financial,
+        value
     )
 
 
@@ -274,10 +272,15 @@ def main():
         value,
 
 
+        "주가예측":
+        prediction,
+
+
         "생성시간":
         datetime.now().isoformat()
 
     }
+
 
 
 
@@ -294,6 +297,7 @@ def main():
         )
 
     )
+
 
 
 
