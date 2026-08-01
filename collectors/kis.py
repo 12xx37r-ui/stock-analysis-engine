@@ -1,116 +1,348 @@
-Skip to content
-12xx37r-ui
-stock-analysis-engine
-Repository navigation
-Code
-Issues
-Pull requests
-Actions
-Projects
-Wiki
-Security and quality
-Insights
-Settings
-run-engine
-run-engine #88
-All jobs
-Run details
-Annotations
-1 warning
-run
-succeeded now in 24s
-Search logs
-1s
-0s
-0s
-13s
-7s
-Run python main.py
-START ENGINE
-REQUEST TOKEN
-TOKEN OK
-{
-  "기업명": "삼성전자",
-  "DART기업코드": "00126380",
-  "KIS종목코드": "005930",
-  "재무분석": {
-    "재무지표": {
-      "ROE": 10.36,
-      "부채비율": 29.94,
-      "영업이익률": 13.07,
-      "순이익률": 13.55
-    },
-    "성장지표": {
-      "매출3년성장률": 28.84,
-      "영업이익3년성장률": 563.94,
-      "순이익3년성장률": 191.9
-    },
-    "버핏평가": {
-      "점수": 80,
-      "판정": "버핏형 우수기업",
-      "좋은점": [
-        "ROE는 양호하지만 최고 수준은 아닙니다.",
-        "부채비율이 낮아 재무 안전성이 좋습니다.",
-        "최근 매출 성장 흐름이 좋습니다.",
-        "영업이익 성장성이 우수합니다.",
-        "영업이익률이 좋아 높은 수익성을 보여줍니다."
-      ],
-      "주의점": []
-    },
-    "투자자해설": {
-      "ROE": "ROE는 회사가 주주의 돈을 이용해 얼마나 많은 이익을 만드는지 나타냅니다. 높을수록 자본 활용 능력이 좋습니다.",
-      "부채비율": "부채비율은 회사가 가진 자기 돈 대비 빚의 규모입니다. 낮을수록 경기 침체에도 버틸 힘이 있습니다.",
-      "영업이익률": "영업이익률은 물건을 팔고 비용을 제외한 뒤 얼마가 남는지를 보여주는 기업 경쟁력 지표입니다."
-    },
-    "원본": {
-      "매출": 333605938000000.0,
-      "영업이익": 43601051000000.0,
-      "순이익": 45206805000000.0
+import json
+import os
+import time
+from datetime import datetime, timedelta, timezone
+
+import requests
+
+from config import (
+    KIS_APP_KEY,
+    KIS_APP_SECRET,
+    KIS_BASE_URL,
+)
+
+
+ACCESS_TOKEN = None
+TOKEN_FILE = "kis_token.json"
+KST = timezone(timedelta(hours=9))
+
+
+def safe_float(value):
+    try:
+        if value in (None, ""):
+            return 0.0
+
+        return float(str(value).replace(",", ""))
+
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def load_token():
+    global ACCESS_TOKEN
+
+    if not os.path.exists(TOKEN_FILE):
+        return None
+
+    try:
+        with open(TOKEN_FILE, "r", encoding="utf-8") as file:
+            data = json.load(file)
+
+        token = data.get("access_token")
+
+        if token:
+            ACCESS_TOKEN = token
+            print("TOKEN LOADED")
+            return token
+
+    except Exception as error:
+        print("TOKEN LOAD ERROR:", error)
+
+    return None
+
+
+def save_token(token):
+    try:
+        with open(TOKEN_FILE, "w", encoding="utf-8") as file:
+            json.dump(
+                {
+                    "access_token": token,
+                    "saved_at": datetime.now(KST).isoformat(),
+                },
+                file,
+                ensure_ascii=False,
+                indent=2,
+            )
+
+    except Exception as error:
+        print("TOKEN SAVE ERROR:", error)
+
+
+def clear_token():
+    global ACCESS_TOKEN
+
+    ACCESS_TOKEN = None
+
+    try:
+        if os.path.exists(TOKEN_FILE):
+            os.remove(TOKEN_FILE)
+
+    except Exception as error:
+        print("TOKEN FILE DELETE ERROR:", error)
+
+
+def get_access_token(force=False):
+    global ACCESS_TOKEN
+
+    if ACCESS_TOKEN and not force:
+        return ACCESS_TOKEN
+
+    if not force:
+        saved_token = load_token()
+
+        if saved_token:
+            return saved_token
+
+    print("REQUEST TOKEN")
+
+    url = KIS_BASE_URL + "/oauth2/tokenP"
+
+    body = {
+        "grant_type": "client_credentials",
+        "appkey": KIS_APP_KEY,
+        "appsecret": KIS_APP_SECRET,
     }
-  },
-  "시장정보": {
-    "현재가": 262500.0,
-    "전일대비": 55500.0,
-    "등락률": 26.81,
-    "거래량": 58478873,
-    "시가": 257000.0,
-    "고가": 267000.0,
-    "저가": 243000.0,
-    "PER": 39.99,
-    "PBR": 4.1,
-    "EPS": 6564.0,
-    "BPS": 63997.0,
-    "시가총액": 15346481.0,
-    "수급": {
-      "외국인순매수": 0.0,
-      "기관순매수": 0.0,
-      "개인순매수": 0.0
-    },
-    "데이터출처": "한국투자증권 KIS"
-  },
-  "가치평가": {
-    "현재가": 262500.0,
-    "실제PER": 39.99,
-    "실제PBR": 4.1,
-    "EPS": 6564.0,
-    "BPS": 63997.0,
-    "PER기준적정가": 98460.0,
-    "PBR기준적정가": 95995.5,
-    "재무적정가": 262500.0,
-    "기본적정가": 152318.5,
-    "현재가대비": -41.97390476190476,
-    "판단": "고평가"
-  },
-  "주가예측": {
-    "단기1~5일": {
-      "기간": "1~5일",
-      "점수": 70,
-      "상승확률": 70,
-      "근거": [
-        "거래량",
-        "가격 흐름"
-      ]
-    },
-0s
-1s
-0s
+
+    try:
+        response = requests.post(
+            url,
+            json=body,
+            timeout=15,
+        )
+        response.raise_for_status()
+
+        data = response.json()
+        token = data.get("access_token")
+
+        if token:
+            ACCESS_TOKEN = token
+            save_token(token)
+            print("TOKEN OK")
+            return token
+
+        print(
+            "TOKEN FAIL:",
+            data.get("error_description")
+            or data.get("msg1")
+            or data,
+        )
+
+    except Exception as error:
+        print("TOKEN ERROR:", error)
+
+    ACCESS_TOKEN = None
+    return None
+
+
+def kis_request(tr_id, path, params):
+    token_reissued = False
+
+    for attempt in range(3):
+        token = get_access_token()
+
+        if not token:
+            return {
+                "rt_cd": "TOKEN_ERROR",
+                "msg_cd": "",
+                "msg1": "토큰 발급 실패",
+                "output": [],
+            }
+
+        headers = {
+            "authorization": "Bearer " + token,
+            "appkey": KIS_APP_KEY,
+            "appsecret": KIS_APP_SECRET,
+            "tr_id": tr_id,
+            "custtype": "P",
+        }
+
+        try:
+            time.sleep(1.5)
+
+            response = requests.get(
+                KIS_BASE_URL + path,
+                headers=headers,
+                params=params,
+                timeout=15,
+            )
+            response.raise_for_status()
+
+            data = response.json()
+
+            msg_code = str(data.get("msg_cd", ""))
+            message = str(data.get("msg1", ""))
+
+            rate_limited = (
+                msg_code == "EGW00201"
+                or "초당 거래건수" in message
+                or "초당" in message
+            )
+
+            if rate_limited:
+                print("KIS RATE LIMIT WAIT")
+                time.sleep(5 + attempt)
+                continue
+
+            token_error = (
+                "토큰" in message
+                or "TOKEN" in message.upper()
+                or msg_code in {
+                    "EGW00121",
+                    "EGW00122",
+                    "EGW00123",
+                }
+            )
+
+            if token_error and not token_reissued:
+                print("TOKEN REISSUE")
+
+                clear_token()
+                token_reissued = True
+
+                new_token = get_access_token(force=True)
+
+                if not new_token:
+                    return {
+                        "rt_cd": "TOKEN_ERROR",
+                        "msg_cd": msg_code,
+                        "msg1": "토큰 재발급 실패",
+                        "output": [],
+                    }
+
+                continue
+
+            return data
+
+        except Exception as error:
+            print("KIS REQUEST ERROR:", error)
+            time.sleep(2 + attempt)
+
+    return {
+        "rt_cd": "REQUEST_ERROR",
+        "msg_cd": "",
+        "msg1": "KIS 요청 실패",
+        "output": [],
+    }
+
+
+def get_stock_price(stock_code):
+    data = kis_request(
+        "FHKST01010100",
+        "/uapi/domestic-stock/v1/quotations/inquire-price",
+        {
+            "FID_COND_MRKT_DIV_CODE": "J",
+            "FID_INPUT_ISCD": stock_code,
+        },
+    )
+
+    output = data.get("output", {})
+
+    if isinstance(output, dict):
+        return output
+
+    return {}
+
+
+def extract_investor_row(data):
+    investor_keys = {
+        "frgn_ntby_qty",
+        "orgn_ntby_qty",
+        "prsn_ntby_qty",
+    }
+
+    for output_name in ("output2", "output", "output1"):
+        output = data.get(output_name)
+
+        if isinstance(output, dict):
+            if investor_keys.intersection(output.keys()):
+                return output
+
+        if isinstance(output, list):
+            for row in output:
+                if not isinstance(row, dict):
+                    continue
+
+                if investor_keys.intersection(row.keys()):
+                    return row
+
+    return {}
+
+
+def recent_business_dates(maximum_days=7):
+    current_date = datetime.now(KST).date()
+    dates = []
+    offset = 0
+
+    while len(dates) < maximum_days and offset < 20:
+        target_date = current_date - timedelta(days=offset)
+        offset += 1
+
+        if target_date.weekday() >= 5:
+            continue
+
+        dates.append(target_date.strftime("%Y%m%d"))
+
+    return dates
+
+
+def get_investor_trade(stock_code):
+    last_data = {}
+    last_message = ""
+
+    for query_date in recent_business_dates(maximum_days=7):
+        data = kis_request(
+            "FHPTJ04160001",
+            "/uapi/domestic-stock/v1/quotations/inquire-investor",
+            {
+                "FID_COND_MRKT_DIV_CODE": "J",
+                "FID_INPUT_ISCD": stock_code,
+                "FID_INPUT_DATE_1": query_date,
+                "FID_ORG_ADJ_PRC": "0",
+                "FID_ETC_CLS_CODE": "00",
+            },
+        )
+
+        last_data = data
+        last_message = str(data.get("msg1", ""))
+
+        row = extract_investor_row(data)
+
+        if not row:
+            print(
+                "INVESTOR DATA EMPTY:",
+                query_date,
+                last_message,
+            )
+            continue
+
+        foreign_net = safe_float(row.get("frgn_ntby_qty"))
+        institution_net = safe_float(row.get("orgn_ntby_qty"))
+        individual_net = safe_float(row.get("prsn_ntby_qty"))
+
+        print(
+            "INVESTOR DATA OK:",
+            query_date,
+            foreign_net,
+            institution_net,
+            individual_net,
+        )
+
+        return {
+            "외국인순매수": foreign_net,
+            "기관순매수": institution_net,
+            "개인순매수": individual_net,
+            "조회일": row.get("stck_bsop_date") or query_date,
+            "응답상태": data.get("rt_cd", ""),
+            "응답메시지": last_message,
+        }
+
+    print("INVESTOR DATA FAILED:", last_message)
+
+    return {
+        "외국인순매수": 0.0,
+        "기관순매수": 0.0,
+        "개인순매수": 0.0,
+        "조회일": "",
+        "응답상태": last_data.get("rt_cd", ""),
+        "응답메시지": last_message,
+    }
