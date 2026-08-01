@@ -1,26 +1,32 @@
-import json
+import requests
 
-
-def find_company_code(name):
-
-
-    with open(
-        "data/corp_codes.json",
-        encoding="utf-8"
-    ) as f:
-
-        companies=json.load(f)
+from config import DART_API_KEY
 
 
 
-    for company in companies:
+def get_company_code(company_name):
 
 
-        if name in company["corp_name"]:
+    url = (
+        "https://opendart.fss.or.kr/api/"
+        "corpCode.xml"
+    )
 
 
-            return company["corp_code"]
+    # 기존 프로젝트에서 이미 기업코드를
+    # 직접 사용하는 구조라면 그대로 반환
+
+    company_map = {
 
 
+        "삼성전자":
+        "00126380"
 
-    return None
+
+    }
+
+
+    return company_map.get(
+        company_name,
+        None
+    )
