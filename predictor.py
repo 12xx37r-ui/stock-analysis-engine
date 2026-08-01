@@ -1,5 +1,5 @@
 """
-주가예측 통합 엔진 V4
+주가예측 통합 엔진 V6
 - KIS 과거 일봉
 - 5일·20일 누적 수급
 - 시장 프로그램매매
@@ -702,6 +702,80 @@ def disclosure_signal(
     )
 
 
+
+def nested_analysis_signal(
+    analysis,
+    section_name,
+):
+    if not isinstance(analysis, dict):
+        return {
+            "signal": 0.0,
+            "quality": 0.0,
+            "status": "미수집",
+            "section": {},
+        }
+
+    section = analysis.get(
+        section_name,
+        {},
+    )
+
+    if not isinstance(section, dict):
+        section = {}
+
+    return {
+        "signal": normalize_signal(
+            safe_float(
+                section.get("신호")
+            )
+        ),
+        "quality": clamp(
+            safe_float(
+                section.get("데이터품질")
+            )
+            / 100.0,
+            0.0,
+            1.0,
+        ),
+        "status": str(
+            analysis.get(
+                "분석상태",
+                "미수집",
+            )
+        ),
+        "section": section,
+    }
+
+
+def choose_signal(
+    primary,
+    fallback,
+    primary_source,
+    fallback_source,
+):
+    if primary["quality"] > 0:
+        return {
+            "signal": primary["signal"],
+            "quality": primary["quality"],
+            "source": primary_source,
+            "used_fallback": False,
+            "section": primary.get(
+                "section",
+                {},
+            ),
+        }
+
+    return {
+        "signal": fallback["signal"],
+        "quality": fallback["quality"],
+        "source": fallback_source,
+        "used_fallback": True,
+        "section": fallback.get(
+            "section",
+            {},
+        ),
+    }
+
 def calculate_short_term(
     market,
     disclosure_analysis=None,
@@ -832,47 +906,127 @@ def calculate_mid_term(
     financial,
     disclosure_analysis=None,
     global_analysis=None,
+    fundamentals_analysis=None,
+    industry_analysis=None,
 ):
     reasons = []
 
-    earnings = earnings_signal(financial)
-    accumulated = accumulated_supply_signal(market)
-    historical = historical_technical_signal(market)
+    legacy_earnings = earnings_signal(
+        financial
+    )
+
+    fundamental_earnings = (
+        nested_analysis_signal(
+            fundamentals_analysis,
+            "분기실적",
+        )
+    )
+
+    earnings = choose_signal(
+        fundamental_earnings,
+        legacy_earnings,
+        "OpenDART 최신 분기 전년동기 실적",
+        "DART 3년 성장률 대용",
+    )
+
+    industry = nested_analysis_signal(
+        industry_analysis,
+        "중기산업선행",
+    )
+
+    accumulated = accumulated_supply_signal(
+        market
+    )
+
+    historical = historical_technical_signal(
+        market
+    )
+
     global_macro = external_signal(
         global_analysis,
         "중기신호",
         "중기데이터품질",
     )
+
     disclosure = disclosure_signal(
         disclosure_analysis
     )
 
     if earnings["signal"] >= 60:
-        add_reason(reasons, "매출·영업이익·순이익 성장 흐름이 강함")
+        add_reason(
+            reasons,
+            "최신 실적 성장 신호가 매우 강함",
+        )
     elif earnings["signal"] >= 20:
-        add_reason(reasons, "재무 성장 흐름이 양호")
+        add_reason(
+            reasons,
+            "최신 실적 성장 신호가 양호",
+        )
     elif earnings["signal"] <= -20:
-        add_reason(reasons, "재무 성장 흐름이 약함")
+        add_reason(
+            reasons,
+            "최신 실적 성장 신호가 약함",
+        )
+
+    if industry["signal"] >= 60:
+        add_reason(
+            reasons,
+            "반도체 산업 선행 흐름이 매우 강함",
+        )
+    elif industry["signal"] >= 20:
+        add_reason(
+            reasons,
+            "반도체 산업 선행 흐름이 우호적",
+        )
+    elif industry["signal"] <= -20:
+        add_reason(
+            reasons,
+            "반도체 산업 선행 흐름이 비우호적",
+        )
 
     if accumulated["signal"] >= 20:
-        add_reason(reasons, "외국인·기관 5일·20일 누적수급이 우호적")
+        add_reason(
+            reasons,
+            "외국인·기관 5일·20일 누적수급이 우호적",
+        )
     elif accumulated["signal"] <= -20:
-        add_reason(reasons, "외국인·기관 5일·20일 누적수급이 비우호적")
+        add_reason(
+            reasons,
+            "외국인·기관 5일·20일 누적수급이 비우호적",
+        )
 
     if historical["signal"] >= 20:
-        add_reason(reasons, "20일·60일 가격추세가 우호적")
+        add_reason(
+            reasons,
+            "20일·60일 가격추세가 우호적",
+        )
     elif historical["signal"] <= -20:
-        add_reason(reasons, "20일·60일 가격추세가 비우호적")
+        add_reason(
+            reasons,
+            "20일·60일 가격추세가 비우호적",
+        )
 
     if global_macro["signal"] >= 20:
-        add_reason(reasons, "원달러·미국금리·글로벌 추세가 우호적")
+        add_reason(
+            reasons,
+            "원달러·미국금리·글로벌 추세가 우호적",
+        )
     elif global_macro["signal"] <= -20:
-        add_reason(reasons, "원달러·미국금리·글로벌 추세가 비우호적")
+        add_reason(
+            reasons,
+            "원달러·미국금리·글로벌 추세가 비우호적",
+        )
 
     if disclosure["signal"] >= 20:
-        add_reason(reasons, "최근 공시 이벤트가 중기 방향에 긍정적")
+        add_reason(
+            reasons,
+            "최근 공시 이벤트가 중기 방향에 긍정적",
+        )
     elif disclosure["signal"] <= -20:
-        add_reason(reasons, "최근 공시 이벤트가 중기 방향에 부정적")
+        add_reason(
+            reasons,
+            "최근 공시 이벤트가 중기 방향에 부정적",
+        )
 
     factors = [
         build_factor(
@@ -880,14 +1034,28 @@ def calculate_mid_term(
             MID_WEIGHTS["분기실적"],
             signal=earnings["signal"],
             quality=earnings["quality"],
-            source="DART 3년 성장률 대용",
-            note="실제 분기 전년동기·전분기 비교 데이터 연결 필요",
+            source=earnings["source"],
+            note=(
+                "최신 분기 전년동기 비교 사용"
+                if not earnings["used_fallback"]
+                else "분기 비교 실패로 3년 성장률 대용"
+            ),
         ),
         build_factor(
             "산업선행지표",
             MID_WEIGHTS["산업선행지표"],
-            source="미수집",
-            note="산업 수주·재고·가격·설비투자 연결 전",
+            signal=industry["signal"],
+            quality=industry["quality"],
+            source="반도체 산업 대표자산 합성",
+            note=(
+                f"산업국면 "
+                f"{industry_analysis.get('산업국면', '')}"
+                if isinstance(
+                    industry_analysis,
+                    dict,
+                )
+                else "산업 데이터 미수집"
+            ),
         ),
         build_factor(
             "누적수급",
@@ -896,8 +1064,10 @@ def calculate_mid_term(
             quality=accumulated["quality"],
             source="KIS 투자자별 일별 매매",
             note=(
-                f"5일 합산 {accumulated['combined_5']:.0f}주, "
-                f"20일 합산 {accumulated['combined_20']:.0f}주"
+                f"5일 합산 "
+                f"{accumulated['combined_5']:.0f}주, "
+                f"20일 합산 "
+                f"{accumulated['combined_20']:.0f}주"
             ),
         ),
         build_factor(
@@ -907,8 +1077,10 @@ def calculate_mid_term(
             quality=global_macro["quality"],
             source="Yahoo 환율·미국금리·글로벌시장",
             note=(
-                f"분석상태 {global_macro['status']}, "
-                f"신호 {global_macro['signal']:.2f}"
+                f"분석상태 "
+                f"{global_macro['status']}, "
+                f"신호 "
+                f"{global_macro['signal']:.2f}"
             ),
         ),
         build_factor(
@@ -918,8 +1090,10 @@ def calculate_mid_term(
             quality=historical["quality"],
             source="KIS 일봉",
             note=(
-                f"20일수익률 {historical['return_20']:.2f}%, "
-                f"60일수익률 {historical['return_60']:.2f}%"
+                f"20일수익률 "
+                f"{historical['return_20']:.2f}%, "
+                f"60일수익률 "
+                f"{historical['return_60']:.2f}%"
             ),
         ),
         build_factor(
@@ -929,8 +1103,10 @@ def calculate_mid_term(
             quality=disclosure["quality"],
             source="OpenDART 최근 공시",
             note=(
-                f"분석상태 {disclosure['status']}, "
-                f"신호 {disclosure['signal']:.2f}"
+                f"분석상태 "
+                f"{disclosure['status']}, "
+                f"신호 "
+                f"{disclosure['signal']:.2f}"
             ),
         ),
     ]
@@ -942,47 +1118,185 @@ def calculate_mid_term(
     )
 
 
-def calculate_long_term(financial, valuation):
+
+def calculate_long_term(
+    financial,
+    valuation,
+    fundamentals_analysis=None,
+    industry_analysis=None,
+):
     reasons = []
 
-    earnings = earnings_signal(financial)
-    quality = quality_signal(financial)
-    value = valuation_signal(valuation)
+    legacy_earnings = earnings_signal(
+        financial
+    )
 
-    if earnings["signal"] >= 60:
-        add_reason(reasons, "과거 이익 성장 방향이 강함")
-    elif earnings["signal"] <= -20:
-        add_reason(reasons, "과거 이익 성장 방향이 약함")
+    fundamental_future = (
+        nested_analysis_signal(
+            fundamentals_analysis,
+            "향후이익방향대용",
+        )
+    )
+
+    future = choose_signal(
+        fundamental_future,
+        legacy_earnings,
+        "OpenDART 최신실적·현금창출력 대용",
+        "DART 3년 성장률 대용",
+    )
+
+    industry_cycle = (
+        nested_analysis_signal(
+            industry_analysis,
+            "장기산업사이클",
+        )
+    )
+
+    quality = quality_signal(
+        financial
+    )
+
+    value = valuation_signal(
+        valuation
+    )
+
+    cash_flow = (
+        nested_analysis_signal(
+            fundamentals_analysis,
+            "현금흐름재무안전성",
+        )
+    )
+
+    if cash_flow["quality"] <= 0:
+        cash_flow = {
+            "signal": quality[
+                "safety_signal"
+            ],
+            "quality": quality[
+                "safety_quality"
+            ],
+            "status": "부채비율 대용",
+            "section": {},
+        }
+        cash_source = "부채비율 대용"
+    else:
+        cash_source = (
+            "OpenDART 현금흐름·FCF·부채비율"
+        )
+
+    shareholder = (
+        nested_analysis_signal(
+            fundamentals_analysis,
+            "주주환원",
+        )
+    )
+
+    # 지배구조 데이터가 아직 없으므로
+    # 주주환원 데이터 품질을 그대로 100% 인정하지 않는다.
+    shareholder_quality = (
+        shareholder["quality"]
+        * 0.80
+    )
+
+    if future["signal"] >= 60:
+        add_reason(
+            reasons,
+            "최신 실적과 현금창출력 기반 이익 방향이 강함",
+        )
+    elif future["signal"] <= -20:
+        add_reason(
+            reasons,
+            "최신 실적과 현금창출력 기반 이익 방향이 약함",
+        )
+
+    if industry_cycle["signal"] >= 60:
+        add_reason(
+            reasons,
+            "반도체 산업 장기 사이클이 매우 우호적",
+        )
+    elif industry_cycle["signal"] >= 20:
+        add_reason(
+            reasons,
+            "반도체 산업 장기 사이클이 우호적",
+        )
+    elif industry_cycle["signal"] <= -20:
+        add_reason(
+            reasons,
+            "반도체 산업 장기 사이클이 비우호적",
+        )
 
     if value["signal"] >= 40:
-        add_reason(reasons, "적정가 대비 안전마진이 존재")
+        add_reason(
+            reasons,
+            "적정가 대비 안전마진이 존재",
+        )
     elif value["signal"] <= -40:
-        add_reason(reasons, "현재 가격의 고평가 부담이 큼")
+        add_reason(
+            reasons,
+            "현재 가격의 고평가 부담이 큼",
+        )
 
     if quality["business_signal"] >= 40:
-        add_reason(reasons, "ROE·영업이익률·기업 품질이 양호")
+        add_reason(
+            reasons,
+            "ROE·영업이익률·기업 품질이 양호",
+        )
     elif quality["business_signal"] <= -20:
-        add_reason(reasons, "기업 경쟁력 지표가 약함")
+        add_reason(
+            reasons,
+            "기업 경쟁력 대용지표가 약함",
+        )
 
-    if quality["safety_signal"] >= 40:
-        add_reason(reasons, "부채비율 기준 재무안전성이 높음")
-    elif quality["safety_signal"] <= -20:
-        add_reason(reasons, "부채비율 기준 재무위험이 높음")
+    if cash_flow["signal"] >= 40:
+        add_reason(
+            reasons,
+            "현금흐름과 재무안전성이 우수",
+        )
+    elif cash_flow["signal"] <= -20:
+        add_reason(
+            reasons,
+            "현금흐름 또는 재무안전성이 취약",
+        )
+
+    if shareholder["signal"] >= 20:
+        add_reason(
+            reasons,
+            "배당·자기주식 기준 주주환원이 우호적",
+        )
+    elif shareholder["signal"] <= -20:
+        add_reason(
+            reasons,
+            "배당·자기주식 기준 주주환원이 비우호적",
+        )
 
     factors = [
         build_factor(
             "향후이익방향",
             LONG_WEIGHTS["향후이익방향"],
-            signal=earnings["signal"],
-            quality=earnings["quality"],
-            source="DART 과거 성장률 대용",
-            note="향후 컨센서스 없이 과거 성장률만 사용하므로 품질 감점",
+            signal=future["signal"],
+            quality=future["quality"],
+            source=future["source"],
+            note=(
+                "애널리스트 컨센서스 미반영 대용지표"
+                if not future["used_fallback"]
+                else "최신 분기자료 실패로 3년 성장률 대용"
+            ),
         ),
         build_factor(
             "산업사이클",
             LONG_WEIGHTS["산업사이클"],
-            source="미수집",
-            note="산업 선행예측 엔진 연결 전",
+            signal=industry_cycle["signal"],
+            quality=industry_cycle["quality"],
+            source="반도체 산업 대표자산 1년 추세",
+            note=(
+                f"산업국면 "
+                f"{industry_analysis.get('산업국면', '')}"
+                if isinstance(
+                    industry_analysis,
+                    dict,
+                )
+                else "산업 데이터 미수집"
+            ),
         ),
         build_factor(
             "가치평가·안전마진",
@@ -991,31 +1305,47 @@ def calculate_long_term(financial, valuation):
             quality=value["quality"],
             source="내부 가치평가",
             note=(
-                f"현재가 대비 {value['gap']:.2f}%, "
-                f"판단 {value['judgment']}"
+                f"현재가 대비 "
+                f"{value['gap']:.2f}%, "
+                f"판단 "
+                f"{value['judgment']}"
             ),
         ),
         build_factor(
             "경쟁력·시장점유율",
             LONG_WEIGHTS["경쟁력·시장점유율"],
-            signal=quality["business_signal"],
-            quality=quality["business_quality"],
+            signal=quality[
+                "business_signal"
+            ],
+            quality=quality[
+                "business_quality"
+            ],
             source="ROE·영업이익률·버핏점수 대용",
-            note="실제 시장점유율과 경쟁사 비교 연결 필요",
+            note=(
+                "실제 시장점유율과 경쟁사 비교는 아직 미연결"
+            ),
         ),
         build_factor(
             "현금흐름·재무안전성",
             LONG_WEIGHTS["현금흐름·재무안전성"],
-            signal=quality["safety_signal"],
-            quality=quality["safety_quality"],
-            source="부채비율 대용",
-            note="영업현금흐름·FCF·순현금 연결 필요",
+            signal=cash_flow["signal"],
+            quality=cash_flow["quality"],
+            source=cash_source,
+            note=(
+                f"분석상태 "
+                f"{cash_flow['status']}"
+            ),
         ),
         build_factor(
             "주주환원·지배구조",
             LONG_WEIGHTS["주주환원·지배구조"],
-            source="미수집",
-            note="배당·자사주·지배구조 데이터 연결 전",
+            signal=shareholder["signal"],
+            quality=shareholder_quality,
+            source="OpenDART 배당·자기주식",
+            note=(
+                "배당·자사주는 반영, "
+                "지배구조 정량평가는 아직 미연결"
+            ),
         ),
     ]
 
@@ -1026,53 +1356,120 @@ def calculate_long_term(financial, valuation):
     )
 
 
+
 def predict_stock(
     market,
     financial,
     value,
     disclosure_analysis=None,
     global_analysis=None,
+    fundamentals_analysis=None,
+    industry_analysis=None,
 ):
     short_term = calculate_short_term(
         market,
-        disclosure_analysis=disclosure_analysis,
-        global_analysis=global_analysis,
+        disclosure_analysis=(
+            disclosure_analysis
+        ),
+        global_analysis=(
+            global_analysis
+        ),
     )
 
     mid_term = calculate_mid_term(
         market,
         financial,
-        disclosure_analysis=disclosure_analysis,
-        global_analysis=global_analysis,
+        disclosure_analysis=(
+            disclosure_analysis
+        ),
+        global_analysis=(
+            global_analysis
+        ),
+        fundamentals_analysis=(
+            fundamentals_analysis
+        ),
+        industry_analysis=(
+            industry_analysis
+        ),
     )
 
     long_term = calculate_long_term(
         financial,
         value,
+        fundamentals_analysis=(
+            fundamentals_analysis
+        ),
+        industry_analysis=(
+            industry_analysis
+        ),
     )
 
-    supply = market.get("수급", {}) or {}
-    history = get_history(market)
+    supply = market.get(
+        "수급",
+        {},
+    ) or {}
+
+    history = get_history(
+        market
+    )
 
     disclosure_ok = (
-        isinstance(disclosure_analysis, dict)
-        and disclosure_analysis.get("분석상태") == "정상"
+        isinstance(
+            disclosure_analysis,
+            dict,
+        )
+        and disclosure_analysis.get(
+            "분석상태"
+        )
+        == "정상"
     )
 
     global_ok = (
-        isinstance(global_analysis, dict)
-        and global_analysis.get("분석상태") == "정상"
+        isinstance(
+            global_analysis,
+            dict,
+        )
+        and global_analysis.get(
+            "분석상태"
+        )
+        == "정상"
+    )
+
+    fundamentals_ok = (
+        isinstance(
+            fundamentals_analysis,
+            dict,
+        )
+        and fundamentals_analysis.get(
+            "분석상태"
+        )
+        == "정상"
+    )
+
+    industry_ok = (
+        isinstance(
+            industry_analysis,
+            dict,
+        )
+        and industry_analysis.get(
+            "분석상태"
+        )
+        == "정상"
     )
 
     return {
-        "엔진버전": "5.0.0-full-signal-integration",
+        "엔진버전": (
+            "6.0.0-fundamentals-industry"
+        ),
         "단기1~5일": short_term,
         "중기1~8주": mid_term,
         "장기6~18개월": long_term,
         "데이터완전성": {
             "KIS현재가": bool(
                 safe_float(
-                    market.get("현재가")
+                    market.get(
+                        "현재가"
+                    )
                 )
             ),
             "KIS당일수급": any(
@@ -1095,25 +1492,67 @@ def predict_stock(
             "KIS프로그램매매": bool(
                 history["program"]
             ),
-            "DART재무": bool(
+            "DART기본재무": bool(
                 financial.get(
                     "재무지표"
                 )
             ),
-            "DART성장": bool(
-                financial.get(
-                    "성장지표"
-                )
+            "DART분기실적": (
+                fundamentals_ok
+                and nested_analysis_signal(
+                    fundamentals_analysis,
+                    "분기실적",
+                )["quality"]
+                > 0
             ),
-            "DART최근공시": disclosure_ok,
+            "DART현금흐름": (
+                fundamentals_ok
+                and nested_analysis_signal(
+                    fundamentals_analysis,
+                    "현금흐름재무안전성",
+                )["quality"]
+                > 0
+            ),
+            "DART주주환원": (
+                fundamentals_ok
+                and nested_analysis_signal(
+                    fundamentals_analysis,
+                    "주주환원",
+                )["quality"]
+                > 0
+            ),
+            "DART최근공시": (
+                disclosure_ok
+            ),
             "글로벌시장": global_ok,
+            "산업선행지표": (
+                industry_ok
+                and nested_analysis_signal(
+                    industry_analysis,
+                    "중기산업선행",
+                )["quality"]
+                > 0
+            ),
+            "산업사이클": (
+                industry_ok
+                and nested_analysis_signal(
+                    industry_analysis,
+                    "장기산업사이클",
+                )["quality"]
+                > 0
+            ),
             "가치평가": bool(value),
-            "산업선행지표": False,
+            "애널리스트컨센서스": False,
+            "실제시장점유율": False,
+            "지배구조정량평가": False,
         },
         "주의": (
             "미수집 요소는 추정하지 않고 중립 처리한다. "
             "프로그램매매는 시장 전체 신호이며 종목별 프로그램 수급이 아니다. "
             "공시 신호는 제목 기반 규칙형 분석이다. "
-            "상승확률은 데이터 커버리지에 따라 50% 방향으로 축소된 모델 확률이다."
+            "향후이익 방향은 최신 실적과 현금창출력 기반 대용지표이며 "
+            "애널리스트 컨센서스는 아직 반영되지 않았다. "
+            "상승확률은 데이터 커버리지에 따라 "
+            "50% 방향으로 축소된 모델 확률이다."
         ),
     }
