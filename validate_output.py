@@ -21,7 +21,7 @@ import sys
 from pathlib import Path
 
 
-EXPECTED_ENGINE_VERSION = "6.0.0-fundamentals-industry"
+EXPECTED_ENGINE_VERSION = "6.1.0-stock-program"
 
 EXPECTED_WEIGHTS = {
     "단기1~5일": {
@@ -233,6 +233,14 @@ def validate_horizon(
                 f"{name}/{factor_name}: 데이터 미수집"
             )
 
+        if factor_name == "파생시장·프로그램":
+            source = str(factor.get("출처", ""))
+            if "종목별 프로그램매매" not in source:
+                result.error(
+                    f"{name}/{factor_name}: "
+                    f"종목별 프로그램매매 출처가 아님 - {source}"
+                )
+
     weight_sum = sum(
         safe_float(item.get("가중치"))
         for item in factors
@@ -337,6 +345,30 @@ def validate_output(data):
         f"시장: 현재가 {current_price:,.0f}, "
         f"거래량 {volume:,.0f}, "
         f"과거데이터 {history_status or '미확인'}"
+    )
+
+    program = safe_dict(history.get("프로그램매매"))
+    detail_status = safe_dict(history.get("수집상태"))
+    program_count = int(safe_float(detail_status.get("프로그램데이터개수")))
+    quantity_5 = safe_float(program.get("프로그램순매수수량5일"))
+    quantity_20 = safe_float(program.get("프로그램순매수수량20일"))
+
+    if program_count > 0:
+        for field_name, value in (
+            ("프로그램순매수수량5일", quantity_5),
+            ("프로그램순매수수량20일", quantity_20),
+        ):
+            if not nearly_equal(value, round(value), tolerance=0.01):
+                result.error(
+                    f"시장정보/과거데이터/{field_name}: "
+                    f"수량이 정수가 아님 - {value}"
+                )
+
+    result.info(
+        "종목별 프로그램매매: "
+        f"5일 {quantity_5:,.0f}주, "
+        f"20일 {quantity_20:,.0f}주, "
+        f"데이터 {program_count}건"
     )
 
     section_statuses = {
