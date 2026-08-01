@@ -1,5 +1,5 @@
 """
-다종목 스크리너 V1
+다종목 스크리너 V1.1
 
 사용:
     python screener.py \
@@ -11,7 +11,9 @@
 - 글로벌시장 데이터는 실행당 1회만 수집
 - 산업 데이터는 산업코드별 1회만 수집
 - 종목별 출력 JSON 생성
-- 종합순위·버핏순위·저평가순위 생성
+- 종합순위·버핏순위 생성
+- 실제 저평가 종목만 저평가순위에 포함
+- 이전 실행 잔여 output 파일 자동 제거
 - output/screener.json
 - output/screener.csv
 - 각 종목 결과를 validate_output.py로 검증
@@ -60,6 +62,7 @@ DEFAULT_STOCK_CODES = (
 DEFAULT_INDUSTRY_CODE = "auto"
 DEFAULT_MARKET_CODE = "K"
 MAX_STOCKS = 10
+SCREENER_VERSION = "1.1.0-ranking-integrity"
 
 
 def safe_float(
@@ -110,6 +113,48 @@ def clamp(
             value,
         ),
     )
+
+
+def prepare_output_directory() -> None:
+    """
+    현재 실행 결과만 Artifact에 포함되도록
+    이전 JSON·CSV 산출물을 제거한다.
+    """
+    output_dir = Path(
+        "output"
+    )
+
+    output_dir.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    removed = []
+
+    for pattern in (
+        "*.json",
+        "*.csv",
+    ):
+        for path in output_dir.glob(
+            pattern
+        ):
+            if not path.is_file():
+                continue
+
+            path.unlink()
+            removed.append(
+                path.name
+            )
+
+    if removed:
+        print(
+            "OUTPUT CLEANED:",
+            ",".join(
+                sorted(
+                    removed
+                )
+            ),
+        )
 
 
 def parse_stock_codes(
@@ -326,11 +371,31 @@ def make_ranking_row(
         100.0,
     )
 
+    fair_value_gap = safe_float(
+        valuation.get(
+            "현재가대비"
+        )
+    )
+
+    valuation_judgment = str(
+        valuation.get(
+            "판단",
+            "",
+        )
+    ).strip()
+
+    undervalued_candidate = (
+        fair_value_gap > 0.0
+        and "고평가"
+        not in valuation_judgment
+    )
+
     total_score = (
-        long_score * 0.40
-        + mid_score * 0.25
+        long_score * 0.30
+        + mid_score * 0.20
         + short_score * 0.10
-        + buffett_score * 0.15
+        + buffett_score * 0.20
+        + valuation_score * 0.10
         + completeness * 0.10
     )
 
@@ -338,6 +403,9 @@ def make_ranking_row(
         "종합순위": 0,
         "버핏순위": 0,
         "저평가순위": 0,
+        "저평가후보": (
+            undervalued_candidate
+        ),
         "기업명": result.get(
             "기업명",
             "",
@@ -403,17 +471,10 @@ def make_ranking_row(
             2,
         ),
         "현재가대비적정가": round(
-            safe_float(
-                valuation.get(
-                    "현재가대비"
-                )
-            ),
+            fair_value_gap,
             2,
         ),
-        "가치판단": valuation.get(
-            "판단",
-            "",
-        ),
+        "가치판단": valuation_judgment,
         "데이터완전성점수": (
             completeness
         ),
@@ -427,9 +488,21 @@ def make_ranking_row(
     }
 
 
+
 def assign_ranks(
     rows: List[Dict[str, Any]],
 ) -> None:
+    for row in rows:
+        row[
+            "종합순위"
+        ] = 0
+        row[
+            "버핏순위"
+        ] = 0
+        row[
+            "저평가순위"
+        ] = 0
+
     total_sorted = sorted(
         rows,
         key=lambda row: (
@@ -475,14 +548,25 @@ def assign_ranks(
             "버핏순위"
         ] = rank
 
+    valuation_candidates = [
+        row
+        for row in rows
+        if row.get(
+            "저평가후보"
+        ) is True
+    ]
+
     valuation_sorted = sorted(
-        rows,
+        valuation_candidates,
         key=lambda row: (
+            row[
+                "현재가대비적정가"
+            ],
             row[
                 "가치평가점수"
             ],
             row[
-                "현재가대비적정가"
+                "버핏점수"
             ],
         ),
         reverse=True,
@@ -495,6 +579,7 @@ def assign_ranks(
         row[
             "저평가순위"
         ] = rank
+
 
 
 def empty_industry_result(
@@ -823,13 +908,41 @@ def save_screener_outputs(
     )
 
     valuation_ranking = sorted(
-        rows,
+        (
+            row
+            for row in rows
+            if row.get(
+                "저평가후보"
+            ) is True
+        ),
         key=lambda row: row[
             "저평가순위"
         ],
     )
 
+    overvalued_list = sorted(
+        (
+            row
+            for row in rows
+            if row.get(
+                "저평가후보"
+            ) is not True
+        ),
+        key=lambda row: (
+            row[
+                "현재가대비적정가"
+            ],
+            row[
+                "가치평가점수"
+            ],
+        ),
+        reverse=True,
+    )
+
     payload = {
+        "스크리너버전": (
+            SCREENER_VERSION
+        ),
         "생성시각": (
             datetime.now().isoformat()
         ),
@@ -839,16 +952,26 @@ def save_screener_outputs(
         "종합순위": total_ranking,
         "버핏순위": buffett_ranking,
         "저평가순위": valuation_ranking,
+        "저평가후보수": len(
+            valuation_ranking
+        ),
+        "비저평가목록": (
+            overvalued_list
+        ),
         "실패": failures,
         "산정방식": {
             "종합선별점수": (
-                "장기점수 40% + 중기점수 25% + "
-                "단기점수 10% + 버핏점수 15% + "
-                "데이터완전성 10%"
+                "장기점수 30% + 중기점수 20% + "
+                "단기점수 10% + 버핏점수 20% + "
+                "가치평가점수 10% + 데이터완전성 10%"
+            ),
+            "저평가후보": (
+                "적정가가 현재가보다 높고 "
+                "가치판단이 고평가가 아닌 종목만 포함"
             ),
             "저평가순위": (
-                "장기 가치평가·안전마진 신호를 "
-                "0~100점으로 변환"
+                "현재가 대비 적정가 상승여력, "
+                "가치평가점수, 버핏점수 순"
             ),
             "주의": (
                 "종합순위는 선별 보조지표이며 "
@@ -873,6 +996,7 @@ def save_screener_outputs(
         "종합순위",
         "버핏순위",
         "저평가순위",
+        "저평가후보",
         "기업명",
         "종목코드",
         "산업코드",
@@ -921,6 +1045,7 @@ def save_screener_outputs(
             )
 
 
+
 def print_summary(
     rows: List[Dict[str, Any]],
     failures: List[Dict[str, Any]],
@@ -941,6 +1066,14 @@ def print_summary(
                 "종합순위"
             ],
         ):
+            valuation_label = (
+                f"저평가 {row['저평가순위']}위"
+                if row.get(
+                    "저평가후보"
+                ) is True
+                else "저평가 아님"
+            )
+
             print(
                 f"{row['종합순위']}. "
                 f"{row['기업명']} "
@@ -948,7 +1081,40 @@ def print_summary(
                 f"종합 {row['종합선별점수']:.2f} "
                 f"장기 {row['장기점수']:.0f} "
                 f"버핏 {row['버핏점수']:.0f} "
-                f"가치 {row['가치평가점수']:.2f}"
+                f"가치 {row['가치평가점수']:.2f} "
+                f"{valuation_label}"
+            )
+
+        valuation_candidates = [
+            row
+            for row in rows
+            if row.get(
+                "저평가후보"
+            ) is True
+        ]
+
+        if valuation_candidates:
+            print(
+                "저평가순위"
+            )
+
+            for row in sorted(
+                valuation_candidates,
+                key=lambda item: item[
+                    "저평가순위"
+                ],
+            ):
+                print(
+                    f"{row['저평가순위']}. "
+                    f"{row['기업명']} "
+                    f"({row['종목코드']}) "
+                    f"상승여력 "
+                    f"{row['현재가대비적정가']:.2f}%"
+                )
+
+        else:
+            print(
+                "저평가후보 없음"
             )
 
     if failures:
@@ -973,6 +1139,7 @@ def print_summary(
     print(
         "OUTPUT_FILE=output/screener.csv"
     )
+
 
 
 def parse_arguments():
@@ -1035,6 +1202,8 @@ def main() -> int:
             stock_codes
         ),
     )
+
+    prepare_output_directory()
 
     global_bundle = safe_execute(
         "GLOBAL MARKET",
