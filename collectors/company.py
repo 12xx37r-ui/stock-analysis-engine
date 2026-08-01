@@ -1,12 +1,13 @@
 """
-OpenDART 기업 자동 조회기 V2
+OpenDART 기업 자동 조회기 V2.1
 
 기능
 - 6자리 종목코드로 기업명과 DART 고유번호 자동 조회
 - OpenDART corpCode.xml ZIP 다운로드·파싱
 - 로컬 JSON 캐시
 - 기존 get_company_code(company_name) 인터페이스 유지
-- 반도체 산업코드 자동 추론
+- 외부 산업 매핑 파일 기반 자동 분류
+- 매핑 파일 오류 시 내장값으로 안전 복구
 """
 
 import io
@@ -44,9 +45,18 @@ FALLBACK_COMPANIES = {
     },
 }
 
-SEMICONDUCTOR_STOCK_CODES = {
-    "005930",  # 삼성전자
-    "000660",  # SK하이닉스
+INDUSTRY_MAP_PATH = (
+    Path(__file__).resolve().parents[1]
+    / "data"
+    / "industry_map.json"
+)
+
+DEFAULT_INDUSTRY_MAP = {
+    "005930": "semiconductor",
+    "000660": "semiconductor",
+    "000990": "semiconductor",
+    "042700": "semiconductor",
+    "089030": "semiconductor",
 }
 
 
@@ -292,6 +302,107 @@ def get_company_list(
     return download_company_list()
 
 
+def load_industry_map() -> Dict[str, str]:
+    mapping = dict(
+        DEFAULT_INDUSTRY_MAP
+    )
+
+    try:
+        if not INDUSTRY_MAP_PATH.exists():
+            return mapping
+
+        payload = json.loads(
+            INDUSTRY_MAP_PATH.read_text(
+                encoding="utf-8"
+            )
+        )
+
+        industries = payload.get(
+            "industries",
+            {}
+        )
+
+        if not isinstance(
+            industries,
+            dict,
+        ):
+            return mapping
+
+        file_mapping: Dict[
+            str,
+            str,
+        ] = {}
+
+        for industry_code, detail in (
+            industries.items()
+        ):
+            if not isinstance(
+                detail,
+                dict,
+            ):
+                continue
+
+            stock_codes = detail.get(
+                "stock_codes",
+                {}
+            )
+
+            if isinstance(
+                stock_codes,
+                list,
+            ):
+                iterable = (
+                    (
+                        code,
+                        "",
+                    )
+                    for code in stock_codes
+                )
+
+            elif isinstance(
+                stock_codes,
+                dict,
+            ):
+                iterable = (
+                    stock_codes.items()
+                )
+
+            else:
+                continue
+
+            for stock_code, _company_name in (
+                iterable
+            ):
+                normalized = (
+                    normalize_stock_code(
+                        stock_code
+                    )
+                )
+
+                if not normalized:
+                    continue
+
+                file_mapping[
+                    normalized
+                ] = safe_text(
+                    industry_code
+                )
+
+        if file_mapping:
+            mapping.update(
+                file_mapping
+            )
+
+    except Exception as error:
+        print(
+            "INDUSTRY MAP WARNING:",
+            type(error).__name__,
+            error,
+        )
+
+    return mapping
+
+
 def infer_industry_code(
     stock_code: Any,
 ) -> str:
@@ -299,12 +410,13 @@ def infer_industry_code(
         stock_code
     )
 
-    if normalized in (
-        SEMICONDUCTOR_STOCK_CODES
-    ):
-        return "semiconductor"
+    if not normalized:
+        return "none"
 
-    return "none"
+    return load_industry_map().get(
+        normalized,
+        "none",
+    )
 
 
 def resolve_company(
