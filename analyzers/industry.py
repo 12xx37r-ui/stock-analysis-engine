@@ -1,5 +1,5 @@
 """
-산업 선행지표·산업 사이클 분석기 V1
+산업 선행지표·산업 사이클 분석기 V2
 
 입력
 - collectors.industry.get_industry_bundle()
@@ -345,8 +345,9 @@ def weighted_result(
     }
 
 
-def get_nasdaq_change20(
+def get_global_asset_change20(
     global_bundle: Dict[str, Any],
+    asset_name: str,
 ) -> float:
     if not isinstance(
         global_bundle,
@@ -359,20 +360,29 @@ def get_nasdaq_change20(
         {},
     )
 
-    if not isinstance(assets, dict):
+    if not isinstance(
+        assets,
+        dict,
+    ):
         return 0.0
 
-    nasdaq = assets.get(
-        "나스닥",
+    asset = assets.get(
+        asset_name,
         {},
     )
 
-    if not isinstance(nasdaq, dict):
+    if not isinstance(
+        asset,
+        dict,
+    ):
         return 0.0
 
     return safe_float(
-        nasdaq.get("20일변화율")
+        asset.get(
+            "20일변화율"
+        )
     )
+
 
 
 def industry_phase(
@@ -494,15 +504,30 @@ def analyze_industry(
         else 0.0
     )
 
+    benchmark_name = str(
+        bundle.get(
+            "상대강도기준",
+            "S&P500",
+        )
+    )
+
+    benchmark_return20 = (
+        get_global_asset_change20(
+            global_bundle,
+            benchmark_name,
+        )
+    )
+
     nasdaq_return20 = (
-        get_nasdaq_change20(
-            global_bundle
+        get_global_asset_change20(
+            global_bundle,
+            "나스닥",
         )
     )
 
     relative_strength = (
         average_industry_return20
-        - nasdaq_return20
+        - benchmark_return20
         if global_bundle
         else 0.0
     )
@@ -585,20 +610,35 @@ def analyze_industry(
                 average_industry_return20,
                 2,
             ),
+            "기준시장": benchmark_name,
+            "기준시장20일수익률": round(
+                benchmark_return20,
+                2,
+            ),
+            "기준시장대비초과수익률": round(
+                relative_strength,
+                2,
+            ),
             "나스닥20일수익률": round(
                 nasdaq_return20,
                 2,
             ),
             "나스닥대비초과수익률": round(
-                relative_strength,
+                (
+                    average_industry_return20
+                    - nasdaq_return20
+                ),
                 2,
             ),
             "비교사용": bool(
                 global_bundle
             ),
         },
-        "설명": (
-            "반도체 지수·ETF·메모리·파운드리·장비 대표자산의 "
-            "가격추세와 시장폭을 합성한 산업 대용지표입니다."
+        "설명": bundle.get(
+            "설명",
+            (
+                "산업 대표자산의 가격추세와 "
+                "시장폭을 합성한 산업 대용지표입니다."
+            ),
         ),
     }
