@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 from datetime import datetime
@@ -8,6 +9,11 @@ from analyzers.fundamentals import analyze_fundamentals
 from analyzers.global_market import analyze_global_market
 from analyzers.industry import analyze_industry
 from analyzers.valuation import calculate_value
+from collectors.company import (
+    infer_industry_code,
+    normalize_stock_code,
+    resolve_company,
+)
 from collectors.dart import get_financial
 from collectors.disclosure import get_recent_disclosures
 from collectors.fundamentals import get_fundamentals_bundle
@@ -18,11 +24,9 @@ from collectors.market import get_market_data
 from predictor import predict_stock
 
 
-COMPANY = "삼성전자"
-DART_CODE = "00126380"
-STOCK_CODE = "005930"
-MARKET_CODE = "K"
-INDUSTRY_CODE = "semiconductor"
+DEFAULT_STOCK_CODE = "005930"
+DEFAULT_MARKET_CODE = "K"
+DEFAULT_INDUSTRY_CODE = "auto"
 
 
 def safe_dict(value):
@@ -557,7 +561,139 @@ def build_industry_summary(
     }
 
 
-def save_result(result):
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description=(
+            "국내주식 재무·시장·예측 엔진"
+        )
+    )
+
+    parser.add_argument(
+        "--stock-code",
+        default=os.getenv(
+            "STOCK_CODE",
+            DEFAULT_STOCK_CODE,
+        ),
+        help=(
+            "6자리 국내 종목코드 "
+            "(기본값: 005930)"
+        ),
+    )
+
+    parser.add_argument(
+        "--industry-code",
+        default=os.getenv(
+            "INDUSTRY_CODE",
+            DEFAULT_INDUSTRY_CODE,
+        ),
+        help=(
+            "auto, semiconductor, none"
+        ),
+    )
+
+    parser.add_argument(
+        "--market-code",
+        default=os.getenv(
+            "MARKET_CODE",
+            DEFAULT_MARKET_CODE,
+        ),
+        help=(
+            "KIS 시장코드 보조값 "
+            "(기본값: K)"
+        ),
+    )
+
+    return parser.parse_args()
+
+
+def resolve_target(
+    stock_code,
+    requested_industry,
+):
+    normalized_stock_code = (
+        normalize_stock_code(
+            stock_code
+        )
+    )
+
+    company_info = resolve_company(
+        normalized_stock_code
+    )
+
+    if company_info.get(
+        "수집상태"
+    ) not in {
+        "정상",
+        "부분성공",
+    }:
+        raise RuntimeError(
+            company_info.get(
+                "응답메시지",
+                "기업 조회 실패",
+            )
+        )
+
+    company_name = company_info.get(
+        "기업명",
+        "",
+    )
+    dart_code = company_info.get(
+        "DART기업코드",
+        "",
+    )
+
+    if not (
+        company_name
+        and dart_code
+        and normalized_stock_code
+    ):
+        raise RuntimeError(
+            "기업명·DART코드·종목코드 중 "
+            "필수 값이 누락됐습니다."
+        )
+
+    requested = str(
+        requested_industry
+        or "auto"
+    ).strip().lower()
+
+    if requested in {
+        "",
+        "auto",
+    }:
+        industry_code = (
+            company_info.get(
+                "산업코드"
+            )
+            or infer_industry_code(
+                normalized_stock_code
+            )
+        )
+    else:
+        industry_code = requested
+
+    if industry_code not in {
+        "semiconductor",
+        "none",
+    }:
+        raise RuntimeError(
+            "현재 산업코드는 "
+            "auto, semiconductor, none만 지원합니다."
+        )
+
+    return {
+        "기업명": company_name,
+        "DART기업코드": dart_code,
+        "종목코드": normalized_stock_code,
+        "산업코드": industry_code,
+        "기업조회": company_info,
+    }
+
+
+def save_result(
+    result,
+    stock_code,
+):
     os.makedirs(
         "output",
         exist_ok=True,
@@ -565,7 +701,7 @@ def save_result(result):
 
     output_path = os.path.join(
         "output",
-        "samsung.json",
+        f"{stock_code}.json",
     )
 
     with open(
@@ -584,10 +720,43 @@ def save_result(result):
 
 
 def main():
+    args = parse_arguments()
+
+    target = resolve_target(
+        args.stock_code,
+        args.industry_code,
+    )
+
+    company = target[
+        "기업명"
+    ]
+    dart_code = target[
+        "DART기업코드"
+    ]
+    stock_code = target[
+        "종목코드"
+    ]
+    industry_code = target[
+        "산업코드"
+    ]
+    market_code = str(
+        args.market_code
+        or DEFAULT_MARKET_CODE
+    ).strip().upper()
+
     print("START ENGINE")
+    print(
+        "TARGET:",
+        company,
+        stock_code,
+        "DART",
+        dart_code,
+        "INDUSTRY",
+        industry_code,
+    )
 
     dart_raw = get_financial(
-        DART_CODE
+        dart_code
     )
 
     financial = analyze_financial(
@@ -595,14 +764,14 @@ def main():
     )
 
     market = get_market_data(
-        STOCK_CODE
+        stock_code
     )
 
     history_bundle = safe_execute(
         "HISTORY",
         lambda: get_history_bundle(
-            STOCK_CODE,
-            market_code=MARKET_CODE,
+            stock_code,
+            market_code=market_code,
         ),
         {
             "전체수집상태": "실패",
@@ -622,7 +791,7 @@ def main():
     disclosure_bundle = safe_execute(
         "DISCLOSURE",
         lambda: get_recent_disclosures(
-            DART_CODE,
+            dart_code,
             days=30,
             page_count=100,
         ),
@@ -676,7 +845,7 @@ def main():
     fundamentals_bundle = safe_execute(
         "DART FUNDAMENTALS",
         lambda: get_fundamentals_bundle(
-            DART_CODE
+            dart_code
         ),
         {
             "전체수집상태": "실패",
@@ -700,33 +869,55 @@ def main():
         },
     )
 
-    industry_bundle = safe_execute(
-        "INDUSTRY",
-        lambda: get_industry_bundle(
-            INDUSTRY_CODE
-        ),
-        {
-            "전체수집상태": "실패",
-            "산업코드": INDUSTRY_CODE,
-            "산업명": "반도체",
+    if industry_code == "none":
+        print(
+            "INDUSTRY SKIPPED:",
+            stock_code,
+        )
+
+        industry_bundle = {
+            "전체수집상태": "미적용",
+            "산업코드": "none",
+            "산업명": "미분류",
             "자산": {},
             "수집오류": [],
-        },
-    )
+        }
 
-    industry_analysis = safe_execute(
-        "INDUSTRY ANALYSIS",
-        lambda: analyze_industry(
-            industry_bundle,
-            global_bundle,
-        ),
-        {
-            "분석상태": "실패",
+        industry_analysis = {
+            "분석상태": "미적용",
             "중기산업선행": {},
             "장기산업사이클": {},
-            "산업국면": "판정불가",
-        },
-    )
+            "산업국면": "미분류",
+        }
+
+    else:
+        industry_bundle = safe_execute(
+            "INDUSTRY",
+            lambda: get_industry_bundle(
+                industry_code
+            ),
+            {
+                "전체수집상태": "실패",
+                "산업코드": industry_code,
+                "산업명": industry_code,
+                "자산": {},
+                "수집오류": [],
+            },
+        )
+
+        industry_analysis = safe_execute(
+            "INDUSTRY ANALYSIS",
+            lambda: analyze_industry(
+                industry_bundle,
+                global_bundle,
+            ),
+            {
+                "분석상태": "실패",
+                "중기산업선행": {},
+                "장기산업사이클": {},
+                "산업국면": "판정불가",
+            },
+        )
 
     valuation = calculate_value(
         financial,
@@ -752,10 +943,13 @@ def main():
     )
 
     result = {
-        "기업명": COMPANY,
-        "DART기업코드": DART_CODE,
-        "KIS종목코드": STOCK_CODE,
-        "산업코드": INDUSTRY_CODE,
+        "기업명": company,
+        "DART기업코드": dart_code,
+        "KIS종목코드": stock_code,
+        "산업코드": industry_code,
+        "기업조회정보": target[
+            "기업조회"
+        ],
         "생성시각": (
             datetime.now().isoformat()
         ),
@@ -790,7 +984,8 @@ def main():
     }
 
     output_path = save_result(
-        result
+        result,
+        stock_code,
     )
 
     print(
@@ -804,6 +999,11 @@ def main():
     print(
         "OUTPUT SAVED:",
         output_path,
+    )
+    print(
+        "OUTPUT_FILE=",
+        output_path,
+        sep="",
     )
 
 
