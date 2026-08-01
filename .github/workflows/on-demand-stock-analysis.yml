@@ -1,0 +1,95 @@
+name: on-demand-stock-analysis
+on:
+  workflow_dispatch:
+    inputs:
+      stock_code:
+        description: "6자리 종목코드"
+        required: true
+        type: string
+      industry_code:
+        description: "산업코드"
+        required: true
+        default: "auto"
+        type: string
+permissions:
+  contents: write
+concurrency:
+  group: on-demand-${{ inputs.stock_code }}
+  cancel-in-progress: false
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DART_API_KEY: ${{ secrets.DART_API_KEY }}
+      KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+      KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+      STOCK_CODE: ${{ inputs.stock_code }}
+      INDUSTRY_CODE: ${{ inputs.industry_code }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Validate input
+        shell: bash
+        run: |
+          if [[ ! "$STOCK_CODE" =~ ^[0-9]{6}$ ]]; then
+            echo "Invalid stock code: $STOCK_CODE"
+            exit 1
+          fi
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: requirements.txt
+      - name: Build weekly cache key
+        id: cache-date
+        shell: bash
+        run: |
+          echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+      - name: Cache OpenDART company list
+        uses: actions/cache@v5
+        with:
+          path: .cache/dart_corp_codes.json
+          key: dart-corp-codes-${{ runner.os }}-${{ steps.cache-date.outputs.week }}
+          restore-keys: |
+            dart-corp-codes-${{ runner.os }}-
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Validate industry profiles
+        run: python validate_industry_profiles.py
+      - name: Run engine
+        run: |
+          python main.py --stock-code "$STOCK_CODE" --industry-code "$INDUSTRY_CODE"
+      - name: Validate output
+        run: |
+          python validate_output.py --file "output/${STOCK_CODE}.json" --stock-code "$STOCK_CODE"
+      - name: Publish latest engine feed
+        run: |
+          python publish_on_demand.py --stock-file "output/${STOCK_CODE}.json" --latest-root data/latest
+      - name: Commit latest stock
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "data/latest/stocks/${STOCK_CODE}.json" data/latest/index.json
+          if git diff --cached --quiet; then
+            echo "No latest-feed changes."
+            exit 0
+          fi
+          git commit -m "feat: publish ${STOCK_CODE} on-demand engine [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+      - name: Upload result
+        uses: actions/upload-artifact@v5
+        with:
+          name: on-demand-stock-${{ inputs.stock_code }}
+          path: |
+            output/${{ inputs.stock_code }}.json
+            data/latest/index.json
+            data/latest/stocks/${{ inputs.stock_code }}.json
+          if-no-files-found: error
+          retention-days: 30
