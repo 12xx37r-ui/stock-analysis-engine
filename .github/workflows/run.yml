@@ -2,6 +2,21 @@ name: run-engine
 
 on:
   workflow_dispatch:
+    inputs:
+      stock_code:
+        description: "6자리 종목코드"
+        required: true
+        default: "005930"
+        type: string
+      industry_code:
+        description: "산업분석 코드"
+        required: true
+        default: "auto"
+        type: choice
+        options:
+          - auto
+          - semiconductor
+          - none
 
 jobs:
   run:
@@ -11,6 +26,8 @@ jobs:
       DART_API_KEY: ${{ secrets.DART_API_KEY }}
       KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
       KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+      STOCK_CODE: ${{ inputs.stock_code }}
+      INDUSTRY_CODE: ${{ inputs.industry_code }}
 
     steps:
       - name: Checkout
@@ -27,8 +44,20 @@ jobs:
 
       - name: Run engine
         run: |
-          python main.py
+          python main.py \
+            --stock-code "$STOCK_CODE" \
+            --industry-code "$INDUSTRY_CODE"
 
       - name: Validate output
         run: |
-          python validate_output.py --file output/samsung.json
+          python validate_output.py \
+            --file "output/${STOCK_CODE}.json" \
+            --stock-code "$STOCK_CODE"
+
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        with:
+          name: stock-analysis-${{ inputs.stock_code }}
+          path: output/${{ inputs.stock_code }}.json
+          if-no-files-found: error
+          retention-days: 30
