@@ -1,0 +1,77 @@
+name: screen-stocks
+
+on:
+  workflow_dispatch:
+    inputs:
+      stock_codes:
+        description: "6자리 종목코드 목록 — 쉼표로 구분"
+        required: true
+        default: "005930,000660"
+        type: string
+      industry_code:
+        description: "산업분석 코드"
+        required: true
+        default: "auto"
+        type: choice
+        options:
+          - auto
+          - semiconductor
+          - none
+
+jobs:
+  screen:
+    runs-on: ubuntu-latest
+
+    env:
+      DART_API_KEY: ${{ secrets.DART_API_KEY }}
+      KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+      KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+      STOCK_CODES: ${{ inputs.stock_codes }}
+      INDUSTRY_CODE: ${{ inputs.industry_code }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: requirements.txt
+
+      - name: Build weekly cache key
+        id: cache-date
+        shell: bash
+        run: |
+          echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache OpenDART company list
+        uses: actions/cache@v5
+        with:
+          path: .cache/dart_corp_codes.json
+          key: dart-corp-codes-${{ runner.os }}-${{ steps.cache-date.outputs.week }}
+          restore-keys: |
+            dart-corp-codes-${{ runner.os }}-
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run screener
+        run: |
+          python screener.py \
+            --stock-codes "$STOCK_CODES" \
+            --industry-code "$INDUSTRY_CODE"
+
+      - name: Upload screener results
+        uses: actions/upload-artifact@v5
+        with:
+          name: stock-screener-${{ github.run_number }}
+          path: |
+            output/screener.json
+            output/screener.csv
+            output/*.json
+          if-no-files-found: error
+          retention-days: 30
