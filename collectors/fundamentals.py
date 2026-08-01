@@ -1,5 +1,5 @@
 """
-OpenDART 실적·현금흐름·주주환원 수집기 V1
+OpenDART 실적·현금흐름·주주환원 수집기 V1.1
 
 수집 대상
 1. 최근 분기/반기/사업보고서 전체 재무제표
@@ -693,7 +693,7 @@ def get_fundamentals_bundle(
     financials = get_financial_periods(
         api_key,
         corp_code,
-        maximum_success=4,
+        maximum_success=6,
     )
 
     dividends = get_annual_series(
