@@ -587,7 +587,8 @@ def parse_arguments():
             DEFAULT_INDUSTRY_CODE,
         ),
         help=(
-            "auto, semiconductor, none"
+            "auto, semiconductor, automotive, battery, "
+            "biotechnology, construction, finance, none"
         ),
     )
 
@@ -674,11 +675,16 @@ def resolve_target(
 
     if industry_code not in {
         "semiconductor",
+        "automotive",
+        "battery",
+        "biotechnology",
+        "construction",
+        "finance",
         "none",
     }:
         raise RuntimeError(
-            "현재 산업코드는 "
-            "auto, semiconductor, none만 지원합니다."
+            "지원 산업코드: auto, semiconductor, automotive, "
+            "battery, biotechnology, construction, finance, none"
         )
 
     return {
