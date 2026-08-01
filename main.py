@@ -928,6 +928,8 @@ def main():
     valuation = calculate_value(
         financial,
         market,
+        fundamentals_analysis,
+        fundamentals_bundle,
     )
 
     prediction = predict_stock(

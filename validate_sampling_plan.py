@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Dict
 
 
-EXPECTED_VERSION = "1.0.0"
+EXPECTED_VERSION = "1.1.0"
 
 EXPECTED_BATCHES = {
     "semiconductor",

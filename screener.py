@@ -793,6 +793,8 @@ def analyze_one_stock(
     valuation = calculate_value(
         financial,
         market,
+        fundamentals_analysis,
+        fundamentals_bundle,
     )
 
     prediction = predict_stock(
