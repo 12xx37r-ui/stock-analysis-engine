@@ -2,13 +2,10 @@ import json
 from datetime import datetime
 
 
-from collectors.company import (
-    get_company_code
-)
-
 from collectors.dart import (
     get_financial
 )
+
 
 from collectors.kis import (
     get_stock_price,
@@ -16,18 +13,13 @@ from collectors.kis import (
 )
 
 
-from analyzers.financial import (
+from financial import (
     analyze_financial
 )
 
 
-from analyzers.value import (
+from value import (
     calculate_value
-)
-
-
-from predictors.predictor import (
-    calculate_prediction
 )
 
 
@@ -37,6 +29,7 @@ COMPANY = "삼성전자"
 DART_CODE = "00126380"
 
 STOCK_CODE = "005930"
+
 
 
 
@@ -54,7 +47,9 @@ def get_market_data(stock_code):
     )
 
 
+
     return {
+
 
         "현재가":
         float(
@@ -63,6 +58,7 @@ def get_market_data(stock_code):
                 0
             )
         ),
+
 
 
         "전일대비":
@@ -74,6 +70,7 @@ def get_market_data(stock_code):
         ),
 
 
+
         "등락률":
         float(
             price.get(
@@ -81,6 +78,7 @@ def get_market_data(stock_code):
                 0
             )
         ),
+
 
 
         "거래량":
@@ -92,6 +90,7 @@ def get_market_data(stock_code):
         ),
 
 
+
         "시가":
         float(
             price.get(
@@ -99,6 +98,7 @@ def get_market_data(stock_code):
                 0
             )
         ),
+
 
 
         "고가":
@@ -110,6 +110,7 @@ def get_market_data(stock_code):
         ),
 
 
+
         "저가":
         float(
             price.get(
@@ -117,6 +118,7 @@ def get_market_data(stock_code):
                 0
             )
         ),
+
 
 
         "PER":
@@ -128,6 +130,7 @@ def get_market_data(stock_code):
         ),
 
 
+
         "PBR":
         float(
             price.get(
@@ -135,6 +138,7 @@ def get_market_data(stock_code):
                 0
             )
         ),
+
 
 
         "EPS":
@@ -146,6 +150,7 @@ def get_market_data(stock_code):
         ),
 
 
+
         "BPS":
         float(
             price.get(
@@ -153,6 +158,7 @@ def get_market_data(stock_code):
                 0
             )
         ),
+
 
 
         "시가총액":
@@ -164,7 +170,10 @@ def get_market_data(stock_code):
         ),
 
 
-        "수급":{
+
+        "수급":
+        {
+
 
             "외국인순매수":
             investor.get(
@@ -172,11 +181,13 @@ def get_market_data(stock_code):
                 0
             ),
 
+
             "기관순매수":
             investor.get(
                 "기관순매수",
                 0
             ),
+
 
             "개인순매수":
             investor.get(
@@ -187,10 +198,14 @@ def get_market_data(stock_code):
         },
 
 
+
         "데이터출처":
         "한국투자증권 KIS"
 
     }
+
+
+
 
 
 
@@ -203,11 +218,11 @@ def main():
     )
 
 
-    # DART
 
     dart_raw = get_financial(
         DART_CODE
     )
+
 
 
     financial = analyze_financial(
@@ -216,29 +231,18 @@ def main():
 
 
 
-    # KIS
-
     market = get_market_data(
         STOCK_CODE
     )
 
 
 
-    # 가치평가
-
     value = calculate_value(
+
         financial,
+
         market
-    )
 
-
-
-    # 예측
-
-    prediction = calculate_prediction(
-        financial,
-        market,
-        value
     )
 
 
@@ -270,10 +274,6 @@ def main():
         value,
 
 
-        "주가예측":
-        prediction,
-
-
         "생성시간":
         datetime.now().isoformat()
 
@@ -282,27 +282,45 @@ def main():
 
 
     print(
+
         json.dumps(
+
             result,
+
             ensure_ascii=False,
+
             indent=2
+
         )
+
     )
 
 
 
     with open(
+
         "output.json",
+
         "w",
+
         encoding="utf-8"
+
     ) as f:
 
+
         json.dump(
+
             result,
+
             f,
+
             ensure_ascii=False,
+
             indent=2
+
         )
+
+
 
 
 
