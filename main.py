@@ -988,9 +988,64 @@ def main():
         stock_code,
     )
 
+    compact_summary = {
+        "기업명": company,
+        "종목코드": stock_code,
+        "산업코드": industry_code,
+        "현재가": market.get(
+            "현재가"
+        ),
+        "엔진버전": prediction.get(
+            "엔진버전"
+        ),
+        "단기1~5일": {
+            key: prediction.get(
+                "단기1~5일",
+                {},
+            ).get(key)
+            for key in (
+                "점수",
+                "상승확률",
+                "판정",
+                "신뢰도",
+            )
+        },
+        "중기1~8주": {
+            key: prediction.get(
+                "중기1~8주",
+                {},
+            ).get(key)
+            for key in (
+                "점수",
+                "상승확률",
+                "판정",
+                "신뢰도",
+            )
+        },
+        "장기6~18개월": {
+            key: prediction.get(
+                "장기6~18개월",
+                {},
+            ).get(key)
+            for key in (
+                "점수",
+                "상승확률",
+                "판정",
+                "신뢰도",
+            )
+        },
+        "데이터완전성": prediction.get(
+            "데이터완전성",
+            {},
+        ),
+    }
+
+    print(
+        "RESULT SUMMARY"
+    )
     print(
         json.dumps(
-            result,
+            compact_summary,
             ensure_ascii=False,
             indent=2,
         )
