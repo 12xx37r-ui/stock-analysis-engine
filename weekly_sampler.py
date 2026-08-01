@@ -1,5 +1,5 @@
 """
-주간 순방향 표본수집 실행기 V1.1
+주간 순방향 표본수집 실행기 V1.2
 
 산업별 배치를 순차 실행해:
 1. 스크리너 실행 및 검증
@@ -44,6 +44,352 @@ def safe_dict(
         return value
 
     return {}
+
+
+def safe_list(
+    value: Any,
+) -> List[Any]:
+    if isinstance(
+        value,
+        list,
+    ):
+        return value
+
+    return []
+
+
+def load_json_file(
+    path: Path,
+    default: Any,
+) -> Any:
+    if not path.exists():
+        return default
+
+    try:
+        return json.loads(
+            path.read_text(
+                encoding="utf-8"
+            )
+        )
+
+    except Exception as error:
+        raise RuntimeError(
+            f"{path} 읽기 실패: "
+            f"{type(error).__name__}: "
+            f"{error}"
+        ) from error
+
+
+def write_json_file(
+    path: Path,
+    payload: Any,
+) -> None:
+    path.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    temporary = path.with_suffix(
+        path.suffix + ".tmp"
+    )
+
+    temporary.write_text(
+        json.dumps(
+            payload,
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+    temporary.replace(
+        path
+    )
+
+
+def publish_batch_latest(
+    root: Path,
+    batch_name: str,
+    stock_codes: List[str],
+) -> None:
+    latest_root = (
+        root
+        / "data"
+        / "latest"
+    )
+
+    stocks_root = (
+        latest_root
+        / "stocks"
+    )
+
+    batches_root = (
+        latest_root
+        / "batches"
+    )
+
+    stocks_root.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    batches_root.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    screener_path = (
+        root
+        / "output"
+        / "screener.json"
+    )
+
+    screener = load_json_file(
+        screener_path,
+        {},
+    )
+
+    if not isinstance(
+        screener,
+        dict,
+    ):
+        raise RuntimeError(
+            "스크리너 최신 결과가 객체가 아닙니다."
+        )
+
+    screener[
+        "배치"
+    ] = batch_name
+
+    screener[
+        "피드갱신시각"
+    ] = now_iso()
+
+    write_json_file(
+        batches_root
+        / f"{batch_name}.json",
+        screener,
+    )
+
+    for stock_code in stock_codes:
+        source = (
+            root
+            / "output"
+            / f"{stock_code}.json"
+        )
+
+        if not source.exists():
+            raise RuntimeError(
+                f"최신 엔진 종목파일 누락: {source}"
+            )
+
+        shutil.copy2(
+            source,
+            stocks_root
+            / source.name,
+        )
+
+
+def build_latest_index(
+    root: Path,
+    summary: Dict[str, Any],
+) -> Dict[str, Any]:
+    latest_root = (
+        root
+        / "data"
+        / "latest"
+    )
+
+    batches_root = (
+        latest_root
+        / "batches"
+    )
+
+    batch_files = sorted(
+        batches_root.glob(
+            "*.json"
+        )
+    )
+
+    row_by_code: Dict[
+        str,
+        Dict[str, Any],
+    ] = {}
+
+    batch_summaries = []
+
+    for batch_path in batch_files:
+        payload = load_json_file(
+            batch_path,
+            {},
+        )
+
+        if not isinstance(
+            payload,
+            dict,
+        ):
+            continue
+
+        rows = [
+            safe_dict(
+                row
+            )
+            for row in safe_list(
+                payload.get(
+                    "종합순위"
+                )
+            )
+        ]
+
+        batch_name = str(
+            payload.get(
+                "배치",
+                batch_path.stem,
+            )
+        )
+
+        batch_summaries.append(
+            {
+                "배치": batch_name,
+                "종목수": len(
+                    rows
+                ),
+                "피드갱신시각": payload.get(
+                    "피드갱신시각",
+                    "",
+                ),
+            }
+        )
+
+        for row in rows:
+            stock_code = str(
+                row.get(
+                    "종목코드",
+                    "",
+                )
+            ).zfill(6)
+
+            if not stock_code:
+                continue
+
+            normalized = dict(
+                row
+            )
+
+            normalized[
+                "종목코드"
+            ] = stock_code
+
+            normalized[
+                "배치"
+            ] = batch_name
+
+            row_by_code[
+                stock_code
+            ] = normalized
+
+    ranking = sorted(
+        row_by_code.values(),
+        key=lambda row: (
+            float(
+                row.get(
+                    "종합선별점수",
+                    0,
+                )
+                or 0
+            ),
+            float(
+                row.get(
+                    "장기점수",
+                    0,
+                )
+                or 0
+            ),
+            float(
+                row.get(
+                    "버핏점수",
+                    0,
+                )
+                or 0
+            ),
+        ),
+        reverse=True,
+    )
+
+    for rank, row in enumerate(
+        ranking,
+        start=1,
+    ):
+        row[
+            "전체순위"
+        ] = rank
+
+    index_payload = {
+        "버전": "1.0.0",
+        "생성시각": now_iso(),
+        "상태": summary.get(
+            "상태",
+            "PASS",
+        ),
+        "최근실행배치": summary.get(
+            "요청배치",
+            "",
+        ),
+        "배치수": len(
+            batch_summaries
+        ),
+        "종목수": len(
+            ranking
+        ),
+        "배치": batch_summaries,
+        "종합순위": ranking,
+        "종목목록": [
+            {
+                "종목코드": row.get(
+                    "종목코드",
+                    "",
+                ),
+                "기업명": row.get(
+                    "기업명",
+                    "",
+                ),
+                "배치": row.get(
+                    "배치",
+                    "",
+                ),
+            }
+            for row in ranking
+        ],
+        "설명": (
+            "weekly-forward-sampling이 생성한 "
+            "Google Apps Script 연결용 안정 경로"
+        ),
+    }
+
+    write_json_file(
+        latest_root
+        / "index.json",
+        index_payload,
+    )
+
+    for report_name in (
+        "forward_test_report.json",
+        "calibration_report.json",
+    ):
+        source = (
+            root
+            / "output"
+            / report_name
+        )
+
+        if source.exists():
+            shutil.copy2(
+                source,
+                latest_root
+                / report_name,
+            )
+
+    return index_payload
 
 
 def now_iso() -> str:
@@ -335,6 +681,12 @@ def main() -> int:
                 stock_codes,
             )
 
+            publish_batch_latest(
+                root,
+                batch_name,
+                stock_codes,
+            )
+
             run_command(
                 [
                     python,
@@ -419,6 +771,33 @@ def main() -> int:
         summary[
             "상태"
         ] = "PASS"
+
+        latest_index = build_latest_index(
+            root,
+            summary,
+        )
+
+        summary[
+            "최신피드종목수"
+        ] = latest_index[
+            "종목수"
+        ]
+
+        print(
+            "LATEST ENGINE FEED:"
+        )
+
+        print(
+            "- 종목:",
+            latest_index[
+                "종목수"
+            ],
+        )
+
+        print(
+            "LATEST_INDEX_FILE="
+            "data/latest/index.json"
+        )
 
     except Exception as error:
         summary[
