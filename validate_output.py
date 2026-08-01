@@ -310,12 +310,49 @@ def validate_horizon(
     )
 
 
-def validate_output(data):
+def validate_output(
+    data,
+    expected_stock_code="",
+):
     result = Result()
 
     for key in REQUIRED_ROOT_KEYS:
         if key not in data:
             result.error(f"루트 필수 키 누락 - {key}")
+
+
+    actual_stock_code = str(
+        data.get(
+            "KIS종목코드",
+            "",
+        )
+    ).strip().zfill(6)
+
+    normalized_expected = str(
+        expected_stock_code
+        or ""
+    ).strip()
+
+    if normalized_expected:
+        normalized_expected = (
+            normalized_expected.zfill(6)
+        )
+
+        if (
+            actual_stock_code
+            != normalized_expected
+        ):
+            result.error(
+                "종목코드 불일치: "
+                f"JSON {actual_stock_code}, "
+                f"요청 {normalized_expected}"
+            )
+
+    result.info(
+        f"분석종목: "
+        f"{data.get('기업명', '')} "
+        f"({actual_stock_code})"
+    )
 
     market = safe_dict(data.get("시장정보"))
     current_price = safe_float(market.get("현재가"))
@@ -483,14 +520,39 @@ def main():
     parser = argparse.ArgumentParser(
         description="엔진 출력 JSON 검증"
     )
+
     parser.add_argument(
         "--file",
-        default="output/samsung.json",
-        help="검증할 JSON 파일",
+        default="",
+        help=(
+            "검증할 JSON 파일. "
+            "생략하면 output/<stock-code>.json"
+        ),
     )
+
+    parser.add_argument(
+        "--stock-code",
+        default="005930",
+        help=(
+            "요청한 6자리 종목코드"
+        ),
+    )
+
     args = parser.parse_args()
 
-    path = Path(args.file)
+    stock_code = str(
+        args.stock_code
+        or "005930"
+    ).strip().zfill(6)
+
+    file_name = (
+        args.file
+        or f"output/{stock_code}.json"
+    )
+
+    path = Path(
+        file_name
+    )
 
     if not path.exists():
         print("ENGINE OUTPUT VALIDATION")
@@ -500,7 +562,9 @@ def main():
 
     try:
         data = json.loads(
-            path.read_text(encoding="utf-8")
+            path.read_text(
+                encoding="utf-8"
+            )
         )
     except Exception as error:
         print("ENGINE OUTPUT VALIDATION")
@@ -518,17 +582,31 @@ def main():
         print("- JSON 루트가 객체가 아님")
         return 1
 
-    result = validate_output(data)
+    result = validate_output(
+        data,
+        expected_stock_code=stock_code,
+    )
 
     print("ENGINE OUTPUT VALIDATION")
     print(
         "RESULT:",
-        "PASS" if not result.errors else "FAIL",
+        "PASS"
+        if not result.errors
+        else "FAIL",
     )
 
-    print_items("SUMMARY", result.summary)
-    print_items("WARNINGS", result.warnings)
-    print_items("ERRORS", result.errors)
+    print_items(
+        "SUMMARY",
+        result.summary,
+    )
+    print_items(
+        "WARNINGS",
+        result.warnings,
+    )
+    print_items(
+        "ERRORS",
+        result.errors,
+    )
 
     print()
     print(
@@ -537,8 +615,14 @@ def main():
         f"warnings={len(result.warnings)}",
     )
 
-    return 0 if not result.errors else 1
+    return (
+        0
+        if not result.errors
+        else 1
+    )
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(
+        main()
+    )
