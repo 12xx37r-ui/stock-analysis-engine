@@ -78,8 +78,10 @@ jobs:
         run: python validate_industry_profiles.py
       - name: Validate valuation profiles
         run: python validate_valuation_profiles.py
-      - name: Validate valuation contract v3
+      - name: Validate valuation contract v4
         run: python validate_valuation_contract.py
+      - name: Validate valuation data pipeline v4
+        run: python validate_valuation_pipeline_v4.py
       - name: Validate signal bridge
         run: python validate_signal_bridge.py
       - name: Run engine
@@ -92,13 +94,14 @@ jobs:
         run: |
           python publish_on_demand.py --stock-file "output/${STOCK_CODE}.json" --latest-root data/latest
           python validate_published_feed.py --file "data/latest/stocks/${STOCK_CODE}.json" --stock-code "$STOCK_CODE"
+          python build_valuation_audit.py --latest-root data/latest
       - name: Commit latest stock with retry
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "data/latest/stocks/${STOCK_CODE}.json" data/latest/index.json
+          git add "data/latest/stocks/${STOCK_CODE}.json" data/latest/index.json data/latest/valuation_audit.json
           if git diff --cached --quiet; then
             echo "No latest-feed changes."
           else
@@ -145,6 +148,7 @@ jobs:
           path: |
             output/${{ inputs.stock_code }}.json
             data/latest/index.json
+            data/latest/valuation_audit.json
             data/latest/stocks/${{ inputs.stock_code }}.json
           if-no-files-found: error
           retention-days: 30

@@ -16,6 +16,7 @@ on:
         options:
           - auto
           - semiconductor
+          - electronic_components
           - automotive
           - battery
           - biotechnology
@@ -83,8 +84,10 @@ jobs:
           python validate_industry_profiles.py
       - name: Validate valuation profiles
         run: python validate_valuation_profiles.py
-      - name: Validate valuation contract v3
+      - name: Validate valuation contract v4
         run: python validate_valuation_contract.py
+      - name: Validate valuation data pipeline v4
+        run: python validate_valuation_pipeline_v4.py
       - name: Validate signal bridge
         run: python validate_signal_bridge.py
 
