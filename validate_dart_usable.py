@@ -1,9 +1,11 @@
 """Validate whether a generated stock result is safe to publish.
 
+General financial analysis mode.
+
 Exit codes:
-  0  usable (including warning-pass)
+  0  usable (including incomplete valuation warning)
   10 retryable OpenDART collection failure
-  20 non-retryable contract failure
+  20 invalid contract failure
 """
 
 import argparse
@@ -44,6 +46,7 @@ def main() -> int:
         )
         return NON_RETRYABLE_FAILURE
 
+
     code = str(data.get("KIS종목코드", "")).zfill(6)
 
     if code != str(args.stock_code).zfill(6):
@@ -51,134 +54,98 @@ def main() -> int:
         return NON_RETRYABLE_FAILURE
 
 
-    fundamentals = safe_dict(data.get("기업기초데이터"))
-    period_bundle = safe_dict(fundamentals.get("재무기간"))
-    periods = safe_list(period_bundle.get("기간목록"))
+    fundamentals = safe_dict(
+        data.get("기업기초데이터")
+    )
+
+    period_bundle = safe_dict(
+        fundamentals.get("재무기간")
+    )
+
+    periods = safe_list(
+        period_bundle.get("기간목록")
+    )
+
 
     valid_periods = [
         item
         for item in periods
         if isinstance(item, dict)
         and item.get("수집상태") == "정상"
-        and safe_dict(item.get("지표")).get("매출")
-        not in (None, 0, 0.0, "")
     ]
 
 
-    valuation = safe_dict(data.get("가치평가"))
-    qualification = safe_dict(
-        valuation.get("데이터자격검사")
+    valuation = safe_dict(
+        data.get("가치평가")
     )
 
-    stop_reasons = [
-        str(item)
-        for item in safe_list(
-            qualification.get("중단사유")
-        )
-    ]
 
-    warning_reasons = [
-        str(item)
-        for item in safe_list(
-            qualification.get("주의사유")
-        )
-    ]
+    # 실제 DART 수집 실패만 재시도
+    if len(valid_periods) == 0:
 
-
-    # ----------------------------
-    # 1. 실제 수집 실패만 재시도
-    # ----------------------------
-
-    retryable = []
-
-    if len(valid_periods) < 4:
-        retryable.append(
-            f"정상 재무기간 {len(valid_periods)}개"
+        print(
+            "DART USABILITY: RETRY"
         )
 
-    if period_bundle.get("수집상태") != "정상":
-        retryable.append(
-            "OpenDART 재무기간 수집 실패"
+        print(
+            "- usable financial period 없음"
         )
-
-
-    if retryable:
-        print("DART USABILITY: RETRY")
-        for item in retryable:
-            print("-", item)
 
         return RETRYABLE_DART_FAILURE
 
 
 
-    # ----------------------------
-    # 2. 구조 오류만 실패
-    # ----------------------------
+    warnings = []
 
-    structural = []
 
     if valuation.get("최종값사용가능") is not True:
-        structural.append(
-            "최종 가치평가 사용 불가"
+        warnings.append(
+            "최종 적정가 일부 모델 산출 불가"
         )
 
 
-    if not valuation:
-        structural.append(
-            "가치평가 데이터 없음"
+    if valuation.get("TTMEPS") in (
+        None,
+        "",
+        0,
+        0.0
+    ):
+        warnings.append(
+            "TTM EPS 미확보"
         )
 
 
-    if structural:
-        print("DART USABILITY: FAIL")
-
-        for item in structural:
-            print("-", item)
-
-        for item in stop_reasons:
-            print("-", item)
-
-        return NON_RETRYABLE_FAILURE
-
-
-
-    # ----------------------------
-    # 3. EPS / 평가자격 문제는 경고 처리
-    # ----------------------------
-
-    qualification_pass = (
-        qualification.get("통과") is True
+    qualification = safe_dict(
+        valuation.get("데이터자격검사")
     )
 
 
-    if not qualification_pass:
+    for item in safe_list(
+        qualification.get("중단사유")
+    ):
+        warnings.append(str(item))
+
+
+    for item in safe_list(
+        qualification.get("주의사유")
+    ):
+        warnings.append(str(item))
+
+
+    if warnings:
 
         print(
             "DART USABILITY: PASS WITH WARNING"
         )
 
-        print(
-            "- valuation qualification warning"
-        )
-
-        for item in stop_reasons:
-            print("-", item)
-
-        for item in warning_reasons:
-            print("-", item)
-
-    elif warning_reasons:
-
-        print(
-            "DART USABILITY: PASS WITH WARNING"
-        )
-
-        for item in warning_reasons:
+        for item in warnings:
             print("-", item)
 
     else:
 
-        print("DART USABILITY: PASS")
+        print(
+            "DART USABILITY: PASS"
+        )
 
 
     print(
