@@ -22,6 +22,7 @@ on:
           - biotechnology
           - construction
           - finance
+          - insurance
           - none
 
 permissions:

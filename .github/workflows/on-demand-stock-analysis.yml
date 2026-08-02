@@ -1,4 +1,5 @@
 name: on-demand-stock-analysis (admin cache)
+run-name: on-demand-${{ inputs.stock_code }}-${{ github.run_number }}
 on:
   workflow_dispatch:
     inputs:
