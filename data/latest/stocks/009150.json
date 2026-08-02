@@ -29,7 +29,7 @@
     "OpenDART업종코드": "2622",
     "데이터출처": "금융감독원 OpenDART"
   },
-  "생성시각": "2026-08-02T10:00:11.733308",
+  "생성시각": "2026-08-02T10:19:15.422640",
   "재무분석": {
     "재무지표": {
       "ROE": 7.46,
@@ -635,7 +635,7 @@
         "MA20": 1478.693494,
         "현재값대비MA20": -2.84667,
         "최종관측시각UTC": "2026-08-02T03:30:49+00:00",
-        "데이터지연시간": 6.487,
+        "데이터지연시간": 6.796,
         "데이터개수": 68
       },
       "S&P500": {
@@ -654,7 +654,7 @@
         "MA20": 7481.149487,
         "현재값대비MA20": 0.114564,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 44.501,
+        "데이터지연시간": 44.809,
         "데이터개수": 63
       },
       "나스닥": {
@@ -673,7 +673,7 @@
         "MA20": 25592.412988,
         "현재값대비MA20": -0.854016,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 44.501,
+        "데이터지연시간": 44.809,
         "데이터개수": 63
       },
       "반도체지수": {
@@ -692,7 +692,7 @@
         "MA20": 12048.914893,
         "현재값대비MA20": -6.123662,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 44.501,
+        "데이터지연시간": 44.809,
         "데이터개수": 63
       },
       "VIX": {
@@ -711,7 +711,7 @@
         "MA20": 17.227,
         "현재값대비MA20": -7.180589,
         "최종관측시각UTC": "2026-07-31T07:00:00+00:00",
-        "데이터지연시간": 51.001,
+        "데이터지연시간": 51.309,
         "데이터개수": 65
       },
       "미국10년물": {
@@ -730,7 +730,7 @@
         "MA20": 4.6037,
         "현재값대비MA20": 3.069269,
         "최종관측시각UTC": "2026-07-31T12:20:00+00:00",
-        "데이터지연시간": 45.668,
+        "데이터지연시간": 45.976,
         "데이터개수": 64
       },
       "미국5년물": {
@@ -749,7 +749,7 @@
         "MA20": 4.3392,
         "현재값대비MA20": 2.783924,
         "최종관측시각UTC": "2026-07-31T12:20:00+00:00",
-        "데이터지연시간": 45.668,
+        "데이터지연시간": 45.976,
         "데이터개수": 64
       },
       "미국13주": {
@@ -768,7 +768,7 @@
         "MA20": 3.7196,
         "현재값대비MA20": -1.010863,
         "최종관측시각UTC": "2026-07-31T12:20:00+00:00",
-        "데이터지연시간": 45.668,
+        "데이터지연시간": 45.976,
         "데이터개수": 64
       }
     },
@@ -875,7 +875,7 @@
       "설명": "국내주식 기준으로 원달러·미국 주가지수·반도체지수·VIX·미국 금리의 방향을 -100~100 신호로 합성했습니다."
     },
     "수집오류": [],
-    "수집시각": "2026-08-02T19:00:04.809582+09:00",
+    "수집시각": "2026-08-02T19:18:33.815556+09:00",
     "데이터출처": "Yahoo Finance Chart API"
   },
   "기업기초데이터": {
@@ -1225,7 +1225,7 @@
       },
       "데이터출처": "금융감독원 OpenDART"
     },
-    "수집시각": "2026-08-02T19:00:10.059476+09:00",
+    "수집시각": "2026-08-02T19:19:14.390979+09:00",
     "데이터출처": "금융감독원 OpenDART"
   },
   "산업분석": {
@@ -1249,7 +1249,7 @@
         "MA20": 241.5195,
         "현재값대비MA20": -1.440673,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 44.503,
+        "데이터지연시간": 44.821,
         "데이터개수": 251,
         "산업구간": "기술하드웨어",
         "중기가중치": 18.0,
@@ -1280,7 +1280,7 @@
         "MA20": 156.028499,
         "현재값대비MA20": 2.994003,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 44.503,
+        "데이터지연시간": 44.821,
         "데이터개수": 251,
         "산업구간": "커넥터·전자부품",
         "중기가중치": 18.0,
@@ -1311,7 +1311,7 @@
         "MA20": 202.756499,
         "현재값대비MA20": 1.446811,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 44.503,
+        "데이터지연시간": 44.821,
         "데이터개수": 251,
         "산업구간": "전장·커넥터",
         "중기가중치": 16.0,
@@ -1342,7 +1342,7 @@
         "MA20": 162.240501,
         "현재값대비MA20": -14.786999,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 44.503,
+        "데이터지연시간": 44.821,
         "데이터개수": 251,
         "산업구간": "광학·세라믹소재",
         "중기가중치": 14.0,
@@ -1373,7 +1373,7 @@
         "MA20": 316.3125,
         "현재값대비MA20": -0.399134,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 44.503,
+        "데이터지연시간": 44.821,
         "데이터개수": 251,
         "산업구간": "전자부품·EMS",
         "중기가중치": 14.0,
@@ -1404,7 +1404,7 @@
         "MA20": 1372650.0,
         "현재값대비MA20": -16.803264,
         "최종관측시각UTC": "2026-07-31T00:00:00+00:00",
-        "데이터지연시간": 58.003,
+        "데이터지연시간": 58.321,
         "데이터개수": 243,
         "산업구간": "MLCC·기판·카메라모듈",
         "중기가중치": 20.0,
@@ -1588,7 +1588,7 @@
       "설명": "글로벌 전자부품·커넥터·광학소재와 한국 대표 전자부품 기업의 가격추세를 합성합니다."
     },
     "수집오류": [],
-    "수집시각": "2026-08-02T19:00:11.732110+09:00",
+    "수집시각": "2026-08-02T19:19:15.421315+09:00",
     "데이터출처": "Yahoo Finance Chart API"
   },
   "기술분석": {
@@ -2737,7 +2737,7 @@
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9DQVFYVjAzVnY3bEc1VVZjWllMNmFfbk5mTXY4TU9mc3RkX3hkNk5VSFJ1eUxUVUxoQUpZSmIyakxMTm12S1dsdG1ORmdyNjM5TWpqMnFNT2tMdHVzelVndmVfbmF4TUd3a250N3g4VXY?oc=5",
         "언론사": "연합인포맥스",
         "발행시각UTC": "2026-07-30T03:15:44+00:00",
-        "경과일": 3.28,
+        "경과일": 3.29,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2747,7 +2747,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE9GMWV1Z1hpd3lGWlRSQXdMZXF0bGZtWndfYWhOT2FNMll0T1kwdFRxRXZPTmROMWhfZW1JTmsxYVFKVmtDQnN0VHdNUFNWLTdNUTRYVV9keDBfRTMzeE9uU2tXWUZ0UQ?oc=5",
         "언론사": "디일렉",
         "발행시각UTC": "2026-07-30T06:37:01+00:00",
-        "경과일": 3.14,
+        "경과일": 3.15,
         "원점수": 16.0,
         "최종점수": 14.88,
         "매칭규칙": [
@@ -2757,9 +2757,9 @@
       {
         "제목": "삼성전기, AI 수요에 2분기 영업익 4404억원…MLCC 장기공급계약 확대 - 조선비즈",
         "링크": "https://news.google.com/rss/articles/CBMiggFBVV95cUxQX1hMNGRPeHctQjNhR1RocUs3YlJTTVI5N1FzR1dCSTdmc1BQVnVhLWtWay10UldsYkh2R25CMl9BX1hfc0hKNVkza0g3T1NpZ3l3NDNUempGOERSMjFpU3dBTGczdGZfdFdpZExoTlRZZUFxYl9GQ21wVkh1ZXg4N0lB0gGWAUFVX3lxTE5faHhDQW5kWEZ0WkM0YkpHSlFYR3dOWU9UU3BCVWJ6ajZhaGxaQ2dGOVFUNGM4X0FZRmZ5SFhhR0RyMEpMM04yZG5Ea3dQYmlQMTBPUlMzLU1pNlI2YnF2ODhSa3RTNXJpWTFTMWpOVlhFeFVJb2g5d01XeFNkTmRZOS1oeW1JS0l4djJqbkdjbHhLZ2d6dw?oc=5",
-        "언론사": "Chosunbiz",
+        "언론사": "biz.chosun.com",
         "발행시각UTC": "2026-07-30T03:04:00+00:00",
-        "경과일": 3.29,
+        "경과일": 3.3,
         "원점수": 15.0,
         "최종점수": 13.9,
         "매칭규칙": [
@@ -2771,7 +2771,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE04Q0F1WHZpV1JhT1FGX2hBT1FZSzg1Z3hlTDBwNlV2ZUFZUU1YYlZxWU90VFNEeDlJVkgxUC1aNjNEaVpKNHY3SEJoUHdyVjQ?oc=5",
         "언론사": "v.daum.net",
         "발행시각UTC": "2026-08-02T03:09:03+00:00",
-        "경과일": 0.29,
+        "경과일": 0.3,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2781,7 +2781,7 @@
         "링크": "https://news.google.com/rss/articles/CBMidkFVX3lxTFBqNzZQVEtGaUpwc01kMU5nT0Vvb2xhajRWU1ZRdG1nTjE1bWRoeEVLUkMtSXdyalVRZm9LcjJRaE0zTnBfNkZWVW5sODF6TlZ3VHRrb2RWUnRFTXA3bTZBekY3bjBhb1MtYnI2aGp6VlVZYlpnd1HSAXZBVV95cUxQajc2UFRLRmlKcHNNZDFOZ09Fb29sYWo0VlNWUXRtZ04xNW1kaHhFS1JDLUl3cmpVUWZvS3IyUWhNM05wXzZGVlVubDgxek5Wd1R0a29kVlJ0RU1wN202QXpGN24wYW9TLWJyNmhqelZVWWJaZ3dR?oc=5",
         "언론사": "시사저널e",
         "발행시각UTC": "2026-08-01T22:18:47+00:00",
-        "경과일": 0.49,
+        "경과일": 0.5,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2791,9 +2791,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE9Ud0c0b09zdC1qaWNHaThyb0VHX2FKcmJ5NFFRNHFwakJ4MUNWaGxva2RTRXFMQlFvX1RIQklVUlhqdGZ4SnlVbzdXdG4tcGlpVERGTGRtU0luakRkaHVoNEF4SlZyRXM?oc=5",
         "언론사": "연합뉴스TV",
         "발행시각UTC": "2026-07-30T06:38:00+00:00",
-        "경과일": 3.14,
+        "경과일": 3.15,
         "원점수": 35.0,
-        "최종점수": 32.56,
+        "최종점수": 32.55,
         "매칭규칙": [
           "실적",
           "최대 실적"
@@ -2802,9 +2802,9 @@
       {
         "제목": "반도체주 투자심리 들썩…삼성전기·SK스퀘어 '상한가' 직행 - 머니투데이",
         "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE13b3hQQ2FtZ2o2UFJvWVlJNE4wTG5kOWk4UlBIem15M3NSRUxiRlRGc0tMNTdkS1JQR2FnbENHWnUtTzVCMzI5Szl0emlPZjZ5ZjlFUjFDdFVacmN6QWxmV21vY0RVTGpN0gFuQVVfeXFMTWxySmlJTVdCaV9zc0xrbDJsQzZGdGlnQU1ONTJYSXRIb0lQdk9IaHZjclpwcHlzU3pmMVVhdGFUX091RS0tTlVFU01HX2xwV0ktb0RhaldZd1JJUGpTdzFyZUxWQTdGbVZNekFFZHc?oc=5",
-        "언론사": "mt.co.kr",
+        "언론사": "머니투데이",
         "발행시각UTC": "2026-07-31T00:52:06+00:00",
-        "경과일": 2.38,
+        "경과일": 2.39,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2814,7 +2814,17 @@
         "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFB2OFNfZnpZbEhTZTN5Qkt1VWl0a3dnWjBGNUVpQlp0T1EyMnhmWElMNGhPcUVqNGRuZkxON2szU0tzRjVqYy1fZ3FLUDZDZEEzRU10NTdzQ1pmaWvSAWBBVV95cUxOcmoyTFdORmtfU0lTMnoxbV9nQVh3anFkWWJGOFhmSTFVLUpWRm9ZcUlTR2JGdXpyQlJnMWN3eEE0ZTdyUUxBdU9qSkIxcGhsdklJdkNIYWMtM1pvTG02Z2c?oc=5",
         "언론사": "연합뉴스",
         "발행시각UTC": "2026-07-30T23:35:50+00:00",
-        "경과일": 2.43,
+        "경과일": 2.45,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "'어닝 서프라이즈'에도…삼성전기 장중 10% 넘게 폭락",
+        "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE9hbFdic3VXSllDZVVwRXNSWnpZR0FsTDlEUEN2UXp1eG1hVDQ4bWpyRGxRMnBvVTh4UnZPVVZtaGdXT1RVeTllTGh5X0JiWGdmOWtQZ3N5R1lEZw?oc=5",
+        "언론사": "hankyung.com",
+        "발행시각UTC": "2026-07-30T05:18:56+00:00",
+        "경과일": 3.21,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2824,7 +2834,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE9FQWduc2w5a01OWm1sV2szcXRWdG4yVTdIZWVKT0ViMjZZZF9LUFg0ZlN1QmRjWTBJYWUzOHpuMnp2YVdPVG9pUzhHV3FqQXNZaHc?oc=5",
         "언론사": "mk.co.kr",
         "발행시각UTC": "2026-07-30T06:56:13+00:00",
-        "경과일": 3.13,
+        "경과일": 3.14,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2834,7 +2844,7 @@
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9HSWIzYjF2OXdNSDN5WVd6Mm1GSnFSbDRGQVczTzlIUzBScWZuRDBtbVdLMTdLc29Lb0FJWjBsYkFqNnpNRVJkM3U0N1BUMHMwWXJkamp3bkhRd1BKN3RvQWQzeUYwc0tjMFc3SWh3QVM?oc=5",
         "언론사": "연합인포맥스",
         "발행시각UTC": "2026-07-31T04:39:05+00:00",
-        "경과일": 2.22,
+        "경과일": 2.24,
         "원점수": -8.0,
         "최종점수": -7.6,
         "매칭규칙": [
@@ -2846,7 +2856,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9HN2Z6ZWRRbHRfM01CQVZfN3U0ckVUWDZNREFyZFBEUU5mUTVtMFI4ZGxScmliSHotTU9YSExaNExyeUZoYmM3M2R0N3dDdzg?oc=5",
         "언론사": "v.daum.net",
         "발행시각UTC": "2026-07-31T08:00:15+00:00",
-        "경과일": 2.08,
+        "경과일": 2.1,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2856,7 +2866,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE9hQjBUeFVKaFVYVV9ROUVNVXJVUEFUWW1tanhfR0RtS3hfd0M4Z0ZxX29SbXpzbmJoQlhBS1NpVXNybDhUTk91aHhxSlNYeEJfYWc?oc=5",
         "언론사": "mk.co.kr",
         "발행시각UTC": "2026-07-29T04:51:03+00:00",
-        "경과일": 4.21,
+        "경과일": 4.23,
         "원점수": 5.0,
         "최종점수": 4.53,
         "매칭규칙": [
@@ -2866,9 +2876,9 @@
       {
         "제목": "iM證 “삼성전기, 목표가 33% 낮춰…밸류에이션 낮아졌지만 업황은 견조” - 조선비즈",
         "링크": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNZGNoVUFxc3kzTjgwVkZ6RkJFRnZKVC0tWklUd0ViVVNmYzNKdkFLbzdjeVhuOE1HT0RWRTlLZkNpOTR1d2FUcTcyYlJpWUdIRS1WekF2UmJSTkg1UjVqWHUxVWlabWdsSXg2Zk1tUnZWQ3lNc0JpV0djSWdYNWI4VUw1Tl9meHFf0gGcAUFVX3lxTE53SklJbWR4QXRzSFY0STA2eTg1YWJiMHF1VEZvT2tNRHRWbXg0LXQtaUc4RElPaGM0VWxHYnpad1VBZm00aENiOXkyb1Zac05GZmk0TFNfemV0Q0piOWNqSUpzZzM4bHluOGNUeHlvSDQ2WW9qRnd0U0Z1cWx0N2U4RkJmWmJocjBiVTBPU1VBX3lZTHk5WUVWSlU3UQ?oc=5",
-        "언론사": "Chosunbiz",
+        "언론사": "biz.chosun.com",
         "발행시각UTC": "2026-07-30T22:41:00+00:00",
-        "경과일": 2.47,
+        "경과일": 2.48,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2878,7 +2888,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBaYWNLSXNlcW9BazM0dzZoMjllUVV4aFFfdUd6YUN0ZW5TdHR1T1RQeUVpc1Y5d2dfM19iYkJRNkI3MnRsdVBJUlppeWlQclR2c3hTY1BzTHJCTWVwVXQ3M0FoYzRqNENu?oc=5",
         "언론사": "CEO스코어데일리",
         "발행시각UTC": "2026-07-21T07:00:00+00:00",
-        "경과일": 12.13,
+        "경과일": 12.14,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2886,9 +2896,9 @@
       {
         "제목": "AI 관련 매출에 호실적 삼성전기, 주가 14% 넘게 급락 - 머니투데이",
         "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE84cWsxQkpzLWZZc1pGYjJXY1ctZUJ2NW5aTFBfZ3RJYmg1M0xlSG0taU54dHRnV2kwLU5IeDVZWG5IRmI4UHQyRmdSYlNOUC0yck9HaWZuMTQ1N2RSdjVXdk1LaWgzelFa0gFuQVVfeXFMTWplci1PeVVqR3c4WkZhYkVuY0xGb25BaUl3Y3k2RXI5NzB0bDVzeUY4eU5uZDNESGlQVDJmQk9UakZvSU1naFI2TXhzMDRRU2Q2dDhONXJzR1ZnY0c2cnhtT3RzQ2N6c1FaTmR1T0E?oc=5",
-        "언론사": "mt.co.kr",
+        "언론사": "머니투데이",
         "발행시각UTC": "2026-07-30T05:42:01+00:00",
-        "경과일": 3.18,
+        "경과일": 3.19,
         "원점수": 8.0,
         "최종점수": 7.43,
         "매칭규칙": [
@@ -2901,7 +2911,7 @@
         "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTFAxcUpHX0RNbUplSTlSWTN2UVZ3akxwMFlneHZCalJnaXFrSi0wTUxkOGp1X2pGMkFQdUNlT0NqVzg5RkcwenRBZjgxUDJuUXBXSjhJenRVUGVidDIxa0M1Y0d1RzdVVE9KMTZQMWU1cjhNM0U?oc=5",
         "언론사": "비즈니스포스트",
         "발행시각UTC": "2026-07-31T02:08:44+00:00",
-        "경과일": 2.33,
+        "경과일": 2.34,
         "원점수": 16.0,
         "최종점수": 15.17,
         "매칭규칙": [
@@ -2911,11 +2921,11 @@
       {
         "제목": "삼성전기, 3Q 역대 최대 실적 경신 전망…저가 매수 기회-KB - 머니투데이",
         "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBMeGs0QTByQTBEYzJNSnphcHcxbWtCTWlXRjJRb2FySVR6TmtJTGV6Z0xtd1lKaHM5cWFPRXNQSDJvSzh4NEZpQ3Q5WVdGaFVZdVk1aUJpelVibWVZYjFmTE4xRXMtMC1P0gFuQVVfeXFMTUxCbEM1UE9UeTdfMWlJUkVlcGZFb2ROd2NBWHdoRllIYmI2QUp6a0hFNGJlNjJsZWEySV9fQUlUZTJJTDZncEE1enZIQ19WOFplZ1FkM2ZXNk41UDJRQWl6dlFvUWFVTXVrNFhRdnc?oc=5",
-        "언론사": "mt.co.kr",
+        "언론사": "머니투데이",
         "발행시각UTC": "2026-07-30T23:21:01+00:00",
-        "경과일": 2.44,
+        "경과일": 2.46,
         "원점수": 35.0,
-        "최종점수": 33.1,
+        "최종점수": 33.09,
         "매칭규칙": [
           "실적",
           "최대 실적",
@@ -2927,9 +2937,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE5TbjBPc1NJV0UzaXdBMVE0bmg0aFFabnhpYWxQeEpqSGptZkR6R3Z1V3RFRDVfaFVxUjJQQmY2VjNlOGExZDZoUU15MA?oc=5",
         "언론사": "v.daum.net",
         "발행시각UTC": "2026-07-30T06:17:17+00:00",
-        "경과일": 3.15,
+        "경과일": 3.17,
         "원점수": 35.0,
-        "최종점수": 32.55,
+        "최종점수": 32.54,
         "매칭규칙": [
           "실적",
           "최대 실적"
@@ -2938,11 +2948,11 @@
       {
         "제목": "‘갑자기 상한가’ 삼성전기…실적 컨센서스 변화로 분석해보니",
         "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1CTHVxaWVySTNYYUotWGdaRlRWZzdzT0RUdjhpaU9MV3d3Zll2TDgzZy1ZN2JSdjZFZ3NINWZCc0h2aUFDM1VGSGxPWC1oNkNVRnRxRjVtdTVQZw?oc=5",
-        "언론사": "한국경제",
+        "언론사": "hankyung.com",
         "발행시각UTC": "2026-07-31T04:37:44+00:00",
-        "경과일": 2.22,
+        "경과일": 2.24,
         "원점수": 16.0,
-        "최종점수": 15.21,
+        "최종점수": 15.2,
         "매칭규칙": [
           "실적"
         ]
@@ -2950,9 +2960,9 @@
       {
         "제목": "빅테크와 직접 거래 늘린 삼성전기…MLCC·기판 슈퍼사이클 올라탔다 - 조선비즈",
         "링크": "https://news.google.com/rss/articles/CBMiggFBVV95cUxNRlF4RVNtcmhseXd4SVFWMWZYQnNQTEtfQU5aZ28xRlo0SmllRG01SWFlZGwwbkNGdlVnRTY1Y1BvcGZPeTE2allIT2NocUduNW9Qdm1FMEhYRWJiZmZpdmJBVmt0bER5UjludlUtdDIyamtsSWxJT2VKdktVQ2VvQVhB0gGWAUFVX3lxTFBXWUNoVTdFaU85MUh0eC1ER2NxTXZKc2hibDdsQWk4WFRCMHBYbno5OGdtWWF3UHNJQ2VhaHgtSmd2REl3czlkSEc1OURhTEFfbHpFRU10NXRjVjNpR1hMTkpmZnVHTlBxbjRkNXVWUXk4MVJndXJiTC1YejJjNFd3WWN5aVJ6b0tuNlhzeTBNQnVPRkZlQQ?oc=5",
-        "언론사": "Chosunbiz",
+        "언론사": "biz.chosun.com",
         "발행시각UTC": "2026-07-30T05:39:00+00:00",
-        "경과일": 3.18,
+        "경과일": 3.19,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2962,7 +2972,7 @@
         "링크": "https://news.google.com/rss/articles/CBMilwFBVV95cUxORU80RWxzQjl1OEJzY1FpMTQtV055TUZ4LTdJVVZ6UHdOYkp6cjBhVHcwM21kdFoyMEh0THhSUlZvYjh4QmVOOU9mUGo1QmV1RlFIRnIydkxTdFpIVUZLTFBRejdXM2RwYlRDekxJenR2S3p1cHhFOVFUVUZwN3Z4SkMtZVp6WEphYjZIZTFmb3RLMDM2R3ZZ?oc=5",
         "언론사": "매일경제 마켓",
         "발행시각UTC": "2026-07-29T15:11:15+00:00",
-        "경과일": 3.78,
+        "경과일": 3.8,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2970,41 +2980,21 @@
       {
         "제목": "삼성전자, 오늘 2Q '메모리 효자' 확정실적 공개…삼성전기도 실적 발표",
         "링크": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5GaHhMczMybkxLaVVPOWFvaFBiMks3WWE0VFNUUE83d2JJbVExUURDR0ZGWkw3bVRTNUlsTjJybW03dEg0dW5MV0gyc3FUT3ZTb2hWNXYwZlBUb3FzQndZVdIBeEFVX3lxTE0wcG1oeTVYUUkxTnRxU2pMN3BOOFMxZHE1azdMQnRzZjNUdzZUYl9QaHp3N1hWdnlsWmR3SVNBSHJoaHI0SmdsU0ZqcnpnNWhXMjU2NDl6cWxLR3ZkNVlyYnpZYjg4emlsdXVaSmRJQXp3RjNfR2NNTw?oc=5",
-        "언론사": "뉴시스",
+        "언론사": "newsis.com",
         "발행시각UTC": "2026-07-29T20:00:00+00:00",
-        "경과일": 3.58,
+        "경과일": 3.6,
         "원점수": 16.0,
-        "최종점수": 14.73,
+        "최종점수": 14.72,
         "매칭규칙": [
           "실적"
         ]
       },
       {
-        "제목": "'어닝 서프라이즈'에도…삼성전기 장중 10% 넘게 폭락",
-        "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE9hbFdic3VXSllDZVVwRXNSWnpZR0FsTDlEUEN2UXp1eG1hVDQ4bWpyRGxRMnBvVTh4UnZPVVZtaGdXT1RVeTllTGh5X0JiWGdmOWtQZ3N5R1lEZw?oc=5",
-        "언론사": "한국경제",
-        "발행시각UTC": "2026-07-30T05:18:56+00:00",
-        "경과일": 3.2,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "삼성전기, 2040년까지 세종 8조·부산 15조 투자",
-        "링크": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE1nOGp1b2tackNUejNId29yRExMWjdvalJZOWZHUEVPZDhTZVNCR0cxZThCREktTEhaZlRuTTd4WXUzOUhndXhFZkwwTVVTVkpKeEY2Si1ITk53XzZFN2V2SjhRMzNkUQ?oc=5",
-        "언론사": "디일렉",
-        "발행시각UTC": "2026-07-03T07:00:00+00:00",
-        "경과일": 30.13,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
         "제목": "삼성전기, AI 타고 '깜짝 실적' 전망...영업이익률 '10% 벽' 깰듯 - 머니투데이",
         "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTE1NcVh2MUtFcVR3Q2YwVHgzZ0Jyd3g5WmxabW1tN3NVajJNOXNxOEFhbmR2dTRGVFhya3N6NGxlWWFFTHZpNW80eTB5M2FtSHVxZG5jTDR3STNwVzVsRGI1b25wTldZcENTbWdKStIBckFVX3lxTE4xYjRicFNZZmdka1FCM2JMM08wUU9lSGVlbDNGSTBCWDl3a1BFNUI1VVUtaFJlejJlVlhiMXJ4ZkJEbFdPRkVScThhc2JHMEczZUtsT1VHOTFSUVZtbU5ZWko2TDlMOW9UT0FuSnRNOHVIQQ?oc=5",
-        "언론사": "mt.co.kr",
+        "언론사": "머니투데이",
         "발행시각UTC": "2026-07-25T22:01:00+00:00",
-        "경과일": 7.5,
+        "경과일": 7.51,
         "원점수": 16.0,
         "최종점수": 13.33,
         "매칭규칙": [
@@ -3012,13 +3002,23 @@
         ]
       },
       {
+        "제목": "삼성전기, 2040년까지 세종 8조·부산 15조 투자",
+        "링크": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE1nOGp1b2tackNUejNId29yRExMWjdvalJZOWZHUEVPZDhTZVNCR0cxZThCREktTEhaZlRuTTd4WXUzOUhndXhFZkwwTVVTVkpKeEY2Si1ITk53XzZFN2V2SjhRMzNkUQ?oc=5",
+        "언론사": "디일렉",
+        "발행시각UTC": "2026-07-03T07:00:00+00:00",
+        "경과일": 30.14,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
         "제목": "장기공급계약 앞세운 삼성전기 \"3분기 역대 최대 실적 전망\" - 머니투데이",
         "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTE1MOGVYRWE2eURMek5LODRBUFBQdFM0Q0czNkZsenFLWFVTZEpJRlJiTm1YdUV2Vlp0TFZRdGg2WnpvYVNmY0hPcVBpdEN3MjZNM3BETVVfRmNoZWVuQmMzZUV2MEhoUENKU2xyVtIBckFVX3lxTFBQQndmVkQwY1VHNjgyQ0lPcjlyMXpQeUU4ZXJTb0tWcDVSNTRIUWJkX2djT2NnWWFXNlFSTUJPNF9nbnAzNTFEUTg3WHF6aVdRckJfWU9QMlQzMmplUC1xTTdwUkZLbVRuTFk0YmNFWEpvUQ?oc=5",
-        "언론사": "mt.co.kr",
+        "언론사": "머니투데이",
         "발행시각UTC": "2026-07-30T06:22:53+00:00",
-        "경과일": 3.15,
+        "경과일": 3.16,
         "원점수": 35.0,
-        "최종점수": 32.55,
+        "최종점수": 32.54,
         "매칭규칙": [
           "실적",
           "최대 실적",
@@ -3028,11 +3028,11 @@
       {
         "제목": "삼성전기, 장 초반 상한가…호실적·목표가 상향에 매수세",
         "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE9NdFI1aUJfY1g4LWduUk8tWkpqWnZET3dlYmwwaHdINXZWaUFfbi1ienZDV3V2Uk5PZmFSSHNzN2F1X3h6ak9MT0JCUEpsbmdXR1ZYbGZxUzhIdw?oc=5",
-        "언론사": "한국경제",
+        "언론사": "hankyung.com",
         "발행시각UTC": "2026-07-31T00:34:15+00:00",
-        "경과일": 2.39,
+        "경과일": 2.41,
         "원점수": 31.0,
-        "최종점수": 29.35,
+        "최종점수": 29.34,
         "매칭규칙": [
           "실적",
           "목표가 상향",
@@ -3044,7 +3044,7 @@
         "링크": "https://news.google.com/rss/articles/CBMigwFBVV95cUxQZEVvOTR1dThYbnI4M3ZUMW5NZ0taWjRCUDlSVGttY252V3hYZlV6d1VvLXhBV2hvR3dDbU5ndGJtQ21SMmk5SzdZTTgxbjU3NzRYeXdZOXo1TC1wVGlVcF9iMXdqQ2N2OGxFajVSUWlUbWxPRHlZQTJaU0t2SFlaNF9IVQ?oc=5",
         "언론사": "조선일보",
         "발행시각UTC": "2026-07-30T05:58:58+00:00",
-        "경과일": 3.17,
+        "경과일": 3.18,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -3054,7 +3054,7 @@
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE8wM1ZvdFAzaG9YdGlFSFNQVW9pOE1iSFFwS2daMXlJLUE4cnI0djd1MGdYVkRlWFE2MnVjVVFWZGxkZUlCYUU3TzlYOFhmcWkwNUpybDhlX1dwVzlQc0NKUFB5ZUxXRUlmcjktMlhDV0c?oc=5",
         "언론사": "연합인포맥스",
         "발행시각UTC": "2026-07-30T05:57:13+00:00",
-        "경과일": 3.17,
+        "경과일": 3.18,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -3064,9 +3064,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE1WR1dzSnl0Rm1YUFBjdDNsNnp1NVpsTG9mYkkzWG9MMHFYemJIWnRZSnZBemwxM01FWmF6SU1yNlB6S1BjWlhRWkdrT3dmQlVSbWw4bWpMNEFYTTdi?oc=5",
         "언론사": "뉴스핌",
         "발행시각UTC": "2026-07-31T00:29:00+00:00",
-        "경과일": 2.4,
+        "경과일": 2.41,
         "원점수": 16.0,
-        "최종점수": 15.15,
+        "최종점수": 15.14,
         "매칭규칙": [
           "실적"
         ]
@@ -3086,7 +3086,7 @@
           "링크": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE9GMWV1Z1hpd3lGWlRSQXdMZXF0bGZtWndfYWhOT2FNMll0T1kwdFRxRXZPTmROMWhfZW1JTmsxYVFKVmtDQnN0VHdNUFNWLTdNUTRYVV9keDBfRTMzeE9uU2tXWUZ0UQ?oc=5",
           "언론사": "디일렉",
           "발행시각UTC": "2026-07-30T06:37:01+00:00",
-          "경과일": 3.14,
+          "경과일": 3.15,
           "원점수": 16.0,
           "최종점수": 14.88,
           "매칭규칙": [
@@ -3096,9 +3096,9 @@
         {
           "제목": "삼성전기, AI 수요에 2분기 영업익 4404억원…MLCC 장기공급계약 확대 - 조선비즈",
           "링크": "https://news.google.com/rss/articles/CBMiggFBVV95cUxQX1hMNGRPeHctQjNhR1RocUs3YlJTTVI5N1FzR1dCSTdmc1BQVnVhLWtWay10UldsYkh2R25CMl9BX1hfc0hKNVkza0g3T1NpZ3l3NDNUempGOERSMjFpU3dBTGczdGZfdFdpZExoTlRZZUFxYl9GQ21wVkh1ZXg4N0lB0gGWAUFVX3lxTE5faHhDQW5kWEZ0WkM0YkpHSlFYR3dOWU9UU3BCVWJ6ajZhaGxaQ2dGOVFUNGM4X0FZRmZ5SFhhR0RyMEpMM04yZG5Ea3dQYmlQMTBPUlMzLU1pNlI2YnF2ODhSa3RTNXJpWTFTMWpOVlhFeFVJb2g5d01XeFNkTmRZOS1oeW1JS0l4djJqbkdjbHhLZ2d6dw?oc=5",
-          "언론사": "Chosunbiz",
+          "언론사": "biz.chosun.com",
           "발행시각UTC": "2026-07-30T03:04:00+00:00",
-          "경과일": 3.29,
+          "경과일": 3.3,
           "원점수": 15.0,
           "최종점수": 13.9,
           "매칭규칙": [
@@ -3110,9 +3110,9 @@
           "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE9Ud0c0b09zdC1qaWNHaThyb0VHX2FKcmJ5NFFRNHFwakJ4MUNWaGxva2RTRXFMQlFvX1RIQklVUlhqdGZ4SnlVbzdXdG4tcGlpVERGTGRtU0luakRkaHVoNEF4SlZyRXM?oc=5",
           "언론사": "연합뉴스TV",
           "발행시각UTC": "2026-07-30T06:38:00+00:00",
-          "경과일": 3.14,
+          "경과일": 3.15,
           "원점수": 35.0,
-          "최종점수": 32.56,
+          "최종점수": 32.55,
           "매칭규칙": [
             "실적",
             "최대 실적"
@@ -3123,7 +3123,7 @@
           "링크": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE9hQjBUeFVKaFVYVV9ROUVNVXJVUEFUWW1tanhfR0RtS3hfd0M4Z0ZxX29SbXpzbmJoQlhBS1NpVXNybDhUTk91aHhxSlNYeEJfYWc?oc=5",
           "언론사": "mk.co.kr",
           "발행시각UTC": "2026-07-29T04:51:03+00:00",
-          "경과일": 4.21,
+          "경과일": 4.23,
           "원점수": 5.0,
           "최종점수": 4.53,
           "매칭규칙": [
@@ -3133,9 +3133,9 @@
         {
           "제목": "AI 관련 매출에 호실적 삼성전기, 주가 14% 넘게 급락 - 머니투데이",
           "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE84cWsxQkpzLWZZc1pGYjJXY1ctZUJ2NW5aTFBfZ3RJYmg1M0xlSG0taU54dHRnV2kwLU5IeDVZWG5IRmI4UHQyRmdSYlNOUC0yck9HaWZuMTQ1N2RSdjVXdk1LaWgzelFa0gFuQVVfeXFMTWplci1PeVVqR3c4WkZhYkVuY0xGb25BaUl3Y3k2RXI5NzB0bDVzeUY4eU5uZDNESGlQVDJmQk9UakZvSU1naFI2TXhzMDRRU2Q2dDhONXJzR1ZnY0c2cnhtT3RzQ2N6c1FaTmR1T0E?oc=5",
-          "언론사": "mt.co.kr",
+          "언론사": "머니투데이",
           "발행시각UTC": "2026-07-30T05:42:01+00:00",
-          "경과일": 3.18,
+          "경과일": 3.19,
           "원점수": 8.0,
           "최종점수": 7.43,
           "매칭규칙": [
@@ -3150,7 +3150,7 @@
           "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9HSWIzYjF2OXdNSDN5WVd6Mm1GSnFSbDRGQVczTzlIUzBScWZuRDBtbVdLMTdLc29Lb0FJWjBsYkFqNnpNRVJkM3U0N1BUMHMwWXJkamp3bkhRd1BKN3RvQWQzeUYwc0tjMFc3SWh3QVM?oc=5",
           "언론사": "연합인포맥스",
           "발행시각UTC": "2026-07-31T04:39:05+00:00",
-          "경과일": 2.22,
+          "경과일": 2.24,
           "원점수": -8.0,
           "최종점수": -7.6,
           "매칭규칙": [
@@ -3161,11 +3161,13 @@
       "설명": "최근 뉴스 제목의 실적·수주·투자·증자·소송 등 규칙과 시간가중치를 합성합니다."
     },
     "데이터출처": "Google News RSS",
-    "수집시각UTC": "2026-08-02T10:00:03.014732+00:00"
+    "수집시각UTC": "2026-08-02T10:18:32.572793+00:00"
   },
   "가치평가": {
     "가치평가계약버전": "4.0",
     "가치평가엔진버전": "6.7.0-valuation-contract-v4",
+    "가치평가모형개정버전": "future-growth-v1.0.0",
+    "미래성장모형버전": "1.0.0",
     "산출상태": "정상",
     "최종값사용가능": true,
     "최종값출처": "Python 가치평가 계약 v4",
@@ -3228,9 +3230,10 @@
     "실제PBR": 9.04,
     "EPS": 9099.0,
     "BPS": 126302.0,
-    "발행주식수추정": 77585385,
-    "발행주식수출처": "OpenDART 주식의 총수 현황+연간순이익÷KIS EPS+자본총계÷KIS BPS+시가총액÷현재가(KIS억원)",
-    "발행주식수품질": 89,
+    "발행주식수추정": 75547250,
+    "발행주식수출처": "OpenDART 주식의 총수 현황",
+    "발행주식수품질": 100,
+    "발행주식수결정원칙": "현재가·시가총액 미사용, OpenDART 유통주식수 우선",
     "발행주식수후보": [
       {
         "출처": "OpenDART 주식의 총수 현황",
@@ -3243,43 +3246,69 @@
       {
         "출처": "자본총계÷KIS BPS",
         "주식수": 79896542
-      },
-      {
-        "출처": "시가총액÷현재가(KIS억원)",
-        "주식수": 74693695
       }
     ],
-    "TTMEPS": 13153.78,
-    "정상화EPS": 9262.01,
-    "분기런레이트EPS": 16276.36,
-    "FY1예상EPS": 15310.16,
-    "FY2예상EPS": 17147.38,
-    "평가EPS": 14041.57,
-    "선행EPS": 15310.16,
+    "TTMEPS": 13508.64,
+    "정상화EPS": 9475.06,
+    "분기런레이트EPS": 16715.47,
+    "FY1예상EPS": 15711.92,
+    "FY2예상EPS": 17597.35,
+    "FY3예상EPS": 21552.53,
+    "FY4예상EPS": 25000.94,
+    "평가EPS": 14407.48,
+    "선행EPS": 15711.92,
     "FY1성장률": 22.55,
     "FY2성장률": 12.0,
+    "FY3성장률": 22.48,
+    "FY4성장률": 16.0,
     "TTM기준기간": "2025Q3~2026Q2",
     "TTM데이터품질": 86,
     "TTM잠정실적반영": true,
     "TTM현금흐름기준": "최근 정식보고서 TTM 유지",
     "목표PER": 20.67,
     "목표PBR": 1.56,
-    "암시PER": 17.07,
-    "암시PBR": 1.9,
-    "PER기준적정가": 290277.37,
+    "암시PER": 18.52,
+    "암시PBR": 2.11,
+    "PER기준적정가": 297841.72,
     "PBR기준적정가": 196899.72,
-    "그레이엄가치": 183823.62,
-    "정상화회복가치": 172323.77,
+    "그레이엄가치": 186106.12,
+    "정상화회복가치": 176287.69,
     "잔여이익가치": 130639.71,
     "FCF가치": 0.0,
-    "실적전환보정가": 300881.55,
+    "실적전환보정가": 308742.3,
+    "미래성장가치": 413792.21,
+    "미래성장모형": {
+      "버전": "1.0.0",
+      "사용가능": true,
+      "차단사유": [],
+      "선정근거": [
+        "매출·영업이익·순이익 동반 구조적 가속",
+        "최근 분기 영업이익 고성장",
+        "향후이익 방향 대용지표 강세",
+        "장기 산업사이클 우호"
+      ],
+      "FY3성장률": 22.47601081126837,
+      "FY4성장률": 16.0,
+      "FY3EPS": 21552.533673425645,
+      "FY4EPS": 25000.939061173747,
+      "출구PER": 22.452714284080404,
+      "할인율": 10.7,
+      "할인기간연수": 3.0,
+      "원시가치": 413792.20843506616,
+      "가치상한": 491438.84558759007,
+      "상한적용": false,
+      "가치": 413792.20843506616,
+      "가중치": 0.2024,
+      "품질": 92,
+      "현재가미사용": true
+    },
     "복합기업대용가치합산": 0.0,
-    "순현금주당가치": 7698.49,
-    "재무적정가": 239729.07,
-    "기본적정가": 239729.07,
-    "보수적적정가": 185777.52,
-    "성장적정가": 324952.08,
-    "현재가대비": -79.01,
+    "순현금주당가치": 7906.18,
+    "재무적정가": 266805.46,
+    "기본적정가": 266805.46,
+    "보수적적정가": 190618.7,
+    "성장적정가": 405544.3,
+    "현재가대비": -76.64,
     "판단": "강한 고평가",
     "가치평가산업코드": "electronic_components",
     "가치평가산업프로필": "전자부품·MLCC·패키지기판 성장형",
@@ -3293,24 +3322,24 @@
     "실적전환방향": "실적 급상승 전환",
     "실적전환강도": 99.7,
     "구조적실적가속": true,
-    "가치평가국면": "일반 가치평가",
+    "가치평가국면": "구조적 성장·미래이익 혼합",
     "이익저점보정": false,
-    "자산대비이익가치배수": 0.678,
-    "그레이엄대비이익가치배수": 0.633,
+    "자산대비이익가치배수": 0.661,
+    "그레이엄대비이익가치배수": 0.625,
     "분기매출성장률": 24.15,
     "분기영업이익성장률": 103.4,
     "분기순이익성장률": 130.04,
     "데이터신뢰도": 94,
-    "모형신뢰도": 64,
-    "가치신뢰도": 81,
+    "모형신뢰도": 55,
+    "가치신뢰도": 78,
     "가치신뢰도등급": "B",
     "가치신뢰도정의": "자료완전성과 모형합의도이며 실제 적중률이 아님",
-    "모형분산배수": 2.303,
-    "전체모형분산배수": 2.303,
+    "모형분산배수": 3.167,
+    "전체모형분산배수": 3.167,
     "모형상세": [
       {
         "모형": "선행·정상화 이익가치",
-        "값": 290277.37,
+        "값": 297841.72,
         "기본가중치": 0.42,
         "역할": "기준",
         "기준가반영": true
@@ -3331,23 +3360,30 @@
       },
       {
         "모형": "실적전환 가치",
-        "값": 300881.55,
+        "값": 308742.3,
         "기본가중치": 0.28,
         "역할": "기준",
         "기준가반영": true
       },
       {
         "모형": "그레이엄 결합가치",
-        "값": 183823.62,
+        "값": 186106.12,
         "기본가중치": 0.08,
         "역할": "보조",
         "기준가반영": true
       },
       {
         "모형": "정상화 회복가치",
-        "값": 172323.77,
+        "값": 176287.69,
         "기본가중치": 0.08,
         "역할": "보조",
+        "기준가반영": true
+      },
+      {
+        "모형": "미래 성장가치",
+        "값": 413792.21,
+        "기본가중치": 0.2024,
+        "역할": "성장",
         "기준가반영": true
       }
     ],
@@ -3363,6 +3399,7 @@
       "KIS EPS는 미래이익 자체가 아니라 발행주식수 교차추정과 보조자료로만 사용했습니다.",
       "현재가는 적정가 산식에 넣지 않고 계산 완료 후 괴리 검증에만 사용했습니다.",
       "전자부품·MLCC·패키지기판 성장형 업종 프로필을 적용했습니다.",
+      "구조적 성장 증거가 확인된 경우에만 FY3·FY4 성장률을 감쇠 적용하고 업종별 EPS·가치 상한 및 할인율을 거친 미래 성장가치를 일부 반영했습니다.",
       "정식 보고서보다 최신인 OpenDART 잠정실적을 매출·영업이익·순이익 TTM에 반영했으며 현금흐름은 최근 정식보고서를 유지했습니다."
     ]
   },
@@ -3551,7 +3588,7 @@
           "데이터품질": 100.0,
           "점수기여": -20.0,
           "출처": "내부 가치평가",
-          "설명": "현재가 대비 -79.01%, 판단 강한 고평가"
+          "설명": "현재가 대비 -76.64%, 판단 강한 고평가"
         },
         {
           "요소": "경쟁력·시장점유율",
@@ -3628,7 +3665,7 @@
     "스키마버전": "2.0",
     "엔진버전": "6.7.0-valuation-contract-v4",
     "종목코드": "009150",
-    "생성시각": "2026-08-02T10:00:11.733308",
+    "생성시각": "2026-08-02T10:19:15.422640",
     "연결상태": "정상",
     "기술분석": {
       "수집상태": "정상",
@@ -3924,7 +3961,7 @@
             "데이터품질": 100.0,
             "점수기여": -20.0,
             "출처": "내부 가치평가",
-            "설명": "현재가 대비 -79.01%, 판단 강한 고평가"
+            "설명": "현재가 대비 -76.64%, 판단 강한 고평가"
           },
           {
             "요소": "경쟁력·시장점유율",
