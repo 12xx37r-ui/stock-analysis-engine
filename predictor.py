@@ -1589,7 +1589,7 @@ def predict_stock(
 
     return {
         "엔진버전": (
-            "6.6.3-valuation-contract-v3"
+            "6.6.4-valuation-contract-v3"
         ),
         "단기1~5일": short_term,
         "중기1~8주": mid_term,
