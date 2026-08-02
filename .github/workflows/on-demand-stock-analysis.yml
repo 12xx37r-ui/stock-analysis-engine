@@ -1,5 +1,5 @@
 name: on-demand-stock-analysis (admin cache)
-run-name: on-demand-${{ inputs.stock_code }}-${{ github.run_number }}
+run-name: on-demand-${{ inputs.stock_code }}-${{ inputs.request_id }}-${{ github.run_number }}
 on:
   workflow_dispatch:
     inputs:
@@ -11,6 +11,11 @@ on:
         description: "산업코드"
         required: true
         default: "auto"
+        type: string
+      request_id:
+        description: "GAS 요청 추적 ID"
+        required: false
+        default: "manual"
         type: string
 permissions:
   contents: write
