@@ -1,4 +1,4 @@
-"""재무적정가 엔진 V6.7.0 · 가치평가 계약 v4.
+"""재무적정가 엔진 V6.7.0 · 가치평가 계약 v4 · 미래성장모형 v1.
 
 핵심 원칙
 - 현재가는 적정가 산식에 넣지 않고 계산 후 괴리 검증에만 사용한다.
@@ -364,6 +364,21 @@ VALUATION_CONTRACT_VERSION = "4.0"
 VALUATION_ENGINE_VERSION = "6.7.0-valuation-contract-v4"
 INDUSTRY_PROFILE_VERSION = "3.0.0"
 DATA_QUALIFICATION_VERSION = "1.0.0"
+VALUATION_MODEL_REVISION = "future-growth-v1.0.0"
+FUTURE_GROWTH_MODEL_VERSION = "1.0.0"
+
+# 현재가를 사용하지 않는 FY3~FY4 미래이익 현재가치 모형.
+# 업종별 상한과 감쇠율을 두어 한 분기 급증을 장기간 직선 외삽하지 않는다.
+FUTURE_GROWTH_CONFIG: Dict[str, Dict[str, float]] = {
+    "semiconductor": {"weight": 0.18, "fy3_cap": 0.20, "fy4_cap": 0.13, "exit_premium": 1.5, "eps_cap": 1.85, "value_cap": 1.55, "min_growth": 0.04},
+    "electronic_components": {"weight": 0.22, "fy3_cap": 0.24, "fy4_cap": 0.16, "exit_premium": 2.0, "eps_cap": 2.00, "value_cap": 1.65, "min_growth": 0.05},
+    "battery": {"weight": 0.20, "fy3_cap": 0.24, "fy4_cap": 0.16, "exit_premium": 2.0, "eps_cap": 2.10, "value_cap": 1.70, "min_growth": 0.04},
+    "biotechnology": {"weight": 0.18, "fy3_cap": 0.26, "fy4_cap": 0.18, "exit_premium": 2.5, "eps_cap": 2.30, "value_cap": 1.85, "min_growth": 0.05},
+    "pharmaceutical": {"weight": 0.16, "fy3_cap": 0.20, "fy4_cap": 0.14, "exit_premium": 1.8, "eps_cap": 1.90, "value_cap": 1.60, "min_growth": 0.04},
+    "media_entertainment": {"weight": 0.18, "fy3_cap": 0.24, "fy4_cap": 0.16, "exit_premium": 2.2, "eps_cap": 2.10, "value_cap": 1.75, "min_growth": 0.05},
+    "software_platform": {"weight": 0.20, "fy3_cap": 0.28, "fy4_cap": 0.18, "exit_premium": 2.8, "eps_cap": 2.40, "value_cap": 1.95, "min_growth": 0.06},
+    "services": {"weight": 0.14, "fy3_cap": 0.18, "fy4_cap": 0.12, "exit_premium": 1.5, "eps_cap": 1.80, "value_cap": 1.50, "min_growth": 0.04},
+}
 
 # 복합기업은 사업부 세부 공시가 자동 수집되지 않으면 진짜 SOTP를 만들 수 없다.
 # 아래 설정은 '사업부 대용 가치합산'을 위한 보수적 복합배수이며, 출력에 대용모형임을 명시한다.
@@ -607,38 +622,44 @@ def infer_share_count(
         if implied > 100000:
             candidates.append({"value": implied, "source": "자본총계÷KIS BPS", "quality": 86})
 
-    market_cap = safe_float(market.get("시가총액"))
-    market_price = safe_float(market.get("현재가"))
-    if market_cap > 0 and market_price > 0:
-        # KIS hts_avls는 억원, Yahoo marketCap은 원 단위일 수 있어 두 단위를 모두
-        # 후보화한 뒤 현실적 주식 수 범위와 다른 후보의 일치도로 선택한다.
-        for multiplier, label in (
-            (1.0, "시가총액÷현재가(원단위)"),
-            (100_000_000.0, "시가총액÷현재가(KIS억원)"),
-        ):
-            implied = market_cap * multiplier / market_price
-            if 100_000 <= implied <= 100_000_000_000:
-                candidates.append({
-                    "value": implied,
-                    "source": label,
-                    "quality": 82,
-                })
-
+    # 현재가·시가총액은 적정가 산식과 주식수 결정에 사용하지 않는다.
+    # OpenDART 유통주식수가 있으면 이를 단일 기준값으로 채택하고 다른 후보는
+    # 교차검증에만 사용한다. 이 원칙으로 시장가격 변화가 EPS와 적정가를
+    # 역으로 움직이는 숨은 가격의존성을 제거한다.
     if not candidates:
         return {"value": 0.0, "source": "미확보", "quality": 0, "candidates": []}
+
+    dart_candidate = next(
+        (row for row in candidates if row["source"] == "OpenDART 주식의 총수 현황"),
+        None,
+    )
+    if dart_candidate:
+        cross_checks = [
+            row for row in candidates
+            if row is not dart_candidate and 0.70 <= row["value"] / dart_candidate["value"] <= 1.30
+        ]
+        quality = 100 if len(cross_checks) >= 1 else 94
+        return {
+            "value": dart_candidate["value"],
+            "source": "OpenDART 주식의 총수 현황",
+            "quality": quality,
+            "candidates": [{"출처": row["source"], "주식수": round(row["value"])} for row in candidates],
+            "결정원칙": "현재가·시가총액 미사용, OpenDART 유통주식수 우선",
+        }
 
     values = sorted(row["value"] for row in candidates)
     center = median(values) or values[0]
     consistent = [row for row in candidates if 0.70 <= row["value"] / center <= 1.30]
-    selected = consistent or candidates
+    selected = consistent or sorted(candidates, key=lambda row: row["quality"], reverse=True)[:1]
     total_quality = sum(row["quality"] for row in selected)
     value = sum(row["value"] * row["quality"] for row in selected) / max(total_quality, 1)
-    quality = min(98, int(sum(row["quality"] for row in selected) / len(selected)))
+    quality = min(92, int(sum(row["quality"] for row in selected) / len(selected)))
     return {
         "value": value,
         "source": "+".join(row["source"] for row in selected),
         "quality": quality,
         "candidates": [{"출처": row["source"], "주식수": round(row["value"])} for row in candidates],
+        "결정원칙": "현재가·시가총액 미사용, 재무 주당지표 교차추정",
     }
 
 
@@ -782,6 +803,165 @@ def _cost_of_equity(debt_ratio: float, profile_code: str) -> float:
     elif debt_ratio > 1.0:
         base += 0.010
     return clamp(base, 0.085, 0.125)
+
+
+def _annualize_two_year_growth(total_growth: float) -> float:
+    """최근 3개 연간값의 2년 누적성장률을 연율로 환산한다."""
+    total_growth = clamp(safe_float(total_growth), -0.95, 4.0)
+    return (1.0 + total_growth) ** 0.5 - 1.0
+
+
+def build_future_growth_model(
+    *,
+    profile_code: str,
+    profile: Dict[str, Any],
+    ttm_eps: float,
+    normalized_eps: float,
+    fy1_eps: float,
+    fy2_eps: float,
+    fy1_growth: float,
+    fy2_growth: float,
+    quarter: Dict[str, Any],
+    revenue_growth_3y: float,
+    operating_growth_3y: float,
+    net_growth_3y: float,
+    earnings_signal: float,
+    forward_signal: float,
+    industry: Dict[str, Any],
+    operating_margin: float,
+    net_margin: float,
+    target_per: float,
+    per_max: float,
+    cost_of_equity: float,
+    share_quality: float,
+    ttm_quality: float,
+    structural_acceleration: bool,
+    negative_transition: bool,
+    earnings_trough: bool,
+    earnings_value: float,
+) -> Dict[str, Any]:
+    config = safe_dict(FUTURE_GROWTH_CONFIG.get(profile_code))
+    blocked: List[str] = []
+    evidence: List[str] = []
+
+    if not config or not profile.get("growth"):
+        blocked.append("미래성장모형 비대상 업종")
+    if min(ttm_eps, fy1_eps, fy2_eps) <= 0:
+        blocked.append("양(+)의 TTM·FY1·FY2 EPS 미확보")
+    if safe_float(ttm_quality) < 70:
+        blocked.append("TTM 데이터품질 70점 미만")
+    if safe_float(share_quality) < 75:
+        blocked.append("주식수 품질 75점 미만")
+    if negative_transition:
+        blocked.append("실적 급하락 전환")
+    if earnings_trough:
+        blocked.append("이익저점 국면은 회복가치 모형 우선")
+    if operating_margin <= 0.03 or net_margin <= 0.015:
+        blocked.append("영업·순이익률 성장모형 최소기준 미달")
+    if safe_float(industry.get("long")) < -35.0:
+        blocked.append("장기 산업사이클 과도한 역풍")
+    if ttm_eps > 0 and normalized_eps > 0 and ttm_eps / normalized_eps > 2.8 and profile.get("cyclical"):
+        blocked.append("사이클 고점 이익 영구화 위험")
+
+    strong_evidence = bool(
+        structural_acceleration
+        or (safe_float(quarter.get("revenue_yoy")) >= 8.0 and safe_float(quarter.get("operating_yoy")) >= 25.0 and safe_float(quarter.get("net_yoy")) >= 18.0)
+        or (earnings_signal >= 35.0 and forward_signal >= 35.0)
+    )
+    if not strong_evidence:
+        blocked.append("구조적 성장 증거 부족")
+    if structural_acceleration:
+        evidence.append("매출·영업이익·순이익 동반 구조적 가속")
+    if safe_float(quarter.get("operating_yoy")) >= 25.0:
+        evidence.append("최근 분기 영업이익 고성장")
+    if forward_signal >= 35.0:
+        evidence.append("향후이익 방향 대용지표 강세")
+    if safe_float(industry.get("long")) >= 20.0:
+        evidence.append("장기 산업사이클 우호")
+
+    if blocked:
+        return {
+            "버전": FUTURE_GROWTH_MODEL_VERSION,
+            "사용가능": False,
+            "차단사유": list(dict.fromkeys(blocked)),
+            "선정근거": list(dict.fromkeys(evidence)),
+            "가치": 0.0,
+            "가중치": 0.0,
+            "품질": 0,
+        }
+
+    revenue_q = clamp(safe_float(quarter.get("revenue_yoy")) / 100.0, -0.15, 0.25)
+    operating_q = clamp(safe_float(quarter.get("operating_yoy")) / 100.0, -0.20, 0.35)
+    net_q = clamp(safe_float(quarter.get("net_yoy")) / 100.0, -0.20, 0.35)
+    operating_ann = clamp(_annualize_two_year_growth(operating_growth_3y), -0.15, 0.25)
+    net_ann = clamp(_annualize_two_year_growth(net_growth_3y), -0.15, 0.25)
+    signal_growth = clamp(forward_signal / 100.0 * 0.15, -0.08, 0.15)
+    industry_growth = clamp(safe_float(industry.get("long")) / 100.0 * 0.10, -0.06, 0.10)
+
+    raw_fy3_growth = (
+        fy2_growth * 0.24
+        + fy1_growth * 0.12
+        + revenue_q * 0.10
+        + operating_q * 0.18
+        + net_q * 0.12
+        + operating_ann * 0.10
+        + net_ann * 0.06
+        + signal_growth * 0.05
+        + industry_growth * 0.03
+    )
+    fy3_growth = clamp(raw_fy3_growth, safe_float(config.get("min_growth"), 0.04), safe_float(config.get("fy3_cap"), 0.20))
+    long_anchor = clamp((operating_ann * 0.55 + net_ann * 0.45), 0.0, safe_float(config.get("fy4_cap"), 0.14))
+    fy4_growth = clamp(
+        fy3_growth * 0.62 + long_anchor * 0.18 + max(0.0, industry_growth) * 0.20,
+        safe_float(config.get("min_growth"), 0.04) * 0.70,
+        safe_float(config.get("fy4_cap"), 0.14),
+    )
+
+    eps_anchor = max(ttm_eps, normalized_eps, fy1_eps, fy2_eps)
+    fy3_eps = fy2_eps * (1.0 + fy3_growth)
+    fy4_eps_raw = fy3_eps * (1.0 + fy4_growth)
+    fy4_eps_cap = eps_anchor * safe_float(config.get("eps_cap"), 2.0)
+    fy4_eps = min(fy4_eps_raw, fy4_eps_cap)
+
+    exit_premium = clamp((fy4_growth - 0.08) * 16.0, -0.5, safe_float(config.get("exit_premium"), 2.0))
+    if structural_acceleration:
+        exit_premium += 0.50
+    exit_per = clamp(target_per + exit_premium, max(6.0, target_per * 0.82), per_max)
+    discount_rate = clamp(cost_of_equity + (0.012 if profile.get("cyclical") else 0.008), 0.09, 0.14)
+    discount_years = 3.0
+    raw_value = fy4_eps * exit_per / ((1.0 + discount_rate) ** discount_years)
+    value_cap = earnings_value * safe_float(config.get("value_cap"), 1.65) if earnings_value > 0 else raw_value
+    future_value = min(raw_value, value_cap) if value_cap > 0 else raw_value
+
+    quality = 35.0
+    quality += clamp(ttm_quality, 0.0, 100.0) * 0.20
+    quality += clamp(share_quality, 0.0, 100.0) * 0.15
+    quality += 15.0 if structural_acceleration else 8.0
+    quality += 5.0 if bool(quarter.get("잠정실적반영")) else 0.0
+    quality += 5.0 if industry.get("available") else 0.0
+    quality = int(clamp(quality, 55.0, 92.0))
+    effective_weight = safe_float(config.get("weight"), 0.16) * quality / 100.0
+
+    return {
+        "버전": FUTURE_GROWTH_MODEL_VERSION,
+        "사용가능": future_value > 0,
+        "차단사유": [],
+        "선정근거": list(dict.fromkeys(evidence)),
+        "FY3성장률": fy3_growth * 100.0,
+        "FY4성장률": fy4_growth * 100.0,
+        "FY3EPS": fy3_eps,
+        "FY4EPS": fy4_eps,
+        "출구PER": exit_per,
+        "할인율": discount_rate * 100.0,
+        "할인기간연수": discount_years,
+        "원시가치": raw_value,
+        "가치상한": value_cap,
+        "상한적용": raw_value > future_value + 1e-9,
+        "가치": future_value,
+        "가중치": effective_weight,
+        "품질": quality,
+        "현재가미사용": True,
+    }
 
 
 def _model_row(name: str, value: float, weight: float, role: str = "기준") -> Dict[str, Any]:
@@ -1324,6 +1504,36 @@ def calculate_value(
         )
     )
 
+    future_growth_model = build_future_growth_model(
+        profile_code=profile_code,
+        profile=profile,
+        ttm_eps=ttm_eps,
+        normalized_eps=normalized_eps,
+        fy1_eps=fy1_eps,
+        fy2_eps=fy2_eps,
+        fy1_growth=fy1_growth,
+        fy2_growth=fy2_growth,
+        quarter=quarter,
+        revenue_growth_3y=revenue_growth_3y,
+        operating_growth_3y=operating_growth_3y,
+        net_growth_3y=net_growth_3y,
+        earnings_signal=earnings_signal,
+        forward_signal=forward_signal,
+        industry=industry,
+        operating_margin=operating_margin,
+        net_margin=net_margin,
+        target_per=target_per,
+        per_max=per_max,
+        cost_of_equity=cost_of_equity,
+        share_quality=safe_float(share_info.get("quality")),
+        ttm_quality=safe_float(ttm.get("quality")),
+        structural_acceleration=structural_acceleration,
+        negative_transition=negative_transition,
+        earnings_trough=earnings_trough,
+        earnings_value=earnings_value,
+    )
+    future_growth_value = safe_float(future_growth_model.get("가치"))
+
     # 기업 유형별 모형 자격과 가중치.
     # 이익저점 국면에서는 현재 이익가치가 자산·그레이엄·정상화 회복가치를
     # 제거하지 못하게 별도 가중치를 적용한다.
@@ -1369,6 +1579,14 @@ def calculate_value(
             _model_row("정상화 회복가치", normalized_recovery_value, 0.08, "보조"),
         ])
 
+    if future_growth_model.get("사용가능") is True:
+        models.append(_model_row(
+            "미래 성장가치",
+            future_growth_value,
+            safe_float(future_growth_model.get("가중치")),
+            "성장",
+        ))
+
     valid_models = [row for row in models if row["value"] > 0 and row["weight"] > 0]
     basis_models = []
     excluded_models = []
@@ -1395,9 +1613,13 @@ def calculate_value(
             basis_models.append(row)
     else:
         for row in valid_models:
-            # 성장·사이클 기업의 하단모형은 보수 시나리오에는 남기되 기준가 가중치에서 과도한 영향 배제.
-            if earnings_value > 0 and profile_code in {"semiconductor", "battery", "software_platform", "media_entertainment", "biotechnology"}:
+            # 성장기업의 낮은 FCF·자산 하단모형은 보수 시나리오에는 남기되
+            # 구조적 성장 기준가와 모형분산을 왜곡하지 못하게 기준가에서 제외한다.
+            if earnings_value > 0 and profile.get("growth"):
                 if row["role"] == "하단" and row["value"] < earnings_value * 0.42:
+                    excluded_models.append(row["name"])
+                    continue
+                if row["name"] == "FCF 가치" and row["value"] < earnings_value * 0.38:
                     excluded_models.append(row["name"])
                     continue
             if earnings_value > 0 and not (earnings_value * 0.28 <= row["value"] <= earnings_value * 3.2):
@@ -1439,6 +1661,7 @@ def calculate_value(
             normalized_recovery_value,
             residual_value,
             transition_value,
+            future_growth_value,
             q75,
         )
         growth_value = min(
@@ -1449,7 +1672,7 @@ def calculate_value(
     else:
         conservative = max(q25, normalized_floor, earnings_floor)
         conservative = min(conservative, basic) if basic > 0 else conservative
-        high_anchor = max(earnings_value, transition_value, complex_proxy_value, q75)
+        high_anchor = max(earnings_value, transition_value, complex_proxy_value, future_growth_value, q75)
         growth_value = min(high_anchor * 1.08, basic * safe_float(profile.get("upside"), 1.35)) if basic > 0 else high_anchor
         growth_value = max(growth_value, basic)
 
@@ -1553,6 +1776,8 @@ def calculate_value(
             model_confidence -= 8
         else:
             model_confidence -= 20
+    if future_growth_model.get("사용가능") is True:
+        model_confidence += 3 if safe_float(future_growth_model.get("품질")) >= 85 else 0
     if complex_config:
         model_confidence = min(model_confidence, 78)  # 세부 사업부 자료 없는 대용 SOTP
     if not ttm.get("available"):
@@ -1592,6 +1817,8 @@ def calculate_value(
         notes.append("이익저점 국면을 감지해 현재 이익가치보다 자산·그레이엄·정상화 회복가치의 비중을 높였습니다.")
     if excluded_models:
         notes.append("기업 유형에 부적합하거나 독립 가치앵커에서 과도하게 벗어난 모형은 기준가에서 제외했습니다.")
+    if future_growth_model.get("사용가능") is True:
+        notes.append("구조적 성장 증거가 확인된 경우에만 FY3·FY4 성장률을 감쇠 적용하고 업종별 EPS·가치 상한 및 할인율을 거친 미래 성장가치를 일부 반영했습니다.")
     if ttm.get("잠정실적반영"):
         notes.append("정식 보고서보다 최신인 OpenDART 잠정실적을 매출·영업이익·순이익 TTM에 반영했으며 현금흐름은 최근 정식보고서를 유지했습니다.")
     if data_qualification.get("통과") is not True:
@@ -1600,6 +1827,8 @@ def calculate_value(
     return {
         "가치평가계약버전": VALUATION_CONTRACT_VERSION,
         "가치평가엔진버전": VALUATION_ENGINE_VERSION,
+        "가치평가모형개정버전": VALUATION_MODEL_REVISION,
+        "미래성장모형버전": FUTURE_GROWTH_MODEL_VERSION,
         "산출상태": calculation_status,
         "최종값사용가능": final_available,
         "최종값출처": "Python 가치평가 계약 v4",
@@ -1617,16 +1846,21 @@ def calculate_value(
         "발행주식수추정": round(shares) if shares > 0 else 0,
         "발행주식수출처": share_info.get("source", ""),
         "발행주식수품질": share_info.get("quality", 0),
+        "발행주식수결정원칙": share_info.get("결정원칙", "현재가·시가총액 미사용"),
         "발행주식수후보": share_info.get("candidates", []),
         "TTMEPS": round(ttm_eps, 2) if ttm_eps > 0 else 0.0,
         "정상화EPS": round(normalized_eps, 2) if normalized_eps > 0 else 0.0,
         "분기런레이트EPS": round(run_rate_eps, 2) if run_rate_eps > 0 else 0.0,
         "FY1예상EPS": round(fy1_eps, 2) if fy1_eps > 0 else 0.0,
         "FY2예상EPS": round(fy2_eps, 2) if fy2_eps > 0 else 0.0,
+        "FY3예상EPS": round(safe_float(future_growth_model.get("FY3EPS")), 2),
+        "FY4예상EPS": round(safe_float(future_growth_model.get("FY4EPS")), 2),
         "평가EPS": round(valuation_eps, 2) if valuation_eps > 0 else 0.0,
         "선행EPS": round(fy1_eps, 2) if fy1_eps > 0 else 0.0,
         "FY1성장률": round(fy1_growth * 100.0, 2),
         "FY2성장률": round(fy2_growth * 100.0, 2),
+        "FY3성장률": round(safe_float(future_growth_model.get("FY3성장률")), 2),
+        "FY4성장률": round(safe_float(future_growth_model.get("FY4성장률")), 2),
         "TTM기준기간": ttm.get("period", ""),
         "TTM데이터품질": ttm.get("quality", 0),
         "TTM잠정실적반영": bool(ttm.get("잠정실적반영")),
@@ -1642,6 +1876,8 @@ def calculate_value(
         "잔여이익가치": round(residual_value, 2),
         "FCF가치": round(fcf_value, 2),
         "실적전환보정가": round(transition_value, 2),
+        "미래성장가치": round(future_growth_value, 2),
+        "미래성장모형": future_growth_model,
         "복합기업대용가치합산": round(complex_proxy_value, 2),
         "순현금주당가치": round(net_cash_per_share, 2),
         "재무적정가": round(basic, 2),
@@ -1662,7 +1898,11 @@ def calculate_value(
         "실적전환방향": transition_direction,
         "실적전환강도": round(transition_strength, 2),
         "구조적실적가속": structural_acceleration,
-        "가치평가국면": "이익저점·회복가치 혼합" if earnings_trough else "일반 가치평가",
+        "가치평가국면": (
+            "이익저점·회복가치 혼합" if earnings_trough
+            else "구조적 성장·미래이익 혼합" if future_growth_model.get("사용가능") is True
+            else "일반 가치평가"
+        ),
         "이익저점보정": earnings_trough,
         "자산대비이익가치배수": round(asset_to_earnings, 3),
         "그레이엄대비이익가치배수": round(graham_to_earnings, 3),

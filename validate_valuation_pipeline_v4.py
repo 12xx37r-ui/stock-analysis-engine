@@ -122,6 +122,10 @@ def main():
     assert value["유효재무기준분기키"] == 2026 * 4 + 2, value
     assert value["데이터자격검사"]["통과"] is True, value["데이터자격검사"]
     assert value["최종값사용가능"] is True, value["이상치검사"]
+    assert value["미래성장모형"]["사용가능"] is True, value["미래성장모형"]
+    assert value["미래성장가치"] > value["PER기준적정가"], value
+    assert value["FY3예상EPS"] > value["FY2예상EPS"], value
+    assert value["FY4예상EPS"] > value["FY3예상EPS"], value
 
     blocked_provisional = {
         "수집상태": "검토필요",
