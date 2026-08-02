@@ -18,7 +18,6 @@ from feed_contract import (
     EXPECTED_ENGINE_VERSION,
     EXPECTED_INDUSTRY_PROFILE,
     EXPECTED_VALUATION_CONTRACT,
-    EXPECTED_VALUATION_MODEL_REVISION,
     inspect_published_stock,
     safe_dict,
     safe_list,
@@ -116,7 +115,6 @@ def build_row(stock: Dict[str, Any], batch: str = "on_demand") -> Dict[str, Any]
         "가치평가계약버전": valuation.get("가치평가계약버전", ""),
         "가치평가엔진버전": valuation.get("가치평가엔진버전", ""),
         "산업프로필버전": valuation.get("산업프로필버전", ""),
-        "가치평가모형개정버전": valuation.get("가치평가모형개정버전", ""),
         "산업분류신뢰도": valuation.get("산업분류신뢰도", 0),
         "정식재무기준분기키": valuation.get("정식재무기준분기키", 0),
         "유효재무기준분기키": valuation.get("유효재무기준분기키", 0),
@@ -193,7 +191,6 @@ def rebuild_latest_index(latest_root: Path, recent_stock: Dict[str, Any] | None 
         "기대엔진버전": EXPECTED_ENGINE_VERSION,
         "기대가치평가계약버전": EXPECTED_VALUATION_CONTRACT,
         "기대산업프로필버전": EXPECTED_INDUSTRY_PROFILE,
-        "기대가치평가모형개정버전": EXPECTED_VALUATION_MODEL_REVISION,
         "종합순위": rows,
         "종목목록": [
             {
@@ -206,7 +203,6 @@ def rebuild_latest_index(latest_root: Path, recent_stock: Dict[str, Any] | None 
                 "가치평가자격상태": item.get("가치평가자격상태", "미확인"),
                 "가치평가엔진버전": item.get("가치평가엔진버전", ""),
                 "산업프로필버전": item.get("산업프로필버전", ""),
-                "가치평가모형개정버전": item.get("가치평가모형개정버전", ""),
                 "유효재무기준분기키": item.get("유효재무기준분기키", 0),
                 "파일SHA256": item.get("파일SHA256", ""),
             }

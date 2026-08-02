@@ -1,6 +1,6 @@
 """업종 적응형 가치평가 프로필 정적 검증."""
 
-from analyzers.valuation import FUTURE_GROWTH_CONFIG, VALUATION_PROFILES, calculate_value
+from analyzers.valuation import VALUATION_PROFILES, calculate_value
 from collectors.company import VALUATION_INDUSTRIES, classify_dart_industry
 
 
@@ -47,21 +47,6 @@ def validate_profiles():
             errors.append(f"{code}: 모형가중치 키 오류")
         elif abs(sum(weights.values()) - 1.0) > 1e-9:
             errors.append(f"{code}: 모형가중치 합이 1이 아님")
-
-    for code, config in FUTURE_GROWTH_CONFIG.items():
-        if code not in VALUATION_PROFILES:
-            errors.append(f"{code}: 미래성장 설정에 없는 가치프로필")
-            continue
-        if VALUATION_PROFILES[code].get("growth") is not True:
-            errors.append(f"{code}: 성장형이 아닌데 미래성장 설정 존재")
-        if not (0.05 <= config.get("weight", 0) <= 0.25):
-            errors.append(f"{code}: 미래성장 가중치 범위 오류")
-        if not (0 < config.get("fy4_cap", 0) <= config.get("fy3_cap", 0) <= 0.30):
-            errors.append(f"{code}: 미래성장 감쇠·상한 오류")
-        if not (1.0 <= config.get("eps_cap", 0) <= 2.5):
-            errors.append(f"{code}: 미래 EPS 상한 오류")
-        if not (1.0 <= config.get("value_cap", 0) <= 2.0):
-            errors.append(f"{code}: 미래가치 상한 오류")
 
     supported = set(VALUATION_PROFILES) | {"none"}
     unknown = set(VALUATION_INDUSTRIES) - supported

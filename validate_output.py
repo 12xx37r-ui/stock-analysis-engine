@@ -22,7 +22,6 @@ from pathlib import Path
 
 
 EXPECTED_ENGINE_VERSION = "6.7.0-valuation-contract-v4"
-EXPECTED_VALUATION_MODEL_REVISION = "future-growth-v1.0.0"
 
 EXPECTED_WEIGHTS = {
     "단기1~5일": {
@@ -327,8 +326,6 @@ def validate_valuation_contract(data, result):
 
     if str(valuation.get("가치평가엔진버전", "")) != EXPECTED_ENGINE_VERSION:
         result.error("가치평가 엔진버전 불일치")
-    if str(valuation.get("가치평가모형개정버전", "")) != EXPECTED_VALUATION_MODEL_REVISION:
-        result.error("가치평가 모형개정버전 불일치")
 
     qualification = safe_dict(valuation.get("데이터자격검사"))
     if not qualification:
@@ -379,22 +376,6 @@ def validate_valuation_contract(data, result):
             result.error("삼성전자 최종가가 PBR 하단가치와 사실상 동일")
         if current_price > 0 and base / current_price < 0.50:
             result.error("삼성전자 적정가가 현재가의 50% 미만: 최신 TTM 연결 의심")
-
-    future_model = safe_dict(valuation.get("미래성장모형"))
-    if not future_model:
-        result.error("미래성장모형 상태 누락")
-    else:
-        if future_model.get("사용가능") is True:
-            if future_model.get("현재가미사용") is not True:
-                result.error("미래성장모형 현재가 비사용 보증 누락")
-            if safe_float(valuation.get("미래성장가치")) <= 0:
-                result.error("미래성장모형 사용가능인데 가치가 0 이하")
-            if safe_float(valuation.get("FY3예상EPS")) <= 0 or safe_float(valuation.get("FY4예상EPS")) <= 0:
-                result.error("미래성장모형 사용가능인데 FY3·FY4 EPS 누락")
-            if safe_float(future_model.get("가치")) > safe_float(future_model.get("가치상한"), float("inf")) + 0.05:
-                result.error("미래성장가치가 자체 상한 초과")
-        elif not safe_list(future_model.get("차단사유")):
-            result.error("미래성장모형 미사용인데 차단사유 없음")
 
     result.info(
         "가치평가 계약: "

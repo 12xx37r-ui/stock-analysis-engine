@@ -15,7 +15,6 @@ from feed_contract import (
     EXPECTED_ENGINE_VERSION,
     EXPECTED_INDUSTRY_PROFILE,
     EXPECTED_VALUATION_CONTRACT,
-    EXPECTED_VALUATION_MODEL_REVISION,
     inspect_published_stock,
     safe_dict,
     safe_list,
@@ -74,16 +73,8 @@ def audit_stock(path: Path) -> Dict[str, Any]:
     if dispersion >= 5.0:
         warnings.append("전체 가치모형 최대·최소 차이 5배 이상")
 
-    future_model = safe_dict(valuation.get("미래성장모형"))
     if valuation.get("구조적실적가속") is True and safe_float(valuation.get("FY1성장률")) < 10.0:
         warnings.append("구조적 실적가속인데 FY1 EPS 성장률 10% 미만")
-    if valuation.get("구조적실적가속") is True and future_model.get("사용가능") is not True:
-        warnings.append("구조적 실적가속이지만 미래성장모형 미적용: " + ", ".join(str(x) for x in safe_list(future_model.get("차단사유"))))
-    if future_model.get("사용가능") is True:
-        if future_model.get("현재가미사용") is not True:
-            critical.append("미래성장모형 현재가 비사용 보증 누락")
-        if safe_float(valuation.get("미래성장가치")) <= 0:
-            critical.append("미래성장모형 사용가능인데 미래성장가치 미확보")
 
     classification_confidence = int(safe_float(valuation.get("산업분류신뢰도"), 0))
     if compatible and classification_confidence < 70:
@@ -109,7 +100,6 @@ def audit_stock(path: Path) -> Dict[str, Any]:
         "산업분류신뢰도": classification_confidence,
         "유효재무기준분기키": valuation.get("유효재무기준분기키", 0),
         "엔진버전": valuation.get("가치평가엔진버전", ""),
-        "모형개정버전": valuation.get("가치평가모형개정버전", ""),
         "치명오류": critical,
         "주의": warnings,
         "파일": path.name,
@@ -163,7 +153,6 @@ def main() -> int:
         "기대엔진버전": EXPECTED_ENGINE_VERSION,
         "기대계약버전": EXPECTED_VALUATION_CONTRACT,
         "기대산업프로필버전": EXPECTED_INDUSTRY_PROFILE,
-        "기대모형개정버전": EXPECTED_VALUATION_MODEL_REVISION,
         "종목수": len(rows),
         "활성인덱스적격종목수": sum(row["활성인덱스적격"] for row in rows),
         "요약": summary,
