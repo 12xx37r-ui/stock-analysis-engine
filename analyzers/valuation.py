@@ -363,7 +363,7 @@ PROFILE_ALIASES = {
 VALUATION_CONTRACT_VERSION = "4.0"
 VALUATION_ENGINE_VERSION = "6.7.2-valuation-contract-v4"
 INDUSTRY_PROFILE_VERSION = "3.0.0"
-DATA_QUALIFICATION_VERSION = "1.0.0"
+DATA_QUALIFICATION_VERSION = "1.1.0"
 VALUATION_MODEL_REVISION = "future-growth-v1.0.1-insurance-financials"
 FUTURE_GROWTH_MODEL_VERSION = "1.0.0"
 
@@ -1149,19 +1149,30 @@ def build_data_qualification(
     provisional_key = int(safe_float(provisional.get("기간키"), 0))
     provisional_detected = bool(provisional.get("접수번호"))
     provisional_usable = provisional.get("사용가능") is True
+    provisional_newer = provisional_detected and provisional_key > formal_key
+    provisional_unquantified = provisional_newer and not provisional_usable
+    formal_current = formal_key >= expected_key
+    formal_fallback_eligible = bool(
+        provisional_unquantified
+        and formal_current
+        and ttm.get("available") is True
+        and shares > 0
+        and valuation_eps > 0
+    )
     effective_key = max(formal_key, provisional_key if provisional_usable else 0)
     industry_confidence = int(safe_float(company_info.get("산업분류신뢰도"), 45))
 
     critical: List[str] = []
     warnings: List[str] = []
     checks = {
-        "정식재무최신성": formal_key >= expected_key,
+        "정식재무최신성": formal_current,
         "연속TTM": ttm.get("available") is True,
         "주식수": shares > 0,
         "평가EPS": valuation_eps > 0,
         "산업프로필": profile_code != "general",
         "가치모형수": model_count >= 3,
         "최신잠정실적정량화": (not provisional_detected) or provisional_usable or provisional_key <= formal_key,
+        "정식보고서대체평가가능": (not provisional_unquantified) or formal_fallback_eligible,
     }
     if not checks["정식재무최신성"]:
         critical.append("정식 재무보고서가 법정 제출시한 기준 최신분기보다 오래됨")
@@ -1171,8 +1182,11 @@ def build_data_qualification(
         critical.append("가치평가 주식수 미확보")
     if not checks["평가EPS"]:
         critical.append("양(+)의 평가 EPS 미확보")
-    if not checks["최신잠정실적정량화"]:
-        critical.append("정식보고서보다 새로운 잠정실적 공시를 정량화하지 못함")
+    if provisional_unquantified:
+        if formal_fallback_eligible:
+            warnings.append("최신 잠정실적 미정량화: 최신 정식보고서 기준 평가")
+        else:
+            critical.append("정식보고서보다 새로운 잠정실적 공시를 정량화하지 못함")
     if not checks["산업프로필"]:
         warnings.append("산업 프로필이 일반기업 또는 저신뢰 분류")
     if not checks["가치모형수"]:
@@ -1183,8 +1197,8 @@ def build_data_qualification(
     extreme_gap = bool(price > 0 and basic > 0 and (basic / price < 0.34 or basic / price > 3.0))
     if extreme_gap:
         warnings.append("현재가와 기준 적정가가 약 3배 이상 괴리")
-        if not provisional_usable and provisional_detected:
-            critical.append("극단적 괴리와 최신 잠정실적 미정량화가 동시에 발생")
+        if provisional_unquantified and formal_fallback_eligible:
+            warnings.append("극단적 괴리와 최신 잠정실적 미반영이 동시에 발생하여 보수적 해석 필요")
         if industry_confidence < 70:
             critical.append("극단적 괴리와 저신뢰 산업분류가 동시에 발생")
 
@@ -1203,6 +1217,15 @@ def build_data_qualification(
         "유효재무분기키": effective_key,
         "잠정실적감지": provisional_detected,
         "잠정실적반영": bool(ttm.get("잠정실적반영")),
+        "잠정실적미정량화": provisional_unquantified,
+        "정식보고서대체평가": formal_fallback_eligible,
+        "평가기준": (
+            "최신 정식보고서 기준·잠정실적 미반영"
+            if formal_fallback_eligible
+            else "잠정실적 반영"
+            if provisional_usable and provisional_key > formal_key
+            else "최신 정식보고서 기준"
+        ),
         "산업분류신뢰도": industry_confidence,
         "산업프로필버전": company_info.get("산업프로필버전", INDUSTRY_PROFILE_VERSION),
         "극단적괴리": extreme_gap,
@@ -1794,6 +1817,8 @@ def calculate_value(
     data_confidence += 5 if safe_float(cash_quality.get("데이터품질")) >= 70 else 0
     data_confidence += 6 if ttm.get("잠정실적반영") else 0
     data_confidence = int(clamp(data_confidence, 25, 95))
+    if data_qualification.get("정식보고서대체평가") is True:
+        data_confidence = min(data_confidence, 72)
     if data_qualification.get("통과") is not True:
         data_confidence = min(data_confidence, 45)
 
@@ -1821,6 +1846,8 @@ def calculate_value(
         confidence = min(confidence, 84)
     if complex_config:
         confidence = min(confidence, 78)
+    if data_qualification.get("정식보고서대체평가") is True:
+        confidence = min(confidence, 72)
     if review:
         confidence = min(confidence, 54)
     confidence_grade = "A" if confidence >= 85 else "B" if confidence >= 70 else "C" if confidence >= 55 else "D"
@@ -1852,6 +1879,8 @@ def calculate_value(
         notes.append("구조적 성장 증거가 확인된 경우에만 FY3·FY4 성장률을 감쇠 적용하고 업종별 EPS·가치 상한 및 할인율을 거친 미래 성장가치를 일부 반영했습니다.")
     if ttm.get("잠정실적반영"):
         notes.append("정식 보고서보다 최신인 OpenDART 잠정실적을 매출·영업이익·순이익 TTM에 반영했으며 현금흐름은 최근 정식보고서를 유지했습니다.")
+    if data_qualification.get("정식보고서대체평가") is True:
+        notes.append("최신 잠정실적 공시는 감지했지만 핵심 계정을 신뢰성 있게 정량화하지 못해, 최신 법정 정식보고서의 연속 TTM만으로 적정가를 산출하고 신뢰도 상한을 낮췄습니다.")
     if data_qualification.get("통과") is not True:
         notes.append("데이터 자격검사를 통과하지 못해 계산값은 진단용으로만 남기고 최종 적정가 사용을 차단했습니다.")
 

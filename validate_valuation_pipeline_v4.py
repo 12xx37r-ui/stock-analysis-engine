@@ -138,16 +138,30 @@ def main():
         "기간키": 2026 * 4 + 2,
         "검증사유": ["순이익 미확보"],
     }
-    blocked = calculate(build_bundle(blocked_provisional), price=1_142_000)
-    assert blocked["데이터자격검사"]["통과"] is False, blocked["데이터자격검사"]
-    assert blocked["최종값사용가능"] is False, blocked
-    assert blocked["산출상태"] == "산출보류", blocked
+    fallback = calculate(build_bundle(blocked_provisional), price=1_142_000)
+    assert fallback["데이터자격검사"]["통과"] is True, fallback["데이터자격검사"]
+    assert fallback["데이터자격검사"]["상태"] == "주의통과", fallback["데이터자격검사"]
+    assert fallback["데이터자격검사"]["정식보고서대체평가"] is True, fallback["데이터자격검사"]
+    assert fallback["최종값사용가능"] is True, fallback
+    assert fallback["산출상태"] == "정상", fallback
+    assert fallback["TTM잠정실적반영"] is False, fallback
+    assert fallback["가치신뢰도"] <= 72, fallback
+
+    stale_bundle = build_bundle(blocked_provisional)
+    stale_bundle["재무기간"]["기간목록"] = [
+        row for row in stale_bundle["재무기간"]["기간목록"]
+        if not (row["사업연도"] == 2026 and row["보고서코드"] == "11013")
+    ]
+    stale = calculate(stale_bundle, price=1_142_000)
+    assert stale["데이터자격검사"]["통과"] is False, stale["데이터자격검사"]
+    assert stale["최종값사용가능"] is False, stale
 
     print("VALUATION PIPELINE V4: PASS")
     print("- classification:", classification)
     print("- provisional period:", provisional["사업연도"], provisional["분기"])
     print("- usable fair:", round(value["기본적정가"]), value["데이터자격검사"]["상태"])
-    print("- blocked reason:", blocked["데이터자격검사"]["중단사유"])
+    print("- formal fallback:", round(fallback["기본적정가"]), fallback["데이터자격검사"]["주의사유"])
+    print("- stale block:", stale["데이터자격검사"]["중단사유"])
 
 
 if __name__ == "__main__":

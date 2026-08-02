@@ -91,7 +91,10 @@ def audit_stock(path: Path) -> Dict[str, Any]:
 
     provisional = safe_dict(valuation.get("잠정실적"))
     if provisional.get("접수번호") and provisional.get("사용가능") is not True:
-        critical.append("최신 잠정실적 공시 미정량화")
+        if qualification.get("정식보고서대체평가") is True:
+            warnings.append("최신 잠정실적 미정량화: 최신 정식보고서 기준 평가")
+        else:
+            critical.append("최신 잠정실적 공시 미정량화")
 
     critical = list(dict.fromkeys(item for item in critical if item))
     warnings = list(dict.fromkeys(item for item in warnings if item))
