@@ -143,6 +143,16 @@ def main():
         f"PBR floor={value['PBR기준적정가']:,.0f}",
     )
 
+    from validate_sdi_trough import run_validation as run_sdi_trough_validation
+    sdi_value = run_sdi_trough_validation()
+    print(
+        "Samsung SDI trough regression:",
+        f"earnings={sdi_value['PER기준적정가']:,.0f}",
+        f"asset={sdi_value['PBR기준적정가']:,.0f}",
+        f"graham={sdi_value['그레이엄가치']:,.0f}",
+        f"fair={sdi_value['기본적정가']:,.0f}",
+    )
+
 
 if __name__ == "__main__":
     main()

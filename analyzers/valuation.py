@@ -1,4 +1,4 @@
-"""재무적정가 엔진 V6.6.1 · 가치평가 계약 v3.
+"""재무적정가 엔진 V6.6.2 · 가치평가 계약 v3.
 
 핵심 원칙
 - 현재가는 적정가 산식에 넣지 않고 계산 후 괴리 검증에만 사용한다.
@@ -351,7 +351,7 @@ PROFILE_ALIASES = {
 }
 
 VALUATION_CONTRACT_VERSION = "3.0"
-VALUATION_ENGINE_VERSION = "6.6.1-valuation-contract-v3"
+VALUATION_ENGINE_VERSION = "6.6.2-valuation-contract-v3"
 
 # 복합기업은 사업부 세부 공시가 자동 수집되지 않으면 진짜 SOTP를 만들 수 없다.
 # 아래 설정은 '사업부 대용 가치합산'을 위한 보수적 복합배수이며, 출력에 대용모형임을 명시한다.
@@ -961,6 +961,27 @@ def calculate_value(
     earnings_value = valuation_eps * target_per if valuation_eps > 0 else 0.0
     pbr_value = bps * target_pbr if bps > 0 else 0.0
 
+    # 그레이엄 결합가치는 이익과 순자산을 함께 보는 독립 보조모형이다.
+    # 현재 이익이 급감한 사이클 저점에서는 TTM 한 시점보다 정상화 EPS를
+    # 함께 사용해 일시적 이익 훼손이 전체 기업가치를 0에 가깝게 끌어내리지 않게 한다.
+    graham_eps = _weighted_positive([
+        {"value": valuation_eps, "weight": 0.55},
+        {"value": normalized_eps, "weight": 0.45},
+    ])
+    graham_value = (
+        (22.5 * graham_eps * bps) ** 0.5
+        if graham_eps > 0 and bps > 0
+        else 0.0
+    )
+
+    # 중간 업황 회복 시 정상화 이익이 창출할 수 있는 가치. 현재가를 사용하지 않는다.
+    recovery_multiple = clamp(target_per * 0.90, per_min, per_max)
+    normalized_recovery_value = (
+        normalized_eps * recovery_multiple
+        if normalized_eps > 0
+        else 0.0
+    )
+
     residual_value = 0.0
     if bps > 0 and roe > 0:
         persistence = 0.70 if roe >= 0.15 else 0.50 if roe >= 0.10 else 0.28
@@ -1015,9 +1036,37 @@ def calculate_value(
         )
         complex_proxy_value = fy1_eps * complex_multiple + max(0.0, net_cash_per_share) * 0.75
 
-    # 기업 유형별 모형 자격과 가중치. 성장·사이클 기업에서 PBR이 기준가를 끌어내리지 않게 제한한다.
+    # 이익저점 국면 판정. 자산·그레이엄 가치가 이익가치보다 3배 이상 높고
+    # 성장·사이클 업종이면 현재 이익 한 시점이 기업가치를 과도하게 누르는 것으로 본다.
+    asset_to_earnings = pbr_value / earnings_value if pbr_value > 0 and earnings_value > 0 else 0.0
+    graham_to_earnings = graham_value / earnings_value if graham_value > 0 and earnings_value > 0 else 0.0
+    normalized_to_ttm = normalized_eps / ttm_eps if normalized_eps > 0 and ttm_eps > 0 else 0.0
+    earnings_trough = bool(
+        profile.get("cyclical")
+        and profile.get("growth")
+        and bps > 0
+        and (
+            (asset_to_earnings >= 3.0 and graham_to_earnings >= 2.0)
+            or normalized_to_ttm >= 1.80
+            or (ttm_eps <= 0 and normalized_eps > 0)
+        )
+    )
+
+    # 기업 유형별 모형 자격과 가중치.
+    # 이익저점 국면에서는 현재 이익가치가 자산·그레이엄·정상화 회복가치를
+    # 제거하지 못하게 별도 가중치를 적용한다.
     models: List[Dict[str, Any]] = []
-    if complex_config:
+    if profile_code == "battery" and earnings_trough:
+        models.extend([
+            _model_row("현재 이익가치", earnings_value, 0.10, "보조"),
+            _model_row("실적전환 가치", transition_value, 0.12, "보조"),
+            _model_row("정상화 회복가치", normalized_recovery_value, 0.20, "기준"),
+            _model_row("PBR 자산가치", pbr_value, 0.28, "기준"),
+            _model_row("그레이엄 결합가치", graham_value, 0.18, "기준"),
+            _model_row("잔여이익가치", residual_value, 0.08, "기준"),
+            _model_row("FCF 가치", fcf_value, 0.04, "보조"),
+        ])
+    elif complex_config:
         models.extend([
             _model_row("선행·정상화 이익가치", earnings_value, safe_float(complex_config.get("earnings_weight"), 0.58)),
             _model_row("복합기업 대용 가치합산", complex_proxy_value, safe_float(complex_config.get("complex_weight"), 0.24)),
@@ -1025,6 +1074,7 @@ def calculate_value(
             _model_row("FCF 가치", fcf_value, safe_float(complex_config.get("fcf_weight"), 0.06)),
             _model_row("PBR 하단가치", pbr_value, safe_float(complex_config.get("asset_weight"), 0.06), "하단"),
             _model_row("잔여이익 하단가치", residual_value, safe_float(complex_config.get("residual_weight"), 0.06), "하단"),
+            _model_row("그레이엄 결합가치", graham_value, 0.04, "보조"),
         ])
     elif profile_code == "semiconductor":
         models.extend([
@@ -1033,6 +1083,7 @@ def calculate_value(
             _model_row("FCF 가치", fcf_value, 0.08),
             _model_row("PBR 하단가치", pbr_value, 0.08, "하단"),
             _model_row("잔여이익 하단가치", residual_value, 0.08, "하단"),
+            _model_row("그레이엄 결합가치", graham_value, 0.06, "보조"),
         ])
     else:
         weights = safe_dict(profile.get("weights"))
@@ -1042,21 +1093,46 @@ def calculate_value(
             _model_row("잔여이익가치", residual_value, safe_float(weights.get("residual"), 0.20)),
             _model_row("실적전환 가치", transition_value, safe_float(weights.get("transition"), 0.22)),
             _model_row("FCF 가치", fcf_value, 0.10),
+            _model_row("그레이엄 결합가치", graham_value, 0.08, "보조"),
+            _model_row("정상화 회복가치", normalized_recovery_value, 0.08, "보조"),
         ])
 
     valid_models = [row for row in models if row["value"] > 0 and row["weight"] > 0]
     basis_models = []
     excluded_models = []
-    for row in valid_models:
-        # 성장·사이클 기업의 하단모형은 보수 시나리오에는 남기되 기준가 가중치에서 과도한 영향 배제.
-        if earnings_value > 0 and profile_code in {"semiconductor", "battery", "software_platform", "media_entertainment", "biotechnology"}:
-            if row["role"] == "하단" and row["value"] < earnings_value * 0.42:
+
+    if earnings_trough:
+        # 이익저점에서는 현재 이익을 앵커로 쓰지 않는다. 자산·그레이엄·정상화 회복·잔여이익의
+        # 중앙값을 독립 앵커로 사용하여 자본집약 성장기업의 가치가 한 분기 이익으로 붕괴하는 것을 막는다.
+        trough_anchor = median([
+            value for value in (
+                pbr_value,
+                graham_value,
+                normalized_recovery_value,
+                residual_value,
+            ) if value > 0
+        ]) or median([row["value"] for row in valid_models]) or 0.0
+        floor_ratio = max(0.38, safe_float(profile.get("model_floor"), 0.28))
+        ceiling_ratio = safe_float(profile.get("model_ceiling"), 3.40)
+        for row in valid_models:
+            if trough_anchor > 0 and not (
+                trough_anchor * floor_ratio <= row["value"] <= trough_anchor * ceiling_ratio
+            ):
                 excluded_models.append(row["name"])
                 continue
-        if earnings_value > 0 and not (earnings_value * 0.28 <= row["value"] <= earnings_value * 3.2):
-            excluded_models.append(row["name"])
-            continue
-        basis_models.append(row)
+            basis_models.append(row)
+    else:
+        for row in valid_models:
+            # 성장·사이클 기업의 하단모형은 보수 시나리오에는 남기되 기준가 가중치에서 과도한 영향 배제.
+            if earnings_value > 0 and profile_code in {"semiconductor", "battery", "software_platform", "media_entertainment", "biotechnology"}:
+                if row["role"] == "하단" and row["value"] < earnings_value * 0.42:
+                    excluded_models.append(row["name"])
+                    continue
+            if earnings_value > 0 and not (earnings_value * 0.28 <= row["value"] <= earnings_value * 3.2):
+                excluded_models.append(row["name"])
+                continue
+            basis_models.append(row)
+
     if len(basis_models) < 2:
         basis_models = [row for row in valid_models if row["role"] != "하단"] or valid_models
         excluded_models = [row["name"] for row in valid_models if row not in basis_models]
@@ -1074,11 +1150,36 @@ def calculate_value(
     q75 = percentile(all_values, 0.75) or basic
     normalized_floor = normalized_eps * max(per_min, target_per * 0.65) if normalized_eps > 0 else 0.0
     earnings_floor = earnings_value * (0.64 if profile.get("cyclical") else 0.72) if earnings_value > 0 else 0.0
-    conservative = max(q25, normalized_floor, earnings_floor)
-    conservative = min(conservative, basic) if basic > 0 else conservative
-    high_anchor = max(earnings_value, transition_value, complex_proxy_value, q75)
-    growth_value = min(high_anchor * 1.08, basic * safe_float(profile.get("upside"), 1.35)) if basic > 0 else high_anchor
-    growth_value = max(growth_value, basic)
+    if earnings_trough:
+        trough_low_candidates = [
+            value for value in (
+                pbr_value * 0.65 if pbr_value > 0 else 0.0,
+                graham_value * 0.72 if graham_value > 0 else 0.0,
+                normalized_recovery_value * 0.70 if normalized_recovery_value > 0 else 0.0,
+                q25,
+            ) if value > 0
+        ]
+        conservative = median(trough_low_candidates) or q25 or basic
+        conservative = min(conservative, basic) if basic > 0 else conservative
+        high_anchor = max(
+            pbr_value,
+            graham_value,
+            normalized_recovery_value,
+            residual_value,
+            transition_value,
+            q75,
+        )
+        growth_value = min(
+            high_anchor * 1.10,
+            basic * safe_float(profile.get("upside"), 1.55),
+        ) if basic > 0 else high_anchor
+        growth_value = max(growth_value, basic)
+    else:
+        conservative = max(q25, normalized_floor, earnings_floor)
+        conservative = min(conservative, basic) if basic > 0 else conservative
+        high_anchor = max(earnings_value, transition_value, complex_proxy_value, q75)
+        growth_value = min(high_anchor * 1.08, basic * safe_float(profile.get("upside"), 1.35)) if basic > 0 else high_anchor
+        growth_value = max(growth_value, basic)
 
     basis_dispersion = max(basis_values) / min(basis_values) if len(basis_values) >= 2 and min(basis_values) > 0 else 0.0
     all_model_dispersion = max(all_values) / min(all_values) if len(all_values) >= 2 and min(all_values) > 0 else 0.0
@@ -1094,10 +1195,17 @@ def calculate_value(
         abnormal_reasons.append("주식수 미확보")
     if valuation_eps <= 0:
         abnormal_reasons.append("양(+)의 평가 EPS 미확보")
-    if implied_per > 0 and not (per_min * 0.75 <= implied_per <= per_max * 1.30):
+    if not earnings_trough and implied_per > 0 and not (per_min * 0.75 <= implied_per <= per_max * 1.30):
         abnormal_reasons.append("최종가 암시 PER이 업종 허용범위를 벗어남")
-    if model_dispersion >= 4.0:
-        abnormal_reasons.append("모형 간 가치 차이가 4배 이상")
+    if earnings_trough and implied_pbr > 0 and not (0.35 <= implied_pbr <= safe_float(profile.get("pbr_max"), 4.0) * 1.20):
+        abnormal_reasons.append("이익저점 기준가의 암시 PBR이 업종 허용범위를 벗어남")
+    dispersion_limit = 5.5 if earnings_trough else 4.0
+    if model_dispersion >= dispersion_limit:
+        abnormal_reasons.append(
+            "이익저점 모형 간 가치 차이가 5.5배 이상"
+            if earnings_trough
+            else "모형 간 가치 차이가 4배 이상"
+        )
     if basic > 0 and price > 0 and (basic / price < 0.35 or basic / price > 3.0) and len(abnormal_reasons) >= 2:
         abnormal_reasons.append("시장가격과 3배 이상 괴리하면서 데이터·모형 경고 동시 발생")
 
@@ -1107,7 +1215,9 @@ def calculate_value(
         for reason in (
             "연속 4개 단독분기 TTM 미확보",
             "최종가 암시 PER이 업종 허용범위를 벗어남",
+            "이익저점 기준가의 암시 PBR이 업종 허용범위를 벗어남",
             "모형 간 가치 차이가 4배 이상",
+            "이익저점 모형 간 가치 차이가 5.5배 이상",
             "시장가격과 3배 이상 괴리하면서 데이터·모형 경고 동시 발생",
         )
     )
@@ -1181,8 +1291,10 @@ def calculate_value(
     ]
     if complex_config:
         notes.append("사업부 세부 손익 자동수집이 없어 진짜 SOTP가 아닌 복합기업 대용 가치합산을 적용했습니다.")
+    if earnings_trough:
+        notes.append("이익저점 국면을 감지해 현재 이익가치보다 자산·그레이엄·정상화 회복가치의 비중을 높였습니다.")
     if excluded_models:
-        notes.append("기업 유형에 부적합하거나 이익가치에서 과도하게 벗어난 하단모형은 기준가에서 제외했습니다.")
+        notes.append("기업 유형에 부적합하거나 독립 가치앵커에서 과도하게 벗어난 모형은 기준가에서 제외했습니다.")
 
     return {
         "가치평가계약버전": VALUATION_CONTRACT_VERSION,
@@ -1216,6 +1328,8 @@ def calculate_value(
         "암시PBR": round(implied_pbr, 2) if implied_pbr > 0 else 0.0,
         "PER기준적정가": round(earnings_value, 2),
         "PBR기준적정가": round(pbr_value, 2),
+        "그레이엄가치": round(graham_value, 2),
+        "정상화회복가치": round(normalized_recovery_value, 2),
         "잔여이익가치": round(residual_value, 2),
         "FCF가치": round(fcf_value, 2),
         "실적전환보정가": round(transition_value, 2),
@@ -1238,6 +1352,10 @@ def calculate_value(
         "산업국면": industry["phase"],
         "실적전환방향": transition_direction,
         "실적전환강도": round(transition_strength, 2),
+        "가치평가국면": "이익저점·회복가치 혼합" if earnings_trough else "일반 가치평가",
+        "이익저점보정": earnings_trough,
+        "자산대비이익가치배수": round(asset_to_earnings, 3),
+        "그레이엄대비이익가치배수": round(graham_to_earnings, 3),
         "분기매출성장률": round(quarter["revenue_yoy"], 2),
         "분기영업이익성장률": round(quarter["operating_yoy"], 2),
         "분기순이익성장률": round(quarter["net_yoy"], 2),
