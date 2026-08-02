@@ -1,4 +1,4 @@
-import requests
+from collectors.dart_http import get_json as dart_get_json
 
 from config import DART_API_KEY
 
@@ -43,75 +43,11 @@ def get_financial(
 
 
 
-    try:
+    data = dart_get_json(url, params)
 
-
-        response = requests.get(
-
-            url,
-
-            params=params,
-
-            timeout=30
-
-        )
-
-
-        response.raise_for_status()
-
-
-
-        data = response.json()
-
-
-
+    if str(data.get("status", "")) in {"000", "013"}:
         return data
 
+    print("DART REQUEST ERROR:", data.get("message", "OpenDART failure"))
+    return data
 
-
-    except requests.exceptions.Timeout:
-
-
-        print(
-            "DART TIMEOUT"
-        )
-
-
-        return {
-
-            "status":
-            "error",
-
-            "message":
-            "DART timeout",
-
-            "list":
-            []
-
-        }
-
-
-
-    except Exception as e:
-
-
-        print(
-
-            "DART REQUEST ERROR:",
-            e
-
-        )
-
-
-        return {
-
-            "status":
-            "error",
-
-            "message":
-            str(e),
-
-            "list":
-            []
-
-        }

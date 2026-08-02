@@ -19,9 +19,10 @@ from pathlib import Path
 from typing import Any, Dict, List
 from xml.etree import ElementTree
 
-import requests
-
 import config
+
+from collectors.dart_http import get_bytes as dart_get_bytes
+from collectors.dart_http import get_json as dart_get_json
 
 
 DART_CORP_CODE_URL = (
@@ -223,16 +224,13 @@ def get_company_overview(corp_code: Any) -> Dict[str, Any]:
         }
 
     try:
-        response = requests.get(
+        data = dart_get_json(
             DART_COMPANY_URL,
-            params={
+            {
                 "crtfc_key": api_key,
                 "corp_code": corp_code,
             },
-            timeout=20,
         )
-        response.raise_for_status()
-        data = response.json()
 
         if not isinstance(data, dict):
             raise RuntimeError("기업개황 응답이 딕셔너리가 아닙니다.")
@@ -468,18 +466,15 @@ def download_company_list() -> List[Dict[str, str]]:
             "DART API 키를 찾지 못했습니다."
         )
 
-    response = requests.get(
+    content = dart_get_bytes(
         DART_CORP_CODE_URL,
-        params={
+        {
             "crtfc_key": api_key,
         },
-        timeout=30,
     )
 
-    response.raise_for_status()
-
     companies = parse_corp_code_zip(
-        response.content
+        content
     )
 
     if not companies:

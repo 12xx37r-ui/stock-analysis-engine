@@ -240,6 +240,16 @@ def main():
     if not compatible:
         raise RuntimeError("게시 계약 검증 실패: " + "; ".join(reasons))
 
+    valuation = safe_dict(stock.get("가치평가"))
+    qualification = safe_dict(valuation.get("데이터자격검사"))
+    if valuation.get("최종값사용가능") is not True or valuation.get("산출상태") != "정상":
+        stop_reasons = safe_list(qualification.get("중단사유"))
+        detail = "; ".join(str(item) for item in stop_reasons) or "가치평가 데이터 자격 미통과"
+        raise RuntimeError(
+            "게시 차단: OpenDART/재무자료가 불완전한 결과로 기존 정상 피드를 덮어쓰지 않습니다. "
+            + detail
+        )
+
     stock_root = latest_root / "stocks"
     latest_stock_path = stock_root / f"{stock_code}.json"
     atomic_copy(source_path, latest_stock_path)

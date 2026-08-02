@@ -15,10 +15,11 @@ import zipfile
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
-import requests
 from bs4 import BeautifulSoup
 
 import config
+
+from collectors.dart_http import get_bytes as dart_get_bytes
 
 KST = timezone(timedelta(hours=9))
 DART_DOCUMENT_URL = "https://opendart.fss.or.kr/api/document.xml"
@@ -177,13 +178,10 @@ def select_latest_disclosure(disclosure_bundle: Dict[str, Any]) -> Optional[Dict
 
 
 def download_document(api_key: str, receipt_no: str) -> bytes:
-    response = requests.get(
+    return dart_get_bytes(
         DART_DOCUMENT_URL,
-        params={"crtfc_key": api_key, "rcept_no": receipt_no},
-        timeout=30,
+        {"crtfc_key": api_key, "rcept_no": receipt_no},
     )
-    response.raise_for_status()
-    return response.content
 
 
 def decode_document(raw: bytes) -> str:

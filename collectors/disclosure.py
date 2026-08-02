@@ -15,9 +15,9 @@ import os
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List
 
-import requests
-
 import config
+
+from collectors.dart_http import get_json as dart_get_json
 
 
 KST = timezone(timedelta(hours=9))
@@ -143,23 +143,7 @@ def get_recent_disclosures(
         "sort_mth": "desc",
     }
 
-    try:
-        response = requests.get(
-            DART_LIST_URL,
-            params=params,
-            timeout=20,
-        )
-        response.raise_for_status()
-        data = response.json()
-
-    except Exception as error:
-        return empty_result(
-            "실패",
-            f"{type(error).__name__}: {error}",
-            corp_code,
-            start_date,
-            end_date,
-        )
+    data = dart_get_json(DART_LIST_URL, params)
 
     response_code = safe_text(data.get("status"))
     response_message = safe_text(data.get("message"))

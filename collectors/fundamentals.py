@@ -15,9 +15,9 @@ import os
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
-import requests
-
 import config
+
+from collectors.dart_http import get_json as dart_get_json
 
 
 KST = timezone(timedelta(hours=9))
@@ -125,37 +125,7 @@ def request_dart(
     url: str,
     params: Dict[str, Any],
 ) -> Dict[str, Any]:
-    try:
-        response = requests.get(
-            url,
-            params=params,
-            timeout=20,
-        )
-        response.raise_for_status()
-
-        data = response.json()
-
-        if isinstance(data, dict):
-            return data
-
-        return {
-            "status": "INVALID_RESPONSE",
-            "message": (
-                "OpenDART 응답 형식이 "
-                "딕셔너리가 아닙니다."
-            ),
-            "list": [],
-        }
-
-    except Exception as error:
-        return {
-            "status": "EXCEPTION",
-            "message": (
-                f"{type(error).__name__}: "
-                f"{error}"
-            ),
-            "list": [],
-        }
+    return dart_get_json(url, params)
 
 
 def normalize_list(

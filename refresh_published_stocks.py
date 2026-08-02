@@ -90,16 +90,37 @@ def main() -> int:
 
         output_file.unlink(missing_ok=True)
 
-        if run_step([
-            sys.executable,
-            "main.py",
-            "--stock-code",
-            code,
-            "--industry-code",
-            args.industry_code,
-        ]) != 0:
-            print("REFRESH ENGINE FAILED:", code, flush=True)
-            failed.append(code)
+        usable = False
+        for attempt in (1, 2):
+            output_file.unlink(missing_ok=True)
+            if run_step([
+                sys.executable,
+                "main.py",
+                "--stock-code",
+                code,
+                "--industry-code",
+                args.industry_code,
+            ]) != 0:
+                print("REFRESH ENGINE FAILED:", code, "attempt", attempt, flush=True)
+            elif run_step([
+                sys.executable,
+                "validate_dart_usable.py",
+                "--file",
+                str(output_file),
+                "--stock-code",
+                code,
+            ]) == 0:
+                usable = True
+                break
+
+            if attempt == 1:
+                import time
+                print("OpenDART temporary failure; retry in 35 seconds:", code, flush=True)
+                time.sleep(35)
+
+        if not usable:
+            print("REFRESH SKIPPED: OpenDART data unavailable; previous published file preserved:", code, flush=True)
+            skipped.append(code)
             continue
 
         if run_step([
