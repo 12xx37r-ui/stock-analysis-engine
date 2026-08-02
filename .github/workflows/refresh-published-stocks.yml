@@ -41,6 +41,8 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+      - name: Validate valuation contract v3
+        run: python validate_valuation_contract.py
       - name: Refresh existing background cache
         run: python refresh_published_stocks.py --limit "$LIMIT"
       - name: Commit refreshed cache
