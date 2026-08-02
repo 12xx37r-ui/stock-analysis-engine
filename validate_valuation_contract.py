@@ -1,4 +1,4 @@
-"""가치평가 계약 v3 회귀검증.
+"""가치평가 계약 v4 회귀검증.
 
 삼성전자형 복합·사이클 기업에서 구형 PBR 값이 최종 적정가로
 잘못 채택되는 회귀를 차단한다.
@@ -89,6 +89,8 @@ def main():
         "가치평가산업코드": "semiconductor",
         "OpenDART업종코드": "264",
         "산업분류출처": "회귀검증",
+        "산업분류신뢰도": 100,
+        "산업프로필버전": "3.0.0",
     }
 
     value = calculate_value(
@@ -101,7 +103,7 @@ def main():
         company_info,
     )
 
-    assert value["가치평가계약버전"] == "3.0"
+    assert value["가치평가계약버전"] == "4.0"
     assert value["최종값사용가능"] is True, value["이상치검사"]
     assert value["복합기업대용모형"] is True
     assert value["TTMEPS"] > value["EPS"]
@@ -128,7 +130,7 @@ def main():
     assert no_kis_value["BPS"] > 0
     assert no_kis_value["기본적정가"] > 0
 
-    print("VALUATION CONTRACT V3: PASS")
+    print("VALUATION CONTRACT V4: PASS")
     print(
         "KIS-disabled regression:",
         f"shares={no_kis_value['발행주식수추정']:,}",

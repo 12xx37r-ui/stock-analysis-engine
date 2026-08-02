@@ -127,6 +127,15 @@ def main() -> int:
 
     shutil.rmtree(backup_root, ignore_errors=True)
 
+    audit_rc = run_step([
+        sys.executable,
+        "build_valuation_audit.py",
+        "--latest-root",
+        "data/latest",
+    ])
+    if audit_rc != 0:
+        print("VALUATION AUDIT BUILD FAILED", flush=True)
+
     print("\nBACKGROUND REFRESH SUMMARY", flush=True)
     print("- requested:", len(codes), flush=True)
     print("- refreshed:", len(refreshed), refreshed, flush=True)

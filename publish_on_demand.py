@@ -70,8 +70,9 @@ def build_row(stock):
     medium_score = horizon_score(prediction, "중기1~8주")
     long_score = horizon_score(prediction, "장기6~18개월")
     buffett_score = safe_float(buffett.get("점수"))
-    gap = safe_float(valuation.get("현재가대비"))
-    value_score = max(0.0, min(100.0, 50.0 + gap))
+    valuation_usable = valuation.get("최종값사용가능") is True
+    gap = safe_float(valuation.get("현재가대비")) if valuation_usable else 0.0
+    value_score = max(0.0, min(100.0, 50.0 + gap)) if valuation_usable else 50.0
     composite = (
         long_score * 0.35
         + medium_score * 0.25
@@ -93,7 +94,16 @@ def build_row(stock):
         "장기점수": round(long_score, 2),
         "버핏점수": round(buffett_score, 2),
         "가치점수": round(value_score, 2),
-        "저평가후보": gap > 0 and "고평가" not in str(valuation.get("판단", "")),
+        "저평가후보": valuation_usable and gap > 0 and "고평가" not in str(valuation.get("판단", "")),
+        "가치평가사용가능": valuation_usable,
+        "가치평가자격상태": safe_dict(valuation.get("데이터자격검사")).get("상태", "미확인"),
+        "가치평가계약버전": valuation.get("가치평가계약버전", ""),
+        "가치평가엔진버전": valuation.get("가치평가엔진버전", ""),
+        "산업프로필버전": valuation.get("산업프로필버전", ""),
+        "산업분류신뢰도": valuation.get("산업분류신뢰도", 0),
+        "정식재무기준분기키": valuation.get("정식재무기준분기키", 0),
+        "유효재무기준분기키": valuation.get("유효재무기준분기키", 0),
+        "잠정실적반영": valuation.get("TTM잠정실적반영") is True,
         "생성시각": stock.get("생성시각", ""),
         "엔진버전": prediction.get("엔진버전", ""),
         "화면브리지스키마": bridge.get("스키마버전", ""),
@@ -129,7 +139,7 @@ def main():
     index = load_json(
         index_path,
         {
-            "버전": "1.2.0",
+            "버전": "1.3.0",
             "배치": [],
             "종합순위": [],
             "종목목록": [],
@@ -160,7 +170,7 @@ def main():
     generated_at = datetime.now(KST).isoformat()
     index.update(
         {
-            "버전": "1.2.0",
+            "버전": "1.3.0",
             "피드스키마버전": "2.0",
             "생성시각": generated_at,
             "상태": "PASS",
@@ -174,6 +184,11 @@ def main():
                     "배치": item.get("배치", ""),
                     "엔진버전": item.get("엔진버전", ""),
                     "화면브리지스키마": item.get("화면브리지스키마", ""),
+                    "가치평가사용가능": item.get("가치평가사용가능", False),
+                    "가치평가자격상태": item.get("가치평가자격상태", "미확인"),
+                    "가치평가엔진버전": item.get("가치평가엔진버전", ""),
+                    "산업프로필버전": item.get("산업프로필버전", ""),
+                    "유효재무기준분기키": item.get("유효재무기준분기키", 0),
                     "파일SHA256": item.get("파일SHA256", ""),
                 }
                 for item in rows

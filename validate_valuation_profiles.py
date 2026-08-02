@@ -54,7 +54,8 @@ def validate_profiles():
         errors.append(f"company.py 산업코드와 가치프로필 불일치: {sorted(unknown)}")
 
     mapping_examples = {
-        "264": "semiconductor",
+        "261": "semiconductor",
+        "264": "electronic_components",
         "301": "automotive",
         "212": "pharmaceutical",
         "411": "construction",
@@ -104,7 +105,11 @@ def validate_profiles():
         result = calculate_value(
             synthetic_financial,
             synthetic_market,
-            company_info={"가치평가산업코드": code},
+            company_info={
+                "가치평가산업코드": code,
+                "산업분류신뢰도": 95,
+                "산업프로필버전": "3.0.0",
+            },
         )
         low = result["보수적적정가"]
         mid = result["기본적정가"]

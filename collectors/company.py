@@ -1,5 +1,5 @@
 """
-OpenDART 기업 자동 조회기 V2.1
+OpenDART 기업 자동 조회기 V3.0
 
 기능
 - 6자리 종목코드로 기업명과 DART 고유번호 자동 조회
@@ -64,9 +64,20 @@ DEFAULT_INDUSTRY_MAP = {
     "089030": "semiconductor",
 }
 
+INDUSTRY_PROFILE_VERSION = "3.0.0"
+
+ELECTRONIC_COMPONENT_KEYWORDS = (
+    "삼성전기", "mlcc", "적층세라믹", "카메라모듈", "전자부품",
+    "패키지기판", "fc-bga", "fcbga", "pcb", "기판",
+)
+SEMICONDUCTOR_KEYWORDS = (
+    "하이닉스", "반도체", "세미콘", "파운드리", "메모리", "hbm",
+)
+
 
 VALUATION_INDUSTRIES = {
     "semiconductor",
+    "electronic_components",
     "automotive",
     "battery",
     "biotechnology",
@@ -94,84 +105,111 @@ VALUATION_INDUSTRIES = {
 }
 
 
-def classify_dart_industry(
+def classify_dart_industry_detail(
     industry_code: Any,
     company_name: Any = "",
     stock_code: Any = "",
-) -> str:
-    """OpenDART 기업개황의 업종코드를 가치평가용 대분류로 변환한다."""
-    code = "".join(
-        character
-        for character in safe_text(industry_code)
-        if character.isdigit()
-    )
+) -> Dict[str, Any]:
+    """OpenDART 업종코드와 기업명을 가치평가 프로필로 세분화한다.
+
+    26번 제조업 전체를 반도체로 몰던 기존 오류를 제거한다.
+    261은 반도체, 262~266은 전자부품·IT하드웨어로 분리한다.
+    """
+    code = "".join(character for character in safe_text(industry_code) if character.isdigit())
     name = safe_text(company_name).lower()
     stock = normalize_stock_code(stock_code)
 
     manual = load_industry_map().get(stock, "none") if stock else "none"
     if manual != "none":
-        return manual
+        return {
+            "산업코드": manual,
+            "분류출처": "수동 종목매핑",
+            "분류신뢰도": 100,
+            "산업프로필버전": INDUSTRY_PROFILE_VERSION,
+        }
 
     if any(keyword in name for keyword in ("지주", "홀딩스", "holdings")):
-        return "holding_company"
-    if any(keyword in name for keyword in ("하이닉스", "반도체", "세미콘", "테크윙")):
-        return "semiconductor"
+        return {"산업코드": "holding_company", "분류출처": "기업명 키워드", "분류신뢰도": 86, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
+    if any(keyword in name for keyword in ELECTRONIC_COMPONENT_KEYWORDS):
+        return {"산업코드": "electronic_components", "분류출처": "전자부품 키워드", "분류신뢰도": 92, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
+    if any(keyword in name for keyword in SEMICONDUCTOR_KEYWORDS):
+        return {"산업코드": "semiconductor", "분류출처": "반도체 키워드", "분류신뢰도": 90, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
     if any(keyword in name for keyword in ("배터리", "에너지솔루션", "리튬", "양극재", "전지")):
-        return "battery"
+        return {"산업코드": "battery", "분류출처": "기업명 키워드", "분류신뢰도": 88, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
     if any(keyword in name for keyword in ("바이오", "셀트리온")):
-        return "biotechnology"
+        return {"산업코드": "biotechnology", "분류출처": "기업명 키워드", "분류신뢰도": 86, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
     if any(keyword in name for keyword in ("제약", "약품", "파마")):
-        return "pharmaceutical"
+        return {"산업코드": "pharmaceutical", "분류출처": "기업명 키워드", "분류신뢰도": 86, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
     if any(keyword in name for keyword in ("엔터", "엔터테인먼트", "스튜디오", "콘텐츠")):
-        return "media_entertainment"
+        return {"산업코드": "media_entertainment", "분류출처": "기업명 키워드", "분류신뢰도": 82, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
     if any(keyword in name for keyword in ("소프트", "플랫폼", "클라우드")):
-        return "software_platform"
+        return {"산업코드": "software_platform", "분류출처": "기업명 키워드", "분류신뢰도": 82, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
 
     if len(code) < 2:
-        return "general"
+        return {"산업코드": "general", "분류출처": "업종코드 미확보", "분류신뢰도": 35, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
 
+    prefix3 = code[:3]
     major = int(code[:2])
+    if prefix3 == "261":
+        result = "semiconductor"
+    elif prefix3 in {"262", "263", "264", "265", "266"}:
+        result = "electronic_components"
+    elif major == 30:
+        result = "automotive"
+    elif major == 21:
+        result = "pharmaceutical"
+    elif major in {41, 42}:
+        result = "construction"
+    elif major in {64, 65}:
+        result = "finance"
+    elif major == 66:
+        result = "insurance"
+    elif major in {10, 11, 12}:
+        result = "consumer_staples"
+    elif major in {13, 14, 15, 16, 17, 18, 32, 33}:
+        result = "consumer_discretionary"
+    elif major in {45, 46, 47}:
+        result = "retail"
+    elif major in {58, 59, 60}:
+        result = "media_entertainment"
+    elif major in {61, 62, 63}:
+        result = "software_platform" if major in {62, 63} else "telecom"
+    elif major in {35, 36, 37, 38, 39}:
+        result = "utilities"
+    elif major in {19, 20, 22, 23, 24, 25}:
+        result = "materials"
+    elif major in {27, 28, 29, 31}:
+        result = "industrial"
+    elif major in {49, 50, 51, 52}:
+        result = "transportation"
+    elif major == 68:
+        result = "real_estate"
+    elif major == 86:
+        result = "healthcare"
+    elif major in {5, 6, 7, 8}:
+        result = "energy"
+    elif major in {69, 70, 71, 72, 73, 74, 75, 85, 90, 91, 94, 95, 96}:
+        result = "services"
+    else:
+        result = "general"
 
-    if major == 26:
-        return "semiconductor"
-    if major == 30:
-        return "automotive"
-    if major == 21:
-        return "pharmaceutical"
-    if major in {41, 42}:
-        return "construction"
-    if major in {64, 65}:
-        return "finance"
-    if major == 66:
-        return "insurance"
-    if major in {10, 11, 12}:
-        return "consumer_staples"
-    if major in {13, 14, 15, 16, 17, 18, 32, 33}:
-        return "consumer_discretionary"
-    if major in {45, 46, 47}:
-        return "retail"
-    if major in {58, 59, 60}:
-        return "media_entertainment"
-    if major in {61, 62, 63}:
-        return "software_platform" if major in {62, 63} else "telecom"
-    if major in {35, 36, 37, 38, 39}:
-        return "utilities"
-    if major in {19, 20, 22, 23, 24, 25}:
-        return "materials"
-    if major in {27, 28, 29, 31}:
-        return "industrial"
-    if major in {49, 50, 51, 52}:
-        return "transportation"
-    if major == 68:
-        return "real_estate"
-    if major == 86:
-        return "healthcare"
-    if major in {5, 6, 7, 8}:
-        return "energy"
-    if major in {69, 70, 71, 72, 73, 74, 75, 85, 90, 91, 94, 95, 96}:
-        return "services"
+    return {
+        "산업코드": result,
+        "분류출처": "OpenDART 기업개황 업종코드 세분류",
+        "분류신뢰도": 92 if prefix3 in {"261", "262", "263", "264", "265", "266"} else 72 if result != "general" else 48,
+        "산업프로필버전": INDUSTRY_PROFILE_VERSION,
+    }
 
-    return "general"
+
+def classify_dart_industry(
+    industry_code: Any,
+    company_name: Any = "",
+    stock_code: Any = "",
+) -> str:
+    return safe_text(
+        classify_dart_industry_detail(industry_code, company_name, stock_code).get("산업코드"),
+        "general",
+    )
 
 
 def get_company_overview(corp_code: Any) -> Dict[str, Any]:
@@ -622,29 +660,29 @@ def resolve_company(
             overview = get_company_overview(
                 result.get("DART기업코드")
             )
-            mapped_industry = infer_industry_code(
-                normalized
+            mapped_industry = infer_industry_code(normalized)
+            classification = classify_dart_industry_detail(
+                overview.get("업종코드"),
+                result.get("기업명"),
+                normalized,
             )
-            valuation_industry = (
-                mapped_industry
-                if mapped_industry != "none"
-                else classify_dart_industry(
-                    overview.get("업종코드"),
-                    result.get("기업명"),
-                    normalized,
-                )
-            )
+            valuation_industry = mapped_industry if mapped_industry != "none" else classification["산업코드"]
+            if mapped_industry != "none":
+                classification = {
+                    "산업코드": mapped_industry,
+                    "분류출처": "수동 종목매핑",
+                    "분류신뢰도": 100,
+                    "산업프로필버전": INDUSTRY_PROFILE_VERSION,
+                }
             result.update(
                 {
                     "수집상태": "정상",
                     "응답메시지": "",
                     "산업코드": valuation_industry,
                     "가치평가산업코드": valuation_industry,
-                    "산업분류출처": (
-                        "수동 종목매핑"
-                        if mapped_industry != "none"
-                        else "OpenDART 기업개황 업종코드"
-                    ),
+                    "산업분류출처": classification["분류출처"],
+                    "산업분류신뢰도": classification["분류신뢰도"],
+                    "산업프로필버전": classification["산업프로필버전"],
                     "OpenDART기업개황": overview,
                     "OpenDART업종코드": overview.get("업종코드", ""),
                     "데이터출처": (

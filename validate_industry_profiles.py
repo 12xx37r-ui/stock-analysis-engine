@@ -2,7 +2,7 @@
 산업 프로필 정적 검증기 V1
 
 네트워크 호출 없이 다음을 검증한다.
-- 지원 산업 6종 존재
+- 지원 산업 7종 존재
 - 산업별 중기·장기 가중치 합계 100
 - 구성자산 심볼·산업구간 존재
 - 상대강도 기준시장 유효
@@ -21,6 +21,7 @@ from collectors.industry import (
 
 EXPECTED_INDUSTRIES = {
     "semiconductor",
+    "electronic_components",
     "automotive",
     "battery",
     "biotechnology",

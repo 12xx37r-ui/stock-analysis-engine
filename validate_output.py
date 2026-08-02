@@ -21,7 +21,7 @@ import sys
 from pathlib import Path
 
 
-EXPECTED_ENGINE_VERSION = "6.6.4-valuation-contract-v3"
+EXPECTED_ENGINE_VERSION = "6.7.0-valuation-contract-v4"
 
 EXPECTED_WEIGHTS = {
     "단기1~5일": {
@@ -321,17 +321,25 @@ def validate_valuation_contract(data, result):
         result.error("가치평가 누락")
         return
 
-    if str(valuation.get("가치평가계약버전", "")) != "3.0":
-        result.error("가치평가 계약버전 3.0 누락")
+    if str(valuation.get("가치평가계약버전", "")) != "4.0":
+        result.error("가치평가 계약버전 4.0 누락")
 
     if str(valuation.get("가치평가엔진버전", "")) != EXPECTED_ENGINE_VERSION:
         result.error("가치평가 엔진버전 불일치")
 
-    if valuation.get("최종값사용가능") is not True:
-        result.error(
-            "가치평가 최종값 사용불가: "
-            + str(safe_dict(valuation.get("이상치검사")).get("사유", []))
-        )
+    qualification = safe_dict(valuation.get("데이터자격검사"))
+    if not qualification:
+        result.error("데이터자격검사 누락")
+    elif valuation.get("최종값사용가능") is True and qualification.get("통과") is not True:
+        result.error("최종값 사용가능인데 데이터자격검사는 미통과")
+    elif valuation.get("최종값사용가능") is not True:
+        if qualification.get("통과") is False and safe_list(qualification.get("중단사유")):
+            result.warning(
+                "가치평가 최종값 사용보류: "
+                + str(qualification.get("중단사유"))
+            )
+        else:
+            result.error("최종값 사용불가인데 명시적 데이터자격 중단사유 없음")
 
     base = safe_float(valuation.get("기본적정가"))
     conservative = safe_float(valuation.get("보수적적정가"))

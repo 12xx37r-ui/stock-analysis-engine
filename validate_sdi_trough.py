@@ -53,7 +53,7 @@ def run_validation():
         '현금흐름재무안전성': {'신호':45,'데이터품질':80},
     }
     industry_analysis={'분석상태':'정상','중기산업선행':{'신호':10,'데이터품질':85},'장기산업사이클':{'신호':35,'데이터품질':85},'산업국면':'저점 통과 시도'}
-    company={'기업명':'삼성SDI','종목코드':'006400','산업코드':'battery','가치평가산업코드':'battery','OpenDART업종코드':'282','산업분류출처':'회귀검증'}
+    company={'기업명':'삼성SDI','종목코드':'006400','산업코드':'battery','가치평가산업코드':'battery','OpenDART업종코드':'282','산업분류출처':'회귀검증','산업분류신뢰도':100,'산업프로필버전':'3.0.0'}
 
     v=calculate_value(financial,market,fundamental_analysis,bundle,industry_analysis,{'산업코드':'battery'},company)
     assert v['이익저점보정'] is True, v

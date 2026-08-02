@@ -32,16 +32,22 @@ def main():
         fail("종목코드 불일치", errors)
 
     prediction = safe_dict(data.get("주가예측"))
-    if prediction.get("엔진버전") != "6.6.4-valuation-contract-v3":
+    if prediction.get("엔진버전") != "6.7.0-valuation-contract-v4":
         fail("엔진버전 불일치", errors)
 
     valuation = safe_dict(data.get("가치평가"))
-    if valuation.get("가치평가계약버전") != "3.0":
-        fail("가치평가 계약버전 3.0 누락", errors)
-    if valuation.get("가치평가엔진버전") != "6.6.4-valuation-contract-v3":
+    if valuation.get("가치평가계약버전") != "4.0":
+        fail("가치평가 계약버전 4.0 누락", errors)
+    if valuation.get("가치평가엔진버전") != "6.7.0-valuation-contract-v4":
         fail("가치평가 엔진버전 불일치", errors)
-    if valuation.get("최종값사용가능") is not True:
-        fail("가치평가 최종값 사용불가", errors)
+    qualification = safe_dict(valuation.get("데이터자격검사"))
+    if not qualification:
+        fail("데이터자격검사 누락", errors)
+    elif valuation.get("최종값사용가능") is True and qualification.get("통과") is not True:
+        fail("최종값 사용가능인데 데이터자격검사 미통과", errors)
+    elif valuation.get("최종값사용가능") is not True:
+        if qualification.get("통과") is not False or not safe_list(qualification.get("중단사유")):
+            fail("최종값 사용보류 사유 누락", errors)
     base = float(valuation.get("기본적정가") or 0)
     low = float(valuation.get("보수적적정가") or 0)
     high = float(valuation.get("성장적정가") or 0)

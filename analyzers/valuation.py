@@ -1,4 +1,4 @@
-"""재무적정가 엔진 V6.6.4 · 가치평가 계약 v3.
+"""재무적정가 엔진 V6.7.0 · 가치평가 계약 v4.
 
 핵심 원칙
 - 현재가는 적정가 산식에 넣지 않고 계산 후 괴리 검증에만 사용한다.
@@ -118,6 +118,16 @@ VALUATION_PROFILES: Dict[str, Dict[str, Any]] = {
         "eps_floor": 0.72, "eps_cap": 1.80,
         "downside": 0.65, "upside": 1.45,
         "model_floor": 0.30, "model_ceiling": 3.20,
+        "cyclical": True, "growth": True,
+    },
+    "electronic_components": {
+        "label": "전자부품·MLCC·패키지기판 성장형",
+        "base_per": 15.0, "per_min": 9.0, "per_max": 28.0,
+        "base_pbr": 1.45, "pbr_min": 0.75, "pbr_max": 4.20,
+        "weights": {"per": 0.42, "pbr": 0.16, "residual": 0.14, "transition": 0.28},
+        "eps_floor": 0.72, "eps_cap": 1.85,
+        "downside": 0.64, "upside": 1.52,
+        "model_floor": 0.30, "model_ceiling": 3.30,
         "cyclical": True, "growth": True,
     },
     "automotive": {
@@ -350,8 +360,10 @@ PROFILE_ALIASES = {
     "": "general",
 }
 
-VALUATION_CONTRACT_VERSION = "3.0"
-VALUATION_ENGINE_VERSION = "6.6.4-valuation-contract-v3"
+VALUATION_CONTRACT_VERSION = "4.0"
+VALUATION_ENGINE_VERSION = "6.7.0-valuation-contract-v4"
+INDUSTRY_PROFILE_VERSION = "3.0.0"
+DATA_QUALIFICATION_VERSION = "1.0.0"
 
 # 복합기업은 사업부 세부 공시가 자동 수집되지 않으면 진짜 SOTP를 만들 수 없다.
 # 아래 설정은 '사업부 대용 가치합산'을 위한 보수적 복합배수이며, 출력에 대용모형임을 명시한다.
@@ -776,6 +788,222 @@ def _model_row(name: str, value: float, weight: float, role: str = "기준") -> 
     return {"name": name, "value": value, "weight": weight, "role": role}
 
 
+
+def provisional_record(fundamentals_bundle: Dict[str, Any]) -> Dict[str, Any]:
+    provisional = safe_dict(safe_dict(fundamentals_bundle).get("잠정실적"))
+    if not provisional:
+        return {}
+    return provisional
+
+
+def latest_period_key(periods: List[Dict[str, Any]]) -> int:
+    if not periods:
+        return 0
+    latest = periods[0]
+    year = int(safe_float(latest.get("사업연도"), 0))
+    quarter = REPORT_QUARTER.get(str(latest.get("보고서코드", "")), 0)
+    return year * 4 + quarter if year and quarter else 0
+
+
+def expected_formal_period_key(now: Optional[Any] = None) -> int:
+    """법정 제출시한에 7일의 안전여유를 둔 최신 정기보고서 기대분기."""
+    from datetime import datetime
+
+    current = now if isinstance(now, datetime) else datetime.now()
+    year = current.year
+    month_day = current.month * 100 + current.day
+    if month_day < 407:
+        return (year - 1) * 4 + 3
+    if month_day < 522:
+        return (year - 1) * 4 + 4
+    if month_day < 821:
+        return year * 4 + 1
+    if month_day < 1121:
+        return year * 4 + 2
+    return year * 4 + 3
+
+
+def build_effective_ttm(
+    formal_quarters: List[Dict[str, Any]],
+    formal_ttm: Dict[str, Any],
+    provisional: Dict[str, Any],
+) -> Dict[str, Any]:
+    """최신 잠정실적이 정식보고서보다 한 분기 앞설 때 이익 TTM만 교체한다.
+
+    현금흐름·재무상태는 감사 전 잠정자료에서 임의 추정하지 않고 가장 최근
+    정식 TTM/재무상태 값을 유지한다.
+    """
+    if provisional.get("사용가능") is not True:
+        return dict(formal_ttm)
+
+    provisional_key = int(safe_float(provisional.get("기간키"), 0))
+    if provisional_key <= 0:
+        return dict(formal_ttm)
+
+    rows = [
+        row for row in formal_quarters
+        if int(safe_float(row.get("기간키"), 0)) < provisional_key
+    ][:3]
+    keys = [provisional_key] + [int(safe_float(row.get("기간키"), 0)) for row in rows]
+    if len(rows) != 3 or any(keys[index] - keys[index + 1] != 1 for index in range(3)):
+        result = dict(formal_ttm)
+        result["잠정실적반영실패사유"] = "잠정실적과 직전 3개 단독분기가 연속되지 않음"
+        return result
+
+    provisional_metrics = safe_dict(provisional.get("지표"))
+    if (
+        safe_float(provisional_metrics.get("매출")) <= 0
+        or provisional_metrics.get("영업이익") in (None, "")
+        or provisional_metrics.get("순이익") in (None, "")
+    ):
+        result = dict(formal_ttm)
+        result["잠정실적반영실패사유"] = "잠정실적 핵심 계정 미확보"
+        return result
+
+    metrics = dict(safe_dict(formal_ttm.get("metrics")))
+    for key in ("매출", "영업이익", "순이익"):
+        metrics[key] = safe_float(provisional_metrics.get(key)) + sum(
+            safe_float(safe_dict(row.get("지표")).get(key)) for row in rows
+        )
+
+    first = rows[-1]
+    result = dict(formal_ttm)
+    result.update({
+        "available": True,
+        "quality": min(88, int(safe_float(provisional.get("데이터품질"), 78))),
+        "metrics": metrics,
+        "period": f"{first.get('사업연도')}Q{first.get('분기')}~{provisional.get('사업연도')}Q{provisional.get('분기')}",
+        "잠정실적반영": True,
+        "잠정실적접수번호": provisional.get("접수번호", ""),
+        "잠정실적공시일": provisional.get("공시일", ""),
+        "현금흐름기준": "최근 정식보고서 TTM 유지",
+    })
+    return result
+
+
+def effective_quarter_signal(
+    periods: List[Dict[str, Any]],
+    formal_quarters: List[Dict[str, Any]],
+    provisional: Dict[str, Any],
+) -> Dict[str, Any]:
+    base = quarter_signal(periods)
+    if provisional.get("사용가능") is not True:
+        return base
+    provisional_key = int(safe_float(provisional.get("기간키"), 0))
+    if provisional_key <= latest_period_key(periods):
+        return base
+    metrics = safe_dict(provisional.get("지표"))
+    prior = next(
+        (
+            row for row in formal_quarters
+            if int(safe_float(row.get("사업연도"), 0)) == int(safe_float(provisional.get("사업연도"), 0)) - 1
+            and int(safe_float(row.get("분기"), 0)) == int(safe_float(provisional.get("분기"), 0))
+        ),
+        None,
+    )
+    prior_metrics = safe_dict(prior.get("지표")) if prior else {}
+    revenue = safe_float(metrics.get("매출"))
+    operating = safe_float(metrics.get("영업이익"))
+    net = safe_float(metrics.get("순이익"))
+    revenue_yoy = growth_rate(revenue, safe_float(prior_metrics.get("매출"))) if prior else 0.0
+    operating_yoy = growth_rate(operating, safe_float(prior_metrics.get("영업이익"))) if prior else 0.0
+    net_yoy = growth_rate(net, safe_float(prior_metrics.get("순이익"))) if prior else 0.0
+    signal = (
+        clamp(revenue_yoy / 40.0, -1.0, 1.0) * 20.0
+        + clamp(operating_yoy / 60.0, -1.0, 1.0) * 45.0
+        + clamp(net_yoy / 80.0, -1.0, 1.0) * 35.0
+    )
+    return {
+        "latest_revenue": revenue,
+        "latest_operating_income": operating,
+        "latest_net_income": net,
+        "revenue_yoy": revenue_yoy,
+        "operating_yoy": operating_yoy,
+        "net_yoy": net_yoy,
+        "signal": clamp(signal, -100.0, 100.0),
+        "quality": int(safe_float(provisional.get("데이터품질"), 78)),
+        "latest_period": f"{provisional.get('사업연도')}Q{provisional.get('분기')}",
+        "잠정실적반영": True,
+    }
+
+
+def build_data_qualification(
+    periods: List[Dict[str, Any]],
+    ttm: Dict[str, Any],
+    provisional: Dict[str, Any],
+    shares: float,
+    valuation_eps: float,
+    profile_code: str,
+    company_info: Dict[str, Any],
+    model_count: int,
+    price: float,
+    basic: float,
+) -> Dict[str, Any]:
+    formal_key = latest_period_key(periods)
+    expected_key = expected_formal_period_key()
+    provisional_key = int(safe_float(provisional.get("기간키"), 0))
+    provisional_detected = bool(provisional.get("접수번호"))
+    provisional_usable = provisional.get("사용가능") is True
+    effective_key = max(formal_key, provisional_key if provisional_usable else 0)
+    industry_confidence = int(safe_float(company_info.get("산업분류신뢰도"), 45))
+
+    critical: List[str] = []
+    warnings: List[str] = []
+    checks = {
+        "정식재무최신성": formal_key >= expected_key,
+        "연속TTM": ttm.get("available") is True,
+        "주식수": shares > 0,
+        "평가EPS": valuation_eps > 0,
+        "산업프로필": profile_code != "general",
+        "가치모형수": model_count >= 3,
+        "최신잠정실적정량화": (not provisional_detected) or provisional_usable or provisional_key <= formal_key,
+    }
+    if not checks["정식재무최신성"]:
+        critical.append("정식 재무보고서가 법정 제출시한 기준 최신분기보다 오래됨")
+    if not checks["연속TTM"]:
+        critical.append("연속 4개 단독분기 TTM 미확보")
+    if not checks["주식수"]:
+        critical.append("가치평가 주식수 미확보")
+    if not checks["평가EPS"]:
+        critical.append("양(+)의 평가 EPS 미확보")
+    if not checks["최신잠정실적정량화"]:
+        critical.append("정식보고서보다 새로운 잠정실적 공시를 정량화하지 못함")
+    if not checks["산업프로필"]:
+        warnings.append("산업 프로필이 일반기업 또는 저신뢰 분류")
+    if not checks["가치모형수"]:
+        warnings.append("독립 가치모형 3개 미만")
+    if industry_confidence < 70:
+        warnings.append(f"산업분류 신뢰도 {industry_confidence}점")
+
+    extreme_gap = bool(price > 0 and basic > 0 and (basic / price < 0.34 or basic / price > 3.0))
+    if extreme_gap:
+        warnings.append("현재가와 기준 적정가가 약 3배 이상 괴리")
+        if not provisional_usable and provisional_detected:
+            critical.append("극단적 괴리와 최신 잠정실적 미정량화가 동시에 발생")
+        if industry_confidence < 70:
+            critical.append("극단적 괴리와 저신뢰 산업분류가 동시에 발생")
+
+    passed = not critical
+    status = "통과" if passed and not warnings else "주의통과" if passed else "보류"
+    return {
+        "버전": DATA_QUALIFICATION_VERSION,
+        "통과": passed,
+        "상태": status,
+        "핵심검사": checks,
+        "중단사유": list(dict.fromkeys(critical)),
+        "주의사유": list(dict.fromkeys(warnings)),
+        "정식재무기준분기키": formal_key,
+        "기대정식재무분기키": expected_key,
+        "잠정실적분기키": provisional_key,
+        "유효재무분기키": effective_key,
+        "잠정실적감지": provisional_detected,
+        "잠정실적반영": bool(ttm.get("잠정실적반영")),
+        "산업분류신뢰도": industry_confidence,
+        "산업프로필버전": company_info.get("산업프로필버전", INDUSTRY_PROFILE_VERSION),
+        "극단적괴리": extreme_gap,
+    }
+
+
 def calculate_value(
     financial: Dict[str, Any],
     market: Dict[str, Any],
@@ -811,8 +1039,10 @@ def calculate_value(
 
     periods = get_periods(fundamentals_bundle)
     quarters = build_standalone_quarters(periods)
-    ttm = build_ttm(quarters)
-    quarter = quarter_signal(periods)
+    formal_ttm = build_ttm(quarters)
+    provisional = provisional_record(fundamentals_bundle)
+    ttm = build_effective_ttm(quarters, formal_ttm, provisional)
+    quarter = effective_quarter_signal(periods, quarters, provisional)
     share_info = infer_share_count(market, periods, company_info, fundamentals_bundle)
     shares = safe_float(share_info.get("value"))
     annual_eps = _annual_eps_series(periods, shares)
@@ -826,10 +1056,34 @@ def calculate_value(
     if market_eps <= 0:
         market_eps = ttm_eps if ttm_eps > 0 else normalized_eps
     latest_equity = 0.0
+    latest_liabilities = 0.0
     for period in periods:
-        latest_equity = safe_float(get_period_metrics(period).get("자본총계"))
+        period_metrics = get_period_metrics(period)
+        latest_equity = safe_float(period_metrics.get("자본총계"))
+        latest_liabilities = safe_float(period_metrics.get("부채총계"))
         if latest_equity > 0:
             break
+
+    # 가치평가 품질·배수 보정은 구형 연간 요약보다 유효 TTM과 최신 재무상태를 우선한다.
+    ttm_metrics = safe_dict(ttm.get("metrics"))
+    ttm_revenue = safe_float(ttm_metrics.get("매출"))
+    ttm_operating = safe_float(ttm_metrics.get("영업이익"))
+    ttm_net = safe_float(ttm_metrics.get("순이익"))
+    if ttm_revenue > 0:
+        operating_margin = ttm_operating / ttm_revenue
+        net_margin = ttm_net / ttm_revenue
+    if latest_equity > 0:
+        roe = ttm_net / latest_equity if ttm_net != 0 else roe
+        debt_ratio = latest_liabilities / latest_equity if latest_liabilities > 0 else debt_ratio
+
+    annual_rows = annual_periods(periods)
+    if len(annual_rows) >= 3:
+        newest = get_period_metrics(annual_rows[0])
+        oldest = get_period_metrics(annual_rows[2])
+        revenue_growth_3y = growth_rate(safe_float(newest.get("매출")), safe_float(oldest.get("매출"))) / 100.0
+        operating_growth_3y = growth_rate(safe_float(newest.get("영업이익")), safe_float(oldest.get("영업이익"))) / 100.0
+        net_growth_3y = growth_rate(safe_float(newest.get("순이익")), safe_float(oldest.get("순이익"))) / 100.0
+
     if bps <= 0 and shares > 0 and latest_equity > 0:
         bps = latest_equity / shares
     if actual_per <= 0 and price > 0 and market_eps > 0:
@@ -846,8 +1100,18 @@ def calculate_value(
     earnings_analysis = safe_dict(fundamentals_analysis.get("분기실적"))
     forward_direction = safe_dict(fundamentals_analysis.get("향후이익방향대용"))
     cash_quality = safe_dict(fundamentals_analysis.get("현금흐름재무안전성"))
-    earnings_signal = safe_float(earnings_analysis.get("신호"), quarter["signal"])
+    earnings_signal = (
+        safe_float(quarter.get("signal"), 0.0)
+        if quarter.get("잠정실적반영")
+        else safe_float(earnings_analysis.get("신호"), quarter["signal"])
+    )
     forward_signal = safe_float(forward_direction.get("신호"), 0.0)
+    if quarter.get("잠정실적반영"):
+        forward_signal = clamp(
+            forward_signal * 0.55 + safe_float(quarter.get("signal")) * 0.45,
+            -100.0,
+            100.0,
+        )
     cash_signal = safe_float(cash_quality.get("신호"), 0.0)
     industry = industry_signal(industry_analysis)
 
@@ -897,6 +1161,14 @@ def calculate_value(
         base_forward_eps = market_eps
 
     growth_cap = 0.18 if profile.get("cyclical") else 0.24 if profile.get("growth") else 0.14
+    structural_acceleration = bool(
+        quarter.get("잠정실적반영")
+        and quarter["revenue_yoy"] >= 15.0
+        and quarter["operating_yoy"] >= 45.0
+        and quarter["net_yoy"] >= 25.0
+    )
+    if structural_acceleration:
+        growth_cap = min(0.34, growth_cap + 0.10)
     growth_floor = -0.18 if profile.get("cyclical") else -0.12
     fy1_growth = 0.0
     fy1_growth += clamp(quarter["revenue_yoy"] / 100.0 * 0.10, -0.05, 0.08)
@@ -1188,7 +1460,21 @@ def calculate_value(
     implied_pbr = basic / bps if basic > 0 and bps > 0 else 0.0
     gap = ((basic - price) / price * 100.0) if price > 0 and basic > 0 else 0.0
 
+    data_qualification = build_data_qualification(
+        periods=periods,
+        ttm=ttm,
+        provisional=provisional,
+        shares=shares,
+        valuation_eps=valuation_eps,
+        profile_code=profile_code,
+        company_info=company_info,
+        model_count=len(valid_models),
+        price=price,
+        basic=basic,
+    )
+
     abnormal_reasons: List[str] = []
+    abnormal_reasons.extend(safe_list(data_qualification.get("중단사유")))
     if not ttm.get("available"):
         abnormal_reasons.append("연속 4개 단독분기 TTM 미확보")
     if shares <= 0:
@@ -1209,7 +1495,7 @@ def calculate_value(
     if basic > 0 and price > 0 and (basic / price < 0.35 or basic / price > 3.0) and len(abnormal_reasons) >= 2:
         abnormal_reasons.append("시장가격과 3배 이상 괴리하면서 데이터·모형 경고 동시 발생")
 
-    fatal = shares <= 0 or valuation_eps <= 0 or basic <= 0
+    fatal = shares <= 0 or valuation_eps <= 0 or basic <= 0 or data_qualification.get("통과") is not True
     review = (not fatal) and any(
         reason in abnormal_reasons
         for reason in (
@@ -1221,8 +1507,16 @@ def calculate_value(
             "시장가격과 3배 이상 괴리하면서 데이터·모형 경고 동시 발생",
         )
     )
-    calculation_status = "산출불가" if fatal else "검토필요" if review else "정상"
-    final_available = not fatal and not review
+    calculation_status = (
+        "산출보류"
+        if data_qualification.get("통과") is not True and basic > 0
+        else "산출불가"
+        if fatal
+        else "검토필요"
+        if review
+        else "정상"
+    )
+    final_available = not fatal and not review and data_qualification.get("통과") is True
 
     if gap > 25:
         judgment = "강한 저평가"
@@ -1244,7 +1538,10 @@ def calculate_value(
     data_confidence += 8 if bps > 0 else 0
     data_confidence += 8 if industry["available"] else 0
     data_confidence += 5 if safe_float(cash_quality.get("데이터품질")) >= 70 else 0
+    data_confidence += 6 if ttm.get("잠정실적반영") else 0
     data_confidence = int(clamp(data_confidence, 25, 95))
+    if data_qualification.get("통과") is not True:
+        data_confidence = min(data_confidence, 45)
 
     model_confidence = 72
     if model_dispersion > 0:
@@ -1295,13 +1592,23 @@ def calculate_value(
         notes.append("이익저점 국면을 감지해 현재 이익가치보다 자산·그레이엄·정상화 회복가치의 비중을 높였습니다.")
     if excluded_models:
         notes.append("기업 유형에 부적합하거나 독립 가치앵커에서 과도하게 벗어난 모형은 기준가에서 제외했습니다.")
+    if ttm.get("잠정실적반영"):
+        notes.append("정식 보고서보다 최신인 OpenDART 잠정실적을 매출·영업이익·순이익 TTM에 반영했으며 현금흐름은 최근 정식보고서를 유지했습니다.")
+    if data_qualification.get("통과") is not True:
+        notes.append("데이터 자격검사를 통과하지 못해 계산값은 진단용으로만 남기고 최종 적정가 사용을 차단했습니다.")
 
     return {
         "가치평가계약버전": VALUATION_CONTRACT_VERSION,
         "가치평가엔진버전": VALUATION_ENGINE_VERSION,
         "산출상태": calculation_status,
         "최종값사용가능": final_available,
-        "최종값출처": "Python 가치평가 계약 v3",
+        "최종값출처": "Python 가치평가 계약 v4",
+        "데이터자격검사": data_qualification,
+        "산업프로필버전": company_info.get("산업프로필버전", INDUSTRY_PROFILE_VERSION),
+        "산업분류신뢰도": int(safe_float(company_info.get("산업분류신뢰도"), 45)),
+        "정식재무기준분기키": latest_period_key(periods),
+        "유효재무기준분기키": int(safe_float(data_qualification.get("유효재무분기키"), latest_period_key(periods))),
+        "잠정실적": provisional,
         "현재가": price,
         "실제PER": actual_per,
         "실제PBR": actual_pbr,
@@ -1322,6 +1629,8 @@ def calculate_value(
         "FY2성장률": round(fy2_growth * 100.0, 2),
         "TTM기준기간": ttm.get("period", ""),
         "TTM데이터품질": ttm.get("quality", 0),
+        "TTM잠정실적반영": bool(ttm.get("잠정실적반영")),
+        "TTM현금흐름기준": ttm.get("현금흐름기준", "정식보고서 TTM"),
         "목표PER": round(target_per, 2),
         "목표PBR": round(target_pbr, 2),
         "암시PER": round(implied_per, 2) if implied_per > 0 else 0.0,
@@ -1352,6 +1661,7 @@ def calculate_value(
         "산업국면": industry["phase"],
         "실적전환방향": transition_direction,
         "실적전환강도": round(transition_strength, 2),
+        "구조적실적가속": structural_acceleration,
         "가치평가국면": "이익저점·회복가치 혼합" if earnings_trough else "일반 가치평가",
         "이익저점보정": earnings_trough,
         "자산대비이익가치배수": round(asset_to_earnings, 3),

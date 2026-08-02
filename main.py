@@ -22,6 +22,7 @@ from collectors.history import get_history_bundle
 from collectors.industry import get_industry_bundle
 from collectors.market import get_market_data
 from collectors.news import get_company_news
+from collectors.provisional import get_latest_provisional_earnings
 from collectors.technical import get_stock_technical_bundle
 from predictor import predict_stock
 
@@ -33,6 +34,7 @@ DEFAULT_INDUSTRY_CODE = "auto"
 
 LIVE_INDUSTRY_CODES = {
     "semiconductor",
+    "electronic_components",
     "automotive",
     "battery",
     "biotechnology",
@@ -42,6 +44,7 @@ LIVE_INDUSTRY_CODES = {
 
 VALUATION_INDUSTRY_CODES = {
     "semiconductor",
+    "electronic_components",
     "automotive",
     "battery",
     "biotechnology",
@@ -636,6 +639,11 @@ def build_fundamentals_summary(
                 "주식총수"
             )
         ),
+        "잠정실적": safe_dict(
+            bundle.get(
+                "잠정실적"
+            )
+        ),
         "분석": safe_dict(
             analysis
         ),
@@ -731,7 +739,7 @@ def parse_arguments():
             DEFAULT_INDUSTRY_CODE,
         ),
         help=(
-            "auto, semiconductor, automotive, battery, "
+            "auto, semiconductor, electronic_components, automotive, battery, "
             "biotechnology, construction, finance, none"
         ),
     )
@@ -1161,7 +1169,7 @@ def main():
         "DISCLOSURE",
         lambda: get_recent_disclosures(
             dart_code,
-            days=30,
+            days=120,
             page_count=100,
         ),
         {
@@ -1224,6 +1232,17 @@ def main():
             "주식총수": {},
         },
     )
+
+    provisional_earnings = safe_execute(
+        "DART PROVISIONAL EARNINGS",
+        lambda: get_latest_provisional_earnings(disclosure_bundle),
+        {
+            "수집상태": "실패",
+            "사용가능": False,
+            "검증사유": ["잠정실적 수집 중 예외"],
+        },
+    )
+    fundamentals_bundle["잠정실적"] = provisional_earnings
 
     fundamentals_analysis = safe_execute(
         "FUNDAMENTALS ANALYSIS",
