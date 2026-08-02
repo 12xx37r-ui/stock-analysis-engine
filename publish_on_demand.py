@@ -244,15 +244,21 @@ def main():
     if not compatible:
         raise RuntimeError("게시 계약 검증 실패: " + "; ".join(reasons))
 
+    # 일반 기업 재무조회 모드에서는 가치평가 가능 여부로 게시를 차단하지 않는다.
+    # 적자기업, EPS 미확보 기업, 재무기간 부족 기업도 재무조회 결과는 표시해야 한다.
+    # 버핏형 검색/선별 조건은 별도 검색 모듈에서 담당한다.
     valuation = safe_dict(stock.get("가치평가"))
     qualification = safe_dict(valuation.get("데이터자격검사"))
-    if valuation.get("최종값사용가능") is not True or valuation.get("산출상태") != "정상":
-        stop_reasons = safe_list(qualification.get("중단사유"))
-        detail = "; ".join(str(item) for item in stop_reasons) or "가치평가 데이터 자격 미통과"
-        raise RuntimeError(
-            "게시 차단: OpenDART/재무자료가 불완전한 결과로 기존 정상 피드를 덮어쓰지 않습니다. "
-            + detail
+
+    if (
+        valuation.get("최종값사용가능") is not True
+        or valuation.get("산출상태") != "정상"
+    ):
+        print(
+            "PUBLISH WARNING: 가치평가 산출 불가 상태이지만 일반 기업 조회 결과는 게시 허용"
         )
+        for reason in safe_list(qualification.get("중단사유")):
+            print("-", reason)
 
     stock_root = latest_root / "stocks"
     latest_stock_path = stock_root / f"{stock_code}.json"
