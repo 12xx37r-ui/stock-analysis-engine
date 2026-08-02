@@ -1,4 +1,4 @@
-name: on-demand-stock-analysis
+name: on-demand-stock-analysis (admin cache)
 on:
   workflow_dispatch:
     inputs:
@@ -21,9 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
+      KIS_DISABLED: "1"
       DART_API_KEY: ${{ secrets.DART_API_KEY }}
-      KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
-      KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
       STOCK_CODE: ${{ inputs.stock_code }}
       INDUSTRY_CODE: ${{ inputs.industry_code }}
     steps:
@@ -62,6 +61,10 @@ jobs:
           pip install -r requirements.txt
       - name: Validate industry profiles
         run: python validate_industry_profiles.py
+      - name: Validate valuation profiles
+        run: python validate_valuation_profiles.py
+      - name: Validate signal bridge
+        run: python validate_signal_bridge.py
       - name: Run engine
         run: |
           python main.py --stock-code "$STOCK_CODE" --industry-code "$INDUSTRY_CODE"
@@ -71,18 +74,53 @@ jobs:
       - name: Publish latest engine feed
         run: |
           python publish_on_demand.py --stock-file "output/${STOCK_CODE}.json" --latest-root data/latest
-      - name: Commit latest stock
+          python validate_published_feed.py --file "data/latest/stocks/${STOCK_CODE}.json" --stock-code "$STOCK_CODE"
+      - name: Commit latest stock with retry
         shell: bash
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "data/latest/stocks/${STOCK_CODE}.json" data/latest/index.json
           if git diff --cached --quiet; then
             echo "No latest-feed changes."
-            exit 0
+          else
+            git commit -m "feat: publish ${STOCK_CODE} on-demand engine [skip ci]"
           fi
-          git commit -m "feat: publish ${STOCK_CODE} on-demand engine [skip ci]"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+          for attempt in 1 2 3; do
+            git fetch origin "$GITHUB_REF_NAME"
+            git rebase "origin/$GITHUB_REF_NAME" || {
+              git rebase --abort || true
+              echo "Rebase failed on attempt $attempt"
+              exit 1
+            }
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              echo "Latest feed pushed on attempt $attempt"
+              break
+            fi
+            if [[ "$attempt" == "3" ]]; then
+              echo "Latest feed push failed after 3 attempts"
+              exit 1
+            fi
+            sleep $((attempt * 3))
+          done
+      - name: Verify committed feed
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin "$GITHUB_REF_NAME"
+          git show "origin/${GITHUB_REF_NAME}:data/latest/stocks/${STOCK_CODE}.json" > "/tmp/${STOCK_CODE}.published.json"
+          python validate_published_feed.py --file "/tmp/${STOCK_CODE}.published.json" --stock-code "$STOCK_CODE"
+          python - <<'PY'
+          import hashlib, os, pathlib
+          code = os.environ["STOCK_CODE"]
+          local = pathlib.Path(f"data/latest/stocks/{code}.json").read_bytes()
+          remote = pathlib.Path(f"/tmp/{code}.published.json").read_bytes()
+          if hashlib.sha256(local).hexdigest() != hashlib.sha256(remote).hexdigest():
+              raise SystemExit("Published feed checksum mismatch")
+          print("Published feed checksum verified")
+          PY
       - name: Upload result
         uses: actions/upload-artifact@v5
         with:
