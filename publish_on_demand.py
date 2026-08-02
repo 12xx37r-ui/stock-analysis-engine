@@ -25,6 +25,7 @@ from feed_contract import (
     stock_code_of,
 )
 
+PUBLISH_MODE = "general-financial-v1.0.1"
 KST = timezone(timedelta(hours=9))
 
 
@@ -246,13 +247,25 @@ def main():
 
     valuation = safe_dict(stock.get("가치평가"))
     qualification = safe_dict(valuation.get("데이터자격검사"))
-    if valuation.get("최종값사용가능") is not True or valuation.get("산출상태") != "정상":
-        stop_reasons = safe_list(qualification.get("중단사유"))
-        detail = "; ".join(str(item) for item in stop_reasons) or "가치평가 데이터 자격 미통과"
-        raise RuntimeError(
-            "게시 차단: OpenDART/재무자료가 불완전한 결과로 기존 정상 피드를 덮어쓰지 않습니다. "
-            + detail
-        )
+
+    # 일반 기업 재무조회 모드:
+    # 적자, TTM EPS 미확보, 최신 정식보고서 미확보, 현재가/거래량 미확보,
+    # 적정가 산출보류는 기업·데이터 상태이지 게시 실패 사유가 아니다.
+    # JSON 구조와 계약이 정상인 결과는 그대로 게시하고 화면에서 자료부족을 표시한다.
+    valuation_usable = (
+        valuation.get("최종값사용가능") is True
+        and valuation.get("산출상태") == "정상"
+    )
+    if not valuation_usable:
+        stop_reasons = [
+            str(item)
+            for item in safe_list(qualification.get("중단사유"))
+            if str(item)
+        ]
+        detail = "; ".join(stop_reasons) or "가치평가 일부 또는 전체 산출 불가"
+        print("GENERAL FINANCIAL PUBLISH: PASS WITH WARNING")
+        print("- 일반 기업 재무조회이므로 가치평가 산출보류 결과도 게시합니다.")
+        print("- 자료부족 사유:", detail)
 
     stock_root = latest_root / "stocks"
     latest_stock_path = stock_root / f"{stock_code}.json"
@@ -261,6 +274,7 @@ def main():
     index = rebuild_latest_index(latest_root, stock)
 
     print("ON-DEMAND PUBLISH RESULT")
+    print("- 게시모드:", PUBLISH_MODE)
     print("- 종목코드:", stock_code)
     print("- 활성 최신피드 종목:", index.get("종목수", 0))
     print("- 제외된 구형파일:", index.get("제외종목수", 0))
