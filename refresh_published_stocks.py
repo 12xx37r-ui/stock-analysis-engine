@@ -1,4 +1,9 @@
-"""Refresh already-published engine files without KIS token issuance.
+"""Refresh already-published engine files with one reusable KIS token per batch.
+
+When GitHub repository secrets KIS_APP_KEY and KIS_APP_SECRET are present,
+all stocks in the batch share the same 23-hour token cache file. If the secrets
+are absent, Yahoo price history remains available and KIS-only investor/program
+data is reported as unavailable without aborting the batch.
 
 This is a background cache warmer, not a prerequisite for GAS searches.
 A single stock with insufficient valuation data must not abort the entire batch.

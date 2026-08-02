@@ -26,6 +26,25 @@ def env_flag(name: str, default: bool = False) -> bool:
     return value in {"1", "true", "yes", "on", "enabled"}
 
 
-# GitHub Actions에서는 기본적으로 KIS 인증을 사용하지 않는다.
-# KIS 실시간 현재가·수급은 GAS의 단일 토큰 관리자가 담당한다.
+# KIS_DISABLED=1이면 KIS 전용 수급·프로그램 호출을 건너뛴다.
+# GitHub Actions는 저장소 비밀키가 있을 때만 23시간 토큰 캐시를 사용한다.
 KIS_DISABLED = env_flag("KIS_DISABLED", default=False)
+
+
+KIS_TOKEN_FILE = os.getenv(
+    "KIS_TOKEN_FILE",
+    ".cache/kis_token.json",
+)
+
+
+def env_float(name: str, default: float) -> float:
+    try:
+        return float(os.getenv(name, str(default)))
+    except (TypeError, ValueError):
+        return default
+
+
+KIS_TOKEN_REUSE_HOURS = env_float(
+    "KIS_TOKEN_REUSE_HOURS",
+    23.0,
+)

@@ -1,4 +1,4 @@
-"""재무적정가 엔진 V6.6.2 · 가치평가 계약 v3.
+"""재무적정가 엔진 V6.6.3 · 가치평가 계약 v3.
 
 핵심 원칙
 - 현재가는 적정가 산식에 넣지 않고 계산 후 괴리 검증에만 사용한다.
@@ -351,7 +351,7 @@ PROFILE_ALIASES = {
 }
 
 VALUATION_CONTRACT_VERSION = "3.0"
-VALUATION_ENGINE_VERSION = "6.6.2-valuation-contract-v3"
+VALUATION_ENGINE_VERSION = "6.6.3-valuation-contract-v3"
 
 # 복합기업은 사업부 세부 공시가 자동 수집되지 않으면 진짜 SOTP를 만들 수 없다.
 # 아래 설정은 '사업부 대용 가치합산'을 위한 보수적 복합배수이며, 출력에 대용모형임을 명시한다.

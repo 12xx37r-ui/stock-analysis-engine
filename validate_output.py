@@ -21,7 +21,7 @@ import sys
 from pathlib import Path
 
 
-EXPECTED_ENGINE_VERSION = "6.6.2-valuation-contract-v3"
+EXPECTED_ENGINE_VERSION = "6.6.3-valuation-contract-v3"
 
 EXPECTED_WEIGHTS = {
     "단기1~5일": {
@@ -63,12 +63,11 @@ REQUIRED_ROOT_KEYS = (
 )
 
 CRITICAL_COMPLETENESS_KEYS = (
-    "KIS현재가",
-    "KIS당일수급",
-    "KIS일봉",
+    "현재가",
+    "가격이력",
     "멀티타임프레임차트",
-    "KIS누적수급",
-    "KIS프로그램매매",
+    "누적수급",
+    "프로그램매매",
     "DART기본재무",
     "DART분기실적",
     "DART현금흐름",
@@ -442,7 +441,7 @@ def validate_output(
 
     if history_status != "정상":
         result.warning(
-            f"KIS 과거데이터 상태: {history_status or '누락'}"
+            f"시장 과거데이터 상태: {history_status or '누락'}"
         )
 
     result.info(

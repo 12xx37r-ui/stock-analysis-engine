@@ -1582,22 +1582,20 @@ def predict_stock(
         history_status.get("프로그램데이터상태") == "정상"
         and int(safe_float(history_status.get("프로그램데이터개수"))) > 0
     )
+    market_source = str(market.get("데이터출처", "") or "")
+    price_history_source = str(history_status.get("가격데이터출처", "") or "")
+    kis_current_price_ok = bool(safe_float(market.get("현재가"))) and "KIS" in market_source
+    kis_price_history_ok = price_history_ok and "KIS" in price_history_source
 
     return {
         "엔진버전": (
-            "6.6.2-valuation-contract-v3"
+            "6.6.3-valuation-contract-v3"
         ),
         "단기1~5일": short_term,
         "중기1~8주": mid_term,
         "장기6~18개월": long_term,
         "데이터완전성": {
-            "KIS현재가": bool(
-                safe_float(
-                    market.get(
-                        "현재가"
-                    )
-                )
-            ),
+            "KIS현재가": kis_current_price_ok,
             "KIS당일수급": any(
                 safe_float(
                     supply.get(key)
@@ -1609,7 +1607,7 @@ def predict_stock(
                     "개인순매수",
                 )
             ),
-            "KIS일봉": price_history_ok,
+            "KIS일봉": kis_price_history_ok,
             "멀티타임프레임차트": technical_ok,
             "KIS누적수급": investor_history_ok,
             "KIS프로그램매매": program_history_ok,

@@ -100,6 +100,96 @@ def safe_execute(
         return fallback
 
 
+def safe_number(value, default=0.0):
+    try:
+        if value in (None, ""):
+            return default
+        return float(str(value).replace(",", "").strip())
+    except (TypeError, ValueError):
+        return default
+
+
+def apply_technical_price_fallback(market, technical_bundle):
+    """Use Yahoo 5-year chart as the source-neutral price history fallback.
+
+    KIS remains the only source for investor/program data. When KIS price history
+    is unavailable, a valid Yahoo technical bundle must still drive the price
+    trend factor and must not be reported as a complete history failure.
+    """
+    market = market if isinstance(market, dict) else {}
+    technical_bundle = technical_bundle if isinstance(technical_bundle, dict) else {}
+    history = market.get("과거데이터")
+    if not isinstance(history, dict):
+        history = {}
+        market["과거데이터"] = history
+
+    status = history.get("수집상태")
+    if not isinstance(status, dict):
+        status = {}
+        history["수집상태"] = status
+
+    existing_count = int(safe_number(status.get("가격데이터개수"), 0))
+    existing_state = str(status.get("가격데이터상태") or "")
+    daily = technical_bundle.get("일봉") if isinstance(technical_bundle.get("일봉"), dict) else {}
+    rows = technical_bundle.get("최근일봉") if isinstance(technical_bundle.get("최근일봉"), list) else []
+
+    if existing_state == "정상" and existing_count > 0:
+        status["가격데이터출처"] = status.get("가격데이터출처") or "한국투자증권 KIS"
+        return market
+
+    if technical_bundle.get("수집상태") not in {"정상", "부분성공"} or daily.get("available") is not True:
+        return market
+
+    closes = [safe_number(row.get("종가"), 0.0) for row in rows if isinstance(row, dict)]
+    closes = [value for value in closes if value > 0]
+    volumes = [safe_number(row.get("거래량"), 0.0) for row in rows if isinstance(row, dict)]
+
+    def roc(period):
+        if len(closes) <= period or closes[-period - 1] <= 0:
+            return 0.0
+        return (closes[-1] / closes[-period - 1] - 1.0) * 100.0
+
+    def mean(values, period):
+        usable = [value for value in values[-period:] if value >= 0]
+        return sum(usable) / len(usable) if usable else 0.0
+
+    avg5 = mean(volumes, 5)
+    avg20 = mean(volumes, 20)
+    history["가격추세"] = {
+        "종가": safe_number(daily.get("latestClose"), closes[-1] if closes else 0.0),
+        "MA5": safe_number(daily.get("maFast")),
+        "MA20": safe_number(daily.get("maMedium")),
+        "MA60": safe_number(daily.get("maLong")),
+        "종가대비MA20": ((safe_number(daily.get("latestClose")) / safe_number(daily.get("maMedium")) - 1.0) * 100.0) if safe_number(daily.get("maMedium")) > 0 else 0.0,
+        "종가대비MA60": ((safe_number(daily.get("latestClose")) / safe_number(daily.get("maLong")) - 1.0) * 100.0) if safe_number(daily.get("maLong")) > 0 else 0.0,
+        "5일수익률": roc(5),
+        "20일수익률": roc(20),
+        "60일수익률": roc(60),
+        "RSI14": safe_number(daily.get("rsi14")),
+        "20일일간변동성": 0.0,
+        "5일평균거래량": avg5,
+        "20일평균거래량": avg20,
+        "거래량비율5대20": avg5 / avg20 if avg20 > 0 else 0.0,
+    }
+
+    count = int(safe_number(technical_bundle.get("일봉데이터개수"), len(closes)))
+    status.update({
+        "가격데이터상태": "정상",
+        "가격응답상태": "YAHOO_FALLBACK",
+        "가격응답메시지": "KIS 일봉 미확보 · Yahoo 5년 일봉으로 가격추세 정상 보완",
+        "가격데이터개수": count,
+        "가격최초일": technical_bundle.get("최초일", ""),
+        "가격최종일": technical_bundle.get("최종일", ""),
+        "가격데이터출처": technical_bundle.get("데이터출처", "Yahoo Finance Chart API 5년 일봉"),
+    })
+
+    investor_ok = status.get("누적수급데이터상태") == "정상" and int(safe_number(status.get("누적수급데이터개수"), 0)) > 0
+    program_ok = status.get("프로그램데이터상태") == "정상" and int(safe_number(status.get("프로그램데이터개수"), 0)) > 0
+    status["전체수집상태"] = "정상" if investor_ok and program_ok else "부분성공"
+    history["데이터출처"] = "Yahoo 가격이력 + KIS 수급·프로그램(설정 시)"
+    return market
+
+
 def build_history_summary(
     history_bundle,
 ):
@@ -170,6 +260,15 @@ def build_history_summary(
                 price_history.get(
                     "데이터개수",
                     0,
+                )
+            ),
+            "가격데이터출처": (
+                price_history.get(
+                    "데이터출처",
+                    history_bundle.get(
+                        "데이터출처",
+                        "한국투자증권 KIS",
+                    ),
                 )
             ),
             "가격최초일": (
@@ -1031,6 +1130,11 @@ def main():
             "월봉": {},
             "수집오류": [],
         },
+    )
+
+    market = apply_technical_price_fallback(
+        market,
+        technical_bundle,
     )
 
     news_bundle = safe_execute(

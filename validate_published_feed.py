@@ -32,13 +32,13 @@ def main():
         fail("종목코드 불일치", errors)
 
     prediction = safe_dict(data.get("주가예측"))
-    if prediction.get("엔진버전") != "6.6.2-valuation-contract-v3":
+    if prediction.get("엔진버전") != "6.6.3-valuation-contract-v3":
         fail("엔진버전 불일치", errors)
 
     valuation = safe_dict(data.get("가치평가"))
     if valuation.get("가치평가계약버전") != "3.0":
         fail("가치평가 계약버전 3.0 누락", errors)
-    if valuation.get("가치평가엔진버전") != "6.6.2-valuation-contract-v3":
+    if valuation.get("가치평가엔진버전") != "6.6.3-valuation-contract-v3":
         fail("가치평가 엔진버전 불일치", errors)
     if valuation.get("최종값사용가능") is not True:
         fail("가치평가 최종값 사용불가", errors)

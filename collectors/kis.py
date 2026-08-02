@@ -1,6 +1,8 @@
+import hashlib
 import json
 import os
 import time
+from pathlib import Path
 from datetime import datetime, timedelta, timezone
 
 import requests
@@ -10,11 +12,14 @@ from config import (
     KIS_APP_SECRET,
     KIS_BASE_URL,
     KIS_DISABLED,
+    KIS_TOKEN_FILE,
+    KIS_TOKEN_REUSE_HOURS,
 )
 
 
 ACCESS_TOKEN = None
-TOKEN_FILE = "kis_token.json"
+ACCESS_TOKEN_EXPIRES_AT = None
+TOKEN_FILE = KIS_TOKEN_FILE
 KST = timezone(timedelta(hours=9))
 
 TOKEN_FAILURE_UNTIL = 0.0
@@ -24,35 +29,96 @@ TOKEN_FAILURE_COOLDOWN_SECONDS = 300
 TOKEN_REQUEST_ATTEMPTS = 2
 TOKEN_CONNECT_TIMEOUT = 8
 TOKEN_READ_TIMEOUT = 20
+TOKEN_EXPIRY_BUFFER_SECONDS = 300
 
 
-def safe_float(value):
-    try:
-        if value in (None, ""):
-            return 0.0
+def credential_fingerprint():
+    source = "|".join([
+        str(KIS_BASE_URL or ""),
+        str(KIS_APP_KEY or ""),
+        str(KIS_APP_SECRET or ""),
+    ])
+    return hashlib.sha256(source.encode("utf-8")).hexdigest()[:24]
 
-        return float(str(value).replace(",", ""))
 
-    except (TypeError, ValueError):
-        return 0.0
+def token_path():
+    path = Path(TOKEN_FILE)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def parse_datetime(value):
+    text = str(value or "").strip()
+    if not text:
+        return None
+
+    candidates = [
+        text,
+        text.replace("Z", "+00:00"),
+        text.replace("/", "-"),
+    ]
+
+    for candidate in candidates:
+        try:
+            parsed = datetime.fromisoformat(candidate)
+            if parsed.tzinfo is None:
+                parsed = parsed.replace(tzinfo=KST)
+            return parsed.astimezone(timezone.utc)
+        except ValueError:
+            pass
+
+    for fmt in (
+        "%Y-%m-%d %H:%M:%S",
+        "%Y%m%d%H%M%S",
+        "%Y-%m-%dT%H:%M:%S",
+    ):
+        try:
+            parsed = datetime.strptime(text, fmt).replace(tzinfo=KST)
+            return parsed.astimezone(timezone.utc)
+        except ValueError:
+            pass
+
+    return None
+
+
+def token_is_reusable(data):
+    if not isinstance(data, dict):
+        return False
+
+    if data.get("credential_fingerprint") != credential_fingerprint():
+        return False
+
+    expires_at = parse_datetime(data.get("expires_at"))
+    if expires_at is None:
+        saved_at = parse_datetime(data.get("saved_at"))
+        if saved_at is None:
+            return False
+        expires_at = saved_at + timedelta(hours=max(1.0, KIS_TOKEN_REUSE_HOURS))
+
+    now = datetime.now(timezone.utc)
+    return expires_at > now + timedelta(seconds=TOKEN_EXPIRY_BUFFER_SECONDS)
 
 
 def load_token():
     global ACCESS_TOKEN
+    global ACCESS_TOKEN_EXPIRES_AT
 
-    if not os.path.exists(TOKEN_FILE):
+    path = token_path()
+    if not path.exists():
         return None
 
     try:
-        with open(TOKEN_FILE, "r", encoding="utf-8") as file:
-            data = json.load(file)
+        data = json.loads(path.read_text(encoding="utf-8"))
+        token = str(data.get("access_token") or "").strip()
 
-        token = data.get("access_token")
-
-        if token:
+        if token and token_is_reusable(data):
             ACCESS_TOKEN = token
-            print("TOKEN LOADED")
+            ACCESS_TOKEN_EXPIRES_AT = parse_datetime(data.get("expires_at"))
+            print("TOKEN CACHE REUSED:", path)
             return token
+
+        print("TOKEN CACHE EXPIRED OR MISMATCH:", path)
+        clear_token()
 
     except Exception as error:
         print("TOKEN LOAD ERROR:", error)
@@ -60,32 +126,51 @@ def load_token():
     return None
 
 
-def save_token(token):
-    try:
-        with open(TOKEN_FILE, "w", encoding="utf-8") as file:
-            json.dump(
-                {
-                    "access_token": token,
-                    "saved_at": datetime.now(KST).isoformat(),
-                },
-                file,
-                ensure_ascii=False,
-                indent=2,
-            )
+def save_token(token, expires_at=None):
+    global ACCESS_TOKEN_EXPIRES_AT
 
+    path = token_path()
+    now = datetime.now(timezone.utc)
+    parsed_expiry = parse_datetime(expires_at)
+
+    if parsed_expiry is None:
+        parsed_expiry = now + timedelta(hours=max(1.0, KIS_TOKEN_REUSE_HOURS))
+
+    ACCESS_TOKEN_EXPIRES_AT = parsed_expiry
+    payload = {
+        "access_token": token,
+        "saved_at": now.isoformat(),
+        "expires_at": parsed_expiry.isoformat(),
+        "credential_fingerprint": credential_fingerprint(),
+        "token_source": "KIS client_credentials",
+    }
+
+    temporary = path.with_suffix(path.suffix + ".tmp")
+
+    try:
+        temporary.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        os.replace(temporary, path)
+        print("TOKEN CACHE SAVED:", path)
     except Exception as error:
         print("TOKEN SAVE ERROR:", error)
+        try:
+            temporary.unlink(missing_ok=True)
+        except Exception:
+            pass
 
 
 def clear_token():
     global ACCESS_TOKEN
+    global ACCESS_TOKEN_EXPIRES_AT
 
     ACCESS_TOKEN = None
+    ACCESS_TOKEN_EXPIRES_AT = None
 
     try:
-        if os.path.exists(TOKEN_FILE):
-            os.remove(TOKEN_FILE)
-
+        token_path().unlink(missing_ok=True)
     except Exception as error:
         print("TOKEN FILE DELETE ERROR:", error)
 
@@ -135,12 +220,17 @@ def get_access_token(force=False):
     global TOKEN_FAILURE_LOGGED
 
     if KIS_DISABLED:
-        # GitHub 정기·일괄 분석은 KIS 토큰을 발급하지 않는다.
-        # 실시간 KIS 데이터는 GAS에서 1일 1회 발급한 토큰으로 보강한다.
+        # 비밀키가 없는 환경에서는 KIS 전용 자료를 건너뛴다.
+        # 가격·차트는 Yahoo 보완 경로가 계속 작동한다.
         return None
 
     if ACCESS_TOKEN and not force:
-        return ACCESS_TOKEN
+        if (
+            ACCESS_TOKEN_EXPIRES_AT is None
+            or ACCESS_TOKEN_EXPIRES_AT > datetime.now(timezone.utc) + timedelta(seconds=TOKEN_EXPIRY_BUFFER_SECONDS)
+        ):
+            return ACCESS_TOKEN
+        clear_token()
 
     if not KIS_APP_KEY or not KIS_APP_SECRET:
         message = (
@@ -210,7 +300,7 @@ def get_access_token(force=False):
             if token:
                 ACCESS_TOKEN = token
                 clear_token_failure()
-                save_token(token)
+                save_token(token, data.get("access_token_token_expired"))
                 print("TOKEN OK")
                 return token
 
@@ -424,13 +514,13 @@ def get_investor_trade(stock_code):
     for query_date in recent_business_dates(maximum_days=7):
         data = kis_request(
             "FHPTJ04160001",
-            "/uapi/domestic-stock/v1/quotations/inquire-investor",
+            "/uapi/domestic-stock/v1/quotations/investor-trade-by-stock-daily",
             {
                 "FID_COND_MRKT_DIV_CODE": "J",
                 "FID_INPUT_ISCD": stock_code,
                 "FID_INPUT_DATE_1": query_date,
-                "FID_ORG_ADJ_PRC": "0",
-                "FID_ETC_CLS_CODE": "00",
+                "FID_ORG_ADJ_PRC": "",
+                "FID_ETC_CLS_CODE": "",
             },
         )
 
@@ -449,8 +539,10 @@ def get_investor_trade(stock_code):
             if data.get(
                 "rt_cd"
             ) in {
+                "KIS_DISABLED",
                 "TOKEN_ERROR",
                 "REQUEST_ERROR",
+                "CONFIG_ERROR",
             }:
                 print(
                     "INVESTOR DATA ABORT:",

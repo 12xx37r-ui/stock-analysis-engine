@@ -580,6 +580,7 @@ def get_daily_price_history(
     count = len(rows)
 
     return {
+        "데이터출처": "한국투자증권 KIS",
         "응답상태": safe_text(
             data.get("rt_cd")
         ),
@@ -856,8 +857,10 @@ def get_investor_daily_history(
             )
 
             if response_code in {
+                "KIS_DISABLED",
                 "TOKEN_ERROR",
                 "REQUEST_ERROR",
+                "CONFIG_ERROR",
             }:
                 print(
                     "INVESTOR HISTORY ABORT:",
@@ -905,6 +908,7 @@ def get_investor_daily_history(
         )
 
         return {
+            "데이터출처": "한국투자증권 KIS",
             "응답상태": safe_text(
                 data.get("rt_cd")
             ),
@@ -1078,8 +1082,10 @@ def get_program_trade_history(
             )
 
             if response_code in {
+                "KIS_DISABLED",
                 "TOKEN_ERROR",
                 "REQUEST_ERROR",
+                "CONFIG_ERROR",
             }:
                 print(
                     "PROGRAM HISTORY ABORT:",
@@ -1096,6 +1102,7 @@ def get_program_trade_history(
         return {
             "종목코드": stock_code,
             "수집구분": "종목별 프로그램매매",
+            "데이터출처": "한국투자증권 KIS",
             "응답상태": safe_text(data.get("rt_cd")),
             "응답메시지": last_message,
             "데이터상태": response_status(data, count),
