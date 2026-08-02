@@ -32,8 +32,27 @@ def main():
         fail("종목코드 불일치", errors)
 
     prediction = safe_dict(data.get("주가예측"))
-    if prediction.get("엔진버전") != "6.5.0-central-kis-direct-query":
+    if prediction.get("엔진버전") != "6.6.0-valuation-contract-v3":
         fail("엔진버전 불일치", errors)
+
+    valuation = safe_dict(data.get("가치평가"))
+    if valuation.get("가치평가계약버전") != "3.0":
+        fail("가치평가 계약버전 3.0 누락", errors)
+    if valuation.get("가치평가엔진버전") != "6.6.0-valuation-contract-v3":
+        fail("가치평가 엔진버전 불일치", errors)
+    if valuation.get("최종값사용가능") is not True:
+        fail("가치평가 최종값 사용불가", errors)
+    base = float(valuation.get("기본적정가") or 0)
+    low = float(valuation.get("보수적적정가") or 0)
+    high = float(valuation.get("성장적정가") or 0)
+    if not (0 < low <= base <= high):
+        fail("가치평가 범위 순서 오류", errors)
+    if args.stock_code == "005930":
+        if valuation.get("복합기업대용모형") is not True:
+            fail("삼성전자 복합기업 대용 가치합산 미적용", errors)
+        current_price = float(safe_dict(data.get("시장정보")).get("현재가") or 0)
+        if current_price > 0 and base / current_price < 0.50:
+            fail("삼성전자 적정가가 현재가의 50% 미만", errors)
 
     bridge = safe_dict(data.get("화면브리지"))
     if bridge.get("스키마버전") != "2.0":

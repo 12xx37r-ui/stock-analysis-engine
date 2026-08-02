@@ -21,7 +21,7 @@ import sys
 from pathlib import Path
 
 
-EXPECTED_ENGINE_VERSION = "6.5.0-central-kis-direct-query"
+EXPECTED_ENGINE_VERSION = "6.6.0-valuation-contract-v3"
 
 EXPECTED_WEIGHTS = {
     "단기1~5일": {
@@ -315,6 +315,68 @@ def validate_horizon(
     )
 
 
+
+def validate_valuation_contract(data, result):
+    valuation = safe_dict(data.get("가치평가"))
+    if not valuation:
+        result.error("가치평가 누락")
+        return
+
+    if str(valuation.get("가치평가계약버전", "")) != "3.0":
+        result.error("가치평가 계약버전 3.0 누락")
+
+    if str(valuation.get("가치평가엔진버전", "")) != EXPECTED_ENGINE_VERSION:
+        result.error("가치평가 엔진버전 불일치")
+
+    if valuation.get("최종값사용가능") is not True:
+        result.error(
+            "가치평가 최종값 사용불가: "
+            + str(safe_dict(valuation.get("이상치검사")).get("사유", []))
+        )
+
+    base = safe_float(valuation.get("기본적정가"))
+    conservative = safe_float(valuation.get("보수적적정가"))
+    growth = safe_float(valuation.get("성장적정가"))
+    evaluation_eps = safe_float(valuation.get("평가EPS"))
+    target_per = safe_float(valuation.get("목표PER"))
+    implied_per = safe_float(valuation.get("암시PER"))
+
+    if not (base > 0 and conservative > 0 and growth > 0):
+        result.error("가치평가 시나리오 값이 0 이하")
+    elif not conservative <= base <= growth:
+        result.error(
+            f"가치평가 범위 순서 오류: {conservative} <= {base} <= {growth}"
+        )
+
+    if evaluation_eps <= 0:
+        result.error("평가EPS가 0 이하")
+    if target_per <= 0:
+        result.error("목표PER이 0 이하")
+    if base > 0 and evaluation_eps > 0:
+        recalculated = base / evaluation_eps
+        if not nearly_equal(implied_per, recalculated, tolerance=0.05):
+            result.error(
+                f"암시PER 불일치: 저장 {implied_per}, 재계산 {recalculated:.2f}"
+            )
+
+    current_price = safe_float(safe_dict(data.get("시장정보")).get("현재가"))
+    stock_code = str(data.get("KIS종목코드", "")).zfill(6)
+    if stock_code == "005930":
+        if valuation.get("복합기업대용모형") is not True:
+            result.error("삼성전자 복합기업 대용 가치합산 미적용")
+        pbr_value = safe_float(valuation.get("PBR기준적정가"))
+        if base > 0 and pbr_value > 0 and abs(base - pbr_value) / base < 0.08:
+            result.error("삼성전자 최종가가 PBR 하단가치와 사실상 동일")
+        if current_price > 0 and base / current_price < 0.50:
+            result.error("삼성전자 적정가가 현재가의 50% 미만: 최신 TTM 연결 의심")
+
+    result.info(
+        "가치평가 계약: "
+        f"상태 {valuation.get('산출상태', '')}, "
+        f"기본 {base:,.0f}, 보수 {conservative:,.0f}, 성장 {growth:,.0f}, "
+        f"평가EPS {evaluation_eps:,.2f}, 목표PER {target_per:.2f}"
+    )
+
 def validate_output(
     data,
     expected_stock_code="",
@@ -388,6 +450,8 @@ def validate_output(
         f"거래량 {volume:,.0f}, "
         f"과거데이터 {history_status or '미확인'}"
     )
+
+    validate_valuation_contract(data, result)
 
     program = safe_dict(history.get("프로그램매매"))
     detail_status = safe_dict(history.get("수집상태"))

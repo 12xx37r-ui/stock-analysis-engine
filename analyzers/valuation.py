@@ -1,11 +1,12 @@
-"""업종 적응형 재무적정가 엔진 V6.3.
+"""재무적정가 엔진 V6.6.0 · 가치평가 계약 v3.
 
 핵심 원칙
-- 현재가를 적정가 산식에 앵커로 넣지 않는다.
-- OpenDART 업종코드 또는 수동 종목매핑으로 업종별 배수·모형가중치를 선택한다.
-- 최근 분기 급증/급락, 3년 성장, 현금흐름, 산업 선행·사이클 신호를 선행 EPS에 반영한다.
-- PER·PBR·잔여이익·실적전환 모형의 합의도로 기준가와 시나리오 범위를 만든다.
-- 단일 정답이 아니라 보수·기준·성장 시나리오와 신뢰도를 함께 반환한다.
+- 현재가는 적정가 산식에 넣지 않고 계산 후 괴리 검증에만 사용한다.
+- DART 누적 분기자료를 단독 분기로 변환해 TTM·정상화·FY1·FY2 EPS를 분리한다.
+- KIS EPS는 미래이익 자체가 아니라 주식 수 교차검증과 보조자료로만 사용한다.
+- 업종·기업 국면에 맞지 않는 PBR/잔여이익 하단모형이 성장가치를 끌어내리지 못하게 한다.
+- 구형·불완전·비정상 결과는 최종값 사용을 차단한다.
+- 단일 정답이 아니라 보수·기준·성장 시나리오와 자료/모형 신뢰도를 함께 반환한다.
 """
 
 from typing import Any, Dict, List, Optional
@@ -46,6 +47,26 @@ def weighted_average(rows: List[Dict[str, float]]) -> Optional[float]:
         for row in rows
         if safe_float(row.get("value"), 0.0) > 0
         and safe_float(row.get("weight"), 0.0) > 0
+    ]
+    if not valid:
+        return None
+    total_weight = sum(safe_float(row.get("weight"), 0.0) for row in valid)
+    if total_weight <= 0:
+        return None
+    return sum(
+        safe_float(row.get("value"), 0.0)
+        * safe_float(row.get("weight"), 0.0)
+        for row in valid
+    ) / total_weight
+
+
+def weighted_average_signed(rows: List[Dict[str, float]]) -> Optional[float]:
+    """손실연도도 정상화 이익에 반영하는 부호 허용 가중평균."""
+    valid = [
+        row
+        for row in rows
+        if safe_float(row.get("weight"), 0.0) > 0
+        and row.get("value") not in (None, "", "-", "--")
     ]
     if not valid:
         return None
@@ -322,21 +343,76 @@ VALUATION_PROFILES: Dict[str, Dict[str, Any]] = {
 }
 
 
+
 PROFILE_ALIASES = {
     "none": "general",
     "auto": "general",
     "": "general",
 }
 
+VALUATION_CONTRACT_VERSION = "3.0"
+VALUATION_ENGINE_VERSION = "6.6.0-valuation-contract-v3"
+
+# 복합기업은 사업부 세부 공시가 자동 수집되지 않으면 진짜 SOTP를 만들 수 없다.
+# 아래 설정은 '사업부 대용 가치합산'을 위한 보수적 복합배수이며, 출력에 대용모형임을 명시한다.
+COMPLEX_COMPANY_CONFIG: Dict[str, Dict[str, Any]] = {
+    "005930": {
+        "label": "삼성전자 복합기술기업 대용 가치합산",
+        "profile": "semiconductor",
+        "base_multiple": 17.5,
+        "min_multiple": 13.0,
+        "max_multiple": 22.0,
+        "earnings_weight": 0.58,
+        "complex_weight": 0.24,
+        "asset_weight": 0.06,
+        "residual_weight": 0.06,
+        "fcf_weight": 0.06,
+    },
+}
+
+REPORT_QUARTER = {
+    "11013": 1,
+    "11012": 2,
+    "11014": 3,
+    "11011": 4,
+}
+
+FLOW_METRICS = (
+    "매출",
+    "영업이익",
+    "순이익",
+    "영업현금흐름",
+    "유형자산취득",
+    "무형자산취득",
+    "설비투자추정",
+    "잉여현금흐름추정",
+)
+
+BALANCE_METRICS = (
+    "자산총계",
+    "부채총계",
+    "자본총계",
+    "현금및현금성자산",
+    "총차입금",
+)
+
 
 def get_periods(fundamentals_bundle: Optional[Dict[str, Any]]) -> List[Dict[str, Any]]:
     bundle = safe_dict(fundamentals_bundle)
     periods = safe_list(safe_dict(bundle.get("재무기간")).get("기간목록"))
-    return [
+    valid = [
         item
         for item in periods
         if isinstance(item, dict) and item.get("수집상태") == "정상"
     ]
+    valid.sort(
+        key=lambda item: (
+            int(safe_float(item.get("사업연도"), 0)),
+            REPORT_QUARTER.get(str(item.get("보고서코드", "")), 0),
+        ),
+        reverse=True,
+    )
+    return valid
 
 
 def get_period_metrics(period: Dict[str, Any]) -> Dict[str, Any]:
@@ -358,8 +434,191 @@ def find_same_report_prior_year(
     return None
 
 
+def _subtract_metric(current: Dict[str, Any], previous: Dict[str, Any], key: str) -> Optional[float]:
+    current_value = safe_float(current.get(key), float("nan"))
+    previous_value = safe_float(previous.get(key), float("nan"))
+    if current_value != current_value or previous_value != previous_value:
+        return None
+    return current_value - previous_value
+
+
+def build_standalone_quarters(periods: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """OpenDART 누적 손익/현금흐름을 실제 단독 분기로 변환한다."""
+    by_year: Dict[int, Dict[int, Dict[str, Any]]] = {}
+    for period in periods:
+        year = int(safe_float(period.get("사업연도"), 0))
+        quarter = REPORT_QUARTER.get(str(period.get("보고서코드", "")), 0)
+        if not year or not quarter:
+            continue
+        by_year.setdefault(year, {})[quarter] = get_period_metrics(period)
+
+    rows: List[Dict[str, Any]] = []
+    for year, cumulative in by_year.items():
+        for quarter in range(1, 5):
+            current = cumulative.get(quarter)
+            if not current:
+                continue
+            previous = cumulative.get(quarter - 1) if quarter > 1 else None
+            metrics: Dict[str, Any] = {}
+            for key in FLOW_METRICS:
+                if quarter == 1:
+                    metrics[key] = safe_float(current.get(key), 0.0)
+                elif previous:
+                    value = _subtract_metric(current, previous, key)
+                    metrics[key] = value if value is not None else 0.0
+                else:
+                    metrics[key] = 0.0
+            for key in BALANCE_METRICS:
+                metrics[key] = safe_float(current.get(key), 0.0)
+            rows.append({
+                "사업연도": year,
+                "분기": quarter,
+                "기간키": year * 4 + quarter,
+                "지표": metrics,
+                "단독분기변환": quarter == 1 or previous is not None,
+            })
+    rows.sort(key=lambda row: row["기간키"], reverse=True)
+    return rows
+
+
+def build_ttm(quarters: List[Dict[str, Any]]) -> Dict[str, Any]:
+    if len(quarters) < 4:
+        return {"available": False, "quality": 0, "metrics": {}, "period": ""}
+    selected = quarters[:4]
+    keys = [int(row.get("기간키", 0)) for row in selected]
+    contiguous = all(keys[index] - keys[index + 1] == 1 for index in range(3))
+    converted = all(bool(row.get("단독분기변환")) for row in selected)
+    positive_revenue = all(
+        safe_float(safe_dict(row.get("지표")).get("매출")) > 0
+        for row in selected
+    )
+    if not contiguous or not converted or not positive_revenue:
+        return {
+            "available": False,
+            "quality": 20 if contiguous else 10,
+            "metrics": {},
+            "period": "",
+            "reason": (
+                "단독분기 변환 불완전" if not converted
+                else "분기 매출자료 불완전" if not positive_revenue
+                else "연속 4개 분기 불연속"
+            ),
+        }
+    metrics: Dict[str, float] = {}
+    for key in FLOW_METRICS:
+        metrics[key] = sum(safe_float(safe_dict(row.get("지표")).get(key)) for row in selected)
+    latest_metrics = safe_dict(selected[0].get("지표"))
+    for key in BALANCE_METRICS:
+        metrics[key] = safe_float(latest_metrics.get(key))
+    first = selected[-1]
+    last = selected[0]
+    period = f"{first.get('사업연도')}Q{first.get('분기')}~{last.get('사업연도')}Q{last.get('분기')}"
+    return {"available": True, "quality": 95, "metrics": metrics, "period": period}
+
+
+def annual_periods(periods: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    rows = [
+        period for period in periods
+        if str(period.get("보고서코드", "")) == "11011"
+    ]
+    rows.sort(key=lambda row: int(safe_float(row.get("사업연도"), 0)), reverse=True)
+    return rows
+
+
+def _recursive_positive(source: Any, keys: set, depth: int = 3) -> Optional[float]:
+    if depth < 0 or not isinstance(source, dict):
+        return None
+    for key, value in source.items():
+        if str(key) in keys:
+            parsed = safe_float(value, 0.0)
+            if parsed > 0:
+                return parsed
+    for value in source.values():
+        if isinstance(value, dict):
+            parsed = _recursive_positive(value, keys, depth - 1)
+            if parsed and parsed > 0:
+                return parsed
+    return None
+
+
+def infer_share_count(
+    market: Dict[str, Any],
+    periods: List[Dict[str, Any]],
+    company_info: Dict[str, Any],
+) -> Dict[str, Any]:
+    candidates: List[Dict[str, Any]] = []
+    explicit = _recursive_positive(
+        company_info,
+        {"발행주식수", "발행주식총수", "상장주식수", "유통주식수", "보통주식수", "shares"},
+    ) or _recursive_positive(
+        market,
+        {"발행주식수", "발행주식총수", "상장주식수", "유통주식수", "보통주식수", "shares"},
+    )
+    if explicit and explicit > 100000:
+        candidates.append({"value": explicit, "source": "직접 발행주식수", "quality": 100})
+
+    annual = annual_periods(periods)
+    market_eps = safe_float(market.get("EPS"))
+    if annual and market_eps > 0:
+        annual_net = safe_float(get_period_metrics(annual[0]).get("순이익"))
+        if annual_net > 0:
+            implied = annual_net / market_eps
+            if implied > 100000:
+                candidates.append({"value": implied, "source": "연간순이익÷KIS EPS", "quality": 88})
+
+    bps = safe_float(market.get("BPS"))
+    latest_equity = 0.0
+    for period in periods:
+        latest_equity = safe_float(get_period_metrics(period).get("자본총계"))
+        if latest_equity > 0:
+            break
+    if bps > 0 and latest_equity > 0:
+        implied = latest_equity / bps
+        if implied > 100000:
+            candidates.append({"value": implied, "source": "자본총계÷KIS BPS", "quality": 86})
+
+    market_cap = safe_float(market.get("시가총액"))
+    market_price = safe_float(market.get("현재가"))
+    if market_cap > 0 and market_price > 0:
+        # KIS hts_avls는 억원, Yahoo marketCap은 원 단위일 수 있어 두 단위를 모두
+        # 후보화한 뒤 현실적 주식 수 범위와 다른 후보의 일치도로 선택한다.
+        for multiplier, label in (
+            (1.0, "시가총액÷현재가(원단위)"),
+            (100_000_000.0, "시가총액÷현재가(KIS억원)"),
+        ):
+            implied = market_cap * multiplier / market_price
+            if 100_000 <= implied <= 100_000_000_000:
+                candidates.append({
+                    "value": implied,
+                    "source": label,
+                    "quality": 82,
+                })
+
+    if not candidates:
+        return {"value": 0.0, "source": "미확보", "quality": 0, "candidates": []}
+
+    values = sorted(row["value"] for row in candidates)
+    center = median(values) or values[0]
+    consistent = [row for row in candidates if 0.70 <= row["value"] / center <= 1.30]
+    selected = consistent or candidates
+    total_quality = sum(row["quality"] for row in selected)
+    value = sum(row["value"] * row["quality"] for row in selected) / max(total_quality, 1)
+    quality = min(98, int(sum(row["quality"] for row in selected) / len(selected)))
+    return {
+        "value": value,
+        "source": "+".join(row["source"] for row in selected),
+        "quality": quality,
+        "candidates": [{"출처": row["source"], "주식수": round(row["value"])} for row in candidates],
+    }
+
+
 def quarter_signal(periods: List[Dict[str, Any]]) -> Dict[str, Any]:
-    if not periods:
+    quarters = [
+        row for row in build_standalone_quarters(periods)
+        if bool(row.get("단독분기변환"))
+        and safe_float(safe_dict(row.get("지표")).get("매출")) > 0
+    ]
+    if not quarters:
         return {
             "latest_revenue": 0.0,
             "latest_operating_income": 0.0,
@@ -371,35 +630,28 @@ def quarter_signal(periods: List[Dict[str, Any]]) -> Dict[str, Any]:
             "quality": 0,
             "latest_period": "",
         }
-
-    latest = periods[0]
-    latest_metrics = get_period_metrics(latest)
-    previous = find_same_report_prior_year(latest, periods)
-    previous_metrics = get_period_metrics(previous) if previous else {}
-
+    latest = quarters[0]
+    previous = next(
+        (
+            row for row in quarters
+            if row.get("사업연도") == latest.get("사업연도") - 1
+            and row.get("분기") == latest.get("분기")
+        ),
+        None,
+    )
+    latest_metrics = safe_dict(latest.get("지표"))
+    previous_metrics = safe_dict(previous.get("지표")) if previous else {}
     latest_revenue = safe_float(latest_metrics.get("매출"))
     latest_operating_income = safe_float(latest_metrics.get("영업이익"))
     latest_net_income = safe_float(latest_metrics.get("순이익"))
-
-    revenue_yoy = (
-        growth_rate(latest_revenue, safe_float(previous_metrics.get("매출")))
-        if previous else 0.0
-    )
-    operating_yoy = (
-        growth_rate(latest_operating_income, safe_float(previous_metrics.get("영업이익")))
-        if previous else 0.0
-    )
-    net_yoy = (
-        growth_rate(latest_net_income, safe_float(previous_metrics.get("순이익")))
-        if previous else 0.0
-    )
-
+    revenue_yoy = growth_rate(latest_revenue, safe_float(previous_metrics.get("매출"))) if previous else 0.0
+    operating_yoy = growth_rate(latest_operating_income, safe_float(previous_metrics.get("영업이익"))) if previous else 0.0
+    net_yoy = growth_rate(latest_net_income, safe_float(previous_metrics.get("순이익"))) if previous else 0.0
     signal = (
         clamp(revenue_yoy / 40.0, -1.0, 1.0) * 20.0
         + clamp(operating_yoy / 60.0, -1.0, 1.0) * 45.0
         + clamp(net_yoy / 80.0, -1.0, 1.0) * 35.0
     )
-
     return {
         "latest_revenue": latest_revenue,
         "latest_operating_income": latest_operating_income,
@@ -408,15 +660,16 @@ def quarter_signal(periods: List[Dict[str, Any]]) -> Dict[str, Any]:
         "operating_yoy": operating_yoy,
         "net_yoy": net_yoy,
         "signal": clamp(signal, -100.0, 100.0),
-        "quality": 75 if previous else 35,
-        "latest_period": f"{latest.get('사업연도', '')} {latest.get('보고서명', '')}".strip(),
+        "quality": 90 if previous else 45,
+        "latest_period": f"{latest.get('사업연도')}Q{latest.get('분기')}",
     }
 
 
-def resolve_profile_code(
-    company_info: Dict[str, Any],
-    industry_bundle: Dict[str, Any],
-) -> str:
+def resolve_profile_code(company_info: Dict[str, Any], industry_bundle: Dict[str, Any]) -> str:
+    stock_code = str(company_info.get("종목코드") or company_info.get("KIS종목코드") or "").zfill(6)
+    complex_config = COMPLEX_COMPANY_CONFIG.get(stock_code)
+    if complex_config:
+        return str(complex_config.get("profile", "semiconductor"))
     candidates = [
         company_info.get("가치평가산업코드"),
         company_info.get("산업코드"),
@@ -440,10 +693,7 @@ def industry_signal(industry_analysis: Dict[str, Any]) -> Dict[str, Any]:
     long_signal = safe_float(long_term.get("신호"), 0.0)
     mid_quality = safe_float(mid.get("데이터품질"), 0.0)
     long_quality = safe_float(long_term.get("데이터품질"), 0.0)
-    available = (
-        analysis.get("분석상태") == "정상"
-        and (mid_quality > 0 or long_quality > 0)
-    )
+    available = analysis.get("분석상태") == "정상" and (mid_quality > 0 or long_quality > 0)
     combined = (mid_signal * 0.35 + long_signal * 0.65) if available else 0.0
     quality = (mid_quality * 0.35 + long_quality * 0.65) if available else 0.0
     return {
@@ -454,6 +704,58 @@ def industry_signal(industry_analysis: Dict[str, Any]) -> Dict[str, Any]:
         "long": long_signal,
         "phase": str(analysis.get("산업국면", "")).strip(),
     }
+
+
+def _weighted_positive(values: List[Dict[str, float]]) -> float:
+    return weighted_average([row for row in values if safe_float(row.get("value")) > 0]) or 0.0
+
+
+def _annual_eps_series(periods: List[Dict[str, Any]], shares: float) -> List[Dict[str, Any]]:
+    if shares <= 0:
+        return []
+    rows = []
+    for period in annual_periods(periods)[:4]:
+        metrics = get_period_metrics(period)
+        if metrics.get("순이익") in (None, "", "-", "--"):
+            continue
+        net_income = safe_float(metrics.get("순이익"))
+        rows.append({
+            "year": int(safe_float(period.get("사업연도"), 0)),
+            "eps": net_income / shares,
+            "net_income": net_income,
+        })
+    return rows
+
+
+def _normalized_eps(annual_eps: List[Dict[str, Any]], market_eps: float) -> float:
+    weights = (0.52, 0.30, 0.18, 0.10)
+    rows = [
+        {"value": row.get("eps", 0.0), "weight": weights[index]}
+        for index, row in enumerate(annual_eps[:4])
+    ]
+    normalized = weighted_average_signed(rows) or 0.0
+    # 손실연도를 삭제해 정상화 EPS가 과대평가되는 문제를 막는다. 다만 최신 KIS EPS가
+    # 양수이고 과거 가중평균이 음수일 때는 완전한 0 대신 절반만 잠정 반영한다.
+    if normalized <= 0 and market_eps > 0:
+        normalized = market_eps * 0.50
+    elif normalized > 0 and market_eps > 0:
+        normalized = normalized * 0.85 + market_eps * 0.15
+    return normalized
+
+
+def _cost_of_equity(debt_ratio: float, profile_code: str) -> float:
+    base = 0.095
+    if profile_code in {"finance", "insurance", "utilities", "telecom"}:
+        base -= 0.005
+    if debt_ratio > 2.0:
+        base += 0.020
+    elif debt_ratio > 1.0:
+        base += 0.010
+    return clamp(base, 0.085, 0.125)
+
+
+def _model_row(name: str, value: float, weight: float, role: str = "기준") -> Dict[str, Any]:
+    return {"name": name, "value": value, "weight": weight, "role": role}
 
 
 def calculate_value(
@@ -475,9 +777,8 @@ def calculate_value(
 
     metrics = safe_dict(financial.get("재무지표"))
     growth = safe_dict(financial.get("성장지표"))
-
     price = safe_float(market.get("현재가"))
-    eps = safe_float(market.get("EPS"))
+    market_eps = safe_float(market.get("EPS"))
     bps = safe_float(market.get("BPS"))
     actual_per = safe_float(market.get("PER"))
     actual_pbr = safe_float(market.get("PBR"))
@@ -486,35 +787,41 @@ def calculate_value(
     operating_margin = safe_float(metrics.get("영업이익률")) / 100.0
     net_margin = safe_float(metrics.get("순이익률")) / 100.0
     debt_ratio = safe_float(metrics.get("부채비율")) / 100.0
-
     revenue_growth_3y = safe_float(growth.get("매출3년성장률")) / 100.0
     operating_growth_3y = safe_float(growth.get("영업이익3년성장률")) / 100.0
     net_growth_3y = safe_float(growth.get("순이익3년성장률")) / 100.0
 
-    profile_code = resolve_profile_code(company_info, industry_bundle)
-    profile = VALUATION_PROFILES[profile_code]
-    profile_recognized = profile_code != "general" or bool(
-        company_info.get("OpenDART업종코드")
-    )
-
     periods = get_periods(fundamentals_bundle)
+    quarters = build_standalone_quarters(periods)
+    ttm = build_ttm(quarters)
     quarter = quarter_signal(periods)
+    share_info = infer_share_count(market, periods, company_info)
+    shares = safe_float(share_info.get("value"))
+    annual_eps = _annual_eps_series(periods, shares)
+    normalized_eps = _normalized_eps(annual_eps, market_eps)
+    ttm_eps = safe_float(safe_dict(ttm.get("metrics")).get("순이익")) / shares if ttm.get("available") and shares > 0 else 0.0
+    latest_quarter_eps = quarter["latest_net_income"] / shares if shares > 0 else 0.0
+    run_rate_eps = latest_quarter_eps * 4.0 if latest_quarter_eps > 0 else 0.0
+
+    profile_code = resolve_profile_code(company_info, industry_bundle)
+    profile = dict(VALUATION_PROFILES[profile_code])
+    stock_code = str(company_info.get("종목코드") or company_info.get("KIS종목코드") or "").zfill(6)
+    complex_config = COMPLEX_COMPANY_CONFIG.get(stock_code)
+    profile_recognized = profile_code != "general" or bool(company_info.get("OpenDART업종코드"))
 
     earnings_analysis = safe_dict(fundamentals_analysis.get("분기실적"))
     forward_direction = safe_dict(fundamentals_analysis.get("향후이익방향대용"))
     cash_quality = safe_dict(fundamentals_analysis.get("현금흐름재무안전성"))
-
     earnings_signal = safe_float(earnings_analysis.get("신호"), quarter["signal"])
     forward_signal = safe_float(forward_direction.get("신호"), 0.0)
     cash_signal = safe_float(cash_quality.get("신호"), 0.0)
     industry = industry_signal(industry_analysis)
 
-    transition_strength = weighted_average([
+    transition_strength = _weighted_positive([
         {"value": abs(quarter["operating_yoy"]), "weight": 0.45},
         {"value": abs(quarter["net_yoy"]), "weight": 0.35},
         {"value": abs(operating_growth_3y * 100.0), "weight": 0.20},
-    ]) or 0.0
-
+    ])
     positive_transition = (
         quarter["operating_yoy"] >= 25.0
         or quarter["net_yoy"] >= 35.0
@@ -528,186 +835,250 @@ def calculate_value(
         or forward_signal <= -25.0
     )
     transition_direction = (
-        "실적 급상승 전환"
-        if positive_transition and not negative_transition
-        else "실적 급하락 전환"
-        if negative_transition and not positive_transition
+        "실적 급상승 전환" if positive_transition and not negative_transition
+        else "실적 급하락 전환" if negative_transition and not positive_transition
         else "실적 안정/혼합"
     )
 
-    # 업종별 기준배수에 기업의 질과 선행신호를 더한다.
-    target_per = safe_float(profile["base_per"])
-    target_per += clamp((roe - 0.08) * 34.0, -2.5, 8.5)
-    target_per += clamp((operating_margin - 0.08) * 18.0, -1.5, 4.5)
-    target_per += clamp(revenue_growth_3y * (10.0 if profile["growth"] else 7.0), -1.5, 4.0)
-    target_per += clamp(operating_growth_3y * 2.8, -1.5, 3.2)
-    target_per += clamp(net_growth_3y * 2.2, -1.2, 3.0)
-    target_per += clamp(earnings_signal / 100.0 * 3.2, -2.0, 3.2)
-    target_per += clamp(forward_signal / 100.0 * 2.4, -1.5, 2.4)
-    target_per += clamp(cash_signal / 100.0 * 1.0, -0.7, 1.0)
-    target_per += clamp(industry["signal"] / 100.0 * 2.2, -1.5, 2.2)
+    # TTM을 중심으로 정상화·분기런레이트를 결합한다. 사이클 기업은 한 분기 연환산 비중을 낮춘다.
+    if profile.get("cyclical"):
+        base_forward_eps = _weighted_positive([
+            {"value": ttm_eps, "weight": 0.65},
+            {"value": normalized_eps, "weight": 0.25},
+            {"value": run_rate_eps, "weight": 0.10},
+        ])
+    elif profile.get("growth"):
+        base_forward_eps = _weighted_positive([
+            {"value": ttm_eps, "weight": 0.58},
+            {"value": normalized_eps, "weight": 0.20},
+            {"value": run_rate_eps, "weight": 0.22},
+        ])
+    else:
+        base_forward_eps = _weighted_positive([
+            {"value": ttm_eps, "weight": 0.62},
+            {"value": normalized_eps, "weight": 0.30},
+            {"value": run_rate_eps, "weight": 0.08},
+        ])
+    if base_forward_eps <= 0:
+        base_forward_eps = market_eps
 
-    if debt_ratio > 2.0 and profile_code not in {"finance", "insurance"}:
-        target_per -= 1.8
-    elif debt_ratio > 1.0 and profile_code not in {"finance", "insurance"}:
-        target_per -= 0.8
+    growth_cap = 0.18 if profile.get("cyclical") else 0.24 if profile.get("growth") else 0.14
+    growth_floor = -0.18 if profile.get("cyclical") else -0.12
+    fy1_growth = 0.0
+    fy1_growth += clamp(quarter["revenue_yoy"] / 100.0 * 0.10, -0.05, 0.08)
+    fy1_growth += clamp(quarter["operating_yoy"] / 100.0 * 0.08, -0.07, 0.10)
+    fy1_growth += clamp(quarter["net_yoy"] / 100.0 * 0.05, -0.05, 0.07)
+    fy1_growth += clamp(forward_signal / 100.0 * 0.06, -0.04, 0.06)
+    fy1_growth += clamp(industry["signal"] / 100.0 * 0.04, -0.03, 0.04)
+    if ttm_eps > 0 and normalized_eps > 0 and ttm_eps / normalized_eps > 2.2 and profile.get("cyclical"):
+        fy1_growth -= 0.05
+    fy1_growth = clamp(fy1_growth, growth_floor, growth_cap)
+    fy2_growth = clamp(fy1_growth * (0.55 if fy1_growth >= 0 else 0.70), -0.12, 0.12)
+    fy1_eps = base_forward_eps * (1.0 + fy1_growth) if base_forward_eps > 0 else 0.0
+    fy2_eps = fy1_eps * (1.0 + fy2_growth) if fy1_eps > 0 else 0.0
 
+    cost_of_equity = _cost_of_equity(debt_ratio, profile_code)
+    valuation_eps = _weighted_positive([
+        {"value": ttm_eps, "weight": 0.20},
+        {"value": normalized_eps, "weight": 0.15},
+        {"value": fy1_eps, "weight": 0.45},
+        {"value": fy2_eps / (1.0 + cost_of_equity), "weight": 0.20},
+    ])
+    if valuation_eps <= 0:
+        valuation_eps = base_forward_eps
+
+    # 업종·기업 질·실적전환을 반영하되, 사이클 고점 이익 영구화는 감점한다.
+    target_per = safe_float(profile.get("base_per"), 10.5)
+    per_min = safe_float(profile.get("per_min"), 6.0)
+    per_max = safe_float(profile.get("per_max"), 26.0)
+    if profile_code == "semiconductor":
+        target_per = max(target_per, 14.0)
+        per_max = min(per_max, 22.0)
+    if complex_config:
+        target_per = safe_float(complex_config.get("base_multiple"), target_per)
+        per_min = safe_float(complex_config.get("min_multiple"), per_min)
+        per_max = safe_float(complex_config.get("max_multiple"), per_max)
+
+    target_per += clamp((roe - 0.08) * 22.0, -2.0, 5.0)
+    target_per += clamp((operating_margin - 0.08) * 10.0, -1.2, 2.8)
+    target_per += clamp(revenue_growth_3y * 3.5, -1.0, 2.0)
+    target_per += clamp(earnings_signal / 100.0 * 1.8, -1.5, 1.8)
+    target_per += clamp(forward_signal / 100.0 * 1.3, -1.0, 1.3)
+    target_per += clamp(industry["signal"] / 100.0 * 1.0, -0.8, 1.0)
     if positive_transition:
-        transition_bonus = 5.5 if profile["growth"] else 4.2
-        target_per += clamp(transition_strength / 50.0, 0.7, transition_bonus)
+        target_per += clamp(transition_strength / 80.0, 0.5, 2.4)
     if negative_transition:
-        target_per -= clamp(transition_strength / 45.0, 0.8, 4.0)
-
-    target_per = clamp(
-        target_per,
-        safe_float(profile["per_min"]),
-        safe_float(profile["per_max"]),
-    )
-
-    target_pbr = safe_float(profile["base_pbr"])
-    target_pbr += clamp((roe - 0.08) * 6.0, -0.30, 2.0)
-    target_pbr += clamp((operating_margin - 0.08) * 2.8, -0.18, 0.45)
-    target_pbr += clamp(revenue_growth_3y * 1.2, -0.15, 0.35)
-    target_pbr += clamp(industry["signal"] / 100.0 * 0.18, -0.12, 0.18)
-    if positive_transition:
-        target_pbr += 0.12 if profile["growth"] else 0.08
+        target_per -= clamp(transition_strength / 55.0, 0.8, 3.0)
     if debt_ratio > 2.0 and profile_code not in {"finance", "insurance"}:
-        target_pbr -= 0.20
-    target_pbr = clamp(
-        target_pbr,
-        safe_float(profile["pbr_min"]),
-        safe_float(profile["pbr_max"]),
-    )
+        target_per -= 1.5
+    if profile.get("cyclical") and ttm_eps > 0 and normalized_eps > 0:
+        cycle_ratio = ttm_eps / normalized_eps
+        if cycle_ratio > 2.5:
+            target_per -= 2.5
+        elif cycle_ratio > 1.8:
+            target_per -= 1.2
+    target_per = clamp(target_per, per_min, per_max)
 
-    # 시장 EPS를 그대로 쓰지 않고 최신 실적·산업 국면으로 선행 EPS를 보정한다.
-    forward_eps = eps if eps > 0 else 0.0
-    eps_multiplier = 0.0
-    if forward_eps > 0:
-        eps_multiplier = 1.0
-        eps_multiplier += clamp(quarter["operating_yoy"] / 100.0 * 0.28, -0.22, 0.42)
-        eps_multiplier += clamp(quarter["net_yoy"] / 100.0 * 0.18, -0.16, 0.32)
-        eps_multiplier += clamp(forward_signal / 100.0 * 0.20, -0.10, 0.20)
-        eps_multiplier += clamp(industry["signal"] / 100.0 * 0.10, -0.08, 0.10)
-        eps_multiplier += 0.08 if positive_transition and operating_margin >= 0.10 else 0.0
-        if profile["cyclical"] and positive_transition:
-            # 사이클 고점 이익을 영구화하지 않되 최근 구조적 전환은 충분히 반영한다.
-            eps_multiplier -= 0.03
-        if negative_transition:
-            eps_multiplier -= 0.08
-        eps_multiplier = clamp(
-            eps_multiplier,
-            safe_float(profile["eps_floor"]),
-            safe_float(profile["eps_cap"]),
-        )
-        forward_eps *= eps_multiplier
+    target_pbr = safe_float(profile.get("base_pbr"), 1.0)
+    target_pbr += clamp((roe - 0.08) * 4.5, -0.30, 1.65)
+    target_pbr += clamp(industry["signal"] / 100.0 * 0.12, -0.10, 0.12)
+    target_pbr = clamp(target_pbr, safe_float(profile.get("pbr_min"), 0.4), safe_float(profile.get("pbr_max"), 3.2))
 
-    per_value = forward_eps * target_per if forward_eps > 0 else 0.0
+    earnings_value = valuation_eps * target_per if valuation_eps > 0 else 0.0
     pbr_value = bps * target_pbr if bps > 0 else 0.0
 
     residual_value = 0.0
     if bps > 0 and roe > 0:
-        cost_of_equity = 0.115 if debt_ratio > 1.5 else 0.105 if debt_ratio > 0.8 else 0.095
-        persistence = 0.72 if positive_transition else 0.58 if roe >= 0.12 else 0.36
+        persistence = 0.70 if roe >= 0.15 else 0.50 if roe >= 0.10 else 0.28
+        if profile.get("cyclical"):
+            persistence -= 0.08
         if profile_code in {"finance", "insurance", "real_estate", "holding_company"}:
-            persistence += 0.08
-        if profile["cyclical"]:
-            persistence -= 0.05
+            persistence += 0.10
         excess_return = max(0.0, roe - cost_of_equity)
-        residual_value = bps + (
-            bps
-            * excess_return
-            * clamp(persistence, 0.20, 0.85)
-            / max(0.035, cost_of_equity - 0.02)
-        )
+        residual_value = bps + bps * excess_return * clamp(persistence, 0.18, 0.85) / max(0.035, cost_of_equity - 0.02)
 
-    transition_value = 0.0
-    if eps > 0:
-        transition_per = target_per
-        if positive_transition:
-            transition_per += clamp(
-                transition_strength / 40.0,
-                1.2,
-                6.5 if profile["growth"] else 5.2,
-            )
-        if negative_transition:
-            transition_per -= clamp(transition_strength / 45.0, 1.0, 4.0)
-        transition_per = clamp(
-            transition_per,
-            safe_float(profile["per_min"]),
-            safe_float(profile["per_max"]) + (5.0 if profile["growth"] else 3.0),
-        )
-        transition_multiplier = (
-            1.10 if positive_transition else 0.94 if negative_transition else 1.0
-        )
-        transition_value = eps * transition_per * transition_multiplier
+    latest_metrics = get_period_metrics(periods[0]) if periods else {}
+    cash = safe_float(latest_metrics.get("현금및현금성자산"))
+    borrowings = safe_float(latest_metrics.get("총차입금"))
+    net_cash = cash - borrowings if cash > 0 and borrowings >= 0 else 0.0
+    net_cash_per_share = net_cash / shares if shares > 0 else 0.0
 
-    model_values = {
-        "PER 선행이익가치": per_value,
-        "PBR 자산가치": pbr_value,
-        "잔여이익가치": residual_value,
-        "실적전환보정가": transition_value,
-    }
-    model_weights = safe_dict(profile["weights"])
-    weight_by_name = {
-        "PER 선행이익가치": safe_float(model_weights.get("per")),
-        "PBR 자산가치": safe_float(model_weights.get("pbr")),
-        "잔여이익가치": safe_float(model_weights.get("residual")),
-        "실적전환보정가": safe_float(model_weights.get("transition")),
-    }
+    annual_fcf_eps = []
+    if shares > 0:
+        for period in annual_periods(periods)[:3]:
+            fcf = safe_float(get_period_metrics(period).get("잉여현금흐름추정"))
+            if fcf > 0:
+                annual_fcf_eps.append(fcf / shares)
+    normalized_fcf_ps = weighted_average([
+        {"value": value, "weight": (0.55, 0.30, 0.15)[index]}
+        for index, value in enumerate(annual_fcf_eps[:3])
+    ]) or 0.0
+    fcf_value = 0.0
+    if normalized_fcf_ps > 0:
+        fcf_multiple = clamp(target_per * 0.78, 7.0, 18.0)
+        fcf_value = normalized_fcf_ps * fcf_multiple + max(0.0, net_cash_per_share) * 0.65
 
-    positive_values = [value for value in model_values.values() if value > 0]
-    model_median = median(positive_values)
-    filtered_models = []
+    transition_eps = _weighted_positive([
+        {"value": ttm_eps, "weight": 0.30},
+        {"value": fy1_eps, "weight": 0.55},
+        {"value": normalized_eps, "weight": 0.15},
+    ])
+    transition_multiple = target_per
+    if positive_transition:
+        transition_multiple += 1.2
+    if negative_transition:
+        transition_multiple -= 1.5
+    transition_multiple = clamp(transition_multiple, per_min, per_max + 2.0)
+    transition_value = transition_eps * transition_multiple if transition_eps > 0 else 0.0
+
+    complex_proxy_value = 0.0
+    if complex_config and fy1_eps > 0:
+        complex_multiple = clamp(
+            safe_float(complex_config.get("base_multiple"), target_per)
+            + clamp(forward_signal / 100.0 * 1.0, -0.8, 1.0),
+            safe_float(complex_config.get("min_multiple"), per_min),
+            safe_float(complex_config.get("max_multiple"), per_max),
+        )
+        complex_proxy_value = fy1_eps * complex_multiple + max(0.0, net_cash_per_share) * 0.75
+
+    # 기업 유형별 모형 자격과 가중치. 성장·사이클 기업에서 PBR이 기준가를 끌어내리지 않게 제한한다.
+    models: List[Dict[str, Any]] = []
+    if complex_config:
+        models.extend([
+            _model_row("선행·정상화 이익가치", earnings_value, safe_float(complex_config.get("earnings_weight"), 0.58)),
+            _model_row("복합기업 대용 가치합산", complex_proxy_value, safe_float(complex_config.get("complex_weight"), 0.24)),
+            _model_row("실적전환 가치", transition_value, 0.12),
+            _model_row("FCF 가치", fcf_value, safe_float(complex_config.get("fcf_weight"), 0.06)),
+            _model_row("PBR 하단가치", pbr_value, safe_float(complex_config.get("asset_weight"), 0.06), "하단"),
+            _model_row("잔여이익 하단가치", residual_value, safe_float(complex_config.get("residual_weight"), 0.06), "하단"),
+        ])
+    elif profile_code == "semiconductor":
+        models.extend([
+            _model_row("선행·정상화 이익가치", earnings_value, 0.48),
+            _model_row("실적전환 가치", transition_value, 0.28),
+            _model_row("FCF 가치", fcf_value, 0.08),
+            _model_row("PBR 하단가치", pbr_value, 0.08, "하단"),
+            _model_row("잔여이익 하단가치", residual_value, 0.08, "하단"),
+        ])
+    else:
+        weights = safe_dict(profile.get("weights"))
+        models.extend([
+            _model_row("선행·정상화 이익가치", earnings_value, safe_float(weights.get("per"), 0.38)),
+            _model_row("PBR 자산가치", pbr_value, safe_float(weights.get("pbr"), 0.20)),
+            _model_row("잔여이익가치", residual_value, safe_float(weights.get("residual"), 0.20)),
+            _model_row("실적전환 가치", transition_value, safe_float(weights.get("transition"), 0.22)),
+            _model_row("FCF 가치", fcf_value, 0.10),
+        ])
+
+    valid_models = [row for row in models if row["value"] > 0 and row["weight"] > 0]
+    basis_models = []
     excluded_models = []
-    for name, value in model_values.items():
-        if value <= 0:
+    for row in valid_models:
+        # 성장·사이클 기업의 하단모형은 보수 시나리오에는 남기되 기준가 가중치에서 과도한 영향 배제.
+        if earnings_value > 0 and profile_code in {"semiconductor", "battery", "software_platform", "media_entertainment", "biotechnology"}:
+            if row["role"] == "하단" and row["value"] < earnings_value * 0.42:
+                excluded_models.append(row["name"])
+                continue
+        if earnings_value > 0 and not (earnings_value * 0.28 <= row["value"] <= earnings_value * 3.2):
+            excluded_models.append(row["name"])
             continue
-        if model_median and not (
-            model_median * safe_float(profile["model_floor"])
-            <= value
-            <= model_median * safe_float(profile["model_ceiling"])
-        ):
-            excluded_models.append(name)
-            continue
-        filtered_models.append({
-            "name": name,
-            "value": value,
-            "weight": weight_by_name[name],
-        })
+        basis_models.append(row)
+    if len(basis_models) < 2:
+        basis_models = [row for row in valid_models if row["role"] != "하단"] or valid_models
+        excluded_models = [row["name"] for row in valid_models if row not in basis_models]
 
-    # 필터 때문에 모형이 2개 미만이면 원래 유효 모형을 복구한다.
-    if len(filtered_models) < 2:
-        filtered_models = [
-            {"name": name, "value": value, "weight": weight_by_name[name]}
-            for name, value in model_values.items()
-            if value > 0
-        ]
-        excluded_models = []
+    weighted_value = weighted_average(basis_models) or 0.0
+    basis_values = [row["value"] for row in basis_models]
+    basis_median = median(basis_values) or weighted_value
+    basic = _weighted_positive([
+        {"value": weighted_value, "weight": 0.90},
+        {"value": basis_median, "weight": 0.10},
+    ])
 
-    weighted_value = weighted_average(filtered_models) or 0.0
-    filtered_values = [safe_float(row.get("value")) for row in filtered_models]
-    filtered_median = median(filtered_values) or weighted_value
-    basic = weighted_average([
-        {"value": weighted_value, "weight": 0.88},
-        {"value": filtered_median, "weight": 0.12},
-    ]) or weighted_value
-
-    # 극단적인 min/max가 화면 범위를 망치지 않도록 사분위수와 업종별 시나리오 계수를 함께 사용한다.
-    q25 = percentile(filtered_values, 0.25) or basic
-    q75 = percentile(filtered_values, 0.75) or basic
-    conservative = max(
-        q25 * 0.96,
-        basic * safe_float(profile["downside"]),
-    )
-    growth_value = min(
-        q75 * (1.08 if positive_transition else 1.03),
-        basic * safe_float(profile["upside"]),
-    )
-    conservative = min(conservative, basic)
+    all_values = [row["value"] for row in valid_models]
+    q25 = percentile(all_values, 0.25) or basic
+    q75 = percentile(all_values, 0.75) or basic
+    normalized_floor = normalized_eps * max(per_min, target_per * 0.65) if normalized_eps > 0 else 0.0
+    earnings_floor = earnings_value * (0.64 if profile.get("cyclical") else 0.72) if earnings_value > 0 else 0.0
+    conservative = max(q25, normalized_floor, earnings_floor)
+    conservative = min(conservative, basic) if basic > 0 else conservative
+    high_anchor = max(earnings_value, transition_value, complex_proxy_value, q75)
+    growth_value = min(high_anchor * 1.08, basic * safe_float(profile.get("upside"), 1.35)) if basic > 0 else high_anchor
     growth_value = max(growth_value, basic)
 
-    financial_value = basic
+    basis_dispersion = max(basis_values) / min(basis_values) if len(basis_values) >= 2 and min(basis_values) > 0 else 0.0
+    all_model_dispersion = max(all_values) / min(all_values) if len(all_values) >= 2 and min(all_values) > 0 else 0.0
+    model_dispersion = basis_dispersion
+    implied_per = basic / valuation_eps if basic > 0 and valuation_eps > 0 else 0.0
+    implied_pbr = basic / bps if basic > 0 and bps > 0 else 0.0
     gap = ((basic - price) / price * 100.0) if price > 0 and basic > 0 else 0.0
+
+    abnormal_reasons: List[str] = []
+    if not ttm.get("available"):
+        abnormal_reasons.append("연속 4개 단독분기 TTM 미확보")
+    if shares <= 0:
+        abnormal_reasons.append("주식수 미확보")
+    if valuation_eps <= 0:
+        abnormal_reasons.append("양(+)의 평가 EPS 미확보")
+    if implied_per > 0 and not (per_min * 0.75 <= implied_per <= per_max * 1.30):
+        abnormal_reasons.append("최종가 암시 PER이 업종 허용범위를 벗어남")
+    if model_dispersion >= 4.0:
+        abnormal_reasons.append("모형 간 가치 차이가 4배 이상")
+    if basic > 0 and price > 0 and (basic / price < 0.35 or basic / price > 3.0) and len(abnormal_reasons) >= 2:
+        abnormal_reasons.append("시장가격과 3배 이상 괴리하면서 데이터·모형 경고 동시 발생")
+
+    fatal = shares <= 0 or valuation_eps <= 0 or basic <= 0
+    review = (not fatal) and any(
+        reason in abnormal_reasons
+        for reason in (
+            "연속 4개 단독분기 TTM 미확보",
+            "최종가 암시 PER이 업종 허용범위를 벗어남",
+            "모형 간 가치 차이가 4배 이상",
+            "시장가격과 3배 이상 괴리하면서 데이터·모형 경고 동시 발생",
+        )
+    )
+    calculation_status = "산출불가" if fatal else "검토필요" if review else "정상"
+    final_available = not fatal and not review
 
     if gap > 25:
         judgment = "강한 저평가"
@@ -719,159 +1090,113 @@ def calculate_value(
         judgment = "고평가"
     else:
         judgment = "적정"
+    if not final_available:
+        judgment = "판정 보류"
 
-    model_dispersion = 0.0
-    if len(filtered_values) >= 2 and min(filtered_values) > 0:
-        model_dispersion = max(filtered_values) / min(filtered_values)
+    data_confidence = 30
+    data_confidence += 18 if ttm.get("available") else 5 if periods else 0
+    data_confidence += min(15, len(periods) * 2)
+    data_confidence += 12 if share_info.get("quality", 0) >= 85 else 6 if shares > 0 else 0
+    data_confidence += 8 if bps > 0 else 0
+    data_confidence += 8 if industry["available"] else 0
+    data_confidence += 5 if safe_float(cash_quality.get("데이터품질")) >= 70 else 0
+    data_confidence = int(clamp(data_confidence, 25, 95))
 
-    earnings_quality = safe_float(earnings_analysis.get("데이터품질"), quarter["quality"])
-    cash_quality_score = safe_float(cash_quality.get("데이터품질"), 0.0)
-    consensus_available = bool(
-        forward_direction.get("애널리스트컨센서스반영")
-        or safe_float(forward_direction.get("컨센서스데이터품질"), 0.0) > 0
-    )
-
-    confidence = 34
-    if price > 0 and eps > 0 and bps > 0:
-        confidence += 10
-    elif price > 0 and (eps > 0 or bps > 0):
-        confidence += 5
-    if roe != 0 or operating_margin != 0 or net_margin != 0:
-        confidence += 7
-    if len(periods) >= 6:
-        confidence += 12
-    elif len(periods) >= 4:
-        confidence += 9
-    elif periods:
-        confidence += 5
-    if quarter["quality"] >= 70:
-        confidence += 8
-    elif quarter["quality"] >= 35:
-        confidence += 4
-    if earnings_quality >= 80:
-        confidence += 6
-    elif earnings_quality >= 50:
-        confidence += 3
-    if cash_quality_score >= 80:
-        confidence += 5
-    elif cash_quality_score >= 50:
-        confidence += 3
-    if profile_recognized:
-        confidence += 6
-    if industry["available"]:
-        confidence += 6
-    if consensus_available:
-        confidence += 5
-    if len(filtered_models) >= 4:
-        confidence += 4
+    model_confidence = 72
     if model_dispersion > 0:
-        if model_dispersion <= 1.35:
-            confidence += 7
-        elif model_dispersion <= 1.70:
-            confidence += 4
-        elif model_dispersion <= 2.20:
-            confidence += 1
-        elif model_dispersion >= 3.00:
-            confidence -= 8
+        if model_dispersion <= 1.5:
+            model_confidence += 10
+        elif model_dispersion <= 2.2:
+            model_confidence += 3
+        elif model_dispersion <= 3.0:
+            model_confidence -= 8
         else:
-            confidence -= 3
-    if transition_direction == "실적 안정/혼합" and transition_strength < 25:
-        confidence += 4
-    elif transition_direction == "실적 급상승 전환":
-        confidence -= 3
-    elif transition_direction == "실적 급하락 전환":
-        confidence -= 5
-
-    confidence = int(clamp(confidence, 30, 95))
-    confidence_cap = 95
-    confidence_cap_reasons = []
-    if not profile_recognized:
-        confidence_cap = min(confidence_cap, 79)
-        confidence_cap_reasons.append("OpenDART 업종분류 미확보")
-    if not industry["available"]:
-        confidence_cap = min(confidence_cap, 84)
-        confidence_cap_reasons.append("산업 선행·사이클 미반영")
-    if not consensus_available:
-        confidence_cap = min(confidence_cap, 84)
-        confidence_cap_reasons.append("애널리스트 컨센서스 미반영")
-    if transition_direction != "실적 안정/혼합":
-        confidence_cap = min(confidence_cap, 82)
-    confidence = min(confidence, confidence_cap)
-    confidence_grade = (
-        "A" if confidence >= 85 else
-        "B" if confidence >= 70 else
-        "C" if confidence >= 55 else
-        "D"
-    )
-
-    # 세 시나리오 확률은 가격 예측이 아니라 어떤 가치 시나리오에 무게를 둘지 표시한다.
-    growth_probability = 34.0
-    growth_probability += clamp(earnings_signal * 0.16, -14.0, 16.0)
-    growth_probability += clamp(forward_signal * 0.12, -10.0, 12.0)
-    growth_probability += clamp(industry["signal"] * 0.10, -8.0, 10.0)
-    growth_probability += 5.0 if positive_transition else -5.0 if negative_transition else 0.0
-    growth_probability = clamp(growth_probability, 12.0, 68.0)
-    conservative_probability = 33.0
-    conservative_probability -= clamp(earnings_signal * 0.10, -10.0, 10.0)
-    conservative_probability -= clamp(industry["signal"] * 0.06, -6.0, 6.0)
-    conservative_probability += 5.0 if negative_transition else -3.0 if positive_transition else 0.0
-    conservative_probability = clamp(conservative_probability, 12.0, 62.0)
-    base_probability = max(10.0, 100.0 - growth_probability - conservative_probability)
-    total_probability = growth_probability + conservative_probability + base_probability
-    conservative_probability = conservative_probability / total_probability * 100.0
-    base_probability = base_probability / total_probability * 100.0
-    growth_probability = growth_probability / total_probability * 100.0
-
-    notes = [
-        f"{profile['label']} 업종 프로필의 기준배수와 모형가중치를 적용했습니다.",
-        "현재가는 적정가 계산에 앵커로 사용하지 않고 계산 후 차이 비교에만 사용했습니다.",
-    ]
-    if positive_transition:
-        notes.append("최근 분기 이익 급증을 선행 EPS와 실적전환 모형에 반영했습니다.")
-    if negative_transition:
-        notes.append("최근 분기 이익 둔화를 선행 EPS와 목표배수에 보수적으로 반영했습니다.")
-    if periods:
-        notes.append(f"OpenDART 최신 분기 {quarter['latest_period']} 자료를 반영했습니다.")
-    if industry["available"]:
-        notes.append(
-            f"산업 중기 {industry['mid']:.2f}, 장기 {industry['long']:.2f} 신호를 배수와 선행 EPS에 반영했습니다."
-        )
-    if excluded_models:
-        notes.append("모형 중앙값에서 과도하게 벗어난 값은 기준가 가중평균에서 제외했습니다.")
+            model_confidence -= 20
+    if complex_config:
+        model_confidence = min(model_confidence, 78)  # 세부 사업부 자료 없는 대용 SOTP
+    if not ttm.get("available"):
+        model_confidence -= 12
+    if review:
+        model_confidence = min(model_confidence, 54)
+    model_confidence = int(clamp(model_confidence, 25, 90))
+    confidence = int(round(data_confidence * 0.58 + model_confidence * 0.42))
+    if not forward_direction.get("애널리스트컨센서스반영"):
+        confidence = min(confidence, 84)
+    if complex_config:
+        confidence = min(confidence, 78)
+    if review:
+        confidence = min(confidence, 54)
+    confidence_grade = "A" if confidence >= 85 else "B" if confidence >= 70 else "C" if confidence >= 55 else "D"
 
     model_detail = []
-    included_names = {row["name"] for row in filtered_models}
-    for name, value in model_values.items():
+    included_names = {row["name"] for row in basis_models}
+    for row in valid_models:
         model_detail.append({
-            "모형": name,
-            "값": round(value, 2) if value > 0 else 0.0,
-            "기본가중치": round(weight_by_name[name], 4),
-            "기준가반영": name in included_names,
+            "모형": row["name"],
+            "값": round(row["value"], 2),
+            "기본가중치": round(row["weight"], 4),
+            "역할": row["role"],
+            "기준가반영": row["name"] in included_names,
         })
 
+    notes = [
+        "DART 누적 분기자료를 단독 분기로 변환한 뒤 최근 4개 분기 TTM을 산출했습니다.",
+        "KIS EPS는 미래이익 자체가 아니라 발행주식수 교차추정과 보조자료로만 사용했습니다.",
+        "현재가는 적정가 산식에 넣지 않고 계산 완료 후 괴리 검증에만 사용했습니다.",
+        f"{profile.get('label', profile_code)} 업종 프로필을 적용했습니다.",
+    ]
+    if complex_config:
+        notes.append("사업부 세부 손익 자동수집이 없어 진짜 SOTP가 아닌 복합기업 대용 가치합산을 적용했습니다.")
+    if excluded_models:
+        notes.append("기업 유형에 부적합하거나 이익가치에서 과도하게 벗어난 하단모형은 기준가에서 제외했습니다.")
+
     return {
-        "가치평가엔진버전": "6.5.0-central-kis-direct-query",
+        "가치평가계약버전": VALUATION_CONTRACT_VERSION,
+        "가치평가엔진버전": VALUATION_ENGINE_VERSION,
+        "산출상태": calculation_status,
+        "최종값사용가능": final_available,
+        "최종값출처": "Python 가치평가 계약 v3",
         "현재가": price,
         "실제PER": actual_per,
         "실제PBR": actual_pbr,
-        "EPS": eps,
+        "EPS": market_eps,
         "BPS": bps,
-        "선행EPS": round(forward_eps, 2) if forward_eps > 0 else 0.0,
-        "선행EPS보정배수": round(eps_multiplier, 4) if eps_multiplier > 0 else 0.0,
+        "발행주식수추정": round(shares) if shares > 0 else 0,
+        "발행주식수출처": share_info.get("source", ""),
+        "발행주식수품질": share_info.get("quality", 0),
+        "발행주식수후보": share_info.get("candidates", []),
+        "TTMEPS": round(ttm_eps, 2) if ttm_eps > 0 else 0.0,
+        "정상화EPS": round(normalized_eps, 2) if normalized_eps > 0 else 0.0,
+        "분기런레이트EPS": round(run_rate_eps, 2) if run_rate_eps > 0 else 0.0,
+        "FY1예상EPS": round(fy1_eps, 2) if fy1_eps > 0 else 0.0,
+        "FY2예상EPS": round(fy2_eps, 2) if fy2_eps > 0 else 0.0,
+        "평가EPS": round(valuation_eps, 2) if valuation_eps > 0 else 0.0,
+        "선행EPS": round(fy1_eps, 2) if fy1_eps > 0 else 0.0,
+        "FY1성장률": round(fy1_growth * 100.0, 2),
+        "FY2성장률": round(fy2_growth * 100.0, 2),
+        "TTM기준기간": ttm.get("period", ""),
+        "TTM데이터품질": ttm.get("quality", 0),
         "목표PER": round(target_per, 2),
         "목표PBR": round(target_pbr, 2),
-        "PER기준적정가": round(per_value, 2),
+        "암시PER": round(implied_per, 2) if implied_per > 0 else 0.0,
+        "암시PBR": round(implied_pbr, 2) if implied_pbr > 0 else 0.0,
+        "PER기준적정가": round(earnings_value, 2),
         "PBR기준적정가": round(pbr_value, 2),
         "잔여이익가치": round(residual_value, 2),
+        "FCF가치": round(fcf_value, 2),
         "실적전환보정가": round(transition_value, 2),
-        "재무적정가": round(financial_value, 2),
+        "복합기업대용가치합산": round(complex_proxy_value, 2),
+        "순현금주당가치": round(net_cash_per_share, 2),
+        "재무적정가": round(basic, 2),
         "기본적정가": round(basic, 2),
         "보수적적정가": round(conservative, 2),
         "성장적정가": round(growth_value, 2),
         "현재가대비": round(gap, 2),
         "판단": judgment,
         "가치평가산업코드": profile_code,
-        "가치평가산업프로필": profile["label"],
+        "가치평가산업프로필": complex_config.get("label") if complex_config else profile.get("label"),
+        "복합기업대용모형": bool(complex_config),
+        "진짜SOTP자료확보": False if complex_config else None,
         "산업분류출처": company_info.get("산업분류출처", "내부 일반분류"),
         "OpenDART업종코드": company_info.get("OpenDART업종코드", ""),
         "산업신호반영": industry["available"],
@@ -882,18 +1207,20 @@ def calculate_value(
         "분기매출성장률": round(quarter["revenue_yoy"], 2),
         "분기영업이익성장률": round(quarter["operating_yoy"], 2),
         "분기순이익성장률": round(quarter["net_yoy"], 2),
+        "데이터신뢰도": data_confidence,
+        "모형신뢰도": model_confidence,
         "가치신뢰도": confidence,
         "가치신뢰도등급": confidence_grade,
-        "가치신뢰도상한": confidence_cap,
-        "가치신뢰도상한사유": confidence_cap_reasons,
-        "컨센서스반영": consensus_available,
+        "가치신뢰도정의": "자료완전성과 모형합의도이며 실제 적중률이 아님",
         "모형분산배수": round(model_dispersion, 3),
+        "전체모형분산배수": round(all_model_dispersion, 3),
         "모형상세": model_detail,
         "제외모형": excluded_models,
-        "시나리오확률": {
-            "보수적": round(conservative_probability, 1),
-            "기준": round(base_probability, 1),
-            "성장": round(growth_probability, 1),
+        "이상치검사": {
+            "통과": final_available,
+            "상태": calculation_status,
+            "사유": abnormal_reasons,
         },
+        "컨센서스반영": bool(forward_direction.get("애널리스트컨센서스반영")),
         "설명": notes,
     }
