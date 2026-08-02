@@ -1569,9 +1569,23 @@ def predict_stock(
         )
     )
 
+    history_status = history["status"] if isinstance(history.get("status"), dict) else {}
+    price_history_ok = (
+        history_status.get("가격데이터상태") == "정상"
+        and int(safe_float(history_status.get("가격데이터개수"))) > 0
+    )
+    investor_history_ok = (
+        history_status.get("누적수급데이터상태") == "정상"
+        and int(safe_float(history_status.get("누적수급데이터개수"))) > 0
+    )
+    program_history_ok = (
+        history_status.get("프로그램데이터상태") == "정상"
+        and int(safe_float(history_status.get("프로그램데이터개수"))) > 0
+    )
+
     return {
         "엔진버전": (
-            "6.6.0-valuation-contract-v3"
+            "6.6.1-valuation-contract-v3"
         ),
         "단기1~5일": short_term,
         "중기1~8주": mid_term,
@@ -1595,16 +1609,14 @@ def predict_stock(
                     "개인순매수",
                 )
             ),
-            "KIS일봉": bool(
-                history["price"]
-            ),
+            "KIS일봉": price_history_ok,
             "멀티타임프레임차트": technical_ok,
-            "KIS누적수급": bool(
-                history["investor"]
-            ),
-            "KIS프로그램매매": bool(
-                history["program"]
-            ),
+            "KIS누적수급": investor_history_ok,
+            "KIS프로그램매매": program_history_ok,
+            "현재가": bool(safe_float(market.get("현재가"))),
+            "가격이력": price_history_ok,
+            "누적수급": investor_history_ok,
+            "프로그램매매": program_history_ok,
             "DART기본재무": bool(
                 financial.get(
                     "재무지표"

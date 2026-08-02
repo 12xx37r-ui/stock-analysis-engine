@@ -1,10 +1,11 @@
 """
-OpenDART 실적·현금흐름·주주환원 수집기 V1.1
+OpenDART 실적·현금흐름·주주환원·주식수 수집기 V1.2
 
 수집 대상
 1. 최근 분기/반기/사업보고서 전체 재무제표
 2. 최근 사업보고서 배당에 관한 사항
 3. 최근 사업보고서 자기주식 취득 및 처분 현황
+4. 최신 정기보고서 주식의 총수 현황
 
 기존 main.py와 predictor.py에는 아직 연결하지 않는다.
 모든 요청은 개별 실패를 허용하며, 수집 가능한 데이터만 반환한다.
@@ -32,6 +33,10 @@ DART_DIVIDEND_URL = (
 DART_TREASURY_URL = (
     "https://opendart.fss.or.kr/api/"
     "tesstkAcqsDspsSttus.json"
+)
+DART_STOCK_TOTAL_URL = (
+    "https://opendart.fss.or.kr/api/"
+    "stockTotqySttus.json"
 )
 
 REPORT_NAMES = {
@@ -625,6 +630,115 @@ def get_report_rows(
     }
 
 
+def _stock_total_number(
+    rows: List[Dict[str, Any]],
+    field: str,
+) -> float:
+    """주식총수 API의 합계행을 우선하고, 없으면 증권종류별 합계를 사용한다."""
+    total_rows = [
+        row
+        for row in rows
+        if clean_account_name(row.get("se")) in {"합계", "총계", "계"}
+    ]
+    for row in total_rows:
+        value = safe_float(row.get(field))
+        if value > 0:
+            return value
+
+    values = []
+    for row in rows:
+        label = clean_account_name(row.get("se"))
+        if not label or label in {"합계", "총계", "계", "비고"}:
+            continue
+        value = safe_float(row.get(field))
+        if value > 0:
+            values.append(value)
+    return sum(values)
+
+
+def parse_stock_total_rows(
+    rows: List[Dict[str, Any]],
+    year: int,
+    report_code: str,
+    status: str,
+    message: str,
+) -> Dict[str, Any]:
+    issued = _stock_total_number(rows, "istc_totqy")
+    treasury = _stock_total_number(rows, "tesstk_co")
+    distributed = _stock_total_number(rows, "distb_stock_co")
+    authorized = _stock_total_number(rows, "isu_stock_totqy")
+
+    if distributed <= 0 and issued > 0:
+        distributed = max(0.0, issued - max(0.0, treasury))
+
+    valuation_shares = distributed if distributed > 0 else issued
+    usable = status == "000" and valuation_shares >= 100_000
+
+    return {
+        "사업연도": year,
+        "보고서코드": report_code,
+        "보고서명": REPORT_NAMES.get(report_code, report_code),
+        "수집상태": "정상" if usable else "실패",
+        "응답코드": status,
+        "응답메시지": message,
+        "행개수": len(rows),
+        "발행가능주식수": round(authorized) if authorized > 0 else 0,
+        "발행주식수": round(issued) if issued > 0 else 0,
+        "자기주식수": round(treasury) if treasury > 0 else 0,
+        "유통주식수": round(distributed) if distributed > 0 else 0,
+        "가치평가주식수": round(valuation_shares) if valuation_shares > 0 else 0,
+        "주식수기준": "유통주식수" if distributed > 0 else "발행주식수" if issued > 0 else "미확보",
+        "결산기준일": safe_text(rows[0].get("stlm_dt")) if rows else "",
+    }
+
+
+def get_stock_total_status(
+    api_key: str,
+    corp_code: str,
+) -> Dict[str, Any]:
+    errors = []
+    for year, report_code in candidate_periods():
+        report = get_report_rows(
+            api_key,
+            DART_STOCK_TOTAL_URL,
+            corp_code,
+            year,
+            report_code,
+        )
+        parsed = parse_stock_total_rows(
+            normalize_list(report.get("목록")),
+            year,
+            report_code,
+            safe_text(report.get("응답코드")),
+            safe_text(report.get("응답메시지")),
+        )
+        print(
+            "DART STOCK TOTAL",
+            year,
+            REPORT_NAMES.get(report_code, report_code),
+            parsed.get("수집상태"),
+            parsed.get("가치평가주식수"),
+        )
+        if parsed.get("수집상태") == "정상":
+            return parsed
+        errors.append({
+            "사업연도": year,
+            "보고서코드": report_code,
+            "응답코드": parsed.get("응답코드", ""),
+            "응답메시지": parsed.get("응답메시지", ""),
+        })
+
+    return {
+        "수집상태": "실패",
+        "발행주식수": 0,
+        "자기주식수": 0,
+        "유통주식수": 0,
+        "가치평가주식수": 0,
+        "주식수기준": "미확보",
+        "수집오류": errors,
+    }
+
+
 def get_annual_series(
     api_key: str,
     url: str,
@@ -692,6 +806,7 @@ def get_fundamentals_bundle(
             "재무기간": {},
             "배당": {},
             "자기주식": {},
+            "주식총수": {},
         }
 
     if not api_key:
@@ -703,6 +818,7 @@ def get_fundamentals_bundle(
             "재무기간": {},
             "배당": {},
             "자기주식": {},
+            "주식총수": {},
         }
 
     financials = get_financial_periods(
@@ -725,10 +841,16 @@ def get_fundamentals_bundle(
         maximum_success=2,
     )
 
+    stock_total = get_stock_total_status(
+        api_key,
+        corp_code,
+    )
+
     statuses = [
         financials.get("수집상태"),
         dividends.get("수집상태"),
         treasury.get("수집상태"),
+        stock_total.get("수집상태"),
     ]
 
     normal_count = sum(
@@ -749,6 +871,7 @@ def get_fundamentals_bundle(
         "재무기간": financials,
         "배당": dividends,
         "자기주식": treasury,
+        "주식총수": stock_total,
         "수집시각": datetime.now(
             KST
         ).isoformat(),

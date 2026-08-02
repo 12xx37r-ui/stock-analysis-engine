@@ -1,4 +1,4 @@
-"""재무적정가 엔진 V6.6.0 · 가치평가 계약 v3.
+"""재무적정가 엔진 V6.6.1 · 가치평가 계약 v3.
 
 핵심 원칙
 - 현재가는 적정가 산식에 넣지 않고 계산 후 괴리 검증에만 사용한다.
@@ -351,7 +351,7 @@ PROFILE_ALIASES = {
 }
 
 VALUATION_CONTRACT_VERSION = "3.0"
-VALUATION_ENGINE_VERSION = "6.6.0-valuation-contract-v3"
+VALUATION_ENGINE_VERSION = "6.6.1-valuation-contract-v3"
 
 # 복합기업은 사업부 세부 공시가 자동 수집되지 않으면 진짜 SOTP를 만들 수 없다.
 # 아래 설정은 '사업부 대용 가치합산'을 위한 보수적 복합배수이며, 출력에 대용모형임을 명시한다.
@@ -545,17 +545,35 @@ def infer_share_count(
     market: Dict[str, Any],
     periods: List[Dict[str, Any]],
     company_info: Dict[str, Any],
+    fundamentals_bundle: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     candidates: List[Dict[str, Any]] = []
+    fundamentals_bundle = safe_dict(fundamentals_bundle)
+
+    # OpenDART 주식의 총수 현황을 최우선으로 사용한다. 유통주식수는
+    # 자기주식을 제외하므로 EPS·BPS의 주당가치 계산에 가장 적합하다.
+    stock_total = safe_dict(fundamentals_bundle.get("주식총수"))
+    dart_shares = (
+        safe_float(stock_total.get("가치평가주식수"))
+        or safe_float(stock_total.get("유통주식수"))
+        or safe_float(stock_total.get("발행주식수"))
+    )
+    if dart_shares >= 100_000:
+        candidates.append({
+            "value": dart_shares,
+            "source": "OpenDART 주식의 총수 현황",
+            "quality": 100,
+        })
+
     explicit = _recursive_positive(
         company_info,
-        {"발행주식수", "발행주식총수", "상장주식수", "유통주식수", "보통주식수", "shares"},
+        {"가치평가주식수", "발행주식수", "발행주식총수", "상장주식수", "유통주식수", "보통주식수", "shares"},
     ) or _recursive_positive(
         market,
-        {"발행주식수", "발행주식총수", "상장주식수", "유통주식수", "보통주식수", "shares"},
+        {"가치평가주식수", "발행주식수", "발행주식총수", "상장주식수", "유통주식수", "보통주식수", "shares"},
     )
     if explicit and explicit > 100000:
-        candidates.append({"value": explicit, "source": "직접 발행주식수", "quality": 100})
+        candidates.append({"value": explicit, "source": "직접 발행주식수", "quality": 96})
 
     annual = annual_periods(periods)
     market_eps = safe_float(market.get("EPS"))
@@ -795,13 +813,29 @@ def calculate_value(
     quarters = build_standalone_quarters(periods)
     ttm = build_ttm(quarters)
     quarter = quarter_signal(periods)
-    share_info = infer_share_count(market, periods, company_info)
+    share_info = infer_share_count(market, periods, company_info, fundamentals_bundle)
     shares = safe_float(share_info.get("value"))
     annual_eps = _annual_eps_series(periods, shares)
     normalized_eps = _normalized_eps(annual_eps, market_eps)
     ttm_eps = safe_float(safe_dict(ttm.get("metrics")).get("순이익")) / shares if ttm.get("available") and shares > 0 else 0.0
     latest_quarter_eps = quarter["latest_net_income"] / shares if shares > 0 else 0.0
     run_rate_eps = latest_quarter_eps * 4.0 if latest_quarter_eps > 0 else 0.0
+
+    # GitHub에서는 KIS를 비활성화하므로 Yahoo 현재가만 확보되고 EPS·BPS가
+    # 비어 있을 수 있다. 이때 DART TTM/자본총계와 주식수로 주당지표를 복원한다.
+    if market_eps <= 0:
+        market_eps = ttm_eps if ttm_eps > 0 else normalized_eps
+    latest_equity = 0.0
+    for period in periods:
+        latest_equity = safe_float(get_period_metrics(period).get("자본총계"))
+        if latest_equity > 0:
+            break
+    if bps <= 0 and shares > 0 and latest_equity > 0:
+        bps = latest_equity / shares
+    if actual_per <= 0 and price > 0 and market_eps > 0:
+        actual_per = price / market_eps
+    if actual_pbr <= 0 and price > 0 and bps > 0:
+        actual_pbr = price / bps
 
     profile_code = resolve_profile_code(company_info, industry_bundle)
     profile = dict(VALUATION_PROFILES[profile_code])

@@ -21,7 +21,7 @@ import sys
 from pathlib import Path
 
 
-EXPECTED_ENGINE_VERSION = "6.6.0-valuation-contract-v3"
+EXPECTED_ENGINE_VERSION = "6.6.1-valuation-contract-v3"
 
 EXPECTED_WEIGHTS = {
     "단기1~5일": {

@@ -532,6 +532,11 @@ def build_fundamentals_summary(
                 "자기주식"
             )
         ),
+        "주식총수": safe_dict(
+            bundle.get(
+                "주식총수"
+            )
+        ),
         "분석": safe_dict(
             analysis
         ),
@@ -1112,6 +1117,7 @@ def main():
             "재무기간": {},
             "배당": {},
             "자기주식": {},
+            "주식총수": {},
         },
     )
 

@@ -5,6 +5,7 @@
 """
 
 from analyzers.valuation import calculate_value
+from collectors.fundamentals import parse_stock_total_rows
 
 
 def period(year, code, revenue, operating, net, equity, liabilities, cash, fcf):
@@ -38,7 +39,27 @@ def main():
         "PER": 39.99,
         "PBR": 4.10,
     }
+    stock_total = parse_stock_total_rows(
+        [
+            {
+                "se": "합계",
+                "isu_stock_totqy": "25,000,000,000",
+                "istc_totqy": "6,792,669,250",
+                "tesstk_co": "12,345,678",
+                "distb_stock_co": "6,780,323,572",
+                "stlm_dt": "2026-03-31",
+            }
+        ],
+        2026,
+        "11013",
+        "000",
+        "정상",
+    )
+    assert stock_total["수집상태"] == "정상"
+    assert stock_total["가치평가주식수"] == 6_780_323_572
+
     fundamentals_bundle = {
+        "주식총수": stock_total,
         "재무기간": {
             "기간목록": [
                 period(2026, "11013", 133_873_444_000_000, 57_232_797_000_000, 47_225_272_000_000, 486_635_976_000_000, 146_703_628_000_000, 73_306_751_000_000, 22_097_151_000_000),
@@ -88,7 +109,32 @@ def main():
     assert value["기본적정가"] > value["PBR기준적정가"] * 1.8, value
     assert value["보수적적정가"] <= value["기본적정가"] <= value["성장적정가"]
     assert 10 <= value["목표PER"] <= 24
+
+    # GitHub KIS_DISABLED=1 경로 회귀검증: Yahoo 현재가만 있어도
+    # OpenDART 주식총수 + DART 재무로 EPS/BPS와 적정가를 산출해야 한다.
+    no_kis_market = {"현재가": 262_500, "거래량": 10_000_000}
+    no_kis_value = calculate_value(
+        financial,
+        no_kis_market,
+        fundamentals_analysis,
+        fundamentals_bundle,
+        industry_analysis,
+        {"산업코드": "semiconductor"},
+        company_info,
+    )
+    assert no_kis_value["최종값사용가능"] is True, no_kis_value["이상치검사"]
+    assert no_kis_value["발행주식수추정"] == 6_780_323_572
+    assert no_kis_value["TTMEPS"] > 0
+    assert no_kis_value["BPS"] > 0
+    assert no_kis_value["기본적정가"] > 0
+
     print("VALUATION CONTRACT V3: PASS")
+    print(
+        "KIS-disabled regression:",
+        f"shares={no_kis_value['발행주식수추정']:,}",
+        f"TTM EPS={no_kis_value['TTMEPS']:,.0f}",
+        f"fair={no_kis_value['기본적정가']:,.0f}",
+    )
     print(
         "Samsung regression:",
         f"TTM EPS={value['TTMEPS']:,.0f}",
