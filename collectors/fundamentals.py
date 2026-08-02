@@ -187,23 +187,11 @@ ACCOUNT_ALIASES = {
         "매출액",
         "수익(매출액)",
         "영업수익",
-        "보험수익",
-        "보험서비스수익",
-        "보험계약수익",
-        "보험영업수익",
-        "보험료수익",
-        "수입보험료",
         "매출",
     ),
     "영업이익": (
         "영업이익",
         "영업이익(손실)",
-        "영업손익",
-        "보험손익",
-        "보험영업손익",
-        "보험영업이익",
-        "보험서비스손익",
-        "보험서비스결과",
     ),
     "순이익": (
         "당기순이익",
@@ -211,13 +199,6 @@ ACCOUNT_ALIASES = {
         "연결당기순이익",
         "분기순이익",
         "반기순이익",
-        "분기연결순이익",
-        "반기연결순이익",
-        "지배기업소유주지분순이익",
-        "지배기업의소유주에게귀속되는당기순이익",
-        "지배기업소유주에게귀속되는당기순이익",
-        "지배기업소유주귀속당기순이익",
-        "지배주주순이익",
     ),
     "자산총계": (
         "자산총계",
@@ -292,17 +273,7 @@ def find_account_value(
             row.get("account_nm")
         )
 
-        exact_match = account_name in aliases_clean
-        partial_match = any(
-            len(alias) >= 4 and (
-                account_name.startswith(alias)
-                or account_name.endswith(alias)
-                or alias in account_name
-            )
-            for alias in aliases_clean
-        )
-
-        if not exact_match and not partial_match:
+        if account_name not in aliases_clean:
             continue
 
         if cumulative:
@@ -328,7 +299,6 @@ def find_account_value(
         candidates.append(
             {
                 "value": value,
-                "exact": exact_match,
                 "order": safe_float(
                     row.get("ord"),
                     999999,
@@ -340,10 +310,7 @@ def find_account_value(
         return 0.0
 
     candidates.sort(
-        key=lambda item: (
-            0 if item.get("exact") else 1,
-            item["order"],
-        )
+        key=lambda item: item["order"]
     )
 
     for candidate in candidates:

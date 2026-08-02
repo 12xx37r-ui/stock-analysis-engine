@@ -361,10 +361,10 @@ PROFILE_ALIASES = {
 }
 
 VALUATION_CONTRACT_VERSION = "4.0"
-VALUATION_ENGINE_VERSION = "6.7.2-valuation-contract-v4"
+VALUATION_ENGINE_VERSION = "6.7.0-valuation-contract-v4"
 INDUSTRY_PROFILE_VERSION = "3.0.0"
 DATA_QUALIFICATION_VERSION = "1.0.0"
-VALUATION_MODEL_REVISION = "future-growth-v1.0.1-insurance-financials"
+VALUATION_MODEL_REVISION = "future-growth-v1.0.0"
 FUTURE_GROWTH_MODEL_VERSION = "1.0.0"
 
 # 현재가를 사용하지 않는 FY3~FY4 미래이익 현재가치 모형.
@@ -508,27 +508,18 @@ def build_standalone_quarters(periods: List[Dict[str, Any]]) -> List[Dict[str, A
     return rows
 
 
-def build_ttm(
-    quarters: List[Dict[str, Any]],
-    profile_code: str = "general",
-) -> Dict[str, Any]:
+def build_ttm(quarters: List[Dict[str, Any]]) -> Dict[str, Any]:
     if len(quarters) < 4:
         return {"available": False, "quality": 0, "metrics": {}, "period": ""}
     selected = quarters[:4]
     keys = [int(row.get("기간키", 0)) for row in selected]
     contiguous = all(keys[index] - keys[index + 1] == 1 for index in range(3))
     converted = all(bool(row.get("단독분기변환")) for row in selected)
-    financial_profile = profile_code in {"finance", "insurance"}
     positive_revenue = all(
         safe_float(safe_dict(row.get("지표")).get("매출")) > 0
         for row in selected
     )
-    net_income_present = any(
-        abs(safe_float(safe_dict(row.get("지표")).get("순이익"))) > 0
-        for row in selected
-    )
-    revenue_usable = positive_revenue or (financial_profile and net_income_present)
-    if not contiguous or not converted or not revenue_usable:
+    if not contiguous or not converted or not positive_revenue:
         return {
             "available": False,
             "quality": 20 if contiguous else 10,
@@ -536,7 +527,7 @@ def build_ttm(
             "period": "",
             "reason": (
                 "단독분기 변환 불완전" if not converted
-                else "분기 핵심 손익자료 불완전" if not revenue_usable
+                else "분기 매출자료 불완전" if not positive_revenue
                 else "연속 4개 분기 불연속"
             ),
         }
@@ -549,14 +540,7 @@ def build_ttm(
     first = selected[-1]
     last = selected[0]
     period = f"{first.get('사업연도')}Q{first.get('분기')}~{last.get('사업연도')}Q{last.get('분기')}"
-    quality = 95 if positive_revenue else 84
-    return {
-        "available": True,
-        "quality": quality,
-        "metrics": metrics,
-        "period": period,
-        "금융업매출대체허용": bool(financial_profile and not positive_revenue),
-    }
+    return {"available": True, "quality": 95, "metrics": metrics, "period": period}
 
 
 def annual_periods(periods: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -814,11 +798,10 @@ def _cost_of_equity(debt_ratio: float, profile_code: str) -> float:
     base = 0.095
     if profile_code in {"finance", "insurance", "utilities", "telecom"}:
         base -= 0.005
-    if profile_code not in {"finance", "insurance"}:
-        if debt_ratio > 2.0:
-            base += 0.020
-        elif debt_ratio > 1.0:
-            base += 0.010
+    if debt_ratio > 2.0:
+        base += 0.020
+    elif debt_ratio > 1.0:
+        base += 0.010
     return clamp(base, 0.085, 0.125)
 
 
@@ -1024,7 +1007,6 @@ def build_effective_ttm(
     formal_quarters: List[Dict[str, Any]],
     formal_ttm: Dict[str, Any],
     provisional: Dict[str, Any],
-    profile_code: str = "general",
 ) -> Dict[str, Any]:
     """최신 잠정실적이 정식보고서보다 한 분기 앞설 때 이익 TTM만 교체한다.
 
@@ -1049,24 +1031,17 @@ def build_effective_ttm(
         return result
 
     provisional_metrics = safe_dict(provisional.get("지표"))
-    financial_profile = profile_code in {"finance", "insurance"}
-    net_income_missing = provisional_metrics.get("순이익") in (None, "")
-    revenue_missing = safe_float(provisional_metrics.get("매출")) <= 0
-    operating_missing = provisional_metrics.get("영업이익") in (None, "")
-    if net_income_missing or (
-        not financial_profile and (revenue_missing or operating_missing)
+    if (
+        safe_float(provisional_metrics.get("매출")) <= 0
+        or provisional_metrics.get("영업이익") in (None, "")
+        or provisional_metrics.get("순이익") in (None, "")
     ):
         result = dict(formal_ttm)
         result["잠정실적반영실패사유"] = "잠정실적 핵심 계정 미확보"
         return result
 
     metrics = dict(safe_dict(formal_ttm.get("metrics")))
-    keys_to_replace = ["순이익"]
-    if not revenue_missing:
-        keys_to_replace.append("매출")
-    if not operating_missing:
-        keys_to_replace.append("영업이익")
-    for key in keys_to_replace:
+    for key in ("매출", "영업이익", "순이익"):
         metrics[key] = safe_float(provisional_metrics.get(key)) + sum(
             safe_float(safe_dict(row.get("지표")).get(key)) for row in rows
         )
@@ -1242,17 +1217,11 @@ def calculate_value(
     operating_growth_3y = safe_float(growth.get("영업이익3년성장률")) / 100.0
     net_growth_3y = safe_float(growth.get("순이익3년성장률")) / 100.0
 
-    profile_code = resolve_profile_code(company_info, industry_bundle)
     periods = get_periods(fundamentals_bundle)
     quarters = build_standalone_quarters(periods)
-    formal_ttm = build_ttm(quarters, profile_code=profile_code)
+    formal_ttm = build_ttm(quarters)
     provisional = provisional_record(fundamentals_bundle)
-    ttm = build_effective_ttm(
-        quarters,
-        formal_ttm,
-        provisional,
-        profile_code=profile_code,
-    )
+    ttm = build_effective_ttm(quarters, formal_ttm, provisional)
     quarter = effective_quarter_signal(periods, quarters, provisional)
     share_info = infer_share_count(market, periods, company_info, fundamentals_bundle)
     shares = safe_float(share_info.get("value"))
@@ -1302,6 +1271,7 @@ def calculate_value(
     if actual_pbr <= 0 and price > 0 and bps > 0:
         actual_pbr = price / bps
 
+    profile_code = resolve_profile_code(company_info, industry_bundle)
     profile = dict(VALUATION_PROFILES[profile_code])
     stock_code = str(company_info.get("종목코드") or company_info.get("KIS종목코드") or "").zfill(6)
     complex_config = COMPLEX_COMPANY_CONFIG.get(stock_code)
@@ -1416,8 +1386,7 @@ def calculate_value(
         per_max = safe_float(complex_config.get("max_multiple"), per_max)
 
     target_per += clamp((roe - 0.08) * 22.0, -2.0, 5.0)
-    if profile_code not in {"finance", "insurance"}:
-        target_per += clamp((operating_margin - 0.08) * 10.0, -1.2, 2.8)
+    target_per += clamp((operating_margin - 0.08) * 10.0, -1.2, 2.8)
     target_per += clamp(revenue_growth_3y * 3.5, -1.0, 2.0)
     target_per += clamp(earnings_signal / 100.0 * 1.8, -1.5, 1.8)
     target_per += clamp(forward_signal / 100.0 * 1.3, -1.0, 1.3)
