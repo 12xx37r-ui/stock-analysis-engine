@@ -15,7 +15,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: refresh-published-stocks
+  group: published-stock-feed
   cancel-in-progress: false
 
 jobs:
@@ -60,8 +60,12 @@ jobs:
         run: python validate_valuation_contract.py
       - name: Validate valuation data pipeline v4
         run: python validate_valuation_pipeline_v4.py
+      - name: Validate published cache coherence
+        run: python validate_cache_coherence.py
       - name: Refresh existing background cache
         run: python refresh_published_stocks.py --limit "$LIMIT"
+      - name: Validate active latest index
+        run: python validate_latest_index.py --latest-root data/latest
       - name: Commit refreshed cache
         shell: bash
         run: |

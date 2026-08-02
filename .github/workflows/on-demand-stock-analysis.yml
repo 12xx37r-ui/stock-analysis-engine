@@ -14,7 +14,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: on-demand-${{ inputs.stock_code }}
+  group: published-stock-feed
   cancel-in-progress: false
 jobs:
   analyze:
@@ -82,8 +82,15 @@ jobs:
         run: python validate_valuation_contract.py
       - name: Validate valuation data pipeline v4
         run: python validate_valuation_pipeline_v4.py
+      - name: Validate published cache coherence
+        run: python validate_cache_coherence.py
       - name: Validate signal bridge
         run: python validate_signal_bridge.py
+      - name: Invalidate local target output
+        shell: bash
+        run: |
+          rm -f "output/${STOCK_CODE}.json"
+          echo "Local output cache invalidated: output/${STOCK_CODE}.json"
       - name: Run engine
         run: |
           python main.py --stock-code "$STOCK_CODE" --industry-code "$INDUSTRY_CODE"
@@ -95,6 +102,7 @@ jobs:
           python publish_on_demand.py --stock-file "output/${STOCK_CODE}.json" --latest-root data/latest
           python validate_published_feed.py --file "data/latest/stocks/${STOCK_CODE}.json" --stock-code "$STOCK_CODE"
           python build_valuation_audit.py --latest-root data/latest
+          python validate_latest_index.py --latest-root data/latest
       - name: Commit latest stock with retry
         shell: bash
         run: |
