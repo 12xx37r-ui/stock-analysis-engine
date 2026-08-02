@@ -13,6 +13,8 @@
     "산업코드": "semiconductor",
     "가치평가산업코드": "semiconductor",
     "산업분류출처": "수동 종목매핑",
+    "산업분류신뢰도": 100,
+    "산업프로필버전": "3.0.0",
     "OpenDART기업개황": {
       "수집상태": "정상",
       "응답코드": "000",
@@ -27,8 +29,9 @@
     "OpenDART업종코드": "264",
     "데이터출처": "금융감독원 OpenDART"
   },
-  "생성시각": "2026-08-02T03:06:22.935598",
+  "생성시각": "2026-08-02T14:10:42.566820",
   "재무분석": {
+    "재무분석모형버전": "financial-quality-v2.0.0",
     "재무지표": {
       "ROE": 10.36,
       "부채비율": 29.94,
@@ -38,11 +41,23 @@
     "성장지표": {
       "매출3년성장률": 28.84,
       "영업이익3년성장률": 563.94,
-      "순이익3년성장률": 191.9
+      "순이익3년성장률": 191.9,
+      "매출2년CAGR": 13.51,
+      "영업이익2년CAGR": 157.67,
+      "순이익2년CAGR": 70.85,
+      "자본2년CAGR": 9.53
     },
     "버핏평가": {
       "점수": 80,
       "판정": "버핏형 우수기업",
+      "평가기준": "일반기업 버핏형 품질평가",
+      "점수구성": {
+        "ROE": 10,
+        "재무안정성": 20,
+        "매출성장": 15,
+        "영업이익성장": 20,
+        "영업이익률": 15
+      },
       "좋은점": [
         "ROE는 양호하지만 최고 수준은 아닙니다.",
         "부채비율이 낮아 재무 안전성이 좋습니다.",
@@ -55,108 +70,103 @@
     "투자자해설": {
       "ROE": "ROE는 회사가 주주의 돈을 이용해 얼마나 많은 이익을 만드는지 나타냅니다. 높을수록 자본 활용 능력이 좋습니다.",
       "부채비율": "부채비율은 회사가 가진 자기 돈 대비 빚의 규모입니다. 낮을수록 경기 침체에도 버틸 힘이 있습니다.",
-      "영업이익률": "영업이익률은 물건을 팔고 비용을 제외한 뒤 얼마가 남는지를 보여주는 기업 경쟁력 지표입니다."
+      "영업이익률": "영업이익률은 본업에서 발생한 수익 대비 영업이익의 비율입니다."
     },
     "원본": {
       "매출": 333605938000000.0,
+      "매출전기": 300870903000000.0,
+      "매출전전기": 258935494000000.0,
       "영업이익": 43601051000000.0,
-      "순이익": 45206805000000.0
+      "영업이익전기": 32725961000000.0,
+      "영업이익전전기": 6566976000000.0,
+      "순이익": 45206805000000.0,
+      "순이익전기": 34451351000000.0,
+      "순이익전전기": 15487100000000.0,
+      "자본": 436320337000000.0,
+      "자본전기": 402192070000000.0,
+      "자본전전기": 363677865000000.0,
+      "부채": 130621773000000.0,
+      "매출계정명": "매출액",
+      "영업이익계정명": "영업이익",
+      "순이익계정명": "당기순이익(손실)"
     }
   },
   "시장정보": {
     "현재가": 262500.0,
-    "전일대비": 13000.0,
-    "등락률": 5.210420841683367,
-    "거래량": 63167438,
+    "전일대비": 55500.0,
+    "등락률": 26.81,
+    "거래량": 58478873,
     "시가": 257000.0,
     "고가": 267000.0,
     "저가": 243000.0,
-    "PER": 0.0,
-    "PBR": 0.0,
-    "EPS": 0.0,
-    "BPS": 0.0,
-    "시가총액": 0.0,
+    "PER": 39.99,
+    "PBR": 4.1,
+    "EPS": 6564.0,
+    "BPS": 63997.0,
+    "시가총액": 15346481.0,
     "수급": {
-      "외국인순매수": 0.0,
-      "기관순매수": 0.0,
-      "개인순매수": 0.0
+      "외국인순매수": 8359011.0,
+      "기관순매수": 3618959.0,
+      "개인순매수": -11681307.0
     },
-    "현재가수집상태": "보완성공",
-    "현재가응답메시지": "KIS 현재가·거래량이 비어 Yahoo Chart API로 보완",
-    "데이터출처": "한국투자증권 KIS + Yahoo Finance 보완",
-    "Yahoo심볼": "005930.KS",
-    "Yahoo통화": "KRW",
-    "Yahoo거래소": "KSC",
+    "현재가수집상태": "정상",
+    "현재가응답메시지": "",
+    "데이터출처": "한국투자증권 KIS",
     "과거데이터": {
       "가격추세": {
-        "종가": 0.0,
-        "MA5": 0.0,
-        "MA20": 0.0,
-        "MA60": 0.0,
-        "종가대비MA20": 0.0,
-        "종가대비MA60": 0.0,
-        "5일수익률": 0.0,
-        "20일수익률": 0.0,
-        "60일수익률": 0.0,
-        "RSI14": 0.0,
-        "20일일간변동성": 0.0,
-        "5일평균거래량": 0.0,
-        "20일평균거래량": 0.0,
-        "거래량비율5대20": 0.0
+        "종가": 262500.0,
+        "MA5": 230400.0,
+        "MA20": 262550.0,
+        "MA60": 295883.3333,
+        "종가대비MA20": -0.019,
+        "종가대비MA60": -11.2826,
+        "5일수익률": 5.2104,
+        "20일수익률": -8.2168,
+        "60일수익률": 12.9032,
+        "RSI14": 45.3988,
+        "20일일간변동성": 8.5642,
+        "5일평균거래량": 47132851.2,
+        "20일평균거래량": 32115563.15,
+        "거래량비율5대20": 1.4676
       },
       "누적수급": {
-        "외국인5일": 0.0,
-        "외국인20일": 0.0,
-        "기관5일": 0.0,
-        "기관20일": 0.0,
-        "개인5일": 0.0,
-        "개인20일": 0.0,
-        "외국인기관합산5일": 0.0,
-        "외국인기관합산20일": 0.0
+        "외국인5일": -4409034.0,
+        "외국인20일": -13273410.0,
+        "기관5일": 9204886.0,
+        "기관20일": 8365186.0,
+        "개인5일": -4351601.0,
+        "개인20일": 5483854.0,
+        "외국인기관합산5일": 4795852.0,
+        "외국인기관합산20일": -4908224.0
       },
       "프로그램매매": {
-        "프로그램순매수수량5일": 0.0,
-        "프로그램순매수수량20일": 0.0,
-        "프로그램순매수금액5일": 0.0,
-        "프로그램순매수금액20일": 0.0
+        "프로그램순매수수량5일": -5047761.0,
+        "프로그램순매수수량20일": -6660919.0,
+        "프로그램순매수금액5일": -1043252638350.0,
+        "프로그램순매수금액20일": -1648509950324.0
       },
       "수집상태": {
-        "전체수집상태": "실패",
-        "가격데이터상태": "실패",
-        "가격응답상태": "KIS_DISABLED",
-        "가격응답메시지": "GitHub KIS 호출 비활성화 · GAS 중앙 토큰 사용",
-        "가격데이터개수": 0,
-        "가격최초일": "",
-        "가격최종일": "",
-        "누적수급데이터상태": "실패",
-        "누적수급응답상태": "KIS_DISABLED",
-        "누적수급응답메시지": "GitHub KIS 호출 비활성화 · GAS 중앙 토큰 사용",
-        "누적수급데이터개수": 0,
-        "누적수급조회기준일": "20260720",
-        "누적수급최초일": "",
-        "누적수급최종일": "",
-        "프로그램데이터상태": "실패",
-        "프로그램응답상태": "KIS_DISABLED",
-        "프로그램응답메시지": "GitHub KIS 호출 비활성화 · GAS 중앙 토큰 사용",
-        "프로그램데이터개수": 0
+        "전체수집상태": "정상",
+        "가격데이터상태": "정상",
+        "가격응답상태": "0",
+        "가격응답메시지": "정상처리 되었습니다.",
+        "가격데이터개수": 100,
+        "가격데이터출처": "한국투자증권 KIS",
+        "가격최초일": "20260309",
+        "가격최종일": "20260731",
+        "누적수급데이터상태": "정상",
+        "누적수급응답상태": "0",
+        "누적수급응답메시지": "정상처리 되었습니다.",
+        "누적수급데이터개수": 30,
+        "누적수급조회기준일": "20260731",
+        "누적수급최초일": "20260619",
+        "누적수급최종일": "20260731",
+        "프로그램데이터상태": "정상",
+        "프로그램응답상태": "0",
+        "프로그램응답메시지": "정상처리 되었습니다.",
+        "프로그램데이터개수": 30
       },
-      "수집오류": [
-        {
-          "항목": "가격추세",
-          "응답상태": "KIS_DISABLED",
-          "응답메시지": "GitHub KIS 호출 비활성화 · GAS 중앙 토큰 사용"
-        },
-        {
-          "항목": "누적수급",
-          "응답상태": "KIS_DISABLED",
-          "응답메시지": "GitHub KIS 호출 비활성화 · GAS 중앙 토큰 사용"
-        },
-        {
-          "항목": "프로그램매매",
-          "응답상태": "KIS_DISABLED",
-          "응답메시지": "GitHub KIS 호출 비활성화 · GAS 중앙 토큰 사용"
-        }
-      ],
+      "수집오류": [],
       "데이터출처": "한국투자증권 KIS"
     }
   },
@@ -164,7 +174,7 @@
     "수집상태": "정상",
     "응답코드": "000",
     "응답메시지": "정상",
-    "조회시작일": "20260703",
+    "조회시작일": "20260404",
     "조회종료일": "20260802",
     "공시개수": 100,
     "최근공시": [
@@ -687,8 +697,8 @@
         "MA5": 1443.415991,
         "MA20": 1478.693494,
         "현재값대비MA20": -2.84667,
-        "최종관측시각UTC": "2026-08-01T03:30:52+00:00",
-        "데이터지연시간": 23.579,
+        "최종관측시각UTC": "2026-08-02T03:30:49+00:00",
+        "데이터지연시간": 10.653,
         "데이터개수": 68
       },
       "S&P500": {
@@ -707,7 +717,7 @@
         "MA20": 7481.149487,
         "현재값대비MA20": 0.114564,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 37.594,
+        "데이터지연시간": 48.666,
         "데이터개수": 63
       },
       "나스닥": {
@@ -726,7 +736,7 @@
         "MA20": 25592.412988,
         "현재값대비MA20": -0.854016,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 37.594,
+        "데이터지연시간": 48.666,
         "데이터개수": 63
       },
       "반도체지수": {
@@ -745,7 +755,7 @@
         "MA20": 12048.914893,
         "현재값대비MA20": -6.123662,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 37.594,
+        "데이터지연시간": 48.666,
         "데이터개수": 63
       },
       "VIX": {
@@ -764,7 +774,7 @@
         "MA20": 17.227,
         "현재값대비MA20": -7.180589,
         "최종관측시각UTC": "2026-07-31T07:00:00+00:00",
-        "데이터지연시간": 44.094,
+        "데이터지연시간": 55.166,
         "데이터개수": 65
       },
       "미국10년물": {
@@ -783,7 +793,7 @@
         "MA20": 4.6037,
         "현재값대비MA20": 3.069269,
         "최종관측시각UTC": "2026-07-31T12:20:00+00:00",
-        "데이터지연시간": 38.761,
+        "데이터지연시간": 49.833,
         "데이터개수": 64
       },
       "미국5년물": {
@@ -802,7 +812,7 @@
         "MA20": 4.3392,
         "현재값대비MA20": 2.783924,
         "최종관측시각UTC": "2026-07-31T12:20:00+00:00",
-        "데이터지연시간": 38.761,
+        "데이터지연시간": 49.833,
         "데이터개수": 64
       },
       "미국13주": {
@@ -821,15 +831,15 @@
         "MA20": 3.7196,
         "현재값대비MA20": -1.010863,
         "최종관측시각UTC": "2026-07-31T12:20:00+00:00",
-        "데이터지연시간": 38.761,
+        "데이터지연시간": 49.833,
         "데이터개수": 64
       }
     },
     "분석": {
       "분석상태": "정상",
-      "단기신호": 0.37,
+      "단기신호": 1.27,
       "단기판정": "중립",
-      "단기데이터품질": 100.0,
+      "단기데이터품질": 88.0,
       "단기요소별평가": [
         {
           "요소": "원달러",
@@ -843,7 +853,7 @@
           "요소": "S&P500",
           "신호": 9.29,
           "판정": "중립",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 15.0,
           "설명": "5일 변화 1.05%"
         },
@@ -851,7 +861,7 @@
           "요소": "나스닥",
           "신호": 5.66,
           "판정": "중립",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 20.0,
           "설명": "5일 변화 1.59%"
         },
@@ -859,7 +869,7 @@
           "요소": "반도체지수",
           "신호": -66.81,
           "판정": "매우 부정",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 25.0,
           "설명": "5일 변화 -4.30%"
         },
@@ -867,14 +877,14 @@
           "요소": "VIX",
           "신호": 45.91,
           "판정": "긍정",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 20.0,
           "설명": "현재 15.99"
         }
       ],
-      "중기신호": -16.65,
+      "중기신호": -14.82,
       "중기판정": "중립",
-      "중기데이터품질": 100.0,
+      "중기데이터품질": 88.8,
       "중기요소별평가": [
         {
           "요소": "원달러",
@@ -888,7 +898,7 @@
           "요소": "미국10년물",
           "신호": -40.43,
           "판정": "부정",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 25.0,
           "설명": "20일 변화 5.80%"
         },
@@ -896,7 +906,7 @@
           "요소": "미국5년물",
           "신호": -36.37,
           "판정": "부정",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 15.0,
           "설명": "20일 변화 5.44%"
         },
@@ -904,7 +914,7 @@
           "요소": "미국13주",
           "신호": 16.62,
           "판정": "중립",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 10.0,
           "설명": "20일 변화 0.38%"
         },
@@ -912,7 +922,7 @@
           "요소": "나스닥",
           "신호": 5.66,
           "판정": "중립",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 10.0,
           "설명": "20일 변화 -1.78%"
         },
@@ -920,7 +930,7 @@
           "요소": "반도체지수",
           "신호": -66.81,
           "판정": "매우 부정",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 15.0,
           "설명": "20일 변화 -10.42%"
         }
@@ -928,7 +938,7 @@
       "설명": "국내주식 기준으로 원달러·미국 주가지수·반도체지수·VIX·미국 금리의 방향을 -100~100 신호로 합성했습니다."
     },
     "수집오류": [],
-    "수집시각": "2026-08-02T12:05:38.362186+09:00",
+    "수집시각": "2026-08-02T23:09:58.978597+09:00",
     "데이터출처": "Yahoo Finance Chart API"
   },
   "기업기초데이터": {
@@ -1185,6 +1195,32 @@
       "주식수기준": "유통주식수",
       "결산기준일": "2025-12-31"
     },
+    "잠정실적": {
+      "수집상태": "검토필요",
+      "사용가능": false,
+      "접수번호": "20260730800103",
+      "공시일": "20260730",
+      "보고서명": "[기재정정]연결재무제표기준영업(잠정)실적(공정공시)",
+      "사업연도": 2026,
+      "분기": 2,
+      "기간키": 8106,
+      "기간시작일": "2026-04-01",
+      "기간종료일": "2026-06-30",
+      "기간판정출처": "공시원문 날짜범위",
+      "금액단위": "미확인",
+      "지표": {
+        "매출": 171.5,
+        "영업이익": 89.49,
+        "순이익": 0.0
+      },
+      "데이터품질": 35,
+      "검증사유": [
+        "금액 단위 미확인",
+        "순이익 미확보"
+      ],
+      "데이터출처": "금융감독원 OpenDART 공시서류원본",
+      "주의": "감사 전 잠정실적이며 정식 분기보고서 제출 시 자동 대체"
+    },
     "분석": {
       "분석상태": "정상",
       "분기실적": {
@@ -1255,7 +1291,7 @@
       },
       "데이터출처": "금융감독원 OpenDART"
     },
-    "수집시각": "2026-08-02T12:06:21.703246+09:00",
+    "수집시각": "2026-08-02T23:10:41.358712+09:00",
     "데이터출처": "금융감독원 OpenDART"
   },
   "산업분석": {
@@ -1279,7 +1315,7 @@
         "MA20": 12048.914893,
         "현재값대비MA20": -6.123662,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 37.606,
+        "데이터지연시간": 48.678,
         "데이터개수": 251,
         "산업구간": "산업지수",
         "중기가중치": 20.0,
@@ -1310,7 +1346,7 @@
         "MA20": 571.632002,
         "현재값대비MA20": -5.440908,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 37.606,
+        "데이터지연시간": 48.678,
         "데이터개수": 251,
         "산업구간": "산업ETF",
         "중기가중치": 20.0,
@@ -1341,7 +1377,7 @@
         "MA20": 911.688007,
         "현재값대비MA20": -9.724596,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 37.606,
+        "데이터지연시간": 48.678,
         "데이터개수": 251,
         "산업구간": "메모리",
         "중기가중치": 15.0,
@@ -1372,7 +1408,7 @@
         "MA20": 415.135498,
         "현재값대비MA20": -2.622155,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 37.606,
+        "데이터지연시간": 48.678,
         "데이터개수": 251,
         "산업구간": "파운드리",
         "중기가중치": 15.0,
@@ -1403,7 +1439,7 @@
         "MA20": 1738.18949,
         "현재값대비MA20": -6.281794,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 37.606,
+        "데이터지연시간": 48.678,
         "데이터개수": 251,
         "산업구간": "노광장비",
         "중기가중치": 10.0,
@@ -1434,7 +1470,7 @@
         "MA20": 546.625996,
         "현재값대비MA20": -7.126625,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 37.606,
+        "데이터지연시간": 48.678,
         "데이터개수": 251,
         "산업구간": "반도체장비",
         "중기가중치": 10.0,
@@ -1465,7 +1501,7 @@
         "MA20": 1900400.0,
         "현재값대비MA20": -9.597979,
         "최종관측시각UTC": "2026-07-31T00:00:00+00:00",
-        "데이터지연시간": 51.106,
+        "데이터지연시간": 62.178,
         "데이터개수": 243,
         "산업구간": "메모리·HBM",
         "중기가중치": 10.0,
@@ -1486,8 +1522,8 @@
       "산업코드": "semiconductor",
       "산업명": "반도체",
       "중기산업선행": {
-        "신호": -50.37,
-        "데이터품질": 98.5,
+        "신호": -50.73,
+        "데이터품질": 85.0,
         "판정": "부정",
         "요소별평가": [
           {
@@ -1496,7 +1532,7 @@
             "산업구간": "산업지수",
             "신호": -54.04,
             "판정": "부정",
-            "데이터품질": 100.0,
+            "데이터품질": 85.0,
             "가중치": 20.0,
             "20일변화율": -10.415941,
             "120일변화율": 40.534401
@@ -1507,7 +1543,7 @@
             "산업구간": "산업ETF",
             "신호": -48.53,
             "판정": "부정",
-            "데이터품질": 100.0,
+            "데이터품질": 85.0,
             "가중치": 20.0,
             "20일변화율": -8.738954,
             "120일변화율": 34.577378
@@ -1518,7 +1554,7 @@
             "산업구간": "메모리",
             "신호": -77.62,
             "판정": "매우 부정",
-            "데이터품질": 100.0,
+            "데이터품질": 85.0,
             "가중치": 15.0,
             "20일변화율": -15.635119,
             "120일변화율": 108.525685
@@ -1529,7 +1565,7 @@
             "산업구간": "파운드리",
             "신호": -32.13,
             "판정": "부정",
-            "데이터품질": 100.0,
+            "데이터품질": 85.0,
             "가중치": 15.0,
             "20일변화율": -6.889166,
             "120일변화율": 15.880749
@@ -1540,7 +1576,7 @@
             "산업구간": "노광장비",
             "신호": -25.63,
             "판정": "부정",
-            "데이터품질": 100.0,
+            "데이터품질": 85.0,
             "가중치": 10.0,
             "20일변화율": -7.930728,
             "120일변화율": 15.285808
@@ -1551,7 +1587,7 @@
             "산업구간": "반도체장비",
             "신호": -37.52,
             "판정": "부정",
-            "데이터품질": 100.0,
+            "데이터품질": 85.0,
             "가중치": 10.0,
             "20일변화율": -15.814866,
             "120일변화율": 57.412173
@@ -1570,8 +1606,8 @@
         ]
       },
       "장기산업사이클": {
-        "신호": 62.91,
-        "데이터품질": 97.8,
+        "신호": 63.27,
+        "데이터품질": 85.0,
         "판정": "매우 긍정",
         "요소별평가": [
           {
@@ -1580,7 +1616,7 @@
             "산업구간": "산업지수",
             "신호": 56.67,
             "판정": "긍정",
-            "데이터품질": 100.0,
+            "데이터품질": 85.0,
             "가중치": 15.0,
             "20일변화율": -10.415941,
             "120일변화율": 40.534401
@@ -1591,7 +1627,7 @@
             "산업구간": "산업ETF",
             "신호": 52.36,
             "판정": "긍정",
-            "데이터품질": 100.0,
+            "데이터품질": 85.0,
             "가중치": 15.0,
             "20일변화율": -8.738954,
             "120일변화율": 34.577378
@@ -1602,7 +1638,7 @@
             "산업구간": "메모리",
             "신호": 96.01,
             "판정": "매우 긍정",
-            "데이터품질": 100.0,
+            "데이터품질": 85.0,
             "가중치": 15.0,
             "20일변화율": -15.635119,
             "120일변화율": 108.525685
@@ -1613,7 +1649,7 @@
             "산업구간": "파운드리",
             "신호": 35.68,
             "판정": "긍정",
-            "데이터품질": 100.0,
+            "데이터품질": 85.0,
             "가중치": 15.0,
             "20일변화율": -6.889166,
             "120일변화율": 15.880749
@@ -1624,7 +1660,7 @@
             "산업구간": "노광장비",
             "신호": 44.97,
             "판정": "긍정",
-            "데이터품질": 100.0,
+            "데이터품질": 85.0,
             "가중치": 15.0,
             "20일변화율": -7.930728,
             "120일변화율": 15.285808
@@ -1635,7 +1671,7 @@
             "산업구간": "반도체장비",
             "신호": 85.71,
             "판정": "매우 긍정",
-            "데이터품질": 100.0,
+            "데이터품질": 85.0,
             "가중치": 10.0,
             "20일변화율": -15.814866,
             "120일변화율": 57.412173
@@ -1671,7 +1707,7 @@
       "설명": "반도체 지수·ETF·메모리·파운드리·장비 대표자산의 가격추세와 시장폭을 합성합니다."
     },
     "수집오류": [],
-    "수집시각": "2026-08-02T12:06:22.934452+09:00",
+    "수집시각": "2026-08-02T23:10:42.565561+09:00",
     "데이터출처": "Yahoo Finance Chart API"
   },
   "기술분석": {
@@ -2820,9 +2856,9 @@
         "링크": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxNNE00NjdET2dBLWZ6cUZKMzFjaGNMMTV2R2E1cTJ0NmFhbDdrZHNwOUpQeE9nVy1UdVBuVDhVT1J2TFY3aGU5em5xS0F1VmpPQndLT1djWXZxcERWQmZTOUg5LWExemVpUTNDZFJIRk1nNGN5Z2h3TXZVc0ljNzFyR1FQVjJDUUhtZlJRU2ZHVFZvWEVENmhycm8ybWUtN1ZyRFlJUk5qSzhfRTY3bjA4cV9OanhrbG9ESEZpSjN6ZnFFaUhOREgyTDNCREdkdkJfc3c?oc=5",
         "언론사": "samsung.com",
         "발행시각UTC": "2026-07-29T23:54:00+00:00",
-        "경과일": 3.13,
+        "경과일": 3.59,
         "원점수": 16.0,
-        "최종점수": 14.89,
+        "최종점수": 14.72,
         "매칭규칙": [
           "실적"
         ]
@@ -2832,9 +2868,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE1IUTVza3dGelFMaFhmaEFtUnpBSlRTTTNZVEl5LWl0S3UyWUR6T216REZoNkZDdkZiQzJUTE5PV2RITUZCcVdHWF85ZGF0VjNvRG9CcWZNYWNDUWtMc1E?oc=5",
         "언론사": "YTN",
         "발행시각UTC": "2026-07-30T01:38:00+00:00",
-        "경과일": 3.06,
+        "경과일": 3.52,
         "원점수": 16.0,
-        "최종점수": 14.91,
+        "최종점수": 14.75,
         "매칭규칙": [
           "실적"
         ]
@@ -2844,32 +2880,22 @@
         "링크": "https://news.google.com/rss/articles/CBMidEFVX3lxTE9HRVVJUC10d0ozWF9HWTQ1dklPalh5S2o2RUt3SWpYMXZQOUVOaUZnNTU5Vm44bU9aRlA0UTJ4bE1pbDk3WTBHUlpnaEJnVjNuT1paazFGcHN1MmVEY3FIZDJvYTc3YlZWcmZtLVdUZEJHOWZC0gF0QVVfeXFMTkRrUXpRRW9OTE43VnlPZkI1clp4SzFpZm40VXdvWmxxMngxWnJhUlVBXzNHeExid0s0NzdSYWlOdXgzZlc1VTJpUEY3VFh3aGExZ1lNVmVadjB6OU1OaU5wYmdreGZ3ZXlOaFZRWEs5MXNWa0E?oc=5",
         "언론사": "MBC 뉴스",
         "발행시각UTC": "2026-07-30T00:39:12+00:00",
-        "경과일": 3.1,
+        "경과일": 3.56,
         "원점수": 35.0,
-        "최종점수": 32.59,
+        "최종점수": 32.23,
         "매칭규칙": [
           "실적",
           "최대 실적"
         ]
       },
       {
-        "제목": "삼성전자, 2Q 영업익 89조4천924억원…역대 최대 경신(상보)",
-        "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE11aGlrTm1BcVg0WXFjaWcybEozZlBLWXhwak1DTVFPY0RIcXVWeG9kRC1aQmVmcDY3SW1YdElwNWVFTmU1RGVHR1ZGcXhRcW9rRWdBZVgwMExEM1NkQWNBY0RCbVg5QjBZZktGVjQ2N1c?oc=5",
-        "언론사": "news.einfomax.co.kr",
-        "발행시각UTC": "2026-07-30T00:07:00+00:00",
-        "경과일": 3.12,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
         "제목": "삼성전자 2026년 2분기 실적발표 컨퍼런스콜 전문",
         "링크": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE1VNjlaMDVfZFhaRk01LTNNR1dTT29DbzQ3U2F3bFFjSUhMb0lWWTJ5aDNlT3hFZVcwdTdORUxVdFpGQWVSdXZqWHZTWkhlczdnd1ZWdXdVaEpnQ3Nmb3N4Ty1GaXg3dw?oc=5",
         "언론사": "디일렉",
         "발행시각UTC": "2026-07-30T05:00:38+00:00",
-        "경과일": 2.92,
+        "경과일": 3.38,
         "원점수": 16.0,
-        "최종점수": 14.96,
+        "최종점수": 14.8,
         "매칭규칙": [
           "실적"
         ]
@@ -2879,9 +2905,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE9UZzVyV2VSajhiMEJ1WlFsMDgxWS1tanpsMHltVlhQaXFQMXBLcjlOYnY5dWFNbHFDU2RPTXUyRExxRXVSRmFfTXNMUFBrMnhCczlqU2xsQUZkRTFVeTEyOXk5NUU?oc=5",
         "언론사": "뉴스1",
         "발행시각UTC": "2026-07-29T21:30:00+00:00",
-        "경과일": 3.23,
+        "경과일": 3.69,
         "원점수": 35.0,
-        "최종점수": 32.49,
+        "최종점수": 32.13,
         "매칭규칙": [
           "실적",
           "사상 최대"
@@ -2892,7 +2918,29 @@
         "링크": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5GaHhMczMybkxLaVVPOWFvaFBiMks3WWE0VFNUUE83d2JJbVExUURDR0ZGWkw3bVRTNUlsTjJybW03dEg0dW5MV0gyc3FUT3ZTb2hWNXYwZlBUb3FzQndZVdIBeEFVX3lxTE0wcG1oeTVYUUkxTnRxU2pMN3BOOFMxZHE1azdMQnRzZjNUdzZUYl9QaHp3N1hWdnlsWmR3SVNBSHJoaHI0SmdsU0ZqcnpnNWhXMjU2NDl6cWxLR3ZkNVlyYnpZYjg4emlsdXVaSmRJQXp3RjNfR2NNTw?oc=5",
         "언론사": "뉴시스",
         "발행시각UTC": "2026-07-29T20:00:00+00:00",
-        "경과일": 3.3,
+        "경과일": 3.76,
+        "원점수": 16.0,
+        "최종점수": 14.66,
+        "매칭규칙": [
+          "실적"
+        ]
+      },
+      {
+        "제목": "가전서 희비 갈린 삼성·LG…영업익 2분기째 1조원 격차",
+        "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1qYThMTXZBeC1WRHdwb0NQVUgyT2p0R1ZOOUtUbkQ2Wi1YenZ6X1NaUW85UXJLNGhndDdsRUxFb21KRC12eUJYVF93VlJBMlotWmFqanhDbTcydTTSAWBBVV95cUxQdHpqNHNSc083YnRVaXlLb2J1REY2blRwMmdtRWFjUHU0bGswN09GSkFjeVh5TE93SXdRbE1lYVZpRmZ1dGx0ejcwSGU5a0F3Wks4c1d2TmQ3dWlvbjlpeXo?oc=5",
+        "언론사": "연합뉴스",
+        "발행시각UTC": "2026-08-01T21:03:01+00:00",
+        "경과일": 0.71,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "\"모범 답안이었다\"…삼성전자 실적 발표에 호평 쏟아낸 시장",
+        "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBEaDh6UTZWUjVBZjRpX0FlZl9vYlZnVTlWSUNldnpnTGdlWFVCSnd2c290UWljVUFfbVBWNE1yU2ozMDFpamxSRjBNQnpmdTBtNGVPQWozNGx3QQ?oc=5",
+        "언론사": "한국경제",
+        "발행시각UTC": "2026-07-30T07:15:05+00:00",
+        "경과일": 3.29,
         "원점수": 16.0,
         "최종점수": 14.83,
         "매칭규칙": [
@@ -2900,13 +2948,23 @@
         ]
       },
       {
-        "제목": "\"모범 답안이었다\"…삼성전자 실적 발표에 호평 쏟아낸 시장",
-        "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBEaDh6UTZWUjVBZjRpX0FlZl9vYlZnVTlWSUNldnpnTGdlWFVCSnd2c290UWljVUFfbVBWNE1yU2ozMDFpamxSRjBNQnpmdTBtNGVPQWozNGx3QQ?oc=5",
-        "언론사": "hankyung.com",
-        "발행시각UTC": "2026-07-30T07:15:05+00:00",
-        "경과일": 2.83,
+        "제목": "삼성전자, 특별배당 검토…최태원, SK하이닉스 주식 매입",
+        "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE13X2xmQk9nVzJRem1VM0dMYllNZFhLeW41VGVHbkZmNWctX3NvRk5YS1hIYXRjSWhmQlk1TDgzNGlrbldmSEQ1QWtnZmc5UUVoRFNaNVlaanFSR1VXNnRoM1I5VVYwaU0?oc=5",
+        "언론사": "연합뉴스TV",
+        "발행시각UTC": "2026-07-31T05:43:00+00:00",
+        "경과일": 2.35,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "역대급 실적에도 달랐던 삼전닉스 컨콜…소통은 삼성전자 돋보였다",
+        "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTFB6Y2paN0pLMldqdGNnZElZaXhYbVBzQUNzN1lESTB2c09ZN25QY0NwR2pkWWtPTWtMMFpoSFo4ODR0TTdYRHVaV0swWmVvQmZKZHIwUGlacEVmc0I4ektXYy1FQVNYamVvRGFNQnYwVkU?oc=5",
+        "언론사": "연합인포맥스",
+        "발행시각UTC": "2026-07-30T23:13:06+00:00",
+        "경과일": 2.62,
         "원점수": 16.0,
-        "최종점수": 14.99,
+        "최종점수": 15.07,
         "매칭규칙": [
           "실적"
         ]
@@ -2916,49 +2974,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1LbzZ4Q2NEazZyM2U1c3prblRSdDhVT3kzTjVfSHJfeEpGenU4VzcwanplU2tJcllNOUo0VjFWcVdkbHBhaUtWQlg0NjJKdnM?oc=5",
         "언론사": "v.daum.net",
         "발행시각UTC": "2026-08-01T23:13:04+00:00",
-        "경과일": 0.16,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "삼성전자, 특별배당 검토…최태원, SK하이닉스 주식 매입",
-        "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE13X2xmQk9nVzJRem1VM0dMYllNZFhLeW41VGVHbkZmNWctX3NvRk5YS1hIYXRjSWhmQlk1TDgzNGlrbldmSEQ1QWtnZmc5UUVoRFNaNVlaanFSR1VXNnRoM1I5VVYwaU0?oc=5",
-        "언론사": "연합뉴스TV",
-        "발행시각UTC": "2026-07-31T05:43:00+00:00",
-        "경과일": 1.89,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "[그래픽] 삼성전자 실적 추이",
-        "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFBocjZaOFd4d0JGajVVYzJ6UEowbUh4VlJvUzU2a1JRM1pqUW9NWnFZUWUxcExDYlJCM280eUFyUUdlYld3WnA3RXBiX1FwSXZGb09YSFoxWHhwT3fSAWBBVV95cUxQQ1NCNGlyZ0RVMTIwMS0zLUU5cXd6NU42anJhYjdPYTVlcUYxM0lFbTBnc2tPTXR5UmZidklTekg4VzhjZFlSc0lnM0lsa0RYWkF4ZU93VFhuMncwT2JvTi0?oc=5",
-        "언론사": "연합뉴스",
-        "발행시각UTC": "2026-07-30T00:25:04+00:00",
-        "경과일": 3.11,
-        "원점수": 16.0,
-        "최종점수": 14.89,
-        "매칭규칙": [
-          "실적"
-        ]
-      },
-      {
-        "제목": "삼성전자·SK하이닉스 주식 보유자들은 무조건 주목해야 할 정보",
-        "링크": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFBlRG41XzRXbzk4el9xMkF5bjBiY0dBWk9Xb1VsT1lCeWtWbTdqdThSWVpsSjhBeUZOaGJQUHY4ZXNVaXZDQkhSR21IdVd5cW9KUklLRU1B?oc=5",
-        "언론사": "위키트리",
-        "발행시각UTC": "2026-08-01T22:11:00+00:00",
-        "경과일": 0.2,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "완제품 수익성 갈린 삼성·LG…영업익 2분기째 1조원 격차(종합)",
-        "링크": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE1yUUFSeDk5ek1iQjlIbHFvQkhHcG1EVVJCQ29sX21XTFlncWFFY2NjTG44bkdQeDZEQzV5MExPM05GX3lNN2x3N2lrX2RTWjktWlE?oc=5",
-        "언론사": "매일경제 마켓",
-        "발행시각UTC": "2026-08-02T00:20:45+00:00",
-        "경과일": 0.11,
+        "경과일": 0.62,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2968,7 +2984,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiakFVX3lxTE1fVGZyZTJsdExLNjZQWXhSZmQ3Yl9DMUZTb1hHWVpBMHB4ZkxKNy1RdzQ0NmR2SVZEaWl6TWdFSzN3RnFWRXozMHNnQUVGeVVsQS1uTFJSZlE5V1VGbXpOODlRLVlhaFNpV0E?oc=5",
         "언론사": "한겨레",
         "발행시각UTC": "2026-07-30T02:22:00+00:00",
-        "경과일": 3.03,
+        "경과일": 3.49,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2978,65 +2994,19 @@
         "링크": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxOWGRLbnJfUDhhektCcGZwUF9yM0xUc3JqOUp2MUdqOFJUZEg4ak1SSzNveHpFV3BjM2tBM1BmXzZLOG1zRGhSaGNTd2lQcFFIa0tQV2pSS3FSWDlZSTB6VF9oU0g2UkNwT2Q5X1BoVEYyOFEtdEdobWdnX3A0OG5MOEt6QlFjOTZu?oc=5",
         "언론사": "글로벌이코노믹",
         "발행시각UTC": "2026-07-31T05:32:15+00:00",
-        "경과일": 1.9,
+        "경과일": 2.36,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
-      },
-      {
-        "제목": "삼성전자, 2026년 2분기 잠정실적 발표",
-        "링크": "https://news.google.com/rss/articles/CBMi6gFBVV95cUxPSTFTNU05WEdQbXhJY1ptQy05S2dqRU5qUzB5V3RuT05tY1pzeENtX2tDUUp6bUtXalBtaWdXU2ZWWnJjTkQzZkVnaF94V3hKSTk3LWpZSkgya2dnWFh4LWlqNzllSEd2ZVE5U1Frd3I5MDk5dUZqVzhSN1Qwek93VW45TjBWbV9pOTRnT0lNclNJcXlpRVhhdkJ2bHB3OVVwdU1abFUwYXVPLUxWVV9yc3JPajRtaVhLVERFNUtiWjhlQ3Q2U25PMmdrS3ZrZ2RrXzQxWW1LQlFaaGJ4MElBb3B1SF8xc0ZscWc?oc=5",
-        "언론사": "samsung.com",
-        "발행시각UTC": "2026-07-07T07:00:00+00:00",
-        "경과일": 25.84,
-        "원점수": 16.0,
-        "최종점수": 6.81,
-        "매칭규칙": [
-          "실적"
-        ]
-      },
-      {
-        "제목": "역대급 실적에도 달랐던 삼전닉스 컨콜…소통은 삼성전자 돋보였다",
-        "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTFB6Y2paN0pLMldqdGNnZElZaXhYbVBzQUNzN1lESTB2c09ZN25QY0NwR2pkWWtPTWtMMFpoSFo4ODR0TTdYRHVaV0swWmVvQmZKZHIwUGlacEVmc0I4ektXYy1FQVNYamVvRGFNQnYwVkU?oc=5",
-        "언론사": "news.einfomax.co.kr",
-        "발행시각UTC": "2026-07-30T23:13:06+00:00",
-        "경과일": 2.16,
-        "원점수": 16.0,
-        "최종점수": 15.23,
-        "매칭규칙": [
-          "실적"
-        ]
-      },
-      {
-        "제목": "삼성전자, 반도체 스타트업 투자·기술 확보에 8천억 출자",
-        "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE5DYlNsVzJmdk9iXzB2Ml9kSXdGSXdnejBpc0lGMDJiMzUtOVNkV1NoOUZLU1F6aFBlUGpSZ0VtbXdMbHRoTVN3TWE5cGs1dTlfbmdMWkZVZV80VWfSAWBBVV95cUxPeUZMTUJVRGdMTW1qM3Nyc1NxYmF1UkpkSG1La29sa3Vnc3l2c0U3MzVuOUppaV9rSWgyWUx4MkttLUNiazVEaUNyTGp1X012OU1ZS0xZZjFUUFh2QW9qbHc?oc=5",
-        "언론사": "연합뉴스",
-        "발행시각UTC": "2026-07-30T08:19:50+00:00",
-        "경과일": 2.78,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "삼성전자 실적 이끈 반도체…전사 이익의 99.7%",
-        "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBWZ2ttbkJkYWVIUW5pbWRoLWNrWXNkOER2bzY5SWlXNEY5YWZnSE0tV3Zadzhyc0stejhVN2RXcXZJZV9GejRIZXBsVVhqbEs2ekRQLVVtRHJqWXNHdk5ZdHBOX1diLTBuandZekRVRVI?oc=5",
-        "언론사": "news.einfomax.co.kr",
-        "발행시각UTC": "2026-07-30T00:23:56+00:00",
-        "경과일": 3.11,
-        "원점수": 16.0,
-        "최종점수": 14.89,
-        "매칭규칙": [
-          "실적"
-        ]
       },
       {
         "제목": "'메모리 호조' 삼성, 분기 기준 '역대 최대 실적'… “하반기도 메모리 숏티지”",
         "링크": "https://news.google.com/rss/articles/CBMiTkFVX3lxTFBuamdhbWMxNVZJenI3QWpKYUdTZVdSdnlVQVRVRGRITVU5bDZnS0thN1hlc0JlMEp5RkFRRUxzQkFyYm01SU1oUWpjQXgtQQ?oc=5",
         "언론사": "전자신문",
         "발행시각UTC": "2026-07-30T05:07:11+00:00",
-        "경과일": 2.92,
+        "경과일": 3.38,
         "원점수": 35.0,
-        "최종점수": 32.73,
+        "최종점수": 32.37,
         "매칭규칙": [
           "실적",
           "최대 실적"
@@ -3047,22 +3017,80 @@
         "링크": "https://news.google.com/rss/articles/CBMiakFVX3lxTE1CZ24wMF9sNmN6Z2VKdXdQczRaMThZb1dITTF0OHB3ampVOHV0Y2ctU0dtV2s2ZGo1R2I0NmZtNHdCNklDVndLblQwQ1FGRnB0UnQ5MlcxN2l4V1ItUHJjeFB0amJJS2JkanfSAW5BVV95cUxNMzlJTWJNVzVWUm1iNzRnb3lKR3VkdWNaQUFFZ3ZnM05Ea3lhbjlPQnd3QkNnZmtzRmlmNVJlMUhtOTMzTnlEbS1sdFhYa3ctR3A5T01nLTlKVTBOTHpnSmdkZXdPTHUtWUIzcXlpQQ?oc=5",
         "언론사": "주간조선",
         "발행시각UTC": "2026-07-30T00:21:39+00:00",
-        "경과일": 3.11,
+        "경과일": 3.58,
         "원점수": 35.0,
-        "최종점수": 32.58,
+        "최종점수": 32.22,
         "매칭규칙": [
           "실적",
           "최대 실적"
         ]
       },
       {
+        "제목": "삼성전자 실적에도 코스피 또 하락…개미 ’팔자’",
+        "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTFBmWnNXTG5iY0pmTkhQbFF2N0Ixb1dxbGU0RVNYTlN4ZVR2bUhOd2NLM29pOWNKcUZRN01MY1lRa05oNF9tbU93VXR4cEMxM01qUHhPX2k2ZXNuZGZoQ0FIdGVqWnJTTFU?oc=5",
+        "언론사": "연합뉴스TV",
+        "발행시각UTC": "2026-07-30T07:08:00+00:00",
+        "경과일": 3.29,
+        "원점수": 16.0,
+        "최종점수": 14.83,
+        "매칭규칙": [
+          "실적"
+        ]
+      },
+      {
+        "제목": "삼성전자, 2026년 2분기 잠정실적 발표",
+        "링크": "https://news.google.com/rss/articles/CBMi6gFBVV95cUxPSTFTNU05WEdQbXhJY1ptQy05S2dqRU5qUzB5V3RuT05tY1pzeENtX2tDUUp6bUtXalBtaWdXU2ZWWnJjTkQzZkVnaF94V3hKSTk3LWpZSkgya2dnWFh4LWlqNzllSEd2ZVE5U1Frd3I5MDk5dUZqVzhSN1Qwek93VW45TjBWbV9pOTRnT0lNclNJcXlpRVhhdkJ2bHB3OVVwdU1abFUwYXVPLUxWVV9yc3JPajRtaVhLVERFNUtiWjhlQ3Q2U25PMmdrS3ZrZ2RrXzQxWW1LQlFaaGJ4MElBb3B1SF8xc0ZscWc?oc=5",
+        "언론사": "samsung.com",
+        "발행시각UTC": "2026-07-07T07:00:00+00:00",
+        "경과일": 26.3,
+        "원점수": 16.0,
+        "최종점수": 6.65,
+        "매칭규칙": [
+          "실적"
+        ]
+      },
+      {
+        "제목": "[그래픽] 삼성전자 실적 추이",
+        "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFBocjZaOFd4d0JGajVVYzJ6UEowbUh4VlJvUzU2a1JRM1pqUW9NWnFZUWUxcExDYlJCM280eUFyUUdlYld3WnA3RXBiX1FwSXZGb09YSFoxWHhwT3fSAWBBVV95cUxQQ1NCNGlyZ0RVMTIwMS0zLUU5cXd6NU42anJhYjdPYTVlcUYxM0lFbTBnc2tPTXR5UmZidklTekg4VzhjZFlSc0lnM0lsa0RYWkF4ZU93VFhuMncwT2JvTi0?oc=5",
+        "언론사": "연합뉴스",
+        "발행시각UTC": "2026-07-30T00:25:04+00:00",
+        "경과일": 3.57,
+        "원점수": 16.0,
+        "최종점수": 14.73,
+        "매칭규칙": [
+          "실적"
+        ]
+      },
+      {
+        "제목": "삼성전자 실적 이끈 반도체…전사 이익의 99.7%",
+        "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBWZ2ttbkJkYWVIUW5pbWRoLWNrWXNkOER2bzY5SWlXNEY5YWZnSE0tV3Zadzhyc0stejhVN2RXcXZJZV9GejRIZXBsVVhqbEs2ekRQLVVtRHJqWXNHdk5ZdHBOX1diLTBuandZekRVRVI?oc=5",
+        "언론사": "연합인포맥스",
+        "발행시각UTC": "2026-07-30T00:23:56+00:00",
+        "경과일": 3.57,
+        "원점수": 16.0,
+        "최종점수": 14.73,
+        "매칭규칙": [
+          "실적"
+        ]
+      },
+      {
+        "제목": "삼성전자, 반도체 스타트업 투자·기술 확보에 8천억 출자",
+        "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE5DYlNsVzJmdk9iXzB2Ml9kSXdGSXdnejBpc0lGMDJiMzUtOVNkV1NoOUZLU1F6aFBlUGpSZ0VtbXdMbHRoTVN3TWE5cGs1dTlfbmdMWkZVZV80VWfSAWBBVV95cUxPeUZMTUJVRGdMTW1qM3Nyc1NxYmF1UkpkSG1La29sa3Vnc3l2c0U3MzVuOUppaV9rSWgyWUx4MkttLUNiazVEaUNyTGp1X012OU1ZS0xZZjFUUFh2QW9qbHc?oc=5",
+        "언론사": "연합뉴스",
+        "발행시각UTC": "2026-07-30T08:19:50+00:00",
+        "경과일": 3.24,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
         "제목": "삼성전자·SK하이닉스, 2분기 나란히 최대 실적…AI 메모리 '쌍끌이'",
         "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE9jQU9ySUo5WW5abzA5ODRfRWVOcUc4a3NvV1dhUV9udUphWFpFOFBvZmJRc2NObVZtLWR2dlBNNW1CTEtHZ2pBcmhCUzFkekNmTU9ZQkJHdWxQSWM5clBSWnNIZlhLOEpS?oc=5",
         "언론사": "ebn.co.kr",
         "발행시각UTC": "2026-07-28T23:40:44+00:00",
-        "경과일": 4.14,
+        "경과일": 4.6,
         "원점수": 35.0,
-        "최종점수": 31.78,
+        "최종점수": 31.42,
         "매칭규칙": [
           "실적",
           "최대 실적"
@@ -3073,19 +3101,29 @@
         "링크": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE5oajNfcmtlQ3BuUGhpNU1HLTRJWHJxNElWLTQ2RHBWYmJOWk5LZzhRb0tyTUp5OEt3cTBlNWpOMzdwRldXN1VfVVRESEU3eHpRWGlfbmpUYzdYMm1KRkE?oc=5",
         "언론사": "YTN",
         "발행시각UTC": "2026-07-07T07:00:00+00:00",
-        "경과일": 25.84,
+        "경과일": 26.3,
         "원점수": 16.0,
-        "최종점수": 6.81,
+        "최종점수": 6.65,
         "매칭규칙": [
           "실적"
         ]
       },
       {
+        "제목": "삼성전자·SK하이닉스 주식 보유자들은 무조건 주목해야 할 정보",
+        "링크": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFBlRG41XzRXbzk4el9xMkF5bjBiY0dBWk9Xb1VsT1lCeWtWbTdqdThSWVpsSjhBeUZOaGJQUHY4ZXNVaXZDQkhSR21IdVd5cW9KUklLRU1B?oc=5",
+        "언론사": "위키트리",
+        "발행시각UTC": "2026-08-01T22:11:00+00:00",
+        "경과일": 0.67,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
         "제목": "삼성전자, 반도체 스타트업 투자·DX 신기술 확보에 8000억 출자",
         "링크": "https://news.google.com/rss/articles/CBMigwFBVV95cUxOXzZqck9wby1wYkxRQUtVOUluSWZ6bllMRVlzeS10LXVFUndrVF9KMWFpN2RWcllsRHNqQ0NTVW5RQS05TzdLMFpmTFA2NXdiWmFuREZyYTVTSDdTMlIyaGhDTzduT01jd1c2VURpS0xFUUY3WTJaSmExUmtRZVNmWFdMNA?oc=5",
-        "언론사": "인베스트조선",
+        "언론사": "investchosun.com",
         "발행시각UTC": "2026-07-30T09:15:00+00:00",
-        "경과일": 2.74,
+        "경과일": 3.2,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -3093,9 +3131,19 @@
       {
         "제목": "삼성전자 \"로봇 사업 경쟁력 확보…인수합병 등 투자 검토 중\"",
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBQTHhoSlJlVzZOV1k5eXJpWHR5NzBxd2V1LVFNd19jT0pER1pwdC1NTElvUEloMWNIejFsRG0xeXZZOWtaMm81WVBsMTJtMEJCS0hwZENnalo4MnVERXM5OUlYc1p0QTk3QU1Ec09uTHI?oc=5",
-        "언론사": "news.einfomax.co.kr",
+        "언론사": "연합인포맥스",
         "발행시각UTC": "2026-07-30T02:31:59+00:00",
-        "경과일": 3.02,
+        "경과일": 3.48,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "상한가 친 SK하이닉스·27% 뛴 삼성전자…증권가 \"더 오른다\"",
+        "링크": "https://news.google.com/rss/articles/CBMiRkFVX3lxTE5Oa25mVngwX3BFOE42V0pydVpVUFhCd1BLVWhxbVR6Q19uMFllUVRyV3FSWm9QWjBOMWlXRGh0czh1V3hROVE?oc=5",
+        "언론사": "v.daum.net",
+        "발행시각UTC": "2026-08-02T01:46:06+00:00",
+        "경과일": 0.52,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -3105,54 +3153,39 @@
         "링크": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNU3U0OTV2SEdUWXVnZGw1RDBCc2NWdVBYNFJPc3g0YjVsSDFkN21Zb3laazBPU3FqSGxQSHdSNkM5bG9WTGhsSXlmX2FOX2dyNC1adFY5QWZ5ek5NaWdRNXJyMGFnN1dSTklQRS1udXVXR1Z6RlhZcENLX0JfWnBVd0dsVThkYWJF?oc=5",
         "언론사": "글로벌이코노믹",
         "발행시각UTC": "2026-07-31T00:01:23+00:00",
-        "경과일": 2.13,
+        "경과일": 2.59,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
       },
       {
-        "제목": "삼성전자 최대 실적에도 주가 30만원 깨졌다, 왜?",
-        "링크": "https://news.google.com/rss/articles/CBMigAFBVV95cUxOQm9wczVfNjFBcFFBR1VhLUc4U3owVEhGOFd2emJLeHVHbE9VVlplMHRzS3JRLUJaOElBODhNa09kM2lQOFZvc3F1YlZyOGlaWlpDa2lleHR2Z3FJeTF5WGk3Wm4zV1NKeGFla1V5aTYyMWN0WXJoeEJpLVhwdmRFWA?oc=5",
-        "언론사": "조선일보",
-        "발행시각UTC": "2026-07-08T07:00:00+00:00",
-        "경과일": 24.84,
-        "원점수": 35.0,
-        "최종점수": 15.68,
-        "매칭규칙": [
-          "실적",
-          "최대 실적"
-        ]
+        "제목": "삼성전자 아니다…외국인이 싹쓸이한 '1위' 주식의 정체",
+        "링크": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE1PUk9QSk54SXFhRXlvdy1vZmVHdTlYZXg1ZkVHYnVYZFU0Y1pTd0hHa240NmtESDZWcjJ6VEN2aDdId1Y5WnpSMnBHTzBDMElTck5RQUpB?oc=5",
+        "언론사": "위키트리",
+        "발행시각UTC": "2026-08-02T06:54:00+00:00",
+        "경과일": 0.3,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "삼성전자, 내년 HBM 점유율 SK하이닉스 추월 전망…“HBM4 전환 속도 앞서” - 조선비즈",
+        "링크": "https://news.google.com/rss/articles/CBMiggFBVV95cUxOa2RCSThEVWMyeWFoN2N0SnJBX1JYOFVNcXJFZmp3MlFwNlFtbml4OVJIUHBUcDBrZHdiUXJDUXUydzNJeU05djlwcmFlckc0VTZBcWtHY0pxWTVJU0ZlMDJIMEdjUUxzV0JyaWVUNTR2SDNpeFl6ajdHRTluQkJOUHRB0gGWAUFVX3lxTE10REVjZlNLT1JJRDFJd1c5WjJpNUNDNkk1bnBUa2dKbVlEcHo4d1haSm9rRE5NMFhIQmZSVnd2NEEwckxRb1NqYzdHaWdjbTA1Vk5KWDlkakg2ZXA4eFVoeUxMQ3JtY3VvS1pRVlNPLUR0R1NheFREd3FjUkg4T0JDaFFtS3FfTWNqMm4xcHI0YmpWVUNQQQ?oc=5",
+        "언론사": "Chosunbiz",
+        "발행시각UTC": "2026-07-31T05:24:00+00:00",
+        "경과일": 2.37,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
       },
       {
         "제목": "“영업익 99%가 반도체”⋯ 삼성전자, 실적 편중 과제 남겼다",
         "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE91YVc4NTlzeGtDdm9Wb016SktCZDRUeGtDY2lvdktmWl9GNl9fdmtyNWd1WWEzTkR0ZlBsNDBIaFlBQzdScFhiaE1JUVRuRUZwQTNDbTF1bk9vUQ?oc=5",
         "언론사": "브릿지경제",
         "발행시각UTC": "2026-07-30T05:02:00+00:00",
-        "경과일": 2.92,
+        "경과일": 3.38,
         "원점수": 16.0,
-        "최종점수": 14.96,
-        "매칭규칙": [
-          "실적"
-        ]
-      },
-      {
-        "제목": "삼전닉스 4755조원 국내 투자, ‘글로벌 반도체 초격차’ 승부수",
-        "링크": "https://news.google.com/rss/articles/CBMickFVX3lxTE8tczNucHhuVi1uOVVINFBfQzhQM1kwcVk5RGVYSE5BRGRIczNkYjYwcVIzYTlvb25ET19NbkZUSmtTcjNmdkNmNllfMDVTakgxZWZGd0s0U3k2LUdyb3NGaG9URm9uanBENU5iZS03QWhwZw?oc=5",
-        "언론사": "한겨레",
-        "발행시각UTC": "2026-08-02T01:51:00+00:00",
-        "경과일": 0.05,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "삼성전자 호실적도 못 살린 코스피…폭락 후 반등 못해",
-        "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTFBOUTRNN3VSMzVueVE0N2k5Y0d4Q0VEN01JTUs1ZTlELVNsT05PUWdFbGJZRWFURFVKZ2VXQ254d1VTaTMwYzA0MU5mR2cyTEdDdTdEdkJuMEVscUNnY212dFdSZk5nSjQ?oc=5",
-        "언론사": "연합뉴스TV",
-        "발행시각UTC": "2026-07-30T10:30:00+00:00",
-        "경과일": 2.69,
-        "원점수": 16.0,
-        "최종점수": 15.04,
+        "최종점수": 14.8,
         "매칭규칙": [
           "실적"
         ]
@@ -3163,18 +3196,18 @@
       "신호": 100.0,
       "데이터품질": 88.0,
       "판정": "매우 긍정",
-      "긍정뉴스개수": 18,
+      "긍정뉴스개수": 17,
       "부정뉴스개수": 0,
-      "중립뉴스개수": 12,
+      "중립뉴스개수": 13,
       "긍정뉴스": [
         {
           "제목": "삼성전자, 2026년 2분기 실적 발표",
           "링크": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxNNE00NjdET2dBLWZ6cUZKMzFjaGNMMTV2R2E1cTJ0NmFhbDdrZHNwOUpQeE9nVy1UdVBuVDhVT1J2TFY3aGU5em5xS0F1VmpPQndLT1djWXZxcERWQmZTOUg5LWExemVpUTNDZFJIRk1nNGN5Z2h3TXZVc0ljNzFyR1FQVjJDUUhtZlJRU2ZHVFZvWEVENmhycm8ybWUtN1ZyRFlJUk5qSzhfRTY3bjA4cV9OanhrbG9ESEZpSjN6ZnFFaUhOREgyTDNCREdkdkJfc3c?oc=5",
           "언론사": "samsung.com",
           "발행시각UTC": "2026-07-29T23:54:00+00:00",
-          "경과일": 3.13,
+          "경과일": 3.59,
           "원점수": 16.0,
-          "최종점수": 14.89,
+          "최종점수": 14.72,
           "매칭규칙": [
             "실적"
           ]
@@ -3184,9 +3217,9 @@
           "링크": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE1IUTVza3dGelFMaFhmaEFtUnpBSlRTTTNZVEl5LWl0S3UyWUR6T216REZoNkZDdkZiQzJUTE5PV2RITUZCcVdHWF85ZGF0VjNvRG9CcWZNYWNDUWtMc1E?oc=5",
           "언론사": "YTN",
           "발행시각UTC": "2026-07-30T01:38:00+00:00",
-          "경과일": 3.06,
+          "경과일": 3.52,
           "원점수": 16.0,
-          "최종점수": 14.91,
+          "최종점수": 14.75,
           "매칭규칙": [
             "실적"
           ]
@@ -3196,9 +3229,9 @@
           "링크": "https://news.google.com/rss/articles/CBMidEFVX3lxTE9HRVVJUC10d0ozWF9HWTQ1dklPalh5S2o2RUt3SWpYMXZQOUVOaUZnNTU5Vm44bU9aRlA0UTJ4bE1pbDk3WTBHUlpnaEJnVjNuT1paazFGcHN1MmVEY3FIZDJvYTc3YlZWcmZtLVdUZEJHOWZC0gF0QVVfeXFMTkRrUXpRRW9OTE43VnlPZkI1clp4SzFpZm40VXdvWmxxMngxWnJhUlVBXzNHeExid0s0NzdSYWlOdXgzZlc1VTJpUEY3VFh3aGExZ1lNVmVadjB6OU1OaU5wYmdreGZ3ZXlOaFZRWEs5MXNWa0E?oc=5",
           "언론사": "MBC 뉴스",
           "발행시각UTC": "2026-07-30T00:39:12+00:00",
-          "경과일": 3.1,
+          "경과일": 3.56,
           "원점수": 35.0,
-          "최종점수": 32.59,
+          "최종점수": 32.23,
           "매칭규칙": [
             "실적",
             "최대 실적"
@@ -3209,9 +3242,9 @@
           "링크": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE1VNjlaMDVfZFhaRk01LTNNR1dTT29DbzQ3U2F3bFFjSUhMb0lWWTJ5aDNlT3hFZVcwdTdORUxVdFpGQWVSdXZqWHZTWkhlczdnd1ZWdXdVaEpnQ3Nmb3N4Ty1GaXg3dw?oc=5",
           "언론사": "디일렉",
           "발행시각UTC": "2026-07-30T05:00:38+00:00",
-          "경과일": 2.92,
+          "경과일": 3.38,
           "원점수": 16.0,
-          "최종점수": 14.96,
+          "최종점수": 14.8,
           "매칭규칙": [
             "실적"
           ]
@@ -3221,9 +3254,9 @@
           "링크": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE9UZzVyV2VSajhiMEJ1WlFsMDgxWS1tanpsMHltVlhQaXFQMXBLcjlOYnY5dWFNbHFDU2RPTXUyRExxRXVSRmFfTXNMUFBrMnhCczlqU2xsQUZkRTFVeTEyOXk5NUU?oc=5",
           "언론사": "뉴스1",
           "발행시각UTC": "2026-07-29T21:30:00+00:00",
-          "경과일": 3.23,
+          "경과일": 3.69,
           "원점수": 35.0,
-          "최종점수": 32.49,
+          "최종점수": 32.13,
           "매칭규칙": [
             "실적",
             "사상 최대"
@@ -3234,55 +3267,160 @@
       "설명": "최근 뉴스 제목의 실적·수주·투자·증자·소송 등 규칙과 시간가중치를 합성합니다."
     },
     "데이터출처": "Google News RSS",
-    "수집시각UTC": "2026-08-02T03:05:35.417630+00:00"
+    "수집시각UTC": "2026-08-02T14:09:56.575612+00:00"
   },
   "가치평가": {
-    "가치평가계약버전": "3.0",
-    "가치평가엔진버전": "6.6.1-valuation-contract-v3",
+    "가치평가계약버전": "4.0",
+    "가치평가엔진버전": "6.7.2-valuation-contract-v4",
+    "가치평가모형개정버전": "future-growth-v1.0.1-insurance-financials",
+    "미래성장모형버전": "1.0.0",
     "산출상태": "정상",
     "최종값사용가능": true,
-    "최종값출처": "Python 가치평가 계약 v3",
+    "최종값출처": "Python 가치평가 계약 v4",
+    "데이터자격검사": {
+      "버전": "1.1.0",
+      "통과": true,
+      "상태": "주의통과",
+      "핵심검사": {
+        "정식재무최신성": true,
+        "연속TTM": true,
+        "주식수": true,
+        "평가EPS": true,
+        "산업프로필": true,
+        "가치모형수": true,
+        "최신잠정실적정량화": false,
+        "정식보고서대체평가가능": true
+      },
+      "중단사유": [],
+      "주의사유": [
+        "최신 잠정실적 미정량화: 최신 정식보고서 기준 평가"
+      ],
+      "정식재무기준분기키": 8105,
+      "기대정식재무분기키": 8105,
+      "잠정실적분기키": 8106,
+      "유효재무분기키": 8105,
+      "잠정실적감지": true,
+      "잠정실적반영": false,
+      "잠정실적미정량화": true,
+      "정식보고서대체평가": true,
+      "평가기준": "최신 정식보고서 기준·잠정실적 미반영",
+      "산업분류신뢰도": 100,
+      "산업프로필버전": "3.0.0",
+      "극단적괴리": false
+    },
+    "산업프로필버전": "3.0.0",
+    "산업분류신뢰도": 100,
+    "정식재무기준분기키": 8105,
+    "유효재무기준분기키": 8105,
+    "잠정실적": {
+      "수집상태": "검토필요",
+      "사용가능": false,
+      "접수번호": "20260730800103",
+      "공시일": "20260730",
+      "보고서명": "[기재정정]연결재무제표기준영업(잠정)실적(공정공시)",
+      "사업연도": 2026,
+      "분기": 2,
+      "기간키": 8106,
+      "기간시작일": "2026-04-01",
+      "기간종료일": "2026-06-30",
+      "기간판정출처": "공시원문 날짜범위",
+      "금액단위": "미확인",
+      "지표": {
+        "매출": 171.5,
+        "영업이익": 89.49,
+        "순이익": 0.0
+      },
+      "데이터품질": 35,
+      "검증사유": [
+        "금액 단위 미확인",
+        "순이익 미확보"
+      ],
+      "데이터출처": "금융감독원 OpenDART 공시서류원본",
+      "주의": "감사 전 잠정실적이며 정식 분기보고서 제출 시 자동 대체"
+    },
     "현재가": 262500.0,
-    "실제PER": 20.66784041283898,
-    "실제PBR": 3.5764357179893334,
-    "EPS": 12700.891566635742,
-    "BPS": 73397.09719362078,
+    "실제PER": 39.99,
+    "실제PBR": 4.1,
+    "EPS": 6564.0,
+    "BPS": 63997.0,
     "발행주식수추정": 6630180138,
     "발행주식수출처": "OpenDART 주식의 총수 현황",
-    "발행주식수품질": 98,
+    "발행주식수품질": 100,
+    "발행주식수결정원칙": "현재가·시가총액 미사용, OpenDART 유통주식수 우선",
     "발행주식수후보": [
       {
         "출처": "OpenDART 주식의 총수 현황",
         "주식수": 6630180138
+      },
+      {
+        "출처": "연간순이익÷KIS EPS",
+        "주식수": 6887081810
+      },
+      {
+        "출처": "자본총계÷KIS BPS",
+        "주식수": 7604043565
       }
     ],
     "TTMEPS": 12700.89,
-    "정상화EPS": 6224.85,
+    "정상화EPS": 6275.72,
     "분기런레이트EPS": 28491.09,
-    "FY1예상EPS": 14939.86,
-    "FY2예상EPS": 16418.91,
-    "평가EPS": 13195.73,
-    "선행EPS": 14939.86,
+    "FY1예상EPS": 14954.87,
+    "FY2예상EPS": 16435.4,
+    "FY3예상EPS": 19722.48,
+    "FY4예상EPS": 22286.41,
+    "평가EPS": 13213.13,
+    "선행EPS": 14954.87,
     "FY1성장률": 18.0,
     "FY2성장률": 9.9,
+    "FY3성장률": 20.0,
+    "FY4성장률": 13.0,
     "TTM기준기간": "2025Q2~2026Q1",
     "TTM데이터품질": 95,
+    "TTM잠정실적반영": false,
+    "TTM현금흐름기준": "정식보고서 TTM",
     "목표PER": 22.0,
-    "목표PBR": 1.18,
-    "암시PER": 21.95,
-    "암시PBR": 3.95,
-    "PER기준적정가": 290306.12,
-    "PBR기준적정가": 86910.56,
-    "잔여이익가치": 76931.9,
+    "목표PBR": 1.5,
+    "암시PER": 22.18,
+    "암시PBR": 4.58,
+    "PER기준적정가": 290688.84,
+    "PBR기준적정가": 95786.86,
+    "그레이엄가치": 120543.71,
+    "정상화회복가치": 124259.32,
+    "잔여이익가치": 105285.29,
     "FCF가치": 78382.04,
-    "실적전환보정가": 300693.35,
-    "복합기업대용가치합산": 282191.58,
+    "실적전환보정가": 301061.88,
+    "미래성장가치": 361426.41,
+    "미래성장모형": {
+      "버전": "1.0.0",
+      "사용가능": true,
+      "차단사유": [],
+      "선정근거": [
+        "최근 분기 영업이익 고성장",
+        "향후이익 방향 대용지표 강세",
+        "장기 산업사이클 우호"
+      ],
+      "FY3성장률": 20.0,
+      "FY4성장률": 13.0,
+      "FY3EPS": 19722.484310830383,
+      "FY4EPS": 22286.40727123833,
+      "출구PER": 22.0,
+      "할인율": 10.7,
+      "할인기간연수": 3.0,
+      "원시가치": 361426.4074637453,
+      "가치상한": 450567.7023606741,
+      "상한적용": false,
+      "가치": 361426.4074637453,
+      "가중치": 0.1476,
+      "품질": 82,
+      "현재가미사용": true
+    },
+    "복합기업대용가치합산": 282468.94,
     "순현금주당가치": 8107.31,
-    "재무적정가": 289634.93,
-    "기본적정가": 289634.93,
-    "보수적적정가": 185795.91,
-    "성장적정가": 324748.82,
-    "현재가대비": 10.34,
+    "재무적정가": 293009.12,
+    "기본적정가": 293009.12,
+    "보수적적정가": 186040.86,
+    "성장적정가": 390340.52,
+    "현재가대비": 11.62,
     "판단": "저평가",
     "가치평가산업코드": "semiconductor",
     "가치평가산업프로필": "삼성전자 복합기술기업 대용 가치합산",
@@ -3291,38 +3429,43 @@
     "산업분류출처": "수동 종목매핑",
     "OpenDART업종코드": "264",
     "산업신호반영": true,
-    "산업종합신호": 23.26,
+    "산업종합신호": 23.37,
     "산업국면": "장기상승 중 단기조정",
     "실적전환방향": "실적 급상승 전환",
     "실적전환강도": 619.04,
+    "구조적실적가속": false,
+    "가치평가국면": "구조적 성장·미래이익 혼합",
+    "이익저점보정": false,
+    "자산대비이익가치배수": 0.33,
+    "그레이엄대비이익가치배수": 0.415,
     "분기매출성장률": 69.16,
     "분기영업이익성장률": 756.1,
     "분기순이익성장률": 474.32,
-    "데이터신뢰도": 93,
-    "모형신뢰도": 78,
-    "가치신뢰도": 78,
-    "가치신뢰도등급": "B",
+    "데이터신뢰도": 72,
+    "모형신뢰도": 64,
+    "가치신뢰도": 69,
+    "가치신뢰도등급": "C",
     "가치신뢰도정의": "자료완전성과 모형합의도이며 실제 적중률이 아님",
-    "모형분산배수": 1.066,
-    "전체모형분산배수": 3.909,
+    "모형분산배수": 2.998,
+    "전체모형분산배수": 4.611,
     "모형상세": [
       {
         "모형": "선행·정상화 이익가치",
-        "값": 290306.12,
+        "값": 290688.84,
         "기본가중치": 0.58,
         "역할": "기준",
         "기준가반영": true
       },
       {
         "모형": "복합기업 대용 가치합산",
-        "값": 282191.58,
+        "값": 282468.94,
         "기본가중치": 0.24,
         "역할": "기준",
         "기준가반영": true
       },
       {
         "모형": "실적전환 가치",
-        "값": 300693.35,
+        "값": 301061.88,
         "기본가중치": 0.12,
         "역할": "기준",
         "기준가반영": true
@@ -3336,17 +3479,31 @@
       },
       {
         "모형": "PBR 하단가치",
-        "값": 86910.56,
+        "값": 95786.86,
         "기본가중치": 0.06,
         "역할": "하단",
         "기준가반영": false
       },
       {
         "모형": "잔여이익 하단가치",
-        "값": 76931.9,
+        "값": 105285.29,
         "기본가중치": 0.06,
         "역할": "하단",
         "기준가반영": false
+      },
+      {
+        "모형": "그레이엄 결합가치",
+        "값": 120543.71,
+        "기본가중치": 0.04,
+        "역할": "보조",
+        "기준가반영": true
+      },
+      {
+        "모형": "미래 성장가치",
+        "값": 361426.41,
+        "기본가중치": 0.1476,
+        "역할": "성장",
+        "기준가반영": true
       }
     ],
     "제외모형": [
@@ -3366,58 +3523,60 @@
       "현재가는 적정가 산식에 넣지 않고 계산 완료 후 괴리 검증에만 사용했습니다.",
       "반도체·메모리 사이클 업종 프로필을 적용했습니다.",
       "사업부 세부 손익 자동수집이 없어 진짜 SOTP가 아닌 복합기업 대용 가치합산을 적용했습니다.",
-      "기업 유형에 부적합하거나 이익가치에서 과도하게 벗어난 하단모형은 기준가에서 제외했습니다."
+      "기업 유형에 부적합하거나 독립 가치앵커에서 과도하게 벗어난 모형은 기준가에서 제외했습니다.",
+      "구조적 성장 증거가 확인된 경우에만 FY3·FY4 성장률을 감쇠 적용하고 업종별 EPS·가치 상한 및 할인율을 거친 미래 성장가치를 일부 반영했습니다.",
+      "최신 잠정실적 공시는 감지했지만 핵심 계정을 신뢰성 있게 정량화하지 못해, 최신 법정 정식보고서의 연속 TTM만으로 적정가를 산출하고 신뢰도 상한을 낮췄습니다."
     ]
   },
   "주가예측": {
-    "엔진버전": "6.6.1-valuation-contract-v3",
+    "엔진버전": "6.7.2-valuation-contract-v4",
     "단기1~5일": {
       "기간": "1~5일",
-      "점수": 56,
+      "점수": 51,
       "상승확률": 51,
       "판정": "중립",
-      "신뢰도": 31,
-      "신뢰도등급": "매우 낮음",
+      "신뢰도": 86,
+      "신뢰도등급": "높음",
       "요소별평가": [
         {
           "요소": "파생시장·프로그램",
           "가중치": 30,
-          "신호": 0.0,
-          "신호판정": "중립",
-          "데이터품질": 0.0,
-          "점수기여": 0.0,
+          "신호": -73.52,
+          "신호판정": "매우 부정",
+          "데이터품질": 70.0,
+          "점수기여": -22.06,
           "출처": "KIS 종목별 프로그램매매",
-          "설명": "5일 수량 0, 20일 수량 0, 5일 거래량대비 0.000%, 20일 거래량대비 0.000%"
+          "설명": "5일 수량 -5047761, 20일 수량 -6660919, 5일 거래량대비 -3.143%, 20일 거래량대비 -1.037%"
         },
         {
           "요소": "외국인·기관수급",
           "가중치": 25,
-          "신호": 0.0,
-          "신호판정": "중립",
-          "데이터품질": 0.0,
-          "점수기여": 0.0,
+          "신호": 100.0,
+          "신호판정": "매우 긍정",
+          "데이터품질": 100.0,
+          "점수기여": 25.0,
           "출처": "KIS 투자자별 당일 매매",
-          "설명": "외국인+기관 합산 0주, 거래량 대비 0.000%"
+          "설명": "외국인+기관 합산 11977970주, 거래량 대비 20.483%"
         },
         {
           "요소": "기술·거래량",
           "가중치": 20,
-          "신호": 26.16,
-          "신호판정": "긍정",
-          "데이터품질": 45.0,
-          "점수기여": 5.23,
-          "출처": "KIS 현재가 대용",
-          "설명": "5일수익률 0.00%, RSI14 0.00"
+          "신호": -33.21,
+          "신호판정": "부정",
+          "데이터품질": 100.0,
+          "점수기여": -6.64,
+          "출처": "KIS 일봉+현재가",
+          "설명": "5일수익률 5.21%, RSI14 45.40"
         },
         {
           "요소": "환율·글로벌",
           "가중치": 15,
-          "신호": 0.37,
+          "신호": 1.27,
           "신호판정": "중립",
-          "데이터품질": 100.0,
-          "점수기여": 0.06,
+          "데이터품질": 88.0,
+          "점수기여": 0.19,
           "출처": "Yahoo 글로벌시장 분석",
-          "설명": "분석상태 정상, 신호 0.37"
+          "설명": "분석상태 정상, 신호 1.27"
         },
         {
           "요소": "뉴스·공시",
@@ -3430,25 +3589,23 @@
           "설명": "분석상태 정상, 신호 64.99"
         }
       ],
-      "미수집요소": [
-        "파생시장·프로그램",
-        "외국인·기관수급"
-      ],
-      "약한대용지표": [
-        "기술·거래량"
-      ],
+      "미수집요소": [],
+      "약한대용지표": [],
       "근거": [
-        "일봉·당일 가격 흐름이 상승",
+        "시장 프로그램매매가 순매도 우위",
+        "외국인·기관 순매수가 거래량 대비 매우 강함",
+        "개인 매도 물량을 외국인·기관이 흡수",
+        "일봉·당일 가격 흐름이 하락",
         "최근 공시 이벤트가 긍정적"
       ]
     },
     "중기1~8주": {
       "기간": "1~8주",
       "점수": 58,
-      "상승확률": 54,
+      "상승확률": 56,
       "판정": "상승 우위",
-      "신뢰도": 69,
-      "신뢰도등급": "보통",
+      "신뢰도": 89,
+      "신뢰도등급": "높음",
       "요소별평가": [
         {
           "요소": "분기실적",
@@ -3463,42 +3620,42 @@
         {
           "요소": "산업선행지표",
           "가중치": 25,
-          "신호": -50.37,
+          "신호": -50.73,
           "신호판정": "부정",
-          "데이터품질": 98.5,
-          "점수기여": -12.59,
+          "데이터품질": 85.0,
+          "점수기여": -12.68,
           "출처": "반도체 산업 대표자산 합성",
           "설명": "산업국면 장기상승 중 단기조정"
         },
         {
           "요소": "누적수급",
           "가중치": 15,
-          "신호": 0.0,
-          "신호판정": "중립",
-          "데이터품질": 0.0,
-          "점수기여": 0.0,
+          "신호": 30.79,
+          "신호판정": "긍정",
+          "데이터품질": 100.0,
+          "점수기여": 4.62,
           "출처": "KIS 투자자별 일별 매매",
-          "설명": "5일 합산 0주, 20일 합산 0주"
+          "설명": "5일 합산 4795852주, 20일 합산 -4908224주"
         },
         {
           "요소": "환율·금리·거시",
           "가중치": 15,
-          "신호": -16.65,
+          "신호": -14.82,
           "신호판정": "중립",
-          "데이터품질": 100.0,
-          "점수기여": -2.5,
+          "데이터품질": 88.8,
+          "점수기여": -2.22,
           "출처": "Yahoo 환율·미국금리·글로벌시장",
-          "설명": "분석상태 정상, 신호 -16.65"
+          "설명": "분석상태 정상, 신호 -14.82"
         },
         {
           "요소": "가격추세",
           "가중치": 10,
-          "신호": 0.0,
-          "신호판정": "중립",
-          "데이터품질": 0.0,
-          "점수기여": 0.0,
+          "신호": -57.8,
+          "신호판정": "부정",
+          "데이터품질": 100.0,
+          "점수기여": -5.78,
           "출처": "KIS 일봉",
-          "설명": "20일수익률 0.00%, 60일수익률 0.00%"
+          "설명": "20일수익률 -8.22%, 60일수익률 12.90%"
         },
         {
           "요소": "뉴스·공시",
@@ -3511,23 +3668,22 @@
           "설명": "분석상태 정상, 신호 64.99"
         }
       ],
-      "미수집요소": [
-        "누적수급",
-        "가격추세"
-      ],
+      "미수집요소": [],
       "약한대용지표": [],
       "근거": [
         "최신 실적 성장 신호가 매우 강함",
         "반도체 산업 선행 흐름이 비우호적",
+        "외국인·기관 5일·20일 누적수급이 우호적",
+        "20일·60일 가격추세가 비우호적",
         "최근 공시 이벤트가 중기 방향에 긍정적"
       ]
     },
     "장기6~18개월": {
       "기간": "6~18개월",
-      "점수": 84,
+      "점수": 85,
       "상승확률": 74,
       "판정": "강한 상승 우위",
-      "신뢰도": 87,
+      "신뢰도": 84,
       "신뢰도등급": "높음",
       "요소별평가": [
         {
@@ -3543,22 +3699,22 @@
         {
           "요소": "산업사이클",
           "가중치": 25,
-          "신호": 62.91,
+          "신호": 63.27,
           "신호판정": "매우 긍정",
-          "데이터품질": 97.8,
-          "점수기여": 15.73,
+          "데이터품질": 85.0,
+          "점수기여": 15.82,
           "출처": "반도체 산업 대표자산 1년 추세",
           "설명": "산업국면 장기상승 중 단기조정"
         },
         {
           "요소": "가치평가·안전마진",
           "가중치": 20,
-          "신호": 25.85,
+          "신호": 29.05,
           "신호판정": "긍정",
           "데이터품질": 100.0,
-          "점수기여": 5.17,
+          "점수기여": 5.81,
           "출처": "내부 가치평가",
-          "설명": "현재가 대비 10.34%, 판단 저평가"
+          "설명": "현재가 대비 11.62%, 판단 저평가"
         },
         {
           "요소": "경쟁력·시장점유율",
@@ -3605,15 +3761,15 @@
     },
     "데이터완전성": {
       "KIS현재가": true,
-      "KIS당일수급": false,
-      "KIS일봉": false,
+      "KIS당일수급": true,
+      "KIS일봉": true,
       "멀티타임프레임차트": true,
-      "KIS누적수급": false,
-      "KIS프로그램매매": false,
+      "KIS누적수급": true,
+      "KIS프로그램매매": true,
       "현재가": true,
-      "가격이력": false,
-      "누적수급": false,
-      "프로그램매매": false,
+      "가격이력": true,
+      "누적수급": true,
+      "프로그램매매": true,
       "DART기본재무": true,
       "DART분기실적": true,
       "DART현금흐름": true,
@@ -3632,10 +3788,10 @@
   },
   "화면브리지": {
     "스키마버전": "2.0",
-    "엔진버전": "6.6.1-valuation-contract-v3",
+    "엔진버전": "6.7.2-valuation-contract-v4",
     "종목코드": "005930",
-    "생성시각": "2026-08-02T03:06:22.935598",
-    "연결상태": "부분",
+    "생성시각": "2026-08-02T14:10:42.566820",
+    "연결상태": "정상",
     "기술분석": {
       "수집상태": "정상",
       "데이터출처": "Yahoo Finance Chart API 5년 일봉",
@@ -3716,65 +3872,65 @@
     "예측": {
       "단기": {
         "기간": "1~5일",
-        "점수": 56,
+        "점수": 51,
         "상승확률": 51,
         "판정": "중립",
-        "자료신뢰도": 31,
-        "신뢰도": 31,
-        "자료신뢰도등급": "매우 낮음",
-        "신뢰도등급": "매우 낮음",
+        "자료신뢰도": 86,
+        "신뢰도": 86,
+        "자료신뢰도등급": "높음",
+        "신뢰도등급": "높음",
         "요소별평가": [
           {
             "요소": "파생시장·프로그램",
-            "사용가능": false,
+            "사용가능": true,
             "가중치": 30.0,
-            "신호": 0.0,
-            "판정": "중립",
-            "신호판정": "중립",
-            "데이터상태": "미수집",
-            "데이터품질": 0.0,
-            "점수기여": 0.0,
+            "신호": -73.52,
+            "판정": "매우 부정",
+            "신호판정": "매우 부정",
+            "데이터상태": "정상",
+            "데이터품질": 70.0,
+            "점수기여": -22.06,
             "출처": "KIS 종목별 프로그램매매",
-            "설명": "5일 수량 0, 20일 수량 0, 5일 거래량대비 0.000%, 20일 거래량대비 0.000%"
+            "설명": "5일 수량 -5047761, 20일 수량 -6660919, 5일 거래량대비 -3.143%, 20일 거래량대비 -1.037%"
           },
           {
             "요소": "외국인·기관수급",
-            "사용가능": false,
+            "사용가능": true,
             "가중치": 25.0,
-            "신호": 0.0,
-            "판정": "중립",
-            "신호판정": "중립",
-            "데이터상태": "미수집",
-            "데이터품질": 0.0,
-            "점수기여": 0.0,
+            "신호": 100.0,
+            "판정": "매우 긍정",
+            "신호판정": "매우 긍정",
+            "데이터상태": "정상",
+            "데이터품질": 100.0,
+            "점수기여": 25.0,
             "출처": "KIS 투자자별 당일 매매",
-            "설명": "외국인+기관 합산 0주, 거래량 대비 0.000%"
+            "설명": "외국인+기관 합산 11977970주, 거래량 대비 20.483%"
           },
           {
             "요소": "기술·거래량",
             "사용가능": true,
             "가중치": 20.0,
-            "신호": 26.16,
-            "판정": "긍정",
-            "신호판정": "긍정",
+            "신호": -33.21,
+            "판정": "부정",
+            "신호판정": "부정",
             "데이터상태": "정상",
-            "데이터품질": 45.0,
-            "점수기여": 5.23,
-            "출처": "KIS 현재가 대용",
-            "설명": "5일수익률 0.00%, RSI14 0.00"
+            "데이터품질": 100.0,
+            "점수기여": -6.64,
+            "출처": "KIS 일봉+현재가",
+            "설명": "5일수익률 5.21%, RSI14 45.40"
           },
           {
             "요소": "환율·글로벌",
             "사용가능": true,
             "가중치": 15.0,
-            "신호": 0.37,
+            "신호": 1.27,
             "판정": "중립",
             "신호판정": "중립",
             "데이터상태": "정상",
-            "데이터품질": 100.0,
-            "점수기여": 0.06,
+            "데이터품질": 88.0,
+            "점수기여": 0.19,
             "출처": "Yahoo 글로벌시장 분석",
-            "설명": "분석상태 정상, 신호 0.37"
+            "설명": "분석상태 정상, 신호 1.27"
           },
           {
             "요소": "뉴스·공시",
@@ -3790,20 +3946,17 @@
             "설명": "분석상태 정상, 신호 64.99"
           }
         ],
-        "미수집요소": [
-          "파생시장·프로그램",
-          "외국인·기관수급"
-        ]
+        "미수집요소": []
       },
       "중기": {
         "기간": "1~8주",
         "점수": 58,
-        "상승확률": 54,
+        "상승확률": 56,
         "판정": "상승 우위",
-        "자료신뢰도": 69,
-        "신뢰도": 69,
-        "자료신뢰도등급": "보통",
-        "신뢰도등급": "보통",
+        "자료신뢰도": 89,
+        "신뢰도": 89,
+        "자료신뢰도등급": "높음",
+        "신뢰도등급": "높음",
         "요소별평가": [
           {
             "요소": "분기실적",
@@ -3822,53 +3975,53 @@
             "요소": "산업선행지표",
             "사용가능": true,
             "가중치": 25.0,
-            "신호": -50.37,
+            "신호": -50.73,
             "판정": "부정",
             "신호판정": "부정",
             "데이터상태": "정상",
-            "데이터품질": 98.5,
-            "점수기여": -12.59,
+            "데이터품질": 85.0,
+            "점수기여": -12.68,
             "출처": "반도체 산업 대표자산 합성",
             "설명": "산업국면 장기상승 중 단기조정"
           },
           {
             "요소": "누적수급",
-            "사용가능": false,
+            "사용가능": true,
             "가중치": 15.0,
-            "신호": 0.0,
-            "판정": "중립",
-            "신호판정": "중립",
-            "데이터상태": "미수집",
-            "데이터품질": 0.0,
-            "점수기여": 0.0,
+            "신호": 30.79,
+            "판정": "긍정",
+            "신호판정": "긍정",
+            "데이터상태": "정상",
+            "데이터품질": 100.0,
+            "점수기여": 4.62,
             "출처": "KIS 투자자별 일별 매매",
-            "설명": "5일 합산 0주, 20일 합산 0주"
+            "설명": "5일 합산 4795852주, 20일 합산 -4908224주"
           },
           {
             "요소": "환율·금리·거시",
             "사용가능": true,
             "가중치": 15.0,
-            "신호": -16.65,
+            "신호": -14.82,
             "판정": "중립",
             "신호판정": "중립",
             "데이터상태": "정상",
-            "데이터품질": 100.0,
-            "점수기여": -2.5,
+            "데이터품질": 88.8,
+            "점수기여": -2.22,
             "출처": "Yahoo 환율·미국금리·글로벌시장",
-            "설명": "분석상태 정상, 신호 -16.65"
+            "설명": "분석상태 정상, 신호 -14.82"
           },
           {
             "요소": "가격추세",
-            "사용가능": false,
+            "사용가능": true,
             "가중치": 10.0,
-            "신호": 0.0,
-            "판정": "중립",
-            "신호판정": "중립",
-            "데이터상태": "미수집",
-            "데이터품질": 0.0,
-            "점수기여": 0.0,
+            "신호": -57.8,
+            "판정": "부정",
+            "신호판정": "부정",
+            "데이터상태": "정상",
+            "데이터품질": 100.0,
+            "점수기여": -5.78,
             "출처": "KIS 일봉",
-            "설명": "20일수익률 0.00%, 60일수익률 0.00%"
+            "설명": "20일수익률 -8.22%, 60일수익률 12.90%"
           },
           {
             "요소": "뉴스·공시",
@@ -3884,18 +4037,15 @@
             "설명": "분석상태 정상, 신호 64.99"
           }
         ],
-        "미수집요소": [
-          "누적수급",
-          "가격추세"
-        ]
+        "미수집요소": []
       },
       "장기": {
         "기간": "6~18개월",
-        "점수": 84,
+        "점수": 85,
         "상승확률": 74,
         "판정": "강한 상승 우위",
-        "자료신뢰도": 87,
-        "신뢰도": 87,
+        "자료신뢰도": 84,
+        "신뢰도": 84,
         "자료신뢰도등급": "높음",
         "신뢰도등급": "높음",
         "요소별평가": [
@@ -3916,12 +4066,12 @@
             "요소": "산업사이클",
             "사용가능": true,
             "가중치": 25.0,
-            "신호": 62.91,
+            "신호": 63.27,
             "판정": "매우 긍정",
             "신호판정": "매우 긍정",
             "데이터상태": "정상",
-            "데이터품질": 97.8,
-            "점수기여": 15.73,
+            "데이터품질": 85.0,
+            "점수기여": 15.82,
             "출처": "반도체 산업 대표자산 1년 추세",
             "설명": "산업국면 장기상승 중 단기조정"
           },
@@ -3929,14 +4079,14 @@
             "요소": "가치평가·안전마진",
             "사용가능": true,
             "가중치": 20.0,
-            "신호": 25.85,
+            "신호": 29.05,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
             "데이터품질": 100.0,
-            "점수기여": 5.17,
+            "점수기여": 5.81,
             "출처": "내부 가치평가",
-            "설명": "현재가 대비 10.34%, 판단 저평가"
+            "설명": "현재가 대비 11.62%, 판단 저평가"
           },
           {
             "요소": "경쟁력·시장점유율",
@@ -3984,22 +4134,22 @@
     "요소상태": {
       "거시환경": {
         "사용가능": true,
-        "점수": -16.65,
-        "데이터품질": 100.0,
+        "점수": -14.82,
+        "데이터품질": 88.8,
         "판정": "중립",
         "출처": "Yahoo Finance Chart API"
       },
       "산업선행지표": {
         "사용가능": true,
-        "점수": -50.37,
-        "데이터품질": 98.5,
+        "점수": -50.73,
+        "데이터품질": 85.0,
         "판정": "부정",
         "출처": "Yahoo Finance Chart API"
       },
       "산업사이클": {
         "사용가능": true,
-        "점수": 62.91,
-        "데이터품질": 97.8,
+        "점수": 63.27,
+        "데이터품질": 85.0,
         "판정": "매우 긍정",
         "출처": "Yahoo Finance Chart API"
       },
@@ -4019,21 +4169,19 @@
       },
       "외국인기관수급": {
         "사용가능": true,
-        "점수": 0.0,
-        "데이터품질": 0.0,
-        "판정": "중립",
+        "점수": 25.0,
+        "데이터품질": 100.0,
+        "판정": "매우 긍정",
         "출처": "한국투자증권 KIS"
       },
       "프로그램매매": {
-        "사용가능": false,
-        "점수": 0.0,
-        "데이터품질": 0.0,
-        "판정": "중립",
+        "사용가능": true,
+        "점수": -22.06,
+        "데이터품질": 70.0,
+        "판정": "매우 부정",
         "출처": "한국투자증권 KIS 종목별 프로그램매매"
       }
     },
-    "검증오류": [
-      "프로그램매매 미연결"
-    ]
+    "검증오류": []
   }
 }
