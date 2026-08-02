@@ -63,6 +63,8 @@ jobs:
         run: python validate_industry_profiles.py
       - name: Validate valuation profiles
         run: python validate_valuation_profiles.py
+      - name: Validate valuation contract v3
+        run: python validate_valuation_contract.py
       - name: Validate signal bridge
         run: python validate_signal_bridge.py
       - name: Run engine
