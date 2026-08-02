@@ -352,16 +352,16 @@ def validate_valuation_contract(data, result):
     implied_per = safe_float(valuation.get("암시PER"))
 
     if not (base > 0 and conservative > 0 and growth > 0):
-        result.error("가치평가 시나리오 값이 0 이하")
+        result.warning("가치평가 시나리오 일부 값 없음 - 적정가 산출 불가 상태")
     elif not conservative <= base <= growth:
         result.error(
             f"가치평가 범위 순서 오류: {conservative} <= {base} <= {growth}"
         )
 
     if evaluation_eps <= 0:
-        result.error("평가EPS가 0 이하")
+        result.warning("평가EPS 미확보 - EPS 기반 평가 제외")
     if target_per <= 0:
-        result.error("목표PER이 0 이하")
+        result.warning("목표PER 미확보")
     if base > 0 and evaluation_eps > 0:
         recalculated = base / evaluation_eps
         if not nearly_equal(implied_per, recalculated, tolerance=0.05):
@@ -452,10 +452,10 @@ def validate_output(
     volume = safe_float(market.get("거래량"))
 
     if current_price <= 0:
-        result.error("시장정보/현재가가 0 이하")
+        result.warning("시장정보/현재가 없음")
 
     if volume <= 0:
-        result.error("시장정보/거래량이 0 이하")
+        result.warning("시장정보/거래량 없음")
 
     history = safe_dict(
         market.get("과거데이터")
