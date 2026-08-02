@@ -1,4 +1,4 @@
-"""Build a repository-wide valuation audit feed.
+"""Build a repository-wide valuation audit feed and synchronize index status.
 
 This audit never moves fair values toward market prices. It only flags stale,
 misclassified, incomplete, or structurally inconsistent valuation inputs.
@@ -11,18 +11,16 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, List
 
+from feed_contract import (
+    EXPECTED_ENGINE_VERSION,
+    EXPECTED_INDUSTRY_PROFILE,
+    EXPECTED_VALUATION_CONTRACT,
+    inspect_published_stock,
+    safe_dict,
+    safe_list,
+)
+
 KST = timezone(timedelta(hours=9))
-EXPECTED_ENGINE = "6.7.0-valuation-contract-v4"
-EXPECTED_CONTRACT = "4.0"
-EXPECTED_PROFILE = "3.0.0"
-
-
-def safe_dict(value: Any) -> Dict[str, Any]:
-    return value if isinstance(value, dict) else {}
-
-
-def safe_list(value: Any) -> List[Any]:
-    return value if isinstance(value, list) else []
 
 
 def safe_float(value: Any, default: float = 0.0) -> float:
@@ -41,6 +39,13 @@ def load(path: Path) -> Dict[str, Any]:
         return {"_load_error": f"{type(error).__name__}: {error}"}
 
 
+def write_json(path: Path, payload: Dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    temporary.replace(path)
+
+
 def audit_stock(path: Path) -> Dict[str, Any]:
     stock = load(path)
     code = str(stock.get("KIS종목코드", path.stem)).zfill(6)
@@ -49,19 +54,12 @@ def audit_stock(path: Path) -> Dict[str, Any]:
     qualification = safe_dict(valuation.get("데이터자격검사"))
     market = safe_dict(stock.get("시장정보"))
 
-    critical: List[str] = []
+    compatible, contract_reasons = inspect_published_stock(stock, path.stem)
+    critical: List[str] = list(contract_reasons)
     warnings: List[str] = []
     if stock.get("_load_error"):
         critical.append(str(stock["_load_error"]))
-    if valuation.get("가치평가엔진버전") != EXPECTED_ENGINE:
-        critical.append("구형 또는 불일치 가치평가 엔진")
-    if valuation.get("가치평가계약버전") != EXPECTED_CONTRACT:
-        critical.append("가치평가 계약버전 불일치")
-    if valuation.get("산업프로필버전") != EXPECTED_PROFILE:
-        critical.append("산업 프로필 버전 불일치")
-    if not qualification:
-        critical.append("데이터자격검사 누락")
-    elif qualification.get("통과") is not True:
+    if qualification and qualification.get("통과") is not True:
         critical.extend(str(item) for item in safe_list(qualification.get("중단사유")))
     warnings.extend(str(item) for item in safe_list(qualification.get("주의사유")))
 
@@ -79,7 +77,7 @@ def audit_stock(path: Path) -> Dict[str, Any]:
         warnings.append("구조적 실적가속인데 FY1 EPS 성장률 10% 미만")
 
     classification_confidence = int(safe_float(valuation.get("산업분류신뢰도"), 0))
-    if classification_confidence < 70:
+    if compatible and classification_confidence < 70:
         warnings.append(f"산업분류 신뢰도 {classification_confidence}점")
 
     provisional = safe_dict(valuation.get("잠정실적"))
@@ -93,6 +91,7 @@ def audit_stock(path: Path) -> Dict[str, Any]:
         "종목코드": code,
         "기업명": company,
         "상태": status,
+        "활성인덱스적격": compatible,
         "최종값사용가능": valuation.get("최종값사용가능") is True,
         "현재가": price,
         "기본적정가": base,
@@ -105,6 +104,32 @@ def audit_stock(path: Path) -> Dict[str, Any]:
         "주의": warnings,
         "파일": path.name,
     }
+
+
+def sync_index_status(index_path: Path, summary: Dict[str, int]) -> None:
+    if not index_path.exists():
+        return
+    index = load(index_path)
+    if index.get("_load_error"):
+        return
+
+    if summary["FAIL"] > 0:
+        status = "WARNING"
+        description = (
+            f"감사 FAIL {summary['FAIL']}개는 활성 인덱스에서 제외되어 있으며 재분석이 필요합니다."
+        )
+    elif summary["REVIEW"] > 0:
+        status = "REVIEW"
+        description = f"활성 종목 중 검토 경고 {summary['REVIEW']}개가 있습니다."
+    else:
+        status = "PASS"
+        description = "게시 종목 전체가 현재 계약과 감사 기준을 통과했습니다."
+
+    index["상태"] = status
+    index["상태설명"] = description
+    index["가치평가감사요약"] = summary
+    index["가치평가감사시각"] = datetime.now(KST).isoformat()
+    write_json(index_path, index)
 
 
 def main() -> int:
@@ -123,19 +148,20 @@ def main() -> int:
         "FAIL": sum(row["상태"] == "FAIL" for row in rows),
     }
     payload = {
-        "버전": "1.0.0",
+        "버전": "1.1.0",
         "생성시각": datetime.now(KST).isoformat(),
-        "기대엔진버전": EXPECTED_ENGINE,
-        "기대계약버전": EXPECTED_CONTRACT,
-        "기대산업프로필버전": EXPECTED_PROFILE,
+        "기대엔진버전": EXPECTED_ENGINE_VERSION,
+        "기대계약버전": EXPECTED_VALUATION_CONTRACT,
+        "기대산업프로필버전": EXPECTED_INDUSTRY_PROFILE,
         "종목수": len(rows),
+        "활성인덱스적격종목수": sum(row["활성인덱스적격"] for row in rows),
         "요약": summary,
         "문제종목": [row for row in rows if row["상태"] != "PASS"],
         "전체감사": rows,
     }
     output = Path(args.output) if args.output else latest_root / "valuation_audit.json"
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    write_json(output, payload)
+    sync_index_status(latest_root / "index.json", summary)
     print("VALUATION AUDIT", summary, "=>", output)
     return 0
 

@@ -1,17 +1,16 @@
-"""Validate the GAS-facing latest stock feed and normalized screen bridge."""
+"""Validate one GAS-facing stock JSON against the current publication contract."""
 
 import argparse
 import json
 import sys
 from pathlib import Path
 
-
-def safe_dict(value):
-    return value if isinstance(value, dict) else {}
-
-
-def safe_list(value):
-    return value if isinstance(value, list) else []
+from feed_contract import (
+    EXPECTED_ENGINE_VERSION,
+    inspect_published_stock,
+    safe_dict,
+    safe_list,
+)
 
 
 def fail(message, errors):
@@ -26,28 +25,10 @@ def main():
 
     path = Path(args.file)
     data = json.loads(path.read_text(encoding="utf-8"))
-    errors = []
-
-    if str(data.get("KIS종목코드", "")).zfill(6) != args.stock_code:
-        fail("종목코드 불일치", errors)
-
-    prediction = safe_dict(data.get("주가예측"))
-    if prediction.get("엔진버전") != "6.7.0-valuation-contract-v4":
-        fail("엔진버전 불일치", errors)
+    compatible, errors = inspect_published_stock(data, args.stock_code)
+    errors = list(errors)
 
     valuation = safe_dict(data.get("가치평가"))
-    if valuation.get("가치평가계약버전") != "4.0":
-        fail("가치평가 계약버전 4.0 누락", errors)
-    if valuation.get("가치평가엔진버전") != "6.7.0-valuation-contract-v4":
-        fail("가치평가 엔진버전 불일치", errors)
-    qualification = safe_dict(valuation.get("데이터자격검사"))
-    if not qualification:
-        fail("데이터자격검사 누락", errors)
-    elif valuation.get("최종값사용가능") is True and qualification.get("통과") is not True:
-        fail("최종값 사용가능인데 데이터자격검사 미통과", errors)
-    elif valuation.get("최종값사용가능") is not True:
-        if qualification.get("통과") is not False or not safe_list(qualification.get("중단사유")):
-            fail("최종값 사용보류 사유 누락", errors)
     base = float(valuation.get("기본적정가") or 0)
     low = float(valuation.get("보수적적정가") or 0)
     high = float(valuation.get("성장적정가") or 0)
@@ -61,11 +42,6 @@ def main():
             fail("삼성전자 적정가가 현재가의 50% 미만", errors)
 
     bridge = safe_dict(data.get("화면브리지"))
-    if bridge.get("스키마버전") != "2.0":
-        fail("화면브리지 스키마 2.0 누락", errors)
-    if str(bridge.get("종목코드", "")).zfill(6) != args.stock_code:
-        fail("화면브리지 종목코드 불일치", errors)
-
     technical = safe_dict(bridge.get("기술분석"))
     for key in ("일봉", "주봉", "월봉"):
         item = safe_dict(technical.get(key))
@@ -96,7 +72,8 @@ def main():
         if key not in elements:
             fail(f"화면브리지 요소 누락: {key}", errors)
 
-    if errors:
+    errors = list(dict.fromkeys(errors))
+    if errors or not compatible:
         print("PUBLISHED FEED VALIDATION: FAIL")
         for message in errors:
             print("-", message)
@@ -104,7 +81,7 @@ def main():
 
     print("PUBLISHED FEED VALIDATION: PASS")
     print("- stock:", args.stock_code)
-    print("- engine:", prediction.get("엔진버전"))
+    print("- engine:", EXPECTED_ENGINE_VERSION)
     print("- bridge:", bridge.get("스키마버전"), bridge.get("연결상태"))
     print("- technical observations:", {
         key: safe_dict(technical.get(key)).get("관측수")

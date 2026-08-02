@@ -1,23 +1,20 @@
-"""Refresh already-published engine files with one reusable KIS token per batch.
+"""Refresh already-published stock files with current engine/contract versions.
 
-When GitHub repository secrets KIS_APP_KEY and KIS_APP_SECRET are present,
-all stocks in the batch share the same 23-hour token cache file. If the secrets
-are absent, Yahoo price history remains available and KIS-only investor/program
-data is reported as unavailable without aborting the batch.
-
-This is a background cache warmer, not a prerequisite for GAS searches.
-A single stock with insufficient valuation data must not abort the entire batch.
-Only outputs that pass both engine-output and published-feed validation replace
-an existing published cache file.
+Incompatible files are refreshed first.  They remain on disk when a rebuild
+fails so the next run can retry, but publish_on_demand excludes them from the
+active index until they pass the current publication contract.
 """
 from __future__ import annotations
 
 import argparse
+import json
 import shutil
 import subprocess
 import sys
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
+
+from feed_contract import inspect_published_stock
 
 
 def run_step(command: List[str]) -> int:
@@ -26,7 +23,21 @@ def run_step(command: List[str]) -> int:
     return int(completed.returncode)
 
 
-def restore_backup(target: Path, backup: Path | None) -> None:
+def load_stock(path: Path):
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def compatibility_key(path: Path) -> Tuple[int, float, str]:
+    stock = load_stock(path)
+    compatible, _ = inspect_published_stock(stock, path.stem)
+    # Incompatible files first, then oldest files first.
+    return (1 if compatible else 0, path.stat().st_mtime, path.name)
+
+
+def restore_file(target: Path, backup: Path | None) -> None:
     if backup and backup.exists():
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(backup, target)
@@ -36,17 +47,20 @@ def restore_backup(target: Path, backup: Path | None) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--limit", type=int, default=20)
+    parser.add_argument("--limit", type=int, default=20, help="0 이하면 기존 게시 종목 전체")
     parser.add_argument("--industry-code", default="auto")
     args = parser.parse_args()
 
     stock_root = Path("data/latest/stocks")
     paths = sorted(
         stock_root.glob("[0-9][0-9][0-9][0-9][0-9][0-9].json"),
-        key=lambda path: (path.stat().st_mtime, path.name),
+        key=compatibility_key,
     )
-    codes = [path.stem for path in paths[: max(0, args.limit)]]
+    selected = paths if args.limit <= 0 else paths[: args.limit]
+    codes = [path.stem for path in selected]
+    stale_count = sum(not inspect_published_stock(load_stock(path), path.stem)[0] for path in paths)
     print("BACKGROUND CACHE STOCKS:", len(codes), flush=True)
+    print("INCOMPATIBLE FILES FOUND:", stale_count, flush=True)
 
     backup_root = Path(".refresh_backup")
     if backup_root.exists():
@@ -61,12 +75,20 @@ def main() -> int:
         print("\nREFRESH:", code, flush=True)
         output_file = Path("output") / f"{code}.json"
         published_file = stock_root / f"{code}.json"
+        index_file = Path("data/latest/index.json")
         backup_file = backup_root / f"{code}.json"
-        backup = None
+        backup_index = backup_root / f"index-{code}.json"
+        stock_backup = None
+        index_backup = None
 
         if published_file.exists():
             shutil.copy2(published_file, backup_file)
-            backup = backup_file
+            stock_backup = backup_file
+        if index_file.exists():
+            shutil.copy2(index_file, backup_index)
+            index_backup = backup_index
+
+        output_file.unlink(missing_ok=True)
 
         if run_step([
             sys.executable,
@@ -88,11 +110,7 @@ def main() -> int:
             "--stock-code",
             code,
         ]) != 0:
-            print(
-                "REFRESH SKIPPED: invalid new output; existing published cache preserved:",
-                code,
-                flush=True,
-            )
+            print("REFRESH SKIPPED: invalid new output; stale file remains excluded:", code, flush=True)
             skipped.append(code)
             continue
 
@@ -104,8 +122,9 @@ def main() -> int:
             "--latest-root",
             "data/latest",
         ]) != 0:
-            restore_backup(published_file, backup)
-            print("REFRESH PUBLISH FAILED; previous cache restored:", code, flush=True)
+            restore_file(published_file, stock_backup)
+            restore_file(index_file, index_backup)
+            print("REFRESH PUBLISH FAILED; previous files restored:", code, flush=True)
             failed.append(code)
             continue
 
@@ -117,8 +136,9 @@ def main() -> int:
             "--stock-code",
             code,
         ]) != 0:
-            restore_backup(published_file, backup)
-            print("REFRESH FEED INVALID; previous cache restored:", code, flush=True)
+            restore_file(published_file, stock_backup)
+            restore_file(index_file, index_backup)
+            print("REFRESH FEED INVALID; previous files restored:", code, flush=True)
             failed.append(code)
             continue
 
@@ -136,14 +156,23 @@ def main() -> int:
     if audit_rc != 0:
         print("VALUATION AUDIT BUILD FAILED", flush=True)
 
+    index_rc = run_step([
+        sys.executable,
+        "validate_latest_index.py",
+        "--latest-root",
+        "data/latest",
+    ])
+    if index_rc != 0:
+        print("LATEST INDEX VALIDATION FAILED", flush=True)
+
     print("\nBACKGROUND REFRESH SUMMARY", flush=True)
     print("- requested:", len(codes), flush=True)
     print("- refreshed:", len(refreshed), refreshed, flush=True)
     print("- skipped-invalid:", len(skipped), skipped, flush=True)
     print("- failed-runtime:", len(failed), failed, flush=True)
+    print("- remaining incompatible files will stay excluded from active index", flush=True)
 
-    # Background cache refresh is best-effort. Invalid new files are never published,
-    # so partial data availability must not make the scheduled workflow fail.
+    # Best-effort batch. Invalid/stale files are not active in the index.
     return 0
 
 
