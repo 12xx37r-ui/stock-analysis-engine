@@ -1,5 +1,6 @@
 name: on-demand-stock-analysis (admin cache)
 run-name: on-demand-${{ inputs.stock_code }}-${{ inputs.request_id }}-${{ github.run_number }}
+
 on:
   workflow_dispatch:
     inputs:
@@ -17,15 +18,93 @@ on:
         required: false
         default: "manual"
         type: string
+
 permissions:
   contents: write
-concurrency:
-  group: published-stock-feed
-  cancel-in-progress: false
+  actions: read
+
 jobs:
+  prepare-kis-token:
+    name: Prepare shared KIS token
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: kis-token-issuer
+      cancel-in-progress: false
+    outputs:
+      token-cache-day: ${{ steps.cache-date.outputs.day }}
+    env:
+      KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+      KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+      KIS_DISABLED: "0"
+      KIS_TOKEN_FILE: ".cache/kis_token.json"
+      KIS_TOKEN_REUSE_HOURS: "23"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Validate input and credentials
+        shell: bash
+        env:
+          STOCK_CODE: ${{ inputs.stock_code }}
+        run: |
+          set -euo pipefail
+          if [[ ! "$STOCK_CODE" =~ ^[0-9]{6}$ ]]; then
+            echo "::error::Invalid stock code: $STOCK_CODE"
+            exit 1
+          fi
+          if [[ -z "${KIS_APP_KEY:-}" || -z "${KIS_APP_SECRET:-}" ]]; then
+            echo "::error::KIS_APP_KEY 또는 KIS_APP_SECRET이 이 워크플로에 전달되지 않았습니다."
+            exit 1
+          fi
+
+      - name: Build KIS token cache key
+        id: cache-date
+        shell: bash
+        run: echo "day=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore reusable KIS token
+        uses: actions/cache@v5
+        with:
+          path: .cache/kis_token.json
+          key: kis-token-${{ runner.os }}-${{ steps.cache-date.outputs.day }}
+          restore-keys: |
+            kis-token-${{ runner.os }}-
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: requirements.txt
+
+      - name: Install KIS token dependency
+        run: python -m pip install requests
+
+      - name: Ensure one reusable KIS token
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from collectors.kis import get_access_token, token_path
+
+          token = get_access_token()
+          if not token:
+              raise SystemExit("KIS access token preparation failed")
+          path = token_path()
+          if not path.exists():
+              raise SystemExit(f"KIS token cache file missing: {path}")
+          print("Reusable KIS token is ready:", path)
+          PY
+
   analyze:
+    name: Analyze ${{ inputs.stock_code }}
+    needs: prepare-kis-token
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    concurrency:
+      group: on-demand-analyze-${{ inputs.stock_code }}
+      cancel-in-progress: false
     env:
       KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
       KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
@@ -35,41 +114,43 @@ jobs:
       DART_API_KEY: ${{ secrets.DART_API_KEY }}
       STOCK_CODE: ${{ inputs.stock_code }}
       INDUSTRY_CODE: ${{ inputs.industry_code }}
+      REQUEST_ID: ${{ inputs.request_id }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Validate input
-        shell: bash
-        run: |
-          if [[ ! "$STOCK_CODE" =~ ^[0-9]{6}$ ]]; then
-            echo "Invalid stock code: $STOCK_CODE"
-            exit 1
-          fi
+
       - name: Setup Python
         uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: "pip"
           cache-dependency-path: requirements.txt
-      - name: Verify KIS credentials and enable collection
+
+      - name: Restore shared KIS token
+        uses: actions/cache@v5
+        with:
+          path: .cache/kis_token.json
+          key: kis-token-${{ runner.os }}-${{ needs.prepare-kis-token.outputs.token-cache-day }}
+          restore-keys: |
+            kis-token-${{ runner.os }}-
+
+      - name: Verify shared KIS token
         shell: bash
         run: |
           set -euo pipefail
-          if [[ -z "${KIS_APP_KEY:-}" || -z "${KIS_APP_SECRET:-}" ]]; then
-            echo "::error::KIS_APP_KEY 또는 KIS_APP_SECRET이 이 워크플로에 전달되지 않았습니다."
-            echo "::error::키가 저장되어 있다면 Repository secrets인지, Environment secrets라면 job에 environment가 지정됐는지 확인하십시오."
+          test -s "$KIS_TOKEN_FILE" || {
+            echo "::error::공유 KIS 토큰 캐시를 복원하지 못했습니다."
             exit 1
-          fi
-          echo "KIS credentials detected: collection is forced ON (KIS_DISABLED=0)."
-          echo "The token is issued once per batch and reused for all stocks in this run."
-      - name: Build weekly cache key
+          }
+          echo "Shared KIS token cache restored. Parallel stock analysis will reuse it."
+
+      - name: Build DART cache key
         id: cache-date
         shell: bash
-        run: |
-          echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
-          echo "day=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+        run: echo "day=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+
       - name: Cache OpenDART responses
         uses: actions/cache@v5
         with:
@@ -80,37 +161,35 @@ jobs:
           restore-keys: |
             dart-api-${{ runner.os }}-${{ steps.cache-date.outputs.day }}-
             dart-api-${{ runner.os }}-
+
       - name: Install
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Validate industry profiles
-        run: python validate_industry_profiles.py
-      - name: Validate valuation profiles
-        run: python validate_valuation_profiles.py
-      - name: Validate valuation contract v4
-        run: python validate_valuation_contract.py
-      - name: Validate valuation data pipeline v4
-        run: python validate_valuation_pipeline_v4.py
-      - name: Validate insurance financials
-        run: python validate_insurance_financials.py
-      - name: Validate future growth valuation model
-        run: python validate_future_growth_model.py
-      - name: Validate published cache coherence
-        run: python validate_cache_coherence.py
-      - name: Validate signal bridge
-        run: python validate_signal_bridge.py
+
+      - name: Validate engine contracts
+        run: |
+          python validate_industry_profiles.py
+          python validate_valuation_profiles.py
+          python validate_valuation_contract.py
+          python validate_valuation_pipeline_v4.py
+          python validate_insurance_financials.py
+          python validate_future_growth_model.py
+          python validate_cache_coherence.py
+          python validate_signal_bridge.py
+
       - name: Invalidate local target output
         shell: bash
         run: |
           rm -f "output/${STOCK_CODE}.json"
           echo "Local output cache invalidated: output/${STOCK_CODE}.json"
+
       - name: Run engine with OpenDART retry
         shell: bash
         run: |
           set -euo pipefail
           for attempt in 1 2; do
-            echo "ENGINE ATTEMPT ${attempt}/2"
+            echo "ENGINE ATTEMPT ${attempt}/2 · request ${REQUEST_ID}"
             rm -f "output/${STOCK_CODE}.json"
             python main.py --stock-code "$STOCK_CODE" --industry-code "$INDUSTRY_CODE"
             if python validate_dart_usable.py --file "output/${STOCK_CODE}.json" --stock-code "$STOCK_CODE"; then
@@ -124,46 +203,102 @@ jobs:
             echo "OpenDART temporary failure. Waiting 35 seconds before retry."
             sleep 35
           done
+
       - name: Validate output
         run: |
           python validate_output.py --file "output/${STOCK_CODE}.json" --stock-code "$STOCK_CODE"
           python validate_dart_usable.py --file "output/${STOCK_CODE}.json" --stock-code "$STOCK_CODE"
-      - name: Publish latest engine feed
+
+      - name: Upload analysis handoff
+        uses: actions/upload-artifact@v5
+        with:
+          name: on-demand-analysis-${{ github.run_id }}
+          path: output/${{ inputs.stock_code }}.json
+          if-no-files-found: error
+          retention-days: 1
+
+  publish:
+    name: Publish ${{ inputs.stock_code }}
+    needs: analyze
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: published-stock-feed-writer
+      cancel-in-progress: false
+    env:
+      STOCK_CODE: ${{ inputs.stock_code }}
+    steps:
+      - name: Checkout latest repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: Download analyzed stock
+        uses: actions/download-artifact@v6
+        with:
+          name: on-demand-analysis-${{ github.run_id }}
+          path: /tmp/on-demand-output
+
+      - name: Verify handoff file
+        shell: bash
         run: |
-          python publish_on_demand.py --stock-file "output/${STOCK_CODE}.json" --latest-root data/latest
-          python validate_published_feed.py --file "data/latest/stocks/${STOCK_CODE}.json" --stock-code "$STOCK_CODE"
-          python build_valuation_audit.py --latest-root data/latest
-          python validate_latest_index.py --latest-root data/latest
-      - name: Commit latest stock with retry
+          set -euo pipefail
+          test -s "/tmp/on-demand-output/${STOCK_CODE}.json" || {
+            echo "::error::분석 결과 인계파일이 없습니다: ${STOCK_CODE}.json"
+            find /tmp/on-demand-output -maxdepth 2 -type f -print || true
+            exit 1
+          }
+
+      - name: Publish latest stock and shared index with retry
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "data/latest/stocks/${STOCK_CODE}.json" data/latest/index.json data/latest/valuation_audit.json
-          if git diff --cached --quiet; then
-            echo "No latest-feed changes."
-          else
-            git commit -m "feat: publish ${STOCK_CODE} on-demand engine [skip ci]"
-          fi
 
-          for attempt in 1 2 3; do
+          published=0
+          for attempt in 1 2 3 4 5; do
+            echo "PUBLISH ATTEMPT ${attempt}/5"
             git fetch origin "$GITHUB_REF_NAME"
-            git rebase "origin/$GITHUB_REF_NAME" || {
-              git rebase --abort || true
-              echo "Rebase failed on attempt $attempt"
-              exit 1
-            }
-            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
-              echo "Latest feed pushed on attempt $attempt"
+            git reset --hard "origin/$GITHUB_REF_NAME"
+            git clean -fd
+
+            mkdir -p output
+            cp "/tmp/on-demand-output/${STOCK_CODE}.json" "output/${STOCK_CODE}.json"
+
+            python publish_on_demand.py --stock-file "output/${STOCK_CODE}.json" --latest-root data/latest
+            python validate_published_feed.py --file "data/latest/stocks/${STOCK_CODE}.json" --stock-code "$STOCK_CODE"
+            python build_valuation_audit.py --latest-root data/latest
+            python validate_latest_index.py --latest-root data/latest
+
+            git add "data/latest/stocks/${STOCK_CODE}.json" data/latest/index.json data/latest/valuation_audit.json
+            if git diff --cached --quiet; then
+              echo "No latest-feed changes. Remote may already contain this exact result."
+              published=1
               break
             fi
-            if [[ "$attempt" == "3" ]]; then
-              echo "Latest feed push failed after 3 attempts"
-              exit 1
+
+            git commit -m "feat: publish ${STOCK_CODE} on-demand engine [skip ci]"
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              echo "Latest feed pushed on attempt ${attempt}"
+              published=1
+              break
             fi
+
+            echo "Concurrent repository update detected. Rebuilding against newest branch before retry."
             sleep $((attempt * 3))
           done
+
+          if [[ "$published" != "1" ]]; then
+            echo "::error::Latest feed push failed after 5 conflict-safe attempts"
+            exit 1
+          fi
+
       - name: Verify committed feed
         shell: bash
         run: |
@@ -174,20 +309,20 @@ jobs:
           python - <<'PY'
           import hashlib, os, pathlib
           code = os.environ["STOCK_CODE"]
-          local = pathlib.Path(f"data/latest/stocks/{code}.json").read_bytes()
+          source = pathlib.Path(f"/tmp/on-demand-output/{code}.json").read_bytes()
           remote = pathlib.Path(f"/tmp/{code}.published.json").read_bytes()
-          if hashlib.sha256(local).hexdigest() != hashlib.sha256(remote).hexdigest():
+          if hashlib.sha256(source).hexdigest() != hashlib.sha256(remote).hexdigest():
               raise SystemExit("Published feed checksum mismatch")
           print("Published feed checksum verified")
           PY
-      - name: Upload result
+
+      - name: Upload final published result
         uses: actions/upload-artifact@v5
         with:
-          name: on-demand-stock-${{ inputs.stock_code }}
+          name: on-demand-stock-${{ inputs.stock_code }}-${{ github.run_id }}
           path: |
-            output/${{ inputs.stock_code }}.json
+            /tmp/${{ inputs.stock_code }}.published.json
             data/latest/index.json
             data/latest/valuation_audit.json
-            data/latest/stocks/${{ inputs.stock_code }}.json
           if-no-files-found: error
           retention-days: 30
