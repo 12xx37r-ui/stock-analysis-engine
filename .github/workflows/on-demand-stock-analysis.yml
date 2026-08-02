@@ -192,15 +192,23 @@ jobs:
             echo "ENGINE ATTEMPT ${attempt}/2 · request ${REQUEST_ID}"
             rm -f "output/${STOCK_CODE}.json"
             python main.py --stock-code "$STOCK_CODE" --industry-code "$INDUSTRY_CODE"
-            if python validate_dart_usable.py --file "output/${STOCK_CODE}.json" --stock-code "$STOCK_CODE"; then
+            set +e
+            python validate_dart_usable.py --file "output/${STOCK_CODE}.json" --stock-code "$STOCK_CODE"
+            validation_status=$?
+            set -e
+            if [[ "$validation_status" == "0" ]]; then
               echo "OpenDART financial data usable on attempt ${attempt}."
               break
             fi
-            if [[ "$attempt" == "2" ]]; then
-              echo "::error::OpenDART 재무자료를 2회 모두 확보하지 못했습니다. 기존 정상 게시파일은 덮어쓰지 않습니다."
+            if [[ "$validation_status" == "20" ]]; then
+              echo "::error::재시도로 해결되지 않는 가치평가 자격 또는 계약 오류입니다. 현재 출력은 게시하지 않습니다."
               exit 1
             fi
-            echo "OpenDART temporary failure. Waiting 35 seconds before retry."
+            if [[ "$attempt" == "2" ]]; then
+              echo "::error::OpenDART 정식 재무자료를 2회 모두 확보하지 못했습니다. 기존 정상 게시파일은 덮어쓰지 않습니다."
+              exit 1
+            fi
+            echo "OpenDART collection failure. Waiting 35 seconds before retry."
             sleep 35
           done
 
