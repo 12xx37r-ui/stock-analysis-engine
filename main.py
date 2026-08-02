@@ -754,6 +754,194 @@ def save_result(
     return output_path
 
 
+
+def _bridge_number(value, default=0.0):
+    try:
+        if value in (None, ""):
+            return default
+        return float(str(value).replace(",", "").strip())
+    except (TypeError, ValueError):
+        return default
+
+
+def _bridge_technical_item(value):
+    value = safe_dict(value)
+    available = value.get("available") is True and _bridge_number(value.get("observations")) > 0
+    return {
+        "사용가능": available,
+        "available": available,
+        "점수": _bridge_number(value.get("score")),
+        "score": _bridge_number(value.get("score")),
+        "판정": value.get("trend", "중립"),
+        "trend": value.get("trend", "중립"),
+        "RSI14": value.get("rsi14"),
+        "rsi14": value.get("rsi14"),
+        "빠른이동평균": value.get("maFast"),
+        "maFast": value.get("maFast"),
+        "중간이동평균": value.get("maMedium"),
+        "maMedium": value.get("maMedium"),
+        "장기이동평균": value.get("maLong"),
+        "maLong": value.get("maLong"),
+        "단기모멘텀": value.get("momentumFast"),
+        "momentumFast": value.get("momentumFast"),
+        "중기모멘텀": value.get("momentumMedium"),
+        "momentumMedium": value.get("momentumMedium"),
+        "관측수": int(_bridge_number(value.get("observations"))),
+        "observations": int(_bridge_number(value.get("observations"))),
+        "자료신뢰도": _bridge_number(value.get("confidence")),
+        "confidence": _bridge_number(value.get("confidence")),
+    }
+
+
+def _bridge_horizon(value):
+    value = safe_dict(value)
+    factors = []
+    for item in safe_list(value.get("요소별평가")):
+        item = safe_dict(item)
+        quality = _bridge_number(item.get("데이터품질"))
+        factors.append({
+            "요소": item.get("요소", ""),
+            "사용가능": quality > 0,
+            "가중치": _bridge_number(item.get("가중치")),
+            "신호": _bridge_number(item.get("신호")),
+            "판정": item.get("신호판정", "중립"),
+            "신호판정": item.get("신호판정", "중립"),
+            "데이터상태": "정상" if quality > 0 else "미수집",
+            "데이터품질": quality,
+            "점수기여": _bridge_number(item.get("점수기여")),
+            "출처": item.get("출처", ""),
+            "설명": item.get("설명", ""),
+        })
+
+    return {
+        "기간": value.get("기간", ""),
+        "점수": int(round(_bridge_number(value.get("점수"), 50))),
+        "상승확률": int(round(_bridge_number(value.get("상승확률"), 50))),
+        "판정": value.get("판정", "중립"),
+        "자료신뢰도": int(round(_bridge_number(value.get("신뢰도")))),
+        "신뢰도": int(round(_bridge_number(value.get("신뢰도")))),
+        "자료신뢰도등급": value.get("신뢰도등급", "-"),
+        "신뢰도등급": value.get("신뢰도등급", "-"),
+        "요소별평가": factors,
+        "미수집요소": safe_list(value.get("미수집요소")),
+    }
+
+
+def build_screen_bridge(
+    stock_code,
+    generated_at,
+    technical_bundle,
+    prediction,
+    global_summary,
+    industry_summary,
+    news_bundle,
+    disclosure_summary,
+    market,
+):
+    technical_bundle = safe_dict(technical_bundle)
+    prediction = safe_dict(prediction)
+    global_summary = safe_dict(global_summary)
+    industry_summary = safe_dict(industry_summary)
+    news_bundle = safe_dict(news_bundle)
+    disclosure_summary = safe_dict(disclosure_summary)
+    market = safe_dict(market)
+
+    technical = {
+        "수집상태": technical_bundle.get("수집상태", ""),
+        "데이터출처": technical_bundle.get("데이터출처", ""),
+        "일봉": _bridge_technical_item(technical_bundle.get("일봉")),
+        "주봉": _bridge_technical_item(technical_bundle.get("주봉")),
+        "월봉": _bridge_technical_item(technical_bundle.get("월봉")),
+    }
+    technical["사용가능"] = any(
+        technical[key]["사용가능"]
+        for key in ("일봉", "주봉", "월봉")
+    )
+
+    horizons = {
+        "단기": _bridge_horizon(prediction.get("단기1~5일")),
+        "중기": _bridge_horizon(prediction.get("중기1~8주")),
+        "장기": _bridge_horizon(prediction.get("장기6~18개월")),
+    }
+
+    global_analysis = safe_dict(global_summary.get("분석"))
+    industry_analysis = safe_dict(industry_summary.get("분석"))
+    news_analysis = safe_dict(news_bundle.get("분석"))
+    disclosure_analysis = safe_dict(disclosure_summary.get("분석"))
+    history = safe_dict(market.get("과거데이터"))
+    history_state = safe_dict(history.get("수집상태"))
+
+    elements = {
+        "거시환경": {
+            "사용가능": global_summary.get("전체수집상태") == "정상" and global_analysis.get("분석상태") == "정상",
+            "점수": _bridge_number(global_analysis.get("중기신호", global_analysis.get("단기신호"))),
+            "데이터품질": _bridge_number(global_analysis.get("중기데이터품질", global_analysis.get("단기데이터품질"))),
+            "판정": global_analysis.get("중기판정", global_analysis.get("단기판정", "중립")),
+            "출처": global_summary.get("데이터출처", ""),
+        },
+        "산업선행지표": {
+            "사용가능": _bridge_number(safe_dict(industry_analysis.get("중기산업선행")).get("데이터품질")) > 0,
+            "점수": _bridge_number(safe_dict(industry_analysis.get("중기산업선행")).get("신호")),
+            "데이터품질": _bridge_number(safe_dict(industry_analysis.get("중기산업선행")).get("데이터품질")),
+            "판정": safe_dict(industry_analysis.get("중기산업선행")).get("판정", "중립"),
+            "출처": industry_summary.get("데이터출처", ""),
+        },
+        "산업사이클": {
+            "사용가능": _bridge_number(safe_dict(industry_analysis.get("장기산업사이클")).get("데이터품질")) > 0,
+            "점수": _bridge_number(safe_dict(industry_analysis.get("장기산업사이클")).get("신호")),
+            "데이터품질": _bridge_number(safe_dict(industry_analysis.get("장기산업사이클")).get("데이터품질")),
+            "판정": safe_dict(industry_analysis.get("장기산업사이클")).get("판정", "중립"),
+            "출처": industry_summary.get("데이터출처", ""),
+        },
+        "뉴스": {
+            "사용가능": news_bundle.get("수집상태") == "정상" and _bridge_number(news_bundle.get("뉴스개수")) > 0,
+            "점수": _bridge_number(news_analysis.get("신호")),
+            "데이터품질": _bridge_number(news_analysis.get("데이터품질")),
+            "판정": news_analysis.get("판정", "중립"),
+            "출처": news_bundle.get("데이터출처", ""),
+        },
+        "기업공시": {
+            "사용가능": disclosure_summary.get("수집상태") == "정상",
+            "점수": _bridge_number(disclosure_analysis.get("신호")),
+            "데이터품질": _bridge_number(disclosure_analysis.get("데이터품질")),
+            "판정": disclosure_analysis.get("판정", "중립"),
+            "출처": disclosure_summary.get("데이터출처", ""),
+        },
+        "외국인기관수급": {
+            "사용가능": history_state.get("누적수급데이터상태") == "정상" or bool(safe_dict(market.get("수급"))),
+            "점수": next((f["점수기여"] for f in horizons["단기"]["요소별평가"] if f["요소"] == "외국인·기관수급"), 0.0),
+            "데이터품질": next((f["데이터품질"] for f in horizons["단기"]["요소별평가"] if f["요소"] == "외국인·기관수급"), 0.0),
+            "판정": next((f["판정"] for f in horizons["단기"]["요소별평가"] if f["요소"] == "외국인·기관수급"), "중립"),
+            "출처": "한국투자증권 KIS",
+        },
+        "프로그램매매": {
+            "사용가능": history_state.get("프로그램데이터상태") == "정상",
+            "점수": next((f["점수기여"] for f in horizons["단기"]["요소별평가"] if "프로그램" in f["요소"]), 0.0),
+            "데이터품질": next((f["데이터품질"] for f in horizons["단기"]["요소별평가"] if "프로그램" in f["요소"]), 0.0),
+            "판정": next((f["판정"] for f in horizons["단기"]["요소별평가"] if "프로그램" in f["요소"]), "중립"),
+            "출처": "한국투자증권 KIS 종목별 프로그램매매",
+        },
+    }
+
+    errors = []
+    if not technical["사용가능"]:
+        errors.append("일봉·주봉·월봉 기술분석이 모두 미연결")
+    for name, item in elements.items():
+        if not item.get("사용가능"):
+            errors.append(name + " 미연결")
+
+    return {
+        "스키마버전": "2.0",
+        "엔진버전": prediction.get("엔진버전", ""),
+        "종목코드": stock_code,
+        "생성시각": generated_at,
+        "연결상태": "정상" if not errors else "부분",
+        "기술분석": technical,
+        "예측": horizons,
+        "요소상태": elements,
+        "검증오류": errors,
+    }
+
 def main():
     args = parse_arguments()
 
@@ -1027,6 +1215,35 @@ def main():
         ),
     )
 
+    generated_at = datetime.now().isoformat()
+    disclosure_summary = build_disclosure_summary(
+        disclosure_bundle,
+        disclosure_analysis,
+    )
+    global_summary = build_global_summary(
+        global_bundle,
+        global_analysis,
+    )
+    fundamentals_summary = build_fundamentals_summary(
+        fundamentals_bundle,
+        fundamentals_analysis,
+    )
+    industry_summary = build_industry_summary(
+        industry_bundle,
+        industry_analysis,
+    )
+    screen_bridge = build_screen_bridge(
+        stock_code=stock_code,
+        generated_at=generated_at,
+        technical_bundle=technical_bundle,
+        prediction=prediction,
+        global_summary=global_summary,
+        industry_summary=industry_summary,
+        news_bundle=news_bundle,
+        disclosure_summary=disclosure_summary,
+        market=market,
+    )
+
     result = {
         "기업명": company,
         "DART기업코드": dart_code,
@@ -1035,39 +1252,18 @@ def main():
         "기업조회정보": target[
             "기업조회"
         ],
-        "생성시각": (
-            datetime.now().isoformat()
-        ),
+        "생성시각": generated_at,
         "재무분석": financial,
         "시장정보": market,
-        "공시정보": (
-            build_disclosure_summary(
-                disclosure_bundle,
-                disclosure_analysis,
-            )
-        ),
-        "글로벌시장": (
-            build_global_summary(
-                global_bundle,
-                global_analysis,
-            )
-        ),
-        "기업기초데이터": (
-            build_fundamentals_summary(
-                fundamentals_bundle,
-                fundamentals_analysis,
-            )
-        ),
-        "산업분석": (
-            build_industry_summary(
-                industry_bundle,
-                industry_analysis,
-            )
-        ),
+        "공시정보": disclosure_summary,
+        "글로벌시장": global_summary,
+        "기업기초데이터": fundamentals_summary,
+        "산업분석": industry_summary,
         "기술분석": technical_bundle,
         "뉴스분석": news_bundle,
         "가치평가": valuation,
         "주가예측": prediction,
+        "화면브리지": screen_bridge,
     }
 
     output_path = save_result(

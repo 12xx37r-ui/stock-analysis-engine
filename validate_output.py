@@ -21,7 +21,7 @@ import sys
 from pathlib import Path
 
 
-EXPECTED_ENGINE_VERSION = "6.4.0-full-signal-bridge"
+EXPECTED_ENGINE_VERSION = "6.4.1-feed-contract"
 
 EXPECTED_WEIGHTS = {
     "단기1~5일": {
@@ -59,6 +59,7 @@ REQUIRED_ROOT_KEYS = (
     "뉴스분석",
     "가치평가",
     "주가예측",
+    "화면브리지",
 )
 
 CRITICAL_COMPLETENESS_KEYS = (

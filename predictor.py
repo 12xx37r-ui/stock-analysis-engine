@@ -1571,7 +1571,7 @@ def predict_stock(
 
     return {
         "엔진버전": (
-            "6.4.0-full-signal-bridge"
+            "6.4.1-feed-contract"
         ),
         "단기1~5일": short_term,
         "중기1~8주": mid_term,

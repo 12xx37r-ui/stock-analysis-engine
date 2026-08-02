@@ -1,28 +1,206 @@
-"""Publish one on-demand engine result into data/latest."""
-import argparse, json, shutil, sys
+"""Publish one on-demand engine result into data/latest with feed metadata."""
+
+import argparse
+import hashlib
+import json
+import shutil
+import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Dict, List
-KST=timezone(timedelta(hours=9))
-def d(v): return v if isinstance(v,dict) else {}
-def l(v): return v if isinstance(v,list) else []
-def f(v,default=0.0):
-    try: return float(v)
-    except (TypeError,ValueError): return default
-def load(p,default): return json.loads(p.read_text(encoding='utf-8')) if p.exists() else default
-def write(p,x):
-    p.parent.mkdir(parents=True,exist_ok=True); t=p.with_suffix(p.suffix+'.tmp'); t.write_text(json.dumps(x,ensure_ascii=False,indent=2),encoding='utf-8'); t.replace(p)
-def hs(pred,key): return f(d(pred.get(key)).get('점수'),50.0)
-def row(stock):
-    pred=d(stock.get('주가예측')); fin=d(stock.get('재무분석')); buff=d(fin.get('버핏평가')); val=d(stock.get('가치평가'))
-    s,m,g=hs(pred,'단기1~5일'),hs(pred,'중기1~8주'),hs(pred,'장기6~18개월'); b=f(buff.get('점수')); gap=f(val.get('현재가대비')); vs=max(0,min(100,50+gap)); comp=g*.35+m*.25+s*.15+b*.15+vs*.10
-    return {'전체순위':0,'종합순위':0,'기업명':str(stock.get('기업명','')),'종목코드':str(stock.get('KIS종목코드','')).zfill(6),'산업코드':str(stock.get('산업코드','none')),'배치':'on_demand','종합선별점수':round(comp,2),'단기점수':round(s,2),'중기점수':round(m,2),'장기점수':round(g,2),'버핏점수':round(b,2),'가치점수':round(vs,2),'저평가후보':gap>0 and '고평가' not in str(val.get('판단','')),'생성시각':stock.get('생성시각','')}
+
+KST = timezone(timedelta(hours=9))
+
+
+def safe_dict(value):
+    return value if isinstance(value, dict) else {}
+
+
+def safe_list(value):
+    return value if isinstance(value, list) else []
+
+
+def safe_float(value, default=0.0):
+    try:
+        if value in (None, ""):
+            return default
+        return float(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def load_json(path, default):
+    if not path.exists():
+        return default
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def write_json(path, value):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(
+        json.dumps(value, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    temporary.replace(path)
+
+
+def file_sha256(path):
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def horizon_score(prediction, key):
+    return safe_float(
+        safe_dict(prediction.get(key)).get("점수"),
+        50.0,
+    )
+
+
+def build_row(stock):
+    prediction = safe_dict(stock.get("주가예측"))
+    financial = safe_dict(stock.get("재무분석"))
+    buffett = safe_dict(financial.get("버핏평가"))
+    valuation = safe_dict(stock.get("가치평가"))
+    bridge = safe_dict(stock.get("화면브리지"))
+
+    short_score = horizon_score(prediction, "단기1~5일")
+    medium_score = horizon_score(prediction, "중기1~8주")
+    long_score = horizon_score(prediction, "장기6~18개월")
+    buffett_score = safe_float(buffett.get("점수"))
+    gap = safe_float(valuation.get("현재가대비"))
+    value_score = max(0.0, min(100.0, 50.0 + gap))
+    composite = (
+        long_score * 0.35
+        + medium_score * 0.25
+        + short_score * 0.15
+        + buffett_score * 0.15
+        + value_score * 0.10
+    )
+
+    return {
+        "전체순위": 0,
+        "종합순위": 0,
+        "기업명": str(stock.get("기업명", "")),
+        "종목코드": str(stock.get("KIS종목코드", "")).zfill(6),
+        "산업코드": str(stock.get("산업코드", "none")),
+        "배치": "on_demand",
+        "종합선별점수": round(composite, 2),
+        "단기점수": round(short_score, 2),
+        "중기점수": round(medium_score, 2),
+        "장기점수": round(long_score, 2),
+        "버핏점수": round(buffett_score, 2),
+        "가치점수": round(value_score, 2),
+        "저평가후보": gap > 0 and "고평가" not in str(valuation.get("판단", "")),
+        "생성시각": stock.get("생성시각", ""),
+        "엔진버전": prediction.get("엔진버전", ""),
+        "화면브리지스키마": bridge.get("스키마버전", ""),
+        "화면브리지상태": bridge.get("연결상태", ""),
+    }
+
+
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument('--stock-file',required=True); ap.add_argument('--latest-root',default='data/latest'); a=ap.parse_args(); sp=Path(a.stock_file); root=Path(a.latest_root); stock=load(sp,{}); code=str(stock.get('KIS종목코드','')).zfill(6)
-    if len(code)!=6 or not code.isdigit(): raise RuntimeError('종목코드 오류')
-    sr=root/'stocks'; sr.mkdir(parents=True,exist_ok=True); shutil.copy2(sp,sr/f'{code}.json')
-    ip=root/'index.json'; idx=load(ip,{'버전':'1.1.0','배치':[],'종합순위':[],'종목목록':[]}); rows=[d(x) for x in l(idx.get('종합순위')) if str(d(x).get('종목코드','')).zfill(6)!=code]; rows.append(row(stock)); rows.sort(key=lambda x:(f(x.get('종합선별점수')),f(x.get('장기점수')),f(x.get('버핏점수'))),reverse=True)
-    for n,x in enumerate(rows,1): x['전체순위']=n; x['종합순위']=n
-    idx.update({'버전':'1.1.0','생성시각':datetime.now(KST).isoformat(),'상태':'PASS','최근실행배치':'on_demand','종목수':len(rows),'종합순위':rows,'종목목록':[{'종목코드':x.get('종목코드',''),'기업명':x.get('기업명',''),'배치':x.get('배치','')} for x in rows]}); write(ip,idx)
-    print('ON-DEMAND PUBLISH RESULT'); print('- 종목코드:',code); print('- 전체 최신피드 종목:',len(rows)); print('LATEST_STOCK_FILE='+str(sr/f'{code}.json')); print('LATEST_INDEX_FILE='+str(ip)); return 0
-if __name__=='__main__': sys.exit(main())
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--stock-file", required=True)
+    parser.add_argument("--latest-root", default="data/latest")
+    args = parser.parse_args()
+
+    source_path = Path(args.stock_file)
+    latest_root = Path(args.latest_root)
+    stock = load_json(source_path, {})
+    stock_code = str(stock.get("KIS종목코드", "")).zfill(6)
+
+    if len(stock_code) != 6 or not stock_code.isdigit():
+        raise RuntimeError("종목코드 오류")
+
+    bridge = safe_dict(stock.get("화면브리지"))
+    if bridge.get("스키마버전") != "2.0":
+        raise RuntimeError("화면브리지 스키마 2.0이 없습니다.")
+
+    stock_root = latest_root / "stocks"
+    stock_root.mkdir(parents=True, exist_ok=True)
+    latest_stock_path = stock_root / f"{stock_code}.json"
+    shutil.copy2(source_path, latest_stock_path)
+
+    checksum = file_sha256(latest_stock_path)
+    index_path = latest_root / "index.json"
+    index = load_json(
+        index_path,
+        {
+            "버전": "1.2.0",
+            "배치": [],
+            "종합순위": [],
+            "종목목록": [],
+        },
+    )
+
+    rows = [
+        safe_dict(item)
+        for item in safe_list(index.get("종합순위"))
+        if str(safe_dict(item).get("종목코드", "")).zfill(6) != stock_code
+    ]
+    new_row = build_row(stock)
+    new_row["파일SHA256"] = checksum
+    rows.append(new_row)
+    rows.sort(
+        key=lambda item: (
+            safe_float(item.get("종합선별점수")),
+            safe_float(item.get("장기점수")),
+            safe_float(item.get("버핏점수")),
+        ),
+        reverse=True,
+    )
+
+    for rank, item in enumerate(rows, 1):
+        item["전체순위"] = rank
+        item["종합순위"] = rank
+
+    generated_at = datetime.now(KST).isoformat()
+    index.update(
+        {
+            "버전": "1.2.0",
+            "피드스키마버전": "2.0",
+            "생성시각": generated_at,
+            "상태": "PASS",
+            "최근실행배치": "on_demand",
+            "종목수": len(rows),
+            "종합순위": rows,
+            "종목목록": [
+                {
+                    "종목코드": item.get("종목코드", ""),
+                    "기업명": item.get("기업명", ""),
+                    "배치": item.get("배치", ""),
+                    "엔진버전": item.get("엔진버전", ""),
+                    "화면브리지스키마": item.get("화면브리지스키마", ""),
+                    "파일SHA256": item.get("파일SHA256", ""),
+                }
+                for item in rows
+            ],
+            "최근갱신종목": {
+                "종목코드": stock_code,
+                "기업명": stock.get("기업명", ""),
+                "엔진버전": safe_dict(stock.get("주가예측")).get("엔진버전", ""),
+                "화면브리지스키마": bridge.get("스키마버전", ""),
+                "화면브리지상태": bridge.get("연결상태", ""),
+                "생성시각": stock.get("생성시각", ""),
+                "파일SHA256": checksum,
+            },
+        }
+    )
+    write_json(index_path, index)
+
+    print("ON-DEMAND PUBLISH RESULT")
+    print("- 종목코드:", stock_code)
+    print("- 전체 최신피드 종목:", len(rows))
+    print("- 엔진버전:", safe_dict(stock.get("주가예측")).get("엔진버전", ""))
+    print("- 화면브리지:", bridge.get("스키마버전", ""), bridge.get("연결상태", ""))
+    print("- SHA256:", checksum)
+    print("LATEST_STOCK_FILE=" + str(latest_stock_path))
+    print("LATEST_INDEX_FILE=" + str(index_path))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
