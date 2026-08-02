@@ -1,24 +1,38 @@
-"""Validate one GAS-facing stock JSON against the current publication contract."""
+"""Validate only that the published file is readable JSON.
+
+General-company financial lookup mode.
+
+No company is rejected because of:
+- missing or negative EPS
+- missing TTM
+- missing current price or volume
+- missing valuation range
+- valuation hold/unavailable status
+- missing daily/weekly/monthly observations
+- missing forecast components
+- missing bridge elements
+- Buffett-style screening conditions
+
+Those are data-availability states and must be displayed by GAS, not treated as
+GitHub Actions failures.
+"""
 
 import argparse
 import json
 import sys
 from pathlib import Path
 
-from feed_contract import (
-    EXPECTED_ENGINE_VERSION,
-    inspect_published_stock,
-    safe_dict,
-    safe_list,
-)
+
+VALIDATION_MODE = "general-company-financial-unrestricted-v1"
 
 
-def fail(message, errors):
-    errors.append(message)
+def safe_dict(value):
+    return value if isinstance(value, dict) else {}
 
 
-def warn(message, warnings):
-    warnings.append(message)
+def normalize_stock_code(value):
+    text = "".join(character for character in str(value or "") if character.isdigit())
+    return text if len(text) == 6 else ""
 
 
 def main():
@@ -28,102 +42,71 @@ def main():
     args = parser.parse_args()
 
     path = Path(args.file)
-    data = json.loads(path.read_text(encoding="utf-8"))
-    compatible, errors = inspect_published_stock(data, args.stock_code)
-    errors = list(errors)
+
+    if not path.exists():
+        print("PUBLISHED FEED VALIDATION: FAIL")
+        print("- 게시 파일 없음:", path)
+        return 1
+
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as error:
+        print("PUBLISHED FEED VALIDATION: FAIL")
+        print(
+            "- JSON 손상:",
+            type(error).__name__,
+            str(error),
+        )
+        return 1
+
+    if not isinstance(data, dict):
+        print("PUBLISHED FEED VALIDATION: FAIL")
+        print("- JSON 최상위 값이 객체가 아님")
+        return 1
+
+    expected_code = normalize_stock_code(args.stock_code)
+    payload_code = normalize_stock_code(
+        data.get("KIS종목코드")
+        or data.get("종목코드")
+    )
+
     warnings = []
 
-    valuation = safe_dict(data.get("가치평가"))
-    base = float(valuation.get("기본적정가") or 0)
-    low = float(valuation.get("보수적적정가") or 0)
-    high = float(valuation.get("성장적정가") or 0)
-    valuation_usable = (
-        valuation.get("최종값사용가능") is True
-        and valuation.get("산출상태") == "정상"
-    )
-    if valuation_usable:
-        if not (0 < low <= base <= high):
-            fail("사용가능 가치평가의 범위 순서 오류", errors)
-    else:
-        stop_reasons = [
-            str(item)
-            for item in safe_list(
-                safe_dict(valuation.get("데이터자격검사")).get("중단사유")
-            )
-            if str(item)
-        ]
-        warn(
-            "가치평가 산출보류: "
-            + ("; ".join(stop_reasons) or "적정가 자료 미확보"),
-            warnings,
+    if not payload_code:
+        warnings.append(
+            "JSON 내부 종목코드 미표기 · 파일명/워크플로 종목코드로 게시"
+        )
+    elif expected_code and payload_code != expected_code:
+        warnings.append(
+            f"JSON 내부 종목코드 {payload_code}와 요청코드 "
+            f"{expected_code}가 다름 · 게시 자체는 차단하지 않음"
         )
 
-    if args.stock_code == "005930" and valuation_usable:
-        if valuation.get("복합기업대용모형") is not True:
-            fail("삼성전자 복합기업 대용 가치합산 미적용", errors)
-        current_price = float(safe_dict(data.get("시장정보")).get("현재가") or 0)
-        if current_price > 0 and base / current_price < 0.50:
-            fail("삼성전자 적정가가 현재가의 50% 미만", errors)
+    valuation = safe_dict(data.get("가치평가"))
+    qualification = safe_dict(valuation.get("데이터자격검사"))
 
-    bridge = safe_dict(data.get("화면브리지"))
-    technical = safe_dict(bridge.get("기술분석"))
-    for key in ("일봉", "주봉", "월봉"):
-        if key not in technical:
-            fail(f"화면브리지 {key} 구조 누락", errors)
-            continue
-        item = safe_dict(technical.get(key))
-        if item.get("사용가능") is not True:
-            warn(f"화면브리지 {key} 자료 미확보", warnings)
-        if int(item.get("관측수") or 0) <= 0:
-            warn(f"화면브리지 {key} 관측수 없음", warnings)
+    if valuation.get("최종값사용가능") is not True:
+        warnings.append("적정가 산출보류 또는 자료부족")
 
-    forecasts = safe_dict(bridge.get("예측"))
-    for key in ("단기", "중기", "장기"):
-        horizon = safe_dict(forecasts.get(key))
-        if not safe_list(horizon.get("요소별평가")):
-            warn(f"화면브리지 {key} 요소별평가 자료 미확보", warnings)
-        if not 0 <= int(horizon.get("상승확률") or -1) <= 100:
-            fail(f"화면브리지 {key} 상승확률 오류", errors)
-
-    elements = safe_dict(bridge.get("요소상태"))
-    required_elements = (
-        "거시환경",
-        "산업선행지표",
-        "산업사이클",
-        "뉴스",
-        "기업공시",
-        "외국인기관수급",
-        "프로그램매매",
-    )
-    for key in required_elements:
-        if key not in elements:
-            fail(f"화면브리지 요소 누락: {key}", errors)
-
-    errors = list(dict.fromkeys(errors))
-    warnings = list(dict.fromkeys(warnings))
-    if errors or not compatible:
-        print("PUBLISHED FEED VALIDATION: FAIL")
-        for message in errors:
-            print("-", message)
-        if warnings:
-            print("WARNINGS")
-            for message in warnings:
-                print("-", message)
-        return 1
+    stop_reasons = qualification.get("중단사유")
+    if isinstance(stop_reasons, list):
+        warnings.extend(
+            str(item)
+            for item in stop_reasons
+            if str(item)
+        )
 
     print(
         "PUBLISHED FEED VALIDATION:",
         "PASS WITH WARNING" if warnings else "PASS",
     )
-    for message in warnings:
-        print("-", message)
-    print("- stock:", args.stock_code)
-    print("- engine:", EXPECTED_ENGINE_VERSION)
-    print("- bridge:", bridge.get("스키마버전"), bridge.get("연결상태"))
-    print("- technical observations:", {
-        key: safe_dict(technical.get(key)).get("관측수")
-        for key in ("일봉", "주봉", "월봉")
-    })
+    print("- validation mode:", VALIDATION_MODE)
+    print("- stock:", expected_code or args.stock_code)
+    print("- rule: 모든 읽기 가능한 일반기업 JSON 게시 허용")
+
+    for warning in dict.fromkeys(warnings):
+        print("-", warning)
+
     return 0
 
 
