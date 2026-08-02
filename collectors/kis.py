@@ -32,6 +32,36 @@ TOKEN_READ_TIMEOUT = 20
 TOKEN_EXPIRY_BUFFER_SECONDS = 300
 
 
+def safe_float(value, default=0.0):
+    """KIS 숫자 문자열을 안전하게 float로 변환한다.
+
+    KIS 응답은 콤마, 공백, 괄호 음수, 빈 문자열을 포함할 수 있다.
+    수급 데이터 한 필드의 형식 오류가 전체 종목 분석을 중단시키지 않도록
+    변환 실패 시 기본값을 반환한다.
+    """
+    try:
+        if value in (None, ""):
+            return default
+
+        text = (
+            str(value)
+            .replace(",", "")
+            .replace(" ", "")
+            .strip()
+        )
+
+        if text in {"", "-", "--", "N/A", "nan", "None"}:
+            return default
+
+        if text.startswith("(") and text.endswith(")"):
+            text = "-" + text[1:-1]
+
+        return float(text)
+
+    except (TypeError, ValueError):
+        return default
+
+
 def credential_fingerprint():
     source = "|".join([
         str(KIS_BASE_URL or ""),
