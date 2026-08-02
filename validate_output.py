@@ -21,7 +21,7 @@ import sys
 from pathlib import Path
 
 
-EXPECTED_ENGINE_VERSION = "6.1.0-stock-program"
+EXPECTED_ENGINE_VERSION = "6.4.0-full-signal-bridge"
 
 EXPECTED_WEIGHTS = {
     "단기1~5일": {
@@ -55,6 +55,8 @@ REQUIRED_ROOT_KEYS = (
     "KIS종목코드",
     "재무분석",
     "시장정보",
+    "기술분석",
+    "뉴스분석",
     "가치평가",
     "주가예측",
 )
@@ -63,6 +65,7 @@ CRITICAL_COMPLETENESS_KEYS = (
     "KIS현재가",
     "KIS당일수급",
     "KIS일봉",
+    "멀티타임프레임차트",
     "KIS누적수급",
     "KIS프로그램매매",
     "DART기본재무",
@@ -70,6 +73,7 @@ CRITICAL_COMPLETENESS_KEYS = (
     "DART현금흐름",
     "DART주주환원",
     "DART최근공시",
+    "기업뉴스",
     "글로벌시장",
     "산업선행지표",
     "산업사이클",

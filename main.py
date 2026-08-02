@@ -21,6 +21,8 @@ from collectors.global_market import get_global_market_bundle
 from collectors.history import get_history_bundle
 from collectors.industry import get_industry_bundle
 from collectors.market import get_market_data
+from collectors.news import get_company_news
+from collectors.technical import get_stock_technical_bundle
 from predictor import predict_stock
 
 
@@ -821,6 +823,43 @@ def main():
         )
     )
 
+    technical_bundle = safe_execute(
+        "MULTI TIMEFRAME TECHNICAL",
+        lambda: get_stock_technical_bundle(
+            stock_code,
+            market_code=market_code,
+            history_bundle=history_bundle,
+        ),
+        {
+            "수집상태": "실패",
+            "응답메시지": "멀티타임프레임 차트 수집 중 예외",
+            "일봉": {},
+            "주봉": {},
+            "월봉": {},
+            "수집오류": [],
+        },
+    )
+
+    news_bundle = safe_execute(
+        "COMPANY NEWS",
+        lambda: get_company_news(
+            company,
+            maximum_items=30,
+        ),
+        {
+            "수집상태": "실패",
+            "응답메시지": "기업 뉴스 수집 중 예외",
+            "뉴스개수": 0,
+            "뉴스목록": [],
+            "분석": {
+                "분석상태": "실패",
+                "신호": 0.0,
+                "데이터품질": 0.0,
+                "판정": "중립",
+            },
+        },
+    )
+
     disclosure_bundle = safe_execute(
         "DISCLOSURE",
         lambda: get_recent_disclosures(
@@ -978,6 +1017,14 @@ def main():
         industry_analysis=(
             industry_analysis
         ),
+        news_analysis=(
+            news_bundle.get("분석", {})
+            if isinstance(news_bundle, dict)
+            else {}
+        ),
+        technical_analysis=(
+            technical_bundle
+        ),
     )
 
     result = {
@@ -1017,6 +1064,8 @@ def main():
                 industry_analysis,
             )
         ),
+        "기술분석": technical_bundle,
+        "뉴스분석": news_bundle,
         "가치평가": valuation,
         "주가예측": prediction,
     }

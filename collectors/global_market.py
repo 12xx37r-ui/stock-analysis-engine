@@ -23,6 +23,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Tuple
 
 import requests
+import time
 
 
 KST = timezone(timedelta(hours=9))

@@ -704,6 +704,80 @@ def disclosure_signal(
     )
 
 
+def combined_event_signal(
+    disclosure_analysis,
+    news_analysis,
+):
+    disclosure = external_signal(
+        disclosure_analysis,
+        "신호",
+        "데이터품질",
+    )
+    news = external_signal(
+        news_analysis,
+        "신호",
+        "데이터품질",
+    )
+
+    components = []
+
+    if disclosure["quality"] > 0:
+        components.append(
+            {
+                "signal": disclosure["signal"],
+                "weight": disclosure["quality"] * 0.55,
+                "source": "OpenDART 최근 공시",
+            }
+        )
+
+    if news["quality"] > 0:
+        components.append(
+            {
+                "signal": news["signal"],
+                "weight": news["quality"] * 0.45,
+                "source": "Google News RSS",
+            }
+        )
+
+    total_weight = sum(
+        item["weight"]
+        for item in components
+    )
+
+    if total_weight <= 0:
+        return {
+            "signal": 0.0,
+            "quality": 0.0,
+            "status": "미수집",
+            "source": "뉴스·공시 미수집",
+            "disclosure": disclosure,
+            "news": news,
+        }
+
+    signal = sum(
+        item["signal"] * item["weight"]
+        for item in components
+    ) / total_weight
+
+    quality = clamp(
+        total_weight / 1.0,
+        0.0,
+        1.0,
+    )
+
+    return {
+        "signal": normalize_signal(signal),
+        "quality": quality,
+        "status": "정상",
+        "source": " + ".join(
+            item["source"]
+            for item in components
+        ),
+        "disclosure": disclosure,
+        "news": news,
+    }
+
+
 
 def nested_analysis_signal(
     analysis,
@@ -782,6 +856,7 @@ def calculate_short_term(
     market,
     disclosure_analysis=None,
     global_analysis=None,
+    news_analysis=None,
 ):
     reasons = []
 
@@ -793,8 +868,9 @@ def calculate_short_term(
         "단기신호",
         "단기데이터품질",
     )
-    disclosure = disclosure_signal(
-        disclosure_analysis
+    disclosure = combined_event_signal(
+        disclosure_analysis,
+        news_analysis,
     )
 
     if program["signal"] >= 20:
@@ -890,7 +966,7 @@ def calculate_short_term(
             SHORT_WEIGHTS["뉴스·공시"],
             signal=disclosure["signal"],
             quality=disclosure["quality"],
-            source="OpenDART 최근 공시",
+            source=disclosure["source"],
             note=(
                 f"분석상태 {disclosure['status']}, "
                 f"신호 {disclosure['signal']:.2f}"
@@ -912,6 +988,7 @@ def calculate_mid_term(
     global_analysis=None,
     fundamentals_analysis=None,
     industry_analysis=None,
+    news_analysis=None,
 ):
     reasons = []
 
@@ -952,8 +1029,9 @@ def calculate_mid_term(
         "중기데이터품질",
     )
 
-    disclosure = disclosure_signal(
-        disclosure_analysis
+    disclosure = combined_event_signal(
+        disclosure_analysis,
+        news_analysis,
     )
 
     if earnings["signal"] >= 60:
@@ -1105,7 +1183,7 @@ def calculate_mid_term(
             MID_WEIGHTS["뉴스·공시"],
             signal=disclosure["signal"],
             quality=disclosure["quality"],
-            source="OpenDART 최근 공시",
+            source=disclosure["source"],
             note=(
                 f"분석상태 "
                 f"{disclosure['status']}, "
@@ -1369,6 +1447,8 @@ def predict_stock(
     global_analysis=None,
     fundamentals_analysis=None,
     industry_analysis=None,
+    news_analysis=None,
+    technical_analysis=None,
 ):
     short_term = calculate_short_term(
         market,
@@ -1377,6 +1457,9 @@ def predict_stock(
         ),
         global_analysis=(
             global_analysis
+        ),
+        news_analysis=(
+            news_analysis
         ),
     )
 
@@ -1394,6 +1477,9 @@ def predict_stock(
         ),
         industry_analysis=(
             industry_analysis
+        ),
+        news_analysis=(
+            news_analysis
         ),
     )
 
@@ -1423,6 +1509,17 @@ def predict_stock(
             dict,
         )
         and disclosure_analysis.get(
+            "분석상태"
+        )
+        == "정상"
+    )
+
+    news_ok = (
+        isinstance(
+            news_analysis,
+            dict,
+        )
+        and news_analysis.get(
             "분석상태"
         )
         == "정상"
@@ -1461,9 +1558,20 @@ def predict_stock(
         == "정상"
     )
 
+    technical_ok = (
+        isinstance(technical_analysis, dict)
+        and technical_analysis.get("수집상태")
+        in {"정상", "부분성공"}
+        and any(
+            isinstance(technical_analysis.get(key), dict)
+            and technical_analysis.get(key, {}).get("available") is True
+            for key in ("일봉", "주봉", "월봉")
+        )
+    )
+
     return {
         "엔진버전": (
-            "6.1.0-stock-program"
+            "6.4.0-full-signal-bridge"
         ),
         "단기1~5일": short_term,
         "중기1~8주": mid_term,
@@ -1490,6 +1598,7 @@ def predict_stock(
             "KIS일봉": bool(
                 history["price"]
             ),
+            "멀티타임프레임차트": technical_ok,
             "KIS누적수급": bool(
                 history["investor"]
             ),
@@ -1528,6 +1637,7 @@ def predict_stock(
             "DART최근공시": (
                 disclosure_ok
             ),
+            "기업뉴스": news_ok,
             "글로벌시장": global_ok,
             "산업선행지표": (
                 industry_ok
@@ -1554,7 +1664,7 @@ def predict_stock(
             "미수집 요소는 추정하지 않고 중립 처리한다. "
             "파생시장·프로그램 요소에는 현재 종목별 프로그램매매만 반영하며 "
             "파생시장 데이터는 아직 미반영이다. "
-            "공시 신호는 제목 기반 규칙형 분석이다. "
+            "뉴스와 공시 신호는 제목 기반 규칙형 분석이다. "
             "향후이익 방향은 최신 실적과 현금창출력 기반 대용지표이며 "
             "애널리스트 컨센서스는 아직 반영되지 않았다. "
             "상승확률은 데이터 커버리지에 따라 "
