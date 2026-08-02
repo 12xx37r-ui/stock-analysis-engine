@@ -104,6 +104,7 @@ def main():
     )
 
     assert value["가치평가계약버전"] == "4.0"
+    assert value["가치평가모형개정버전"] == "future-growth-v1.0.1-insurance-financials", value
     assert value["최종값사용가능"] is True, value["이상치검사"]
     assert value["복합기업대용모형"] is True
     assert value["TTMEPS"] > value["EPS"]

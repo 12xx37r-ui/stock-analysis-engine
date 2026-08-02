@@ -10,10 +10,11 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Tuple
 
-EXPECTED_ENGINE_VERSION = "6.7.0-valuation-contract-v4"
+EXPECTED_ENGINE_VERSION = "6.7.2-valuation-contract-v4"
 EXPECTED_VALUATION_CONTRACT = "4.0"
 EXPECTED_INDUSTRY_PROFILE = "3.0.0"
 EXPECTED_BRIDGE_SCHEMA = "2.0"
+EXPECTED_VALUATION_MODEL_REVISION = "future-growth-v1.0.1-insurance-financials"
 
 
 def safe_dict(value: Any) -> Dict[str, Any]:
@@ -51,6 +52,16 @@ def inspect_published_stock(stock: Dict[str, Any], expected_code: str = "") -> T
         reasons.append("가치평가 계약버전 불일치")
     if str(valuation.get("산업프로필버전", "")) != EXPECTED_INDUSTRY_PROFILE:
         reasons.append("산업 프로필 버전 불일치")
+    if str(valuation.get("가치평가모형개정버전", "")) != EXPECTED_VALUATION_MODEL_REVISION:
+        reasons.append("가치평가 모형개정버전 불일치")
+    future_model = safe_dict(valuation.get("미래성장모형"))
+    if not future_model:
+        reasons.append("미래성장모형 상태 누락")
+    elif future_model.get("사용가능") is True and future_model.get("현재가미사용") is not True:
+        reasons.append("미래성장모형 현재가 비사용 보증 누락")
+    elif future_model.get("사용가능") is not True and not safe_list(future_model.get("차단사유")):
+        reasons.append("미래성장모형 미사용 사유 누락")
+
     if bridge.get("스키마버전") != EXPECTED_BRIDGE_SCHEMA:
         reasons.append("화면브리지 스키마 불일치")
     if stock_code_of(bridge, bridge.get("종목코드", "")) != code:

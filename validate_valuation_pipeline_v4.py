@@ -116,12 +116,16 @@ def main():
     assert provisional["지표"]["매출"] == 3_457_200_000_000, provisional
 
     value = calculate(build_bundle(provisional))
-    assert value["가치평가엔진버전"] == "6.7.0-valuation-contract-v4", value
+    assert value["가치평가엔진버전"] == "6.7.2-valuation-contract-v4", value
     assert value["가치평가산업코드"] == "electronic_components", value
     assert value["TTM잠정실적반영"] is True, value
     assert value["유효재무기준분기키"] == 2026 * 4 + 2, value
     assert value["데이터자격검사"]["통과"] is True, value["데이터자격검사"]
     assert value["최종값사용가능"] is True, value["이상치검사"]
+    assert value["미래성장모형"]["사용가능"] is True, value["미래성장모형"]
+    assert value["미래성장가치"] > value["PER기준적정가"], value
+    assert value["FY3예상EPS"] > value["FY2예상EPS"], value
+    assert value["FY4예상EPS"] > value["FY3예상EPS"], value
 
     blocked_provisional = {
         "수집상태": "검토필요",
