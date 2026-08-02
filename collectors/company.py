@@ -29,6 +29,11 @@ DART_CORP_CODE_URL = (
     "corpCode.xml"
 )
 
+DART_COMPANY_URL = (
+    "https://opendart.fss.or.kr/api/"
+    "company.json"
+)
+
 CACHE_PATH = Path(
     ".cache/dart_corp_codes.json"
 )
@@ -58,6 +63,167 @@ DEFAULT_INDUSTRY_MAP = {
     "042700": "semiconductor",
     "089030": "semiconductor",
 }
+
+
+VALUATION_INDUSTRIES = {
+    "semiconductor",
+    "automotive",
+    "battery",
+    "biotechnology",
+    "pharmaceutical",
+    "construction",
+    "finance",
+    "insurance",
+    "consumer_staples",
+    "consumer_discretionary",
+    "retail",
+    "media_entertainment",
+    "software_platform",
+    "telecom",
+    "utilities",
+    "materials",
+    "industrial",
+    "transportation",
+    "real_estate",
+    "healthcare",
+    "energy",
+    "holding_company",
+    "services",
+    "general",
+    "none",
+}
+
+
+def classify_dart_industry(
+    industry_code: Any,
+    company_name: Any = "",
+    stock_code: Any = "",
+) -> str:
+    """OpenDART 기업개황의 업종코드를 가치평가용 대분류로 변환한다."""
+    code = "".join(
+        character
+        for character in safe_text(industry_code)
+        if character.isdigit()
+    )
+    name = safe_text(company_name).lower()
+    stock = normalize_stock_code(stock_code)
+
+    manual = load_industry_map().get(stock, "none") if stock else "none"
+    if manual != "none":
+        return manual
+
+    if any(keyword in name for keyword in ("지주", "홀딩스", "holdings")):
+        return "holding_company"
+    if any(keyword in name for keyword in ("하이닉스", "반도체", "세미콘", "테크윙")):
+        return "semiconductor"
+    if any(keyword in name for keyword in ("배터리", "에너지솔루션", "리튬", "양극재", "전지")):
+        return "battery"
+    if any(keyword in name for keyword in ("바이오", "셀트리온")):
+        return "biotechnology"
+    if any(keyword in name for keyword in ("제약", "약품", "파마")):
+        return "pharmaceutical"
+    if any(keyword in name for keyword in ("엔터", "엔터테인먼트", "스튜디오", "콘텐츠")):
+        return "media_entertainment"
+    if any(keyword in name for keyword in ("소프트", "플랫폼", "클라우드")):
+        return "software_platform"
+
+    if len(code) < 2:
+        return "general"
+
+    major = int(code[:2])
+
+    if major == 26:
+        return "semiconductor"
+    if major == 30:
+        return "automotive"
+    if major == 21:
+        return "pharmaceutical"
+    if major in {41, 42}:
+        return "construction"
+    if major in {64, 65}:
+        return "finance"
+    if major == 66:
+        return "insurance"
+    if major in {10, 11, 12}:
+        return "consumer_staples"
+    if major in {13, 14, 15, 16, 17, 18, 32, 33}:
+        return "consumer_discretionary"
+    if major in {45, 46, 47}:
+        return "retail"
+    if major in {58, 59, 60}:
+        return "media_entertainment"
+    if major in {61, 62, 63}:
+        return "software_platform" if major in {62, 63} else "telecom"
+    if major in {35, 36, 37, 38, 39}:
+        return "utilities"
+    if major in {19, 20, 22, 23, 24, 25}:
+        return "materials"
+    if major in {27, 28, 29, 31}:
+        return "industrial"
+    if major in {49, 50, 51, 52}:
+        return "transportation"
+    if major == 68:
+        return "real_estate"
+    if major == 86:
+        return "healthcare"
+    if major in {5, 6, 7, 8}:
+        return "energy"
+    if major in {69, 70, 71, 72, 73, 74, 75, 85, 90, 91, 94, 95, 96}:
+        return "services"
+
+    return "general"
+
+
+def get_company_overview(corp_code: Any) -> Dict[str, Any]:
+    corp_code = safe_text(corp_code)
+    api_key = get_dart_api_key()
+
+    if not corp_code or not api_key:
+        return {
+            "수집상태": "실패",
+            "응답메시지": "기업코드 또는 DART API 키가 없습니다.",
+        }
+
+    try:
+        response = requests.get(
+            DART_COMPANY_URL,
+            params={
+                "crtfc_key": api_key,
+                "corp_code": corp_code,
+            },
+            timeout=20,
+        )
+        response.raise_for_status()
+        data = response.json()
+
+        if not isinstance(data, dict):
+            raise RuntimeError("기업개황 응답이 딕셔너리가 아닙니다.")
+
+        status = safe_text(data.get("status"))
+        if status != "000":
+            return {
+                "수집상태": "실패",
+                "응답코드": status,
+                "응답메시지": safe_text(data.get("message")),
+            }
+
+        return {
+            "수집상태": "정상",
+            "응답코드": status,
+            "응답메시지": "",
+            "업종코드": safe_text(data.get("induty_code")),
+            "법인구분": safe_text(data.get("corp_cls")),
+            "대표자": safe_text(data.get("ceo_nm")),
+            "설립일": safe_text(data.get("est_dt")),
+            "결산월": safe_text(data.get("acc_mt")),
+            "홈페이지": safe_text(data.get("hm_url")),
+        }
+
+    except Exception as error:
+        return {
+            "수집상태": "실패",
+            "응답메시지": f"{type(error).__name__}: {error}",
+        }
 
 
 def safe_text(
@@ -453,15 +619,34 @@ def resolve_company(
                 continue
 
             result = dict(company)
+            overview = get_company_overview(
+                result.get("DART기업코드")
+            )
+            mapped_industry = infer_industry_code(
+                normalized
+            )
+            valuation_industry = (
+                mapped_industry
+                if mapped_industry != "none"
+                else classify_dart_industry(
+                    overview.get("업종코드"),
+                    result.get("기업명"),
+                    normalized,
+                )
+            )
             result.update(
                 {
                     "수집상태": "정상",
                     "응답메시지": "",
-                    "산업코드": (
-                        infer_industry_code(
-                            normalized
-                        )
+                    "산업코드": valuation_industry,
+                    "가치평가산업코드": valuation_industry,
+                    "산업분류출처": (
+                        "수동 종목매핑"
+                        if mapped_industry != "none"
+                        else "OpenDART 기업개황 업종코드"
                     ),
+                    "OpenDART기업개황": overview,
+                    "OpenDART업종코드": overview.get("업종코드", ""),
                     "데이터출처": (
                         "금융감독원 OpenDART"
                     ),
@@ -512,6 +697,12 @@ def resolve_company(
                             normalized
                         )
                     ),
+                    "가치평가산업코드": (
+                        infer_industry_code(
+                            normalized
+                        )
+                    ),
+                    "산업분류출처": "내장 종목매핑",
                     "데이터출처": (
                         "내장 비상값"
                     ),

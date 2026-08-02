@@ -47,6 +47,7 @@ from main import (
     build_global_summary,
     build_history_summary,
     build_industry_summary,
+    LIVE_INDUSTRY_CODES,
     resolve_target,
     safe_execute,
     save_result,
@@ -740,7 +741,7 @@ def analyze_one_stock(
     )
 
     if industry_code not in industry_cache:
-        if industry_code == "none":
+        if industry_code not in LIVE_INDUSTRY_CODES:
             industry_cache[
                 industry_code
             ] = empty_industry_result(
@@ -797,6 +798,7 @@ def analyze_one_stock(
         fundamentals_bundle,
         industry_analysis,
         industry_bundle,
+        target.get("기업조회", {}),
     )
 
     prediction = predict_stock(

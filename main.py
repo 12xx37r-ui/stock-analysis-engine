@@ -29,6 +29,44 @@ DEFAULT_MARKET_CODE = "K"
 DEFAULT_INDUSTRY_CODE = "auto"
 
 
+LIVE_INDUSTRY_CODES = {
+    "semiconductor",
+    "automotive",
+    "battery",
+    "biotechnology",
+    "construction",
+    "finance",
+}
+
+VALUATION_INDUSTRY_CODES = {
+    "semiconductor",
+    "automotive",
+    "battery",
+    "biotechnology",
+    "pharmaceutical",
+    "construction",
+    "finance",
+    "insurance",
+    "consumer_staples",
+    "consumer_discretionary",
+    "retail",
+    "media_entertainment",
+    "software_platform",
+    "telecom",
+    "utilities",
+    "materials",
+    "industrial",
+    "transportation",
+    "real_estate",
+    "healthcare",
+    "energy",
+    "holding_company",
+    "services",
+    "general",
+    "none",
+}
+
+
 def safe_dict(value):
     if isinstance(value, dict):
         return value
@@ -673,19 +711,8 @@ def resolve_target(
     else:
         industry_code = requested
 
-    if industry_code not in {
-        "semiconductor",
-        "automotive",
-        "battery",
-        "biotechnology",
-        "construction",
-        "finance",
-        "none",
-    }:
-        raise RuntimeError(
-            "지원 산업코드: auto, semiconductor, automotive, "
-            "battery, biotechnology, construction, finance, none"
-        )
+    if industry_code not in VALUATION_INDUSTRY_CODES:
+        industry_code = "general"
 
     return {
         "기업명": company_name,
@@ -875,7 +902,7 @@ def main():
         },
     )
 
-    if industry_code == "none":
+    if industry_code not in LIVE_INDUSTRY_CODES:
         print(
             "INDUSTRY SKIPPED:",
             stock_code,
@@ -883,8 +910,8 @@ def main():
 
         industry_bundle = {
             "전체수집상태": "미적용",
-            "산업코드": "none",
-            "산업명": "미분류",
+            "산업코드": industry_code,
+            "산업명": industry_code if industry_code != "none" else "미분류",
             "자산": {},
             "수집오류": [],
         }
@@ -932,6 +959,7 @@ def main():
         fundamentals_bundle,
         industry_analysis,
         industry_bundle,
+        target.get("기업조회", {}),
     )
 
     prediction = predict_stock(
