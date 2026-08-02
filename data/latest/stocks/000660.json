@@ -27,7 +27,7 @@
     "OpenDART업종코드": "2612",
     "데이터출처": "금융감독원 OpenDART"
   },
-  "생성시각": "2026-08-02T00:53:14.192498",
+  "생성시각": "2026-08-02T01:12:27.587076",
   "재무분석": {
     "재무지표": {
       "ROE": 35.59,
@@ -575,7 +575,7 @@
         "MA20": 1478.693494,
         "현재값대비MA20": -2.84667,
         "최종관측시각UTC": "2026-08-01T03:30:52+00:00",
-        "데이터지연시간": 21.356,
+        "데이터지연시간": 21.689,
         "데이터개수": 68
       },
       "S&P500": {
@@ -594,7 +594,7 @@
         "MA20": 7481.149487,
         "현재값대비MA20": 0.114564,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 35.371,
+        "데이터지연시간": 35.703,
         "데이터개수": 63
       },
       "나스닥": {
@@ -613,7 +613,7 @@
         "MA20": 25592.412988,
         "현재값대비MA20": -0.854016,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 35.371,
+        "데이터지연시간": 35.703,
         "데이터개수": 63
       },
       "반도체지수": {
@@ -632,7 +632,7 @@
         "MA20": 12048.914893,
         "현재값대비MA20": -6.123662,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 35.371,
+        "데이터지연시간": 35.703,
         "데이터개수": 63
       },
       "VIX": {
@@ -651,7 +651,7 @@
         "MA20": 17.227,
         "현재값대비MA20": -7.180589,
         "최종관측시각UTC": "2026-07-31T07:00:00+00:00",
-        "데이터지연시간": 41.871,
+        "데이터지연시간": 42.203,
         "데이터개수": 65
       },
       "미국10년물": {
@@ -670,7 +670,7 @@
         "MA20": 4.6037,
         "현재값대비MA20": 3.069269,
         "최종관측시각UTC": "2026-07-31T12:20:00+00:00",
-        "데이터지연시간": 36.537,
+        "데이터지연시간": 36.87,
         "데이터개수": 64
       },
       "미국5년물": {
@@ -689,7 +689,7 @@
         "MA20": 4.3392,
         "현재값대비MA20": 2.783924,
         "최종관측시각UTC": "2026-07-31T12:20:00+00:00",
-        "데이터지연시간": 36.537,
+        "데이터지연시간": 36.87,
         "데이터개수": 64
       },
       "미국13주": {
@@ -708,7 +708,7 @@
         "MA20": 3.7196,
         "현재값대비MA20": -1.010863,
         "최종관측시각UTC": "2026-07-31T12:20:00+00:00",
-        "데이터지연시간": 36.537,
+        "데이터지연시간": 36.87,
         "데이터개수": 64
       }
     },
@@ -815,7 +815,7 @@
       "설명": "국내주식 기준으로 원달러·미국 주가지수·반도체지수·VIX·미국 금리의 방향을 -100~100 신호로 합성했습니다."
     },
     "수집오류": [],
-    "수집시각": "2026-08-02T09:52:14.722789+09:00",
+    "수집시각": "2026-08-02T10:12:12.263430+09:00",
     "데이터출처": "Yahoo Finance Chart API"
   },
   "기업기초데이터": {
@@ -1108,7 +1108,7 @@
       },
       "데이터출처": "금융감독원 OpenDART"
     },
-    "수집시각": "2026-08-02T09:53:13.408762+09:00",
+    "수집시각": "2026-08-02T10:12:26.949440+09:00",
     "데이터출처": "금융감독원 OpenDART"
   },
   "산업분석": {
@@ -1132,7 +1132,7 @@
         "MA20": 12048.914893,
         "현재값대비MA20": -6.123662,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 35.387,
+        "데이터지연시간": 35.708,
         "데이터개수": 251,
         "산업구간": "산업지수",
         "중기가중치": 20.0,
@@ -1163,7 +1163,7 @@
         "MA20": 571.632002,
         "현재값대비MA20": -5.440908,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 35.387,
+        "데이터지연시간": 35.708,
         "데이터개수": 251,
         "산업구간": "산업ETF",
         "중기가중치": 20.0,
@@ -1194,7 +1194,7 @@
         "MA20": 911.688007,
         "현재값대비MA20": -9.724596,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 35.387,
+        "데이터지연시간": 35.708,
         "데이터개수": 251,
         "산업구간": "메모리",
         "중기가중치": 15.0,
@@ -1225,7 +1225,7 @@
         "MA20": 415.135498,
         "현재값대비MA20": -2.622155,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 35.387,
+        "데이터지연시간": 35.708,
         "데이터개수": 251,
         "산업구간": "파운드리",
         "중기가중치": 15.0,
@@ -1256,7 +1256,7 @@
         "MA20": 1738.18949,
         "현재값대비MA20": -6.281794,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 35.387,
+        "데이터지연시간": 35.708,
         "데이터개수": 251,
         "산업구간": "노광장비",
         "중기가중치": 10.0,
@@ -1287,7 +1287,7 @@
         "MA20": 546.625996,
         "현재값대비MA20": -7.126625,
         "최종관측시각UTC": "2026-07-31T13:30:00+00:00",
-        "데이터지연시간": 35.387,
+        "데이터지연시간": 35.708,
         "데이터개수": 251,
         "산업구간": "반도체장비",
         "중기가중치": 10.0,
@@ -1318,7 +1318,7 @@
         "MA20": 1900400.0,
         "현재값대비MA20": -9.597979,
         "최종관측시각UTC": "2026-07-31T00:00:00+00:00",
-        "데이터지연시간": 48.887,
+        "데이터지연시간": 49.208,
         "데이터개수": 243,
         "산업구간": "메모리·HBM",
         "중기가중치": 10.0,
@@ -1524,7 +1524,7 @@
       "설명": "반도체 지수·ETF·메모리·파운드리·장비 대표자산의 가격추세와 시장폭을 합성합니다."
     },
     "수집오류": [],
-    "수집시각": "2026-08-02T09:53:14.191741+09:00",
+    "수집시각": "2026-08-02T10:12:27.586302+09:00",
     "데이터출처": "Yahoo Finance Chart API"
   },
   "기술분석": {
@@ -2673,7 +2673,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFBlRG41XzRXbzk4el9xMkF5bjBiY0dBWk9Xb1VsT1lCeWtWbTdqdThSWVpsSjhBeUZOaGJQUHY4ZXNVaXZDQkhSR21IdVd5cW9KUklLRU1B?oc=5",
         "언론사": "위키트리",
         "발행시각UTC": "2026-08-01T22:11:00+00:00",
-        "경과일": 0.11,
+        "경과일": 0.13,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2683,9 +2683,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxQaUM3MEtRclZOM0R5MXhYTU1yVzNoTnVwanFZN1RxVEpLaGhIaTFENDF0WUZINUJ1TUlITENoZGVJNUUzRXZEWnJQSnpBdnlUTU11YlNyMDJlSmpXWTQ0cS1CLTB2UkJFY240SDF2MUNBLTMxTEJXdGlyRDkwaTlOYmJ3TWIwNG5T0gGcAUFVX3lxTE9WU182WUx6RmlPd29UaUhKZUFWdzVFT3dKc1I3NzBSOFpuUHhOOGxSc2NjTk13YjFfVmp4WjRaXzFsQVBMalUxdnZzTVM0WEY1dFMxMmQyV1dNXzdCc1V6MnVaZm12V2NsdjUwaE9NQVZEMjlmS0NrZnJLeVY4cE5uS0RIOEhiLUFCVkNQVmprUG9OLUFrSW41d1EzOQ?oc=5",
         "언론사": "Chosunbiz",
         "발행시각UTC": "2026-07-30T22:50:00+00:00",
-        "경과일": 2.08,
+        "경과일": 2.1,
         "원점수": 35.0,
-        "최종점수": 33.38,
+        "최종점수": 33.37,
         "매칭규칙": [
           "실적",
           "사상 최대",
@@ -2697,7 +2697,7 @@
         "링크": "https://news.google.com/rss/articles/CBMieEFVX3lxTE1ld25iRkdRbTR2aXpkdURHaVhuVG9CMmhsbi1MRHpMY3AyRVEyWTdYVnFPT05fX295RlAxVlc4VlVORTZHbkFvVUxHUVY3MTFVRTRKcExsXzdpbmJBd2NDRDg3WFFSQ204UTlER1VYemY0V2E5aDV5atIBeEFVX3lxTE1ld25iRkdRbTR2aXpkdURHaVhuVG9CMmhsbi1MRHpMY3AyRVEyWTdYVnFPT05fX295RlAxVlc4VlVORTZHbkFvVUxHUVY3MTFVRTRKcExsXzdpbmJBd2NDRDg3WFFSQ204UTlER1VYemY0V2E5aDV5ag?oc=5",
         "언론사": "뉴시스",
         "발행시각UTC": "2026-08-01T20:12:33+00:00",
-        "경과일": 0.19,
+        "경과일": 0.21,
         "원점수": 5.0,
         "최종점수": 4.98,
         "매칭규칙": [
@@ -2709,7 +2709,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE13X2xmQk9nVzJRem1VM0dMYllNZFhLeW41VGVHbkZmNWctX3NvRk5YS1hIYXRjSWhmQlk1TDgzNGlrbldmSEQ1QWtnZmc5UUVoRFNaNVlaanFSR1VXNnRoM1I5VVYwaU0?oc=5",
         "언론사": "연합뉴스TV",
         "발행시각UTC": "2026-07-31T05:43:00+00:00",
-        "경과일": 1.8,
+        "경과일": 1.81,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2717,9 +2717,9 @@
       {
         "제목": "ADR 상장 뒤 '25일'…SK하이닉스가 주주환원에 말 아낀 까닭",
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5tcERKSFZBZ2FVbk8zaDN2ME96N1NHb0VubUxPWjVMaTlMREFjeHMtd3VlbWd3NlFnendFMXRtd3Bib1g4STktUHo0a1ctNlQ5dFpZcko5ak5LWnJZUnVuS3hpWXRqck02ZDhrMEdDZG4?oc=5",
-        "언론사": "연합인포맥스",
+        "언론사": "news.einfomax.co.kr",
         "발행시각UTC": "2026-07-30T22:45:06+00:00",
-        "경과일": 2.09,
+        "경과일": 2.1,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2729,9 +2729,21 @@
         "링크": "https://news.google.com/rss/articles/CBMickFVX3lxTE1rVXdTUkVoNk4xX2ktOC1XWndxbHlWaEZGRW50NURiYVQ4dFJsOFZtZ1NHeGVjME9Ud0Q4SHhQR2hIV3lUMm1wM1B6OGRPRlVwUVFGNHZMNkhrSUNVckppQVg4azM5NDlzOFZvY1p4WE8zZw?oc=5",
         "언론사": "한겨레",
         "발행시각UTC": "2026-07-31T09:14:00+00:00",
-        "경과일": 1.65,
+        "경과일": 1.67,
         "원점수": 5.0,
-        "최종점수": 4.82,
+        "최종점수": 4.81,
+        "매칭규칙": [
+          "매수"
+        ]
+      },
+      {
+        "제목": "최태원 SK회장, SK하이닉스 주식 3620주 장내매수 - 머니투데이",
+        "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTE9nejNZbVBlZF9nS2JadkJlZXRLLV9wUUVmVjNCQzlDRGN3d0YzMDRXOHNuTzkyakJhT1Y3Y1VvOS1iaVJJSkNtRW1aRkpCU3BSaVZtdm4yLTJNaDBXVGdab0dDb3lRRHVFUmEydtIBckFVX3lxTE4zcnJYRFgtTE9VMWVXdUowWnYzVWx6OWlWY3BVb0dXVjJuSk44alRLaW1vM1drYVRLenpzWDZ5aWp3STRNYjNmYVI5bnFSMVM1Q1hmNEo0Z1oxRm1TM3ZNYWs5U0dtZWk2VGYxS2tJeDBrdw?oc=5",
+        "언론사": "머니투데이",
+        "발행시각UTC": "2026-07-30T10:12:25+00:00",
+        "경과일": 2.62,
+        "원점수": 5.0,
+        "최종점수": 4.71,
         "매칭규칙": [
           "매수"
         ]
@@ -2741,29 +2753,17 @@
         "링크": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1LbzZ4Q2NEazZyM2U1c3prblRSdDhVT3kzTjVfSHJfeEpGenU4VzcwanplU2tJcllNOUo0VjFWcVdkbHBhaUtWQlg0NjJKdnM?oc=5",
         "언론사": "v.daum.net",
         "발행시각UTC": "2026-08-01T23:13:04+00:00",
-        "경과일": 0.07,
+        "경과일": 0.08,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
-      },
-      {
-        "제목": "최태원 SK회장, SK하이닉스 주식 3620주 장내매수 - 머니투데이",
-        "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTE9nejNZbVBlZF9nS2JadkJlZXRLLV9wUUVmVjNCQzlDRGN3d0YzMDRXOHNuTzkyakJhT1Y3Y1VvOS1iaVJJSkNtRW1aRkpCU3BSaVZtdm4yLTJNaDBXVGdab0dDb3lRRHVFUmEydtIBckFVX3lxTE4zcnJYRFgtTE9VMWVXdUowWnYzVWx6OWlWY3BVb0dXVjJuSk44alRLaW1vM1drYVRLenpzWDZ5aWp3STRNYjNmYVI5bnFSMVM1Q1hmNEo0Z1oxRm1TM3ZNYWs5U0dtZWk2VGYxS2tJeDBrdw?oc=5",
-        "언론사": "머니투데이",
-        "발행시각UTC": "2026-07-30T10:12:25+00:00",
-        "경과일": 2.61,
-        "원점수": 5.0,
-        "최종점수": 4.71,
-        "매칭규칙": [
-          "매수"
-        ]
       },
       {
         "제목": "최태원 책임경영 의지…SK하이닉스 주식 3620주 장내매수",
         "링크": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFBPRHV1dzhpN1l5OHdETXR0aHBxVHpBZF80ek5rX21DYUMyWHktSDdTY0FZcnMzb282Q05CWmRaR0lXREZrQUlwTklxRzJHRE1MZXQ4M0xn?oc=5",
         "언론사": "중앙일보",
         "발행시각UTC": "2026-07-30T10:29:41+00:00",
-        "경과일": 2.6,
+        "경과일": 2.61,
         "원점수": 5.0,
         "최종점수": 4.71,
         "매칭규칙": [
@@ -2775,7 +2775,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5MZFBpUVVCblp0VlpTdnRfaDVRX2k5LWZxbEpBbC1UdFFITHVXeUp6ZXZGOXRvckltb2x0dGZUTmkwaWlFU2l4a2ZiZDg1aTF3NGk4QzdMUHhLZw?oc=5",
         "언론사": "한국경제",
         "발행시각UTC": "2026-07-30T10:45:39+00:00",
-        "경과일": 2.59,
+        "경과일": 2.6,
         "원점수": 5.0,
         "최종점수": 4.71,
         "매칭규칙": [
@@ -2787,7 +2787,7 @@
         "링크": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQeFJ6SGxZYnhFWENBbmxZNmFBV1kyekxIaVBPYjl5UzdCWGpIV05wd2hLaEhVenNsVzBGVk5lOWhxOWluT010R2cyWnYyWDZlN3Myd1FzZFptem92QVlUMzBoU3V6Rlcxc1F6MFZwRGc1ZlRqQ1dOdXBhaGQzYjF3ZQ?oc=5",
         "언론사": "조선일보",
         "발행시각UTC": "2026-07-29T23:52:52+00:00",
-        "경과일": 3.04,
+        "경과일": 3.06,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2795,11 +2795,11 @@
       {
         "제목": "2분기 사상 최대 실적 SK하이닉스, 컨센서스 하회에 프리장서 약세",
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5ZdjdUUWl2bVBIeWxEMl9fc0t0S1M4QThiazVpcEtKM19EX2FET3VjamdfTHh2Nl9FSi1kLXdmc3RFdUJWeEdBYVpDczhBMjdMMFNHYVZObTRrNk9ZT0RfcGx6cjdHZm4tZldheVY4Y3g?oc=5",
-        "언론사": "연합인포맥스",
+        "언론사": "news.einfomax.co.kr",
         "발행시각UTC": "2026-07-28T23:07:49+00:00",
-        "경과일": 4.07,
+        "경과일": 4.09,
         "원점수": 35.0,
-        "최종점수": 31.83,
+        "최종점수": 31.82,
         "매칭규칙": [
           "실적",
           "사상 최대",
@@ -2811,9 +2811,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE9LcE8tUzU1UzlEaXh3N1lyTkpoSGpCTTdiOTB3RHhWTFRTZVdDdzNvek5aXzlSd2c1VEJBM2NGbzRJSFJOR0xvanFDVnRwbVNpZjN6S2hZTnRaM29WUDR3ejNaTHlVWUU?oc=5",
         "언론사": "연합뉴스TV",
         "발행시각UTC": "2026-07-28T23:09:00+00:00",
-        "경과일": 4.07,
+        "경과일": 4.09,
         "원점수": 35.0,
-        "최종점수": 31.83,
+        "최종점수": 31.82,
         "매칭규칙": [
           "실적",
           "사상 최대",
@@ -2825,7 +2825,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9tbEswNVd0UHhYbGFUek8zTlBHekZacnFYWmxRZ1UyelpHRl9XckduTUM1dVdHX1Vna0NVSkhLSGNYUWJSOXhVWWJVOTRnYnM?oc=5",
         "언론사": "v.daum.net",
         "발행시각UTC": "2026-08-01T20:37:07+00:00",
-        "경과일": 0.18,
+        "경과일": 0.19,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2835,7 +2835,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE1ienZSemx1TF91N1c2cTN5SmN3aTJtVm5Hd09ENGNMUm9OVzRZdGpHZVowWnBwbmpCT1ExaFMxQzA2RlNEd0FvUUFlR25uaEpUclBZVHBn?oc=5",
         "언론사": "위키트리",
         "발행시각UTC": "2026-08-02T00:01:00+00:00",
-        "경과일": 0.04,
+        "경과일": 0.05,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2843,9 +2843,9 @@
       {
         "제목": "SK하이닉스, 2분기 실적이 예상치 밑돈 이유는",
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBZTTMyZ2dSQk5JSElKSFBucFNjYWVJMjZjNTZDTHRzN0xraGxTSjltQU13YXpwNzBvT2RiRjZWWHRubFFaQU1yc0ctSEdLU0xNVjA1Z0tJUnFZN2l6VHFBRzRaVEdtUmRXTzNlVDlSUTk?oc=5",
-        "언론사": "연합인포맥스",
+        "언론사": "news.einfomax.co.kr",
         "발행시각UTC": "2026-07-29T01:43:01+00:00",
-        "경과일": 3.96,
+        "경과일": 3.98,
         "원점수": 16.0,
         "최종점수": 14.59,
         "매칭규칙": [
@@ -2857,7 +2857,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE5JVVFNbC02VU9mVHNRSFdpV29WNXI1Ri1aaWpxQjFNVzZuSGFYbmxRVHQ5enVGZFBlOXpNcWNBUzN3MWZTcHhwUWwwSFB1bG05MHRTNUYtZERMUW1HLUV5eDQxdG5MbjQ?oc=5",
         "언론사": "연합뉴스TV",
         "발행시각UTC": "2026-07-30T12:52:00+00:00",
-        "경과일": 2.5,
+        "경과일": 2.51,
         "원점수": 5.0,
         "최종점수": 4.72,
         "매칭규칙": [
@@ -2867,9 +2867,9 @@
       {
         "제목": "'어닝 미스' SK하이닉스 엇갈린 전망…한투 470만원 VS BNK 148만원",
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5xMDQtNzVsd29BaTBab08zeHVDVmdNcm1mb2FNb2dMUkhBelJ2WWpXQ3l6cy1KU2pxMGZKYXQtVldiQnd2aXZGR1VDVjdhTWxMSWt5RlRjbnhXUTNYa2ZnNVBsOE9yX2pVTDZDZHdDU1I?oc=5",
-        "언론사": "연합인포맥스",
+        "언론사": "news.einfomax.co.kr",
         "발행시각UTC": "2026-07-29T23:59:49+00:00",
-        "경과일": 3.04,
+        "경과일": 3.05,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2877,9 +2877,9 @@
       {
         "제목": "SK하이닉스, 2분기 영업익 63조 전망…꺾인 투심 되돌릴까",
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9QNEwwRHpEdmdtMENkd3YtZ2N3OWZ4cWJxR0tERnJ5eWVGUkVXUEtnZ1BveGZWLXpFZlk5OVBvOUNIRFI4Vk9Fall2T2w0VGtsbm9pOTE5bDZZT2M5NWVfVUktWUhjZXlqMDJDQzB1bm4?oc=5",
-        "언론사": "연합인포맥스",
+        "언론사": "news.einfomax.co.kr",
         "발행시각UTC": "2026-07-27T23:17:00+00:00",
-        "경과일": 5.07,
+        "경과일": 5.08,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2887,19 +2887,19 @@
       {
         "제목": "SK하이닉스 영업외이익 62조…'키옥시아' 투자 효과에 순익률 118%",
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE03U1RtNHRhQTU2bHhnMVBOUGs0ZnhKamJSU2RlRmhVZURERnJFTVBPc0JtUkRkZEhjb0xpSXRlMERQVlowRUkwb20xRmhxNkYyQTlGb0doTGEyRmdEdGhFV2xEU0V4WGhqU21QdGxsRU8?oc=5",
-        "언론사": "연합인포맥스",
+        "언론사": "news.einfomax.co.kr",
         "발행시각UTC": "2026-07-28T23:57:50+00:00",
-        "경과일": 4.04,
+        "경과일": 4.05,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
       },
       {
-        "제목": "최태원, 처음으로 SK하이닉스 주식 샀다···보통주 3620주 매수 “책임경영 차원”",
-        "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1ETEZPbW1yakZQTm81WUxBeEdSWHFWRS1XdjBJT1YyVzl4alU2MTVURW82aTJ4Sk1CT1Blb3hfbk02RW9XeVNiNHd0RGVCaUhJdWhxREtqTDBZQdIBX0FVX3lxTE5Ma2lta0w3N1o5M0p6QWh3MDdrV3Y0OG1nQmpxbnA5bTZiS29USUkyMkw3alE3cDF5a0tOV3M3enRZUUF6eWRUUER4WDFrT0lBWERSTmVrNXJoMzV6TXJN?oc=5",
-        "언론사": "경향신문",
-        "발행시각UTC": "2026-07-30T10:43:00+00:00",
-        "경과일": 2.59,
+        "제목": "최태원, SK하이닉스 주식 48억 원어치 장내 매수",
+        "링크": "https://news.google.com/rss/articles/CBMiXkFVX3lxTFBCb3dvWHdSMnRiMEhZUmN3VUJKdU9MczRtRmNUSGNRRDNGZlpWNEpCQ2xPWndYSmpEdWVIUXV0ek00ZXBsUGtzdHRPQkVQUzY5VlZ1UmJrVkpyYWhFbVE?oc=5",
+        "언론사": "YTN",
+        "발행시각UTC": "2026-07-30T10:31:00+00:00",
+        "경과일": 2.61,
         "원점수": 5.0,
         "최종점수": 4.71,
         "매칭규칙": [
@@ -2907,10 +2907,10 @@
         ]
       },
       {
-        "제목": "최태원, SK하이닉스 주식 48억 원어치 장내 매수",
-        "링크": "https://news.google.com/rss/articles/CBMiXkFVX3lxTFBCb3dvWHdSMnRiMEhZUmN3VUJKdU9MczRtRmNUSGNRRDNGZlpWNEpCQ2xPWndYSmpEdWVIUXV0ek00ZXBsUGtzdHRPQkVQUzY5VlZ1UmJrVkpyYWhFbVE?oc=5",
-        "언론사": "YTN",
-        "발행시각UTC": "2026-07-30T10:31:00+00:00",
+        "제목": "최태원, 처음으로 SK하이닉스 주식 샀다···보통주 3620주 매수 “책임경영 차원”",
+        "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1ETEZPbW1yakZQTm81WUxBeEdSWHFWRS1XdjBJT1YyVzl4alU2MTVURW82aTJ4Sk1CT1Blb3hfbk02RW9XeVNiNHd0RGVCaUhJdWhxREtqTDBZQdIBX0FVX3lxTE5Ma2lta0w3N1o5M0p6QWh3MDdrV3Y0OG1nQmpxbnA5bTZiS29USUkyMkw3alE3cDF5a0tOV3M3enRZUUF6eWRUUER4WDFrT0lBWERSTmVrNXJoMzV6TXJN?oc=5",
+        "언론사": "경향신문",
+        "발행시각UTC": "2026-07-30T10:43:00+00:00",
         "경과일": 2.6,
         "원점수": 5.0,
         "최종점수": 4.71,
@@ -2923,7 +2923,7 @@
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE1EUWNLbDdpWVdJaDVvWEtUblNWeE9KOUdTUkFfZVNrMVVEbTRhTmdmZFd2QloxR3NUcEw5SjQxWnFHZExkb2NwRV8yOHk3UmpOa3hrNzNtbGtwU3ZyZzI0TjB4MnA1djFCUWxCME9jdVM?oc=5",
         "언론사": "Investing.com 한국어",
         "발행시각UTC": "2026-07-31T01:05:00+00:00",
-        "경과일": 1.99,
+        "경과일": 2.0,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2933,7 +2933,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE13VGJxd2JlMWlkQmN0TDNGSGxwajdwY0NhSWR6SXBfa2NORmtZbVcxZHBaV1BjNTJZUk5la1hlNWZUSFNBUFlSMU05TEJrS3YxM21lcXF6Z2JPRlBrTlhxWFZHN3BsMmRM0gFuQVVfeXFMUGF6RmFacWtSYjFhVTRlbDJIYzBmVTRDdTZTWXBQWllQazBENEd6Rl9zTzJJVjBNdlRZRGY1TE5lU0lzSGdNUllQT05JWkxGQkktbklNY000RWZaTjM4elcwRkZ3ZTgyRkZhVHVGUEE?oc=5",
         "언론사": "머니투데이",
         "발행시각UTC": "2026-07-28T08:28:29+00:00",
-        "경과일": 4.68,
+        "경과일": 4.7,
         "원점수": 16.0,
         "최종점수": 14.33,
         "매칭규칙": [
@@ -2945,7 +2945,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE55OTlxZnU3M0poX2JhXzVqQUZXbUpPcmlvMmJ2Tkl4ZENDWmNmS3JBZFJhb0lrZERuWms0TDBTTjloX0FUYUFvN1RNVWt4OE5GNDRQRjJUTURDUmvSAWBBVV95cUxOT1lDanJFSDRQRXFrVlViUkE0YTg5Qlc5X0RSTDRTWjdqdU5vTUtjUnlfZmZXQkhLend6UmtyZGdiOEJSSnVyQ1ZpTkdKdW9NYjd0Nk5YT2Q0d1VJZEhvUEo?oc=5",
         "언론사": "연합뉴스",
         "발행시각UTC": "2026-07-30T10:37:47+00:00",
-        "경과일": 2.59,
+        "경과일": 2.61,
         "원점수": 5.0,
         "최종점수": 4.71,
         "매칭규칙": [
@@ -2955,9 +2955,9 @@
       {
         "제목": "최태원 SK 회장, SK하이닉스 주식 3천620주 매입…\"책임경영 일환\"(종합)",
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE13OUJ2bnU0SzZIMDB2R0t2RzdFQnNRUzQzS25manV1cEVDdk8xYnA1Zm9UdDdrUGIwcmdBdTlPYlJTc20zYlJtTm1hbUhqQnNvUG91SkRBOWtvcHQ4NW16bTRDdTBoX3lYMlZPQW9uZUY?oc=5",
-        "언론사": "연합인포맥스",
+        "언론사": "news.einfomax.co.kr",
         "발행시각UTC": "2026-07-30T10:30:31+00:00",
-        "경과일": 2.6,
+        "경과일": 2.61,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2967,7 +2967,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiTkFVX3lxTE5OMHFfVWZIUmVZSTQ2dld0Vmw1M2NacWpvUGxXVDB1SUUxOGg4bi1OQl8xSnl3UTNfY0RGQXVzUW5zYnJIVUZJRDhlZ1VwQQ?oc=5",
         "언론사": "전자신문",
         "발행시각UTC": "2026-07-30T10:49:43+00:00",
-        "경과일": 2.59,
+        "경과일": 2.6,
         "원점수": 5.0,
         "최종점수": 4.71,
         "매칭규칙": [
@@ -2975,11 +2975,21 @@
         ]
       },
       {
+        "제목": "주가 폭락 속…한국투자증권 \"SK하이닉스 470만원 간다\"",
+        "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTFBRTzlubnZSOTlVTEtPajNVSDNvZG56cG85eVpsS2hxblF5NnBySFQtX0Y2TUZqbkc3NGJlQ0d6Ui0zSDQ3VlhEVGJoanl0RWVIcWF6RUlYcjFyVUJSbHgtUjBFU1RfaHM?oc=5",
+        "언론사": "연합뉴스TV",
+        "발행시각UTC": "2026-07-30T01:23:00+00:00",
+        "경과일": 2.99,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
         "제목": "급락장 와중에…최태원, SK하이닉스 주식 47억9000만원 첫 장내매수",
         "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE91X2QxSlhaNkhrQURCbFZVSnBDRXFJVE5qXzlQSjBJb0REdjlxMTN1RU5HRDNkLU1FTU85dzJJRHVOSkd5QmhROENQWjZ5TVpQYWlYazZzZWZIQUk?oc=5",
-        "언론사": "에너지경제신문",
+        "언론사": "ekn.kr",
         "발행시각UTC": "2026-07-30T10:32:19+00:00",
-        "경과일": 2.6,
+        "경과일": 2.61,
         "원점수": -3.0,
         "최종점수": -2.83,
         "매칭규칙": [
@@ -2988,21 +2998,11 @@
         ]
       },
       {
-        "제목": "주가 폭락 속…한국투자증권 \"SK하이닉스 470만원 간다\"",
-        "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTFBRTzlubnZSOTlVTEtPajNVSDNvZG56cG85eVpsS2hxblF5NnBySFQtX0Y2TUZqbkc3NGJlQ0d6Ui0zSDQ3VlhEVGJoanl0RWVIcWF6RUlYcjFyVUJSbHgtUjBFU1RfaHM?oc=5",
-        "언론사": "연합뉴스TV",
-        "발행시각UTC": "2026-07-30T01:23:00+00:00",
-        "경과일": 2.98,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
         "제목": "\"갖고 있으면 오른다\" 최태원, SK하이닉스 주식 첫 매수…48억원 규모 - 머니투데이",
         "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTE52RWtlUWtBQ3N1RlVjZ1pKT25KZDE3ZmVCT0YyUDM3NmlpNXdqWUh0WlZ5VTZjby14R1g1OFpBNTZudXp4UXcyeFNBby12S1J4S2tNb3VlTGp1YktNd1VmLXFYRzh6dVFtOG9xVtIBckFVX3lxTFB3b0FZUmItak43M3R4N3ZFWVNSd0dlODJvTkg3VkJReDV2Q1VUemFja3d2Vzc1SkFDTlBwcm1kWmxRRVY4SFVGSVJSdS1hcHJlRTU5cXFwNXBqWlNHNkFWVndCRE9ydTc5MXZlN3AtbTZOdw?oc=5",
         "언론사": "머니투데이",
         "발행시각UTC": "2026-07-30T10:33:12+00:00",
-        "경과일": 2.6,
+        "경과일": 2.61,
         "원점수": 5.0,
         "최종점수": 4.71,
         "매칭규칙": [
@@ -3012,7 +3012,7 @@
     ],
     "분석": {
       "분석상태": "정상",
-      "신호": 65.75,
+      "신호": 65.73,
       "데이터품질": 88.0,
       "판정": "매우 긍정",
       "긍정뉴스개수": 16,
@@ -3024,9 +3024,9 @@
           "링크": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxQaUM3MEtRclZOM0R5MXhYTU1yVzNoTnVwanFZN1RxVEpLaGhIaTFENDF0WUZINUJ1TUlITENoZGVJNUUzRXZEWnJQSnpBdnlUTU11YlNyMDJlSmpXWTQ0cS1CLTB2UkJFY240SDF2MUNBLTMxTEJXdGlyRDkwaTlOYmJ3TWIwNG5T0gGcAUFVX3lxTE9WU182WUx6RmlPd29UaUhKZUFWdzVFT3dKc1I3NzBSOFpuUHhOOGxSc2NjTk13YjFfVmp4WjRaXzFsQVBMalUxdnZzTVM0WEY1dFMxMmQyV1dNXzdCc1V6MnVaZm12V2NsdjUwaE9NQVZEMjlmS0NrZnJLeVY4cE5uS0RIOEhiLUFCVkNQVmprUG9OLUFrSW41d1EzOQ?oc=5",
           "언론사": "Chosunbiz",
           "발행시각UTC": "2026-07-30T22:50:00+00:00",
-          "경과일": 2.08,
+          "경과일": 2.1,
           "원점수": 35.0,
-          "최종점수": 33.38,
+          "최종점수": 33.37,
           "매칭규칙": [
             "실적",
             "사상 최대",
@@ -3038,7 +3038,7 @@
           "링크": "https://news.google.com/rss/articles/CBMieEFVX3lxTE1ld25iRkdRbTR2aXpkdURHaVhuVG9CMmhsbi1MRHpMY3AyRVEyWTdYVnFPT05fX295RlAxVlc4VlVORTZHbkFvVUxHUVY3MTFVRTRKcExsXzdpbmJBd2NDRDg3WFFSQ204UTlER1VYemY0V2E5aDV5atIBeEFVX3lxTE1ld25iRkdRbTR2aXpkdURHaVhuVG9CMmhsbi1MRHpMY3AyRVEyWTdYVnFPT05fX295RlAxVlc4VlVORTZHbkFvVUxHUVY3MTFVRTRKcExsXzdpbmJBd2NDRDg3WFFSQ204UTlER1VYemY0V2E5aDV5ag?oc=5",
           "언론사": "뉴시스",
           "발행시각UTC": "2026-08-01T20:12:33+00:00",
-          "경과일": 0.19,
+          "경과일": 0.21,
           "원점수": 5.0,
           "최종점수": 4.98,
           "매칭규칙": [
@@ -3050,9 +3050,9 @@
           "링크": "https://news.google.com/rss/articles/CBMickFVX3lxTE1rVXdTUkVoNk4xX2ktOC1XWndxbHlWaEZGRW50NURiYVQ4dFJsOFZtZ1NHeGVjME9Ud0Q4SHhQR2hIV3lUMm1wM1B6OGRPRlVwUVFGNHZMNkhrSUNVckppQVg4azM5NDlzOFZvY1p4WE8zZw?oc=5",
           "언론사": "한겨레",
           "발행시각UTC": "2026-07-31T09:14:00+00:00",
-          "경과일": 1.65,
+          "경과일": 1.67,
           "원점수": 5.0,
-          "최종점수": 4.82,
+          "최종점수": 4.81,
           "매칭규칙": [
             "매수"
           ]
@@ -3062,7 +3062,7 @@
           "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTE9nejNZbVBlZF9nS2JadkJlZXRLLV9wUUVmVjNCQzlDRGN3d0YzMDRXOHNuTzkyakJhT1Y3Y1VvOS1iaVJJSkNtRW1aRkpCU3BSaVZtdm4yLTJNaDBXVGdab0dDb3lRRHVFUmEydtIBckFVX3lxTE4zcnJYRFgtTE9VMWVXdUowWnYzVWx6OWlWY3BVb0dXVjJuSk44alRLaW1vM1drYVRLenpzWDZ5aWp3STRNYjNmYVI5bnFSMVM1Q1hmNEo0Z1oxRm1TM3ZNYWs5U0dtZWk2VGYxS2tJeDBrdw?oc=5",
           "언론사": "머니투데이",
           "발행시각UTC": "2026-07-30T10:12:25+00:00",
-          "경과일": 2.61,
+          "경과일": 2.62,
           "원점수": 5.0,
           "최종점수": 4.71,
           "매칭규칙": [
@@ -3074,7 +3074,7 @@
           "링크": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFBPRHV1dzhpN1l5OHdETXR0aHBxVHpBZF80ek5rX21DYUMyWHktSDdTY0FZcnMzb282Q05CWmRaR0lXREZrQUlwTklxRzJHRE1MZXQ4M0xn?oc=5",
           "언론사": "중앙일보",
           "발행시각UTC": "2026-07-30T10:29:41+00:00",
-          "경과일": 2.6,
+          "경과일": 2.61,
           "원점수": 5.0,
           "최종점수": 4.71,
           "매칭규칙": [
@@ -3086,9 +3086,9 @@
         {
           "제목": "급락장 와중에…최태원, SK하이닉스 주식 47억9000만원 첫 장내매수",
           "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE91X2QxSlhaNkhrQURCbFZVSnBDRXFJVE5qXzlQSjBJb0REdjlxMTN1RU5HRDNkLU1FTU85dzJJRHVOSkd5QmhROENQWjZ5TVpQYWlYazZzZWZIQUk?oc=5",
-          "언론사": "에너지경제신문",
+          "언론사": "ekn.kr",
           "발행시각UTC": "2026-07-30T10:32:19+00:00",
-          "경과일": 2.6,
+          "경과일": 2.61,
           "원점수": -3.0,
           "최종점수": -2.83,
           "매칭규칙": [
@@ -3100,7 +3100,7 @@
       "설명": "최근 뉴스 제목의 실적·수주·투자·증자·소송 등 규칙과 시간가중치를 합성합니다."
     },
     "데이터출처": "Google News RSS",
-    "수집시각UTC": "2026-08-02T00:52:12.966998+00:00"
+    "수집시각UTC": "2026-08-02T01:12:10.872811+00:00"
   },
   "가치평가": {
     "가치평가엔진버전": "6.4.0-all-industry-signal-bridge",
@@ -3184,7 +3184,7 @@
     ]
   },
   "주가예측": {
-    "엔진버전": "6.4.0-full-signal-bridge",
+    "엔진버전": "6.4.1-feed-contract",
     "단기1~5일": {
       "기간": "1~5일",
       "점수": 52,
@@ -3236,12 +3236,12 @@
         {
           "요소": "뉴스·공시",
           "가중치": 10,
-          "신호": 40.84,
+          "신호": 40.83,
           "신호판정": "긍정",
           "데이터품질": 75.4,
           "점수기여": 4.08,
           "출처": "OpenDART 최근 공시 + Google News RSS",
-          "설명": "분석상태 정상, 신호 40.84"
+          "설명": "분석상태 정상, 신호 40.83"
         }
       ],
       "미수집요소": [],
@@ -3315,12 +3315,12 @@
         {
           "요소": "뉴스·공시",
           "가중치": 10,
-          "신호": 40.84,
+          "신호": 40.83,
           "신호판정": "긍정",
           "데이터품질": 75.4,
           "점수기여": 4.08,
           "출처": "OpenDART 최근 공시 + Google News RSS",
-          "설명": "분석상태 정상, 신호 40.84"
+          "설명": "분석상태 정상, 신호 40.83"
         }
       ],
       "미수집요소": [],
@@ -3436,5 +3436,403 @@
       "지배구조정량평가": false
     },
     "주의": "미수집 요소는 추정하지 않고 중립 처리한다. 파생시장·프로그램 요소에는 현재 종목별 프로그램매매만 반영하며 파생시장 데이터는 아직 미반영이다. 뉴스와 공시 신호는 제목 기반 규칙형 분석이다. 향후이익 방향은 최신 실적과 현금창출력 기반 대용지표이며 애널리스트 컨센서스는 아직 반영되지 않았다. 상승확률은 데이터 커버리지에 따라 50% 방향으로 축소된 모델 확률이다."
+  },
+  "화면브리지": {
+    "스키마버전": "2.0",
+    "엔진버전": "6.4.1-feed-contract",
+    "종목코드": "000660",
+    "생성시각": "2026-08-02T01:12:27.587076",
+    "연결상태": "정상",
+    "기술분석": {
+      "수집상태": "정상",
+      "데이터출처": "Yahoo Finance Chart API 5년 일봉",
+      "일봉": {
+        "사용가능": true,
+        "available": true,
+        "점수": -75.8,
+        "score": -75.8,
+        "판정": "강한 하락",
+        "trend": "강한 하락",
+        "RSI14": 39.33,
+        "rsi14": 39.33,
+        "빠른이동평균": 1561400.0,
+        "maFast": 1561400.0,
+        "중간이동평균": 1900400.0,
+        "maMedium": 1900400.0,
+        "장기이동평균": 2107050.0,
+        "maLong": 2107050.0,
+        "단기모멘텀": -0.023309,
+        "momentumFast": -0.023309,
+        "중기모멘텀": -0.214449,
+        "momentumMedium": -0.214449,
+        "관측수": 1219,
+        "observations": 1219,
+        "자료신뢰도": 95.0,
+        "confidence": 95.0
+      },
+      "주봉": {
+        "사용가능": true,
+        "available": true,
+        "점수": -7.0,
+        "score": -7.0,
+        "판정": "중립",
+        "trend": "중립",
+        "RSI14": 57.96,
+        "rsi14": 57.96,
+        "빠른이동평균": 1874750.0,
+        "maFast": 1874750.0,
+        "중간이동평균": 2104615.38,
+        "maMedium": 2104615.38,
+        "장기이동평균": 1553923.08,
+        "maLong": 1553923.08,
+        "단기모멘텀": -0.291546,
+        "momentumFast": -0.291546,
+        "중기모멘텀": 0.335925,
+        "momentumMedium": 0.335925,
+        "관측수": 261,
+        "observations": 261,
+        "자료신뢰도": 95.0,
+        "confidence": 95.0
+      },
+      "월봉": {
+        "사용가능": true,
+        "available": true,
+        "점수": 91.0,
+        "score": 91.0,
+        "판정": "강한 상승",
+        "trend": "강한 상승",
+        "RSI14": 68.97,
+        "rsi14": 68.97,
+        "빠른이동평균": 2233666.67,
+        "maFast": 2233666.67,
+        "중간이동평균": 1093375.0,
+        "maMedium": 1093375.0,
+        "장기이동평균": 646520.83,
+        "maLong": 646520.83,
+        "단기모멘텀": 0.335925,
+        "momentumFast": 0.335925,
+        "중기모멘텀": 5.281536,
+        "momentumMedium": 5.281536,
+        "관측수": 60,
+        "observations": 60,
+        "자료신뢰도": 95.0,
+        "confidence": 95.0
+      },
+      "사용가능": true
+    },
+    "예측": {
+      "단기": {
+        "기간": "1~5일",
+        "점수": 52,
+        "상승확률": 51,
+        "판정": "중립",
+        "자료신뢰도": 89,
+        "신뢰도": 89,
+        "자료신뢰도등급": "높음",
+        "신뢰도등급": "높음",
+        "요소별평가": [
+          {
+            "요소": "파생시장·프로그램",
+            "사용가능": true,
+            "가중치": 30.0,
+            "신호": -50.98,
+            "판정": "부정",
+            "신호판정": "부정",
+            "데이터상태": "정상",
+            "데이터품질": 70.0,
+            "점수기여": -15.29,
+            "출처": "KIS 종목별 프로그램매매",
+            "설명": "5일 수량 -41712, 20일 수량 -2380659, 5일 거래량대비 -0.123%, 20일 거래량대비 -1.753%"
+          },
+          {
+            "요소": "외국인·기관수급",
+            "사용가능": true,
+            "가중치": 25.0,
+            "신호": 100.0,
+            "판정": "매우 긍정",
+            "신호판정": "매우 긍정",
+            "데이터상태": "정상",
+            "데이터품질": 100.0,
+            "점수기여": 25.0,
+            "출처": "KIS 투자자별 당일 매매",
+            "설명": "외국인+기관 합산 2482950주, 거래량 대비 23.648%"
+          },
+          {
+            "요소": "기술·거래량",
+            "사용가능": true,
+            "가중치": 20.0,
+            "신호": -52.88,
+            "판정": "부정",
+            "신호판정": "부정",
+            "데이터상태": "정상",
+            "데이터품질": 100.0,
+            "점수기여": -10.58,
+            "출처": "KIS 일봉+현재가",
+            "설명": "5일수익률 -2.33%, RSI14 39.33"
+          },
+          {
+            "요소": "환율·글로벌",
+            "사용가능": true,
+            "가중치": 15.0,
+            "신호": 0.37,
+            "판정": "중립",
+            "신호판정": "중립",
+            "데이터상태": "정상",
+            "데이터품질": 100.0,
+            "점수기여": 0.06,
+            "출처": "Yahoo 글로벌시장 분석",
+            "설명": "분석상태 정상, 신호 0.37"
+          },
+          {
+            "요소": "뉴스·공시",
+            "사용가능": true,
+            "가중치": 10.0,
+            "신호": 40.83,
+            "판정": "긍정",
+            "신호판정": "긍정",
+            "데이터상태": "정상",
+            "데이터품질": 75.4,
+            "점수기여": 4.08,
+            "출처": "OpenDART 최근 공시 + Google News RSS",
+            "설명": "분석상태 정상, 신호 40.83"
+          }
+        ],
+        "미수집요소": []
+      },
+      "중기": {
+        "기간": "1~8주",
+        "점수": 54,
+        "상승확률": 53,
+        "판정": "중립",
+        "자료신뢰도": 95,
+        "신뢰도": 95,
+        "자료신뢰도등급": "높음",
+        "신뢰도등급": "높음",
+        "요소별평가": [
+          {
+            "요소": "분기실적",
+            "사용가능": true,
+            "가중치": 25.0,
+            "신호": 100.0,
+            "판정": "매우 긍정",
+            "신호판정": "매우 긍정",
+            "데이터상태": "정상",
+            "데이터품질": 90.0,
+            "점수기여": 25.0,
+            "출처": "OpenDART 최신 분기 전년동기 실적",
+            "설명": "최신 분기 전년동기 비교 사용"
+          },
+          {
+            "요소": "산업선행지표",
+            "사용가능": true,
+            "가중치": 25.0,
+            "신호": -50.37,
+            "판정": "부정",
+            "신호판정": "부정",
+            "데이터상태": "정상",
+            "데이터품질": 98.5,
+            "점수기여": -12.59,
+            "출처": "반도체 산업 대표자산 합성",
+            "설명": "산업국면 장기상승 중 단기조정"
+          },
+          {
+            "요소": "누적수급",
+            "사용가능": true,
+            "가중치": 15.0,
+            "신호": 11.71,
+            "판정": "중립",
+            "신호판정": "중립",
+            "데이터상태": "정상",
+            "데이터품질": 100.0,
+            "점수기여": 1.76,
+            "출처": "KIS 투자자별 일별 매매",
+            "설명": "5일 합산 894348주, 20일 합산 -2059802주"
+          },
+          {
+            "요소": "환율·금리·거시",
+            "사용가능": true,
+            "가중치": 15.0,
+            "신호": -16.65,
+            "판정": "중립",
+            "신호판정": "중립",
+            "데이터상태": "정상",
+            "데이터품질": 100.0,
+            "점수기여": -2.5,
+            "출처": "Yahoo 환율·미국금리·글로벌시장",
+            "설명": "분석상태 정상, 신호 -16.65"
+          },
+          {
+            "요소": "가격추세",
+            "사용가능": true,
+            "가중치": 10.0,
+            "신호": -84.66,
+            "판정": "매우 부정",
+            "신호판정": "매우 부정",
+            "데이터상태": "정상",
+            "데이터품질": 100.0,
+            "점수기여": -8.47,
+            "출처": "KIS 일봉",
+            "설명": "20일수익률 -21.44%, 60일수익률 18.73%"
+          },
+          {
+            "요소": "뉴스·공시",
+            "사용가능": true,
+            "가중치": 10.0,
+            "신호": 40.83,
+            "판정": "긍정",
+            "신호판정": "긍정",
+            "데이터상태": "정상",
+            "데이터품질": 75.4,
+            "점수기여": 4.08,
+            "출처": "OpenDART 최근 공시 + Google News RSS",
+            "설명": "분석상태 정상, 신호 40.83"
+          }
+        ],
+        "미수집요소": []
+      },
+      "장기": {
+        "기간": "6~18개월",
+        "점수": 85,
+        "상승확률": 74,
+        "판정": "강한 상승 우위",
+        "자료신뢰도": 87,
+        "신뢰도": 87,
+        "자료신뢰도등급": "높음",
+        "신뢰도등급": "높음",
+        "요소별평가": [
+          {
+            "요소": "향후이익방향",
+            "사용가능": true,
+            "가중치": 30.0,
+            "신호": 93.87,
+            "판정": "매우 긍정",
+            "신호판정": "매우 긍정",
+            "데이터상태": "정상",
+            "데이터품질": 75.0,
+            "점수기여": 28.16,
+            "출처": "OpenDART 최신실적·현금창출력 대용",
+            "설명": "애널리스트 컨센서스 미반영 대용지표"
+          },
+          {
+            "요소": "산업사이클",
+            "사용가능": true,
+            "가중치": 25.0,
+            "신호": 62.91,
+            "판정": "매우 긍정",
+            "신호판정": "매우 긍정",
+            "데이터상태": "정상",
+            "데이터품질": 97.8,
+            "점수기여": 15.73,
+            "출처": "반도체 산업 대표자산 1년 추세",
+            "설명": "산업국면 장기상승 중 단기조정"
+          },
+          {
+            "요소": "가치평가·안전마진",
+            "사용가능": true,
+            "가중치": 20.0,
+            "신호": 64.07,
+            "판정": "매우 긍정",
+            "신호판정": "매우 긍정",
+            "데이터상태": "정상",
+            "데이터품질": 100.0,
+            "점수기여": 12.81,
+            "출처": "내부 가치평가",
+            "설명": "현재가 대비 25.63%, 판단 강한 저평가"
+          },
+          {
+            "요소": "경쟁력·시장점유율",
+            "사용가능": true,
+            "가중치": 10.0,
+            "신호": 100.0,
+            "판정": "매우 긍정",
+            "신호판정": "매우 긍정",
+            "데이터상태": "정상",
+            "데이터품질": 70.0,
+            "점수기여": 10.0,
+            "출처": "ROE·영업이익률·버핏점수 대용",
+            "설명": "실제 시장점유율과 경쟁사 비교는 아직 미연결"
+          },
+          {
+            "요소": "현금흐름·재무안전성",
+            "사용가능": true,
+            "가중치": 10.0,
+            "신호": 77.33,
+            "판정": "매우 긍정",
+            "신호판정": "매우 긍정",
+            "데이터상태": "정상",
+            "데이터품질": 100.0,
+            "점수기여": 7.73,
+            "출처": "OpenDART 현금흐름·FCF·부채비율",
+            "설명": "분석상태 정상"
+          },
+          {
+            "요소": "주주환원·지배구조",
+            "사용가능": true,
+            "가중치": 5.0,
+            "신호": 24.68,
+            "판정": "긍정",
+            "신호판정": "긍정",
+            "데이터상태": "정상",
+            "데이터품질": 61.2,
+            "점수기여": 1.23,
+            "출처": "OpenDART 배당·자기주식",
+            "설명": "배당·자사주는 반영, 지배구조 정량평가는 아직 미연결"
+          }
+        ],
+        "미수집요소": []
+      }
+    },
+    "요소상태": {
+      "거시환경": {
+        "사용가능": true,
+        "점수": -16.65,
+        "데이터품질": 100.0,
+        "판정": "중립",
+        "출처": "Yahoo Finance Chart API"
+      },
+      "산업선행지표": {
+        "사용가능": true,
+        "점수": -50.37,
+        "데이터품질": 98.5,
+        "판정": "부정",
+        "출처": "Yahoo Finance Chart API"
+      },
+      "산업사이클": {
+        "사용가능": true,
+        "점수": 62.91,
+        "데이터품질": 97.8,
+        "판정": "매우 긍정",
+        "출처": "Yahoo Finance Chart API"
+      },
+      "뉴스": {
+        "사용가능": true,
+        "점수": 65.73,
+        "데이터품질": 88.0,
+        "판정": "매우 긍정",
+        "출처": "Google News RSS"
+      },
+      "기업공시": {
+        "사용가능": true,
+        "점수": 13.25,
+        "데이터품질": 65.0,
+        "판정": "중립",
+        "출처": "금융감독원 OpenDART"
+      },
+      "외국인기관수급": {
+        "사용가능": true,
+        "점수": 25.0,
+        "데이터품질": 100.0,
+        "판정": "매우 긍정",
+        "출처": "한국투자증권 KIS"
+      },
+      "프로그램매매": {
+        "사용가능": true,
+        "점수": -15.29,
+        "데이터품질": 70.0,
+        "판정": "부정",
+        "출처": "한국투자증권 KIS 종목별 프로그램매매"
+      }
+    },
+    "검증오류": []
   }
 }
