@@ -32,7 +32,7 @@ def main():
         fail("종목코드 불일치", errors)
 
     prediction = safe_dict(data.get("주가예측"))
-    if prediction.get("엔진버전") != "6.4.1-feed-contract":
+    if prediction.get("엔진버전") != "6.5.0-central-kis-direct-query":
         fail("엔진버전 불일치", errors)
 
     bridge = safe_dict(data.get("화면브리지"))

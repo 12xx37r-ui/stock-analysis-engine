@@ -850,7 +850,7 @@ def calculate_value(
         })
 
     return {
-        "가치평가엔진버전": "6.4.0-all-industry-signal-bridge",
+        "가치평가엔진버전": "6.5.0-central-kis-direct-query",
         "현재가": price,
         "실제PER": actual_per,
         "실제PBR": actual_pbr,

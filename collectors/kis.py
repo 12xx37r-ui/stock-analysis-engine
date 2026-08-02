@@ -9,6 +9,7 @@ from config import (
     KIS_APP_KEY,
     KIS_APP_SECRET,
     KIS_BASE_URL,
+    KIS_DISABLED,
 )
 
 
@@ -133,6 +134,11 @@ def get_access_token(force=False):
     global ACCESS_TOKEN
     global TOKEN_FAILURE_LOGGED
 
+    if KIS_DISABLED:
+        # GitHub 정기·일괄 분석은 KIS 토큰을 발급하지 않는다.
+        # 실시간 KIS 데이터는 GAS에서 1일 1회 발급한 토큰으로 보강한다.
+        return None
+
     if ACCESS_TOKEN and not force:
         return ACCESS_TOKEN
 
@@ -253,6 +259,14 @@ def get_access_token(force=False):
 
 
 def kis_request(tr_id, path, params):
+    if KIS_DISABLED:
+        return {
+            "rt_cd": "KIS_DISABLED",
+            "msg_cd": "",
+            "msg1": "GitHub KIS 호출 비활성화 · GAS 중앙 토큰 사용",
+            "output": [],
+        }
+
     token_reissued = False
 
     for attempt in range(3):

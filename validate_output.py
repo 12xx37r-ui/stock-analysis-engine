@@ -21,7 +21,7 @@ import sys
 from pathlib import Path
 
 
-EXPECTED_ENGINE_VERSION = "6.4.1-feed-contract"
+EXPECTED_ENGINE_VERSION = "6.5.0-central-kis-direct-query"
 
 EXPECTED_WEIGHTS = {
     "단기1~5일": {
