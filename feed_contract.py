@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Tuple
 
-EXPECTED_ENGINE_VERSION = "6.7.1-valuation-contract-v4"
+EXPECTED_ENGINE_VERSION = "6.7.2-valuation-contract-v4"
 EXPECTED_VALUATION_CONTRACT = "4.0"
 EXPECTED_INDUSTRY_PROFILE = "3.0.0"
 EXPECTED_BRIDGE_SCHEMA = "2.0"

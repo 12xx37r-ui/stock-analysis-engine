@@ -657,7 +657,8 @@ def analyze_one_stock(
     )
 
     financial = analyze_financial(
-        dart_raw
+        dart_raw,
+        industry_code=industry_code,
     )
 
     market = get_market_data(

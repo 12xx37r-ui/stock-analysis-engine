@@ -3,6 +3,7 @@
 
 from datetime import datetime
 
+from analyzers.financial import analyze_financial
 from analyzers.valuation import (
     _cost_of_equity,
     build_effective_ttm,
@@ -86,6 +87,54 @@ def main() -> None:
     assert metrics["매출"] == 1_000_000.0, metrics
     assert metrics["영업이익"] == 120_000.0, metrics
     assert metrics["순이익"] == 90_000.0, metrics
+
+
+    annual_raw = {
+        "list": [
+            {
+                "account_nm": "보험서비스수익(보험수익)",
+                "thstrm_amount": "1210000",
+                "frmtrm_amount": "1100000",
+                "bfefrmtrm_amount": "1000000",
+                "ord": "1",
+            },
+            {
+                "account_nm": "보험영업이익",
+                "thstrm_amount": "145200",
+                "frmtrm_amount": "125000",
+                "bfefrmtrm_amount": "100000",
+                "ord": "2",
+            },
+            {
+                "account_nm": "당기순이익(손실)",
+                "thstrm_amount": "85000",
+                "frmtrm_amount": "75000",
+                "bfefrmtrm_amount": "65000",
+                "ord": "3",
+            },
+            {
+                "account_nm": "자본총계",
+                "thstrm_amount": "850000",
+                "frmtrm_amount": "800000",
+                "bfefrmtrm_amount": "760000",
+                "ord": "4",
+            },
+            {
+                "account_nm": "부채총계",
+                "thstrm_amount": "4200000",
+                "frmtrm_amount": "4000000",
+                "bfefrmtrm_amount": "3800000",
+                "ord": "5",
+            },
+        ]
+    }
+    insurance_quality = analyze_financial(annual_raw, industry_code="insurance")
+    assert insurance_quality["재무분석모형버전"] == "financial-quality-v2.0.0", insurance_quality
+    assert insurance_quality["원본"]["매출"] == 1_210_000.0, insurance_quality
+    assert insurance_quality["성장지표"]["보험수익2년CAGR"] == 10.0, insurance_quality
+    assert insurance_quality["버핏평가"]["점수"] > 0, insurance_quality
+    assert insurance_quality["버핏평가"]["평가기준"] == "금융·보험업 전용 품질평가", insurance_quality
+    assert "부채비율" not in insurance_quality["버핏평가"]["점수구성"], insurance_quality
 
     missing_revenue_quarters = [
         quarter(2026, 2, 0.0, 110.0),
