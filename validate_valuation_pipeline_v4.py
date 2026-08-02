@@ -116,7 +116,7 @@ def main():
     assert provisional["지표"]["매출"] == 3_457_200_000_000, provisional
 
     value = calculate(build_bundle(provisional))
-    assert value["가치평가엔진버전"] == "6.7.2-valuation-contract-v4", value
+    assert value["가치평가엔진버전"] == "6.7.0-valuation-contract-v4", value
     assert value["가치평가산업코드"] == "electronic_components", value
     assert value["TTM잠정실적반영"] is True, value
     assert value["유효재무기준분기키"] == 2026 * 4 + 2, value

@@ -145,8 +145,6 @@ def classify_dart_industry_detail(
         return {"산업코드": "media_entertainment", "분류출처": "기업명 키워드", "분류신뢰도": 82, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
     if any(keyword in name for keyword in ("소프트", "플랫폼", "클라우드")):
         return {"산업코드": "software_platform", "분류출처": "기업명 키워드", "분류신뢰도": 82, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
-    if any(keyword in name for keyword in ("보험", "생명", "화재", "손해보험", "재보험")):
-        return {"산업코드": "insurance", "분류출처": "보험업 기업명 키워드", "분류신뢰도": 94, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
 
     if len(code) < 2:
         return {"산업코드": "general", "분류출처": "업종코드 미확보", "분류신뢰도": 35, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
@@ -163,10 +161,10 @@ def classify_dart_industry_detail(
         result = "pharmaceutical"
     elif major in {41, 42}:
         result = "construction"
-    elif major == 65:
-        result = "insurance"
-    elif major in {64, 66}:
+    elif major in {64, 65}:
         result = "finance"
+    elif major == 66:
+        result = "insurance"
     elif major in {10, 11, 12}:
         result = "consumer_staples"
     elif major in {13, 14, 15, 16, 17, 18, 32, 33}:

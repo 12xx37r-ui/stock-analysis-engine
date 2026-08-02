@@ -40,7 +40,6 @@ LIVE_INDUSTRY_CODES = {
     "biotechnology",
     "construction",
     "finance",
-    "insurance",
 }
 
 VALUATION_INDUSTRY_CODES = {
@@ -1096,8 +1095,7 @@ def main():
     )
 
     financial = analyze_financial(
-        dart_raw,
-        industry_code=industry_code,
+        dart_raw
     )
 
     market = get_market_data(
