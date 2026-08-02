@@ -164,7 +164,7 @@ def main():
     high_price = calculate(1_142_000)
     low_price = calculate(114_200)
 
-    assert high_price["가치평가모형개정버전"] == "future-growth-v1.0.0"
+    assert high_price["가치평가모형개정버전"] == "future-growth-v1.0.1-insurance-financials"
     assert high_price["미래성장모형"]["사용가능"] is True, high_price["미래성장모형"]
     assert high_price["미래성장모형"]["현재가미사용"] is True
     assert high_price["발행주식수추정"] == 75_547_250, high_price["발행주식수후보"]

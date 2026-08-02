@@ -40,6 +40,7 @@ LIVE_INDUSTRY_CODES = {
     "biotechnology",
     "construction",
     "finance",
+    "insurance",
 }
 
 VALUATION_INDUSTRY_CODES = {

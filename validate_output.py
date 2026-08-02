@@ -21,8 +21,8 @@ import sys
 from pathlib import Path
 
 
-EXPECTED_ENGINE_VERSION = "6.7.0-valuation-contract-v4"
-EXPECTED_VALUATION_MODEL_REVISION = "future-growth-v1.0.0"
+EXPECTED_ENGINE_VERSION = "6.7.1-valuation-contract-v4"
+EXPECTED_VALUATION_MODEL_REVISION = "future-growth-v1.0.1-insurance-financials"
 
 EXPECTED_WEIGHTS = {
     "단기1~5일": {
