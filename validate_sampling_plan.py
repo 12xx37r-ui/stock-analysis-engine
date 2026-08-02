@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Dict
 
 
-EXPECTED_VERSION = "1.1.0"
+EXPECTED_VERSION = "1.2.0"
 
 EXPECTED_BATCHES = {
     "semiconductor",
@@ -18,6 +18,7 @@ EXPECTED_BATCHES = {
     "biotechnology",
     "construction",
     "finance",
+    "insurance",
 }
 
 MAX_STOCKS_PER_BATCH = 10
