@@ -97,6 +97,8 @@ jobs:
         run: python validate_valuation_contract.py
       - name: Validate valuation data pipeline v4
         run: python validate_valuation_pipeline_v4.py
+      - name: Validate future growth valuation model
+        run: python validate_future_growth_model.py
       - name: Validate signal bridge
         run: python validate_signal_bridge.py
 
