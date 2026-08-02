@@ -63,13 +63,17 @@ jobs:
         shell: bash
         run: |
           echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
-      - name: Cache OpenDART company list
+          echo "day=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+      - name: Cache OpenDART responses
         uses: actions/cache@v5
         with:
-          path: .cache/dart_corp_codes.json
-          key: dart-corp-codes-${{ runner.os }}-${{ steps.cache-date.outputs.week }}
+          path: |
+            .cache/dart_corp_codes.json
+            .cache/dart_api
+          key: dart-api-${{ runner.os }}-${{ steps.cache-date.outputs.day }}-${{ github.run_id }}
           restore-keys: |
-            dart-corp-codes-${{ runner.os }}-
+            dart-api-${{ runner.os }}-${{ steps.cache-date.outputs.day }}-
+            dart-api-${{ runner.os }}-
       - name: Install
         run: |
           python -m pip install --upgrade pip
@@ -91,12 +95,29 @@ jobs:
         run: |
           rm -f "output/${STOCK_CODE}.json"
           echo "Local output cache invalidated: output/${STOCK_CODE}.json"
-      - name: Run engine
+      - name: Run engine with OpenDART retry
+        shell: bash
         run: |
-          python main.py --stock-code "$STOCK_CODE" --industry-code "$INDUSTRY_CODE"
+          set -euo pipefail
+          for attempt in 1 2; do
+            echo "ENGINE ATTEMPT ${attempt}/2"
+            rm -f "output/${STOCK_CODE}.json"
+            python main.py --stock-code "$STOCK_CODE" --industry-code "$INDUSTRY_CODE"
+            if python validate_dart_usable.py --file "output/${STOCK_CODE}.json" --stock-code "$STOCK_CODE"; then
+              echo "OpenDART financial data usable on attempt ${attempt}."
+              break
+            fi
+            if [[ "$attempt" == "2" ]]; then
+              echo "::error::OpenDART 재무자료를 2회 모두 확보하지 못했습니다. 기존 정상 게시파일은 덮어쓰지 않습니다."
+              exit 1
+            fi
+            echo "OpenDART temporary failure. Waiting 35 seconds before retry."
+            sleep 35
+          done
       - name: Validate output
         run: |
           python validate_output.py --file "output/${STOCK_CODE}.json" --stock-code "$STOCK_CODE"
+          python validate_dart_usable.py --file "output/${STOCK_CODE}.json" --stock-code "$STOCK_CODE"
       - name: Publish latest engine feed
         run: |
           python publish_on_demand.py --stock-file "output/${STOCK_CODE}.json" --latest-root data/latest

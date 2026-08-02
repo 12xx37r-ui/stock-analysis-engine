@@ -52,6 +52,20 @@ jobs:
           fi
           echo "KIS credentials detected: collection is forced ON (KIS_DISABLED=0)."
           echo "The token is issued once per batch and reused for all stocks in this run."
+      - name: Build DART cache key
+        id: dart-cache-date
+        shell: bash
+        run: echo "day=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+      - name: Cache OpenDART responses
+        uses: actions/cache@v5
+        with:
+          path: |
+            .cache/dart_corp_codes.json
+            .cache/dart_api
+          key: dart-api-${{ runner.os }}-${{ steps.dart-cache-date.outputs.day }}-${{ github.run_id }}
+          restore-keys: |
+            dart-api-${{ runner.os }}-${{ steps.dart-cache-date.outputs.day }}-
+            dart-api-${{ runner.os }}-
       - name: Install
         run: |
           python -m pip install --upgrade pip
