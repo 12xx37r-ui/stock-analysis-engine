@@ -1,6 +1,10 @@
 name: on-demand-stock-analysis (admin cache)
 run-name: on-demand-${{ inputs.stock_code }}-${{ inputs.request_id }}-${{ github.run_number }}
 
+concurrency:
+  group: on-demand-stock-analysis
+  cancel-in-progress: true
+
 on:
   workflow_dispatch:
     inputs:
@@ -333,4 +337,4 @@ jobs:
             data/latest/index.json
             data/latest/valuation_audit.json
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 3
