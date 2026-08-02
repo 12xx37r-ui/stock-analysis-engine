@@ -24,7 +24,11 @@ jobs:
     timeout-minutes: 180
     env:
       DART_API_KEY: ${{ secrets.DART_API_KEY }}
-      KIS_DISABLED: "1"
+      KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+      KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+      KIS_DISABLED: ${{ (secrets.KIS_APP_KEY == '' || secrets.KIS_APP_SECRET == '') && '1' || '0' }}
+      KIS_TOKEN_FILE: ".cache/kis_token.json"
+      KIS_TOKEN_REUSE_HOURS: "23"
       LIMIT: ${{ inputs.limit || '20' }}
     steps:
       - name: Checkout
@@ -37,6 +41,14 @@ jobs:
           python-version: "3.11"
           cache: "pip"
           cache-dependency-path: requirements.txt
+      - name: Show KIS collection mode
+        shell: bash
+        run: |
+          if [[ "$KIS_DISABLED" == "1" ]]; then
+            echo "KIS disabled: add KIS_APP_KEY and KIS_APP_SECRET repository secrets to enable investor/program data."
+          else
+            echo "KIS enabled: one token is issued at most once and reused across every stock in this batch."
+          fi
       - name: Install
         run: |
           python -m pip install --upgrade pip
