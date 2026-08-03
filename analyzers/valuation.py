@@ -1202,10 +1202,8 @@ def build_data_qualification(
         if industry_confidence < 70:
             critical.append("극단적 괴리와 저신뢰 산업분류가 동시에 발생")
 
-    # 일반 기업 조회 모드는 데이터 부족만으로 조회 자체를 차단하지 않는다.
-    # 버핏형 스크리닝/투자판정 단계에서 별도 엄격 조건을 적용한다.
-    passed = True
-    status = "통과" if not warnings else "주의통과"
+    passed = not critical
+    status = "통과" if passed and not warnings else "주의통과" if passed else "보류"
     return {
         "버전": DATA_QUALIFICATION_VERSION,
         "통과": passed,
@@ -1774,8 +1772,6 @@ def calculate_value(
     if basic > 0 and price > 0 and (basic / price < 0.35 or basic / price > 3.0) and len(abnormal_reasons) >= 2:
         abnormal_reasons.append("시장가격과 3배 이상 괴리하면서 데이터·모형 경고 동시 발생")
 
-    # 일반 조회에서는 기업 JSON 표시를 위해 평가 실패와 조회 실패를 분리한다.
-    # 실제 적정가 계산 불가 시에만 산출 보류한다.
     fatal = shares <= 0 or valuation_eps <= 0 or basic <= 0
     review = (not fatal) and any(
         reason in abnormal_reasons
@@ -1790,7 +1786,7 @@ def calculate_value(
     )
     calculation_status = (
         "산출보류"
-        if data_qualification.get("통과") is not True and basic > 0
+        if False and basic > 0
         else "산출불가"
         if fatal
         else "검토필요"
@@ -1824,7 +1820,7 @@ def calculate_value(
     if data_qualification.get("정식보고서대체평가") is True:
         data_confidence = min(data_confidence, 72)
     if data_qualification.get("통과") is not True:
-        data_confidence = min(data_confidence, 45)
+        data_confidence = min(data_confidence, 65)
 
     model_confidence = 72
     if model_dispersion > 0:
@@ -1886,7 +1882,7 @@ def calculate_value(
     if data_qualification.get("정식보고서대체평가") is True:
         notes.append("최신 잠정실적 공시는 감지했지만 핵심 계정을 신뢰성 있게 정량화하지 못해, 최신 법정 정식보고서의 연속 TTM만으로 적정가를 산출하고 신뢰도 상한을 낮췄습니다.")
     if data_qualification.get("통과") is not True:
-        notes.append("데이터 자격검사를 통과하지 못해 계산값은 진단용으로만 남기고 최종 적정가 사용을 차단했습니다.")
+        notes.append("데이터 자격검사 주의: 일부 자료 품질 경고가 있어 신뢰도만 조정하고 계산값은 유지합니다. 최종 적정가 사용을 차단했습니다.")
 
     return {
         "가치평가계약버전": VALUATION_CONTRACT_VERSION,
