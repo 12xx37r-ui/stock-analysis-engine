@@ -1202,8 +1202,10 @@ def build_data_qualification(
         if industry_confidence < 70:
             critical.append("극단적 괴리와 저신뢰 산업분류가 동시에 발생")
 
-    passed = not critical
-    status = "통과" if passed and not warnings else "주의통과" if passed else "보류"
+    # 일반 기업 조회 모드는 데이터 부족만으로 조회 자체를 차단하지 않는다.
+    # 버핏형 스크리닝/투자판정 단계에서 별도 엄격 조건을 적용한다.
+    passed = True
+    status = "통과" if not warnings else "주의통과"
     return {
         "버전": DATA_QUALIFICATION_VERSION,
         "통과": passed,
@@ -1772,7 +1774,9 @@ def calculate_value(
     if basic > 0 and price > 0 and (basic / price < 0.35 or basic / price > 3.0) and len(abnormal_reasons) >= 2:
         abnormal_reasons.append("시장가격과 3배 이상 괴리하면서 데이터·모형 경고 동시 발생")
 
-    fatal = shares <= 0 or valuation_eps <= 0 or basic <= 0 or data_qualification.get("통과") is not True
+    # 일반 조회에서는 기업 JSON 표시를 위해 평가 실패와 조회 실패를 분리한다.
+    # 실제 적정가 계산 불가 시에만 산출 보류한다.
+    fatal = shares <= 0 or valuation_eps <= 0 or basic <= 0
     review = (not fatal) and any(
         reason in abnormal_reasons
         for reason in (
@@ -1793,7 +1797,7 @@ def calculate_value(
         if review
         else "정상"
     )
-    final_available = not fatal and not review and data_qualification.get("통과") is True
+    final_available = not fatal and not review
 
     if gap > 25:
         judgment = "강한 저평가"
