@@ -1,4 +1,4 @@
-name: on-demand-stock-analysis (general company lookup)
+name: on-demand-stock-analysis (GAS central KIS token)
 run-name: on-demand-${{ inputs.stock_code }}-${{ inputs.request_id }}-${{ github.run_number }}
 
 on:
@@ -34,11 +34,9 @@ jobs:
     timeout-minutes: 30
     env:
       DART_API_KEY: ${{ secrets.DART_API_KEY }}
-      KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
-      KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
-      KIS_DISABLED: "0"
-      KIS_TOKEN_FILE: ".cache/kis_token.json"
-      KIS_TOKEN_REUSE_HOURS: "23"
+      # KIS access token is issued and reused only by GAS Script Properties.
+      # GitHub must never issue a KIS access token for each company search.
+      KIS_DISABLED: "1"
       STOCK_CODE: ${{ inputs.stock_code }}
       INDUSTRY_CODE: ${{ inputs.industry_code }}
       REQUEST_ID: ${{ inputs.request_id }}
@@ -65,41 +63,12 @@ jobs:
           cache: "pip"
           cache-dependency-path: requirements.txt
 
-      - name: Restore reusable KIS token
-        uses: actions/cache@v5
-        with:
-          path: .cache/kis_token.json
-          key: kis-token-${{ runner.os }}-${{ github.run_id }}
-          restore-keys: |
-            kis-token-${{ runner.os }}-
-
-      - name: Install
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Prepare KIS best effort
+      - name: Confirm GAS-central KIS mode
         shell: bash
         run: |
-          set +e
-          if [[ -z "${KIS_APP_KEY:-}" || -z "${KIS_APP_SECRET:-}" ]]; then
-            echo "KIS credentials unavailable. Financial analysis continues without KIS."
-            echo "KIS_DISABLED=1" >> "$GITHUB_ENV"
-            exit 0
-          fi
-          python - <<'PY'
-          from collectors.kis import get_access_token
-          token = get_access_token()
-          raise SystemExit(0 if token else 1)
-          PY
-          status=$?
-          if [[ "$status" != "0" ]]; then
-            echo "KIS token preparation failed. Financial analysis continues without KIS."
-            echo "KIS_DISABLED=1" >> "$GITHUB_ENV"
-          else
-            echo "KIS token ready."
-          fi
-          exit 0
+          set -euo pipefail
+          echo "KIS_DISABLED=${KIS_DISABLED}"
+          echo "GitHub does not issue a KIS token. GAS owns and reuses one token for about 23 hours."
 
       - name: Invalidate local target output
         shell: bash
