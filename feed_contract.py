@@ -10,11 +10,11 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Tuple
 
-EXPECTED_ENGINE_VERSION = "6.7.2-valuation-contract-v4"
+EXPECTED_ENGINE_VERSION = "6.8.0-valuation-contract-v4"
 EXPECTED_VALUATION_CONTRACT = "4.0"
 EXPECTED_INDUSTRY_PROFILE = "3.0.0"
 EXPECTED_BRIDGE_SCHEMA = "2.0"
-EXPECTED_VALUATION_MODEL_REVISION = "future-growth-v1.0.1-insurance-financials"
+EXPECTED_VALUATION_MODEL_REVISION = "future-growth-v1.1.0-price-independent"
 
 
 def safe_dict(value: Any) -> Dict[str, Any]:

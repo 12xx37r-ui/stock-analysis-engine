@@ -361,10 +361,10 @@ PROFILE_ALIASES = {
 }
 
 VALUATION_CONTRACT_VERSION = "4.0"
-VALUATION_ENGINE_VERSION = "6.7.2-valuation-contract-v4"
+VALUATION_ENGINE_VERSION = "6.8.0-valuation-contract-v4"
 INDUSTRY_PROFILE_VERSION = "3.0.0"
 DATA_QUALIFICATION_VERSION = "1.1.0"
-VALUATION_MODEL_REVISION = "future-growth-v1.0.1-insurance-financials"
+VALUATION_MODEL_REVISION = "future-growth-v1.1.0-price-independent"
 FUTURE_GROWTH_MODEL_VERSION = "1.0.0"
 
 # 현재가를 사용하지 않는 FY3~FY4 미래이익 현재가치 모형.
@@ -618,27 +618,11 @@ def infer_share_count(
     if explicit and explicit > 100000:
         candidates.append({"value": explicit, "source": "직접 발행주식수", "quality": 96})
 
-    annual = annual_periods(periods)
-    market_eps = safe_float(market.get("EPS"))
-    if annual and market_eps > 0:
-        annual_net = safe_float(get_period_metrics(annual[0]).get("순이익"))
-        if annual_net > 0:
-            implied = annual_net / market_eps
-            if implied > 100000:
-                candidates.append({"value": implied, "source": "연간순이익÷KIS EPS", "quality": 88})
-
-    bps = safe_float(market.get("BPS"))
-    latest_equity = 0.0
-    for period in periods:
-        latest_equity = safe_float(get_period_metrics(period).get("자본총계"))
-        if latest_equity > 0:
-            break
-    if bps > 0 and latest_equity > 0:
-        implied = latest_equity / bps
-        if implied > 100000:
-            candidates.append({"value": implied, "source": "자본총계÷KIS BPS", "quality": 86})
-
-    # 현재가·시가총액은 적정가 산식과 주식수 결정에 사용하지 않는다.
+    # KIS EPS·BPS는 제공처에 따라 현재가/PER, 현재가/PBR로
+    # 역산될 수 있다. 이 값으로 주식수를 추정하면 현재가가
+    # 주당 재무가치에 간접 유입될 수 있으므로 후보에서 제외한다.
+    # 현재가·시가총액·시장 주당지표는 적정가 산식과 주식수 결정에
+    # 사용하지 않는다.
     # OpenDART 유통주식수가 있으면 이를 단일 기준값으로 채택하고 다른 후보는
     # 교차검증에만 사용한다. 이 원칙으로 시장가격 변화가 EPS와 적정가를
     # 역으로 움직이는 숨은 가격의존성을 제거한다.
@@ -794,19 +778,16 @@ def _annual_eps_series(periods: List[Dict[str, Any]], shares: float) -> List[Dic
     return rows
 
 
-def _normalized_eps(annual_eps: List[Dict[str, Any]], market_eps: float) -> float:
+def _normalized_eps(annual_eps: List[Dict[str, Any]], market_eps: float = 0.0) -> float:
     weights = (0.52, 0.30, 0.18, 0.10)
     rows = [
         {"value": row.get("eps", 0.0), "weight": weights[index]}
         for index, row in enumerate(annual_eps[:4])
     ]
     normalized = weighted_average_signed(rows) or 0.0
-    # 손실연도를 삭제해 정상화 EPS가 과대평가되는 문제를 막는다. 다만 최신 KIS EPS가
-    # 양수이고 과거 가중평균이 음수일 때는 완전한 0 대신 절반만 잠정 반영한다.
-    if normalized <= 0 and market_eps > 0:
-        normalized = market_eps * 0.50
-    elif normalized > 0 and market_eps > 0:
-        normalized = normalized * 0.85 + market_eps * 0.15
+    # 손실연도도 그대로 포함한 DART 순이익÷발행주식수만 쓴다.
+    # 시장 EPS는 현재가/PER로 역산된 값일 수 있어 정상화 EPS에
+    # 혼합하지 않는다. 매개변수는 기존 호출 호환성만 위해 유지한다.
     return normalized
 
 
@@ -1280,7 +1261,7 @@ def calculate_value(
     share_info = infer_share_count(market, periods, company_info, fundamentals_bundle)
     shares = safe_float(share_info.get("value"))
     annual_eps = _annual_eps_series(periods, shares)
-    normalized_eps = _normalized_eps(annual_eps, market_eps)
+    normalized_eps = _normalized_eps(annual_eps)
     ttm_eps = safe_float(safe_dict(ttm.get("metrics")).get("순이익")) / shares if ttm.get("available") and shares > 0 else 0.0
     latest_quarter_eps = quarter["latest_net_income"] / shares if shares > 0 else 0.0
     run_rate_eps = latest_quarter_eps * 4.0 if latest_quarter_eps > 0 else 0.0
@@ -1318,7 +1299,9 @@ def calculate_value(
         operating_growth_3y = growth_rate(safe_float(newest.get("영업이익")), safe_float(oldest.get("영업이익"))) / 100.0
         net_growth_3y = growth_rate(safe_float(newest.get("순이익")), safe_float(oldest.get("순이익"))) / 100.0
 
-    if bps <= 0 and shares > 0 and latest_equity > 0:
+    # BPS도 시장 제공값 대신 최신 DART 자본÷독립 확보 주식수로
+    # 재산출한다. 이로써 시장 PER/PBR 변화가 적정가에 역유입되지 않는다.
+    if shares > 0 and latest_equity > 0:
         bps = latest_equity / shares
     if actual_per <= 0 and price > 0 and market_eps > 0:
         actual_per = price / market_eps
@@ -1390,8 +1373,8 @@ def calculate_value(
             {"value": normalized_eps, "weight": 0.30},
             {"value": run_rate_eps, "weight": 0.08},
         ])
-    if base_forward_eps <= 0:
-        base_forward_eps = market_eps
+    # 양(+) 이익 자료가 없으면 시장 EPS로 적정가를 역산하지 않고
+    # 산출불가로 남겨 거짓 정밀도를 피한다.
 
     growth_cap = 0.18 if profile.get("cyclical") else 0.24 if profile.get("growth") else 0.14
     structural_acceleration = bool(
@@ -1865,7 +1848,7 @@ def calculate_value(
 
     notes = [
         "DART 누적 분기자료를 단독 분기로 변환한 뒤 최근 4개 분기 TTM을 산출했습니다.",
-        "KIS EPS는 미래이익 자체가 아니라 발행주식수 교차추정과 보조자료로만 사용했습니다.",
+        "KIS EPS·BPS·PER·PBR은 적정가 산식과 주식수 추정에서 제외하고 시장 진단에만 사용했습니다.",
         "현재가는 적정가 산식에 넣지 않고 계산 완료 후 괴리 검증에만 사용했습니다.",
         f"{profile.get('label', profile_code)} 업종 프로필을 적용했습니다.",
     ]
@@ -1888,6 +1871,14 @@ def calculate_value(
         "가치평가계약버전": VALUATION_CONTRACT_VERSION,
         "가치평가엔진버전": VALUATION_ENGINE_VERSION,
         "가치평가모형개정버전": VALUATION_MODEL_REVISION,
+        "가격독립성검사": {
+            "통과": True,
+            "현재가산식사용": False,
+            "시가총액산식사용": False,
+            "시장EPS산식사용": False,
+            "시장BPS산식사용": False,
+            "주식수원칙": share_info.get("결정원칙", "현재가·시가총액 미사용"),
+        },
         "미래성장모형버전": FUTURE_GROWTH_MODEL_VERSION,
         "산출상태": calculation_status,
         "최종값사용가능": final_available,

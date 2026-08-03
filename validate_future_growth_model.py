@@ -90,10 +90,12 @@ def calculate(price: float):
     market = {
         "현재가": price,
         "시가총액": 853_002,
-        "EPS": 9_099,
-        "BPS": 126_302,
-        "PER": 125.51,
-        "PBR": 9.04,
+        # 시장 제공 EPS·BPS가 가격비율에서 역산된 최악의 경우를 재현한다.
+        # 가격을 10배 바꿔도 DART 재무 적정가는 불변이어야 한다.
+        "EPS": price / 18.0,
+        "BPS": price / 2.0,
+        "PER": 18.0,
+        "PBR": 2.0,
     }
     fundamentals_analysis = {
         "분기실적": {"신호": 90.73, "데이터품질": 90},
@@ -164,12 +166,15 @@ def main():
     high_price = calculate(1_142_000)
     low_price = calculate(114_200)
 
-    assert high_price["가치평가모형개정버전"] == "future-growth-v1.0.1-insurance-financials"
+    assert high_price["가치평가모형개정버전"] == "future-growth-v1.1.0-price-independent"
     assert high_price["미래성장모형"]["사용가능"] is True, high_price["미래성장모형"]
     assert high_price["미래성장모형"]["현재가미사용"] is True
+    assert high_price["가격독립성검사"]["통과"] is True
+    assert high_price["가격독립성검사"]["시장EPS산식사용"] is False
     assert high_price["발행주식수추정"] == 75_547_250, high_price["발행주식수후보"]
     assert "현재가·시가총액 미사용" in high_price["발행주식수결정원칙"]
     assert high_price["재무적정가"] == low_price["재무적정가"], (high_price["재무적정가"], low_price["재무적정가"])
+    assert high_price["BPS"] == low_price["BPS"]
     assert high_price["미래성장가치"] == low_price["미래성장가치"]
     assert high_price["FY2예상EPS"] < high_price["FY3예상EPS"] < high_price["FY4예상EPS"]
     assert high_price["FY3성장률"] <= FUTURE_GROWTH_CONFIG["electronic_components"]["fy3_cap"] * 100 + 0.01
