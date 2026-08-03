@@ -19,6 +19,7 @@
 - main.py와 predictor.py에는 아직 연결하지 않음
 """
 
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Tuple
 
@@ -620,27 +621,49 @@ def overall_status(
 
 
 def get_global_market_bundle() -> Dict[str, Any]:
-    print("REQUEST GLOBAL MARKET")
+    print("REQUEST GLOBAL MARKET · PARALLEL 4")
 
     results: Dict[
         str,
         Dict[str, Any],
     ] = {}
 
-    for name, asset_config in ASSETS.items():
-        result = get_global_asset(
-            name,
-            asset_config,
-        )
+    asset_items = list(ASSETS.items())
+    worker_count = min(4, max(1, len(asset_items)))
 
-        results[name] = result
+    # Each Yahoo symbol is independent. Collect in parallel, then restore the
+    # original ASSETS order so the JSON schema and display order never change.
+    with ThreadPoolExecutor(max_workers=worker_count) as executor:
+        futures = {
+            name: executor.submit(
+                get_global_asset,
+                name,
+                asset_config,
+            )
+            for name, asset_config in asset_items
+        }
 
-        print(
-            "GLOBAL",
-            name,
-            result.get("수집상태"),
-            result.get("현재값"),
-        )
+        for name, _asset_config in asset_items:
+            try:
+                result = futures[name].result()
+            except Exception as error:
+                config = ASSETS[name]
+                result = empty_asset_result(
+                    name,
+                    safe_text(config.get("symbol")),
+                    safe_text(config.get("type")),
+                    safe_text(config.get("unit")),
+                    f"{type(error).__name__}: {error}",
+                )
+
+            results[name] = result
+
+            print(
+                "GLOBAL",
+                name,
+                result.get("수집상태"),
+                result.get("현재값"),
+            )
 
     errors = [
         {

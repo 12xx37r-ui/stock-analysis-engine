@@ -1,16 +1,19 @@
 """Shared resilient OpenDART HTTP client.
 
 Goals
-- Avoid repeating 20-second timeouts for every endpoint when OpenDART is unavailable.
+- Avoid repeating long timeouts for every endpoint when OpenDART is unavailable.
 - Retry transient network/5xx failures briefly.
-- Reuse successful JSON/document responses from disk cache.
+- Reuse successful JSON/document responses from memory and disk cache.
+- Bound concurrent OpenDART requests so parallel collection does not overload the API.
 - Never cache API keys in file names or payload metadata.
 """
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import os
+import threading
 import time
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -21,15 +24,23 @@ from urllib3.util.retry import Retry
 
 CACHE_ROOT = Path(os.getenv("DART_RESPONSE_CACHE_DIR", ".cache/dart_api"))
 DEFAULT_TIMEOUT = (8, 30)
+FRESH_CACHE_SECONDS = int(os.getenv("DART_FRESH_CACHE_SECONDS", "1800"))
 JSON_STALE_SECONDS = int(os.getenv("DART_JSON_STALE_SECONDS", str(45 * 24 * 60 * 60)))
 DOCUMENT_STALE_SECONDS = int(os.getenv("DART_DOCUMENT_STALE_SECONDS", str(45 * 24 * 60 * 60)))
 CIRCUIT_SECONDS = int(os.getenv("DART_CIRCUIT_SECONDS", "45"))
+CIRCUIT_FAILURE_THRESHOLD = max(1, int(os.getenv("DART_CIRCUIT_FAILURE_THRESHOLD", "2")))
+MAX_CONCURRENT_REQUESTS = max(1, int(os.getenv("DART_MAX_CONCURRENT_REQUESTS", "2")))
 
 _FAILURES = 0
 _OPEN_UNTIL = 0.0
+_STATE_LOCK = threading.Lock()
+_MEMORY_LOCK = threading.Lock()
+_NETWORK_GATE = threading.BoundedSemaphore(MAX_CONCURRENT_REQUESTS)
+_THREAD_LOCAL = threading.local()
+_MEMORY_CACHE: Dict[str, tuple[float, Any]] = {}
 
 
-def _session() -> requests.Session:
+def _new_session() -> requests.Session:
     retry = Retry(
         total=2,
         connect=2,
@@ -48,7 +59,12 @@ def _session() -> requests.Session:
     return session
 
 
-_SESSION = _session()
+def _session() -> requests.Session:
+    session = getattr(_THREAD_LOCAL, "session", None)
+    if session is None:
+        session = _new_session()
+        _THREAD_LOCAL.session = session
+    return session
 
 
 def _safe_params(params: Dict[str, Any]) -> Dict[str, str]:
@@ -74,8 +90,38 @@ def _paths(key: str, kind: str) -> tuple[Path, Path]:
     return CACHE_ROOT / f"{key}{suffix}", CACHE_ROOT / f"{key}.meta.json"
 
 
-def _read_cache(url: str, params: Dict[str, Any], kind: str, max_age: int) -> Optional[Any]:
+def _read_memory(key: str, max_age: int) -> Optional[Any]:
+    with _MEMORY_LOCK:
+        cached = _MEMORY_CACHE.get(key)
+        if cached is None:
+            return None
+        saved_at, value = cached
+        age = time.time() - saved_at
+        if age < 0 or age > max_age:
+            _MEMORY_CACHE.pop(key, None)
+            return None
+        return copy.deepcopy(value)
+
+
+def _write_memory(key: str, value: Any) -> None:
+    with _MEMORY_LOCK:
+        _MEMORY_CACHE[key] = (time.time(), copy.deepcopy(value))
+
+
+def _read_cache(
+    url: str,
+    params: Dict[str, Any],
+    kind: str,
+    max_age: int,
+    *,
+    label: str,
+) -> Optional[Any]:
     key = _cache_key(url, params, kind)
+    memory = _read_memory(key, max_age)
+    if memory is not None:
+        print(f"DART MEMORY CACHE HIT: key={key[:10]}")
+        return memory
+
     payload_path, meta_path = _paths(key, kind)
     if not payload_path.exists() or not meta_path.exists():
         return None
@@ -91,8 +137,9 @@ def _read_cache(url: str, params: Dict[str, Any], kind: str, max_age: int) -> Op
                 return None
         else:
             value = payload_path.read_bytes()
-        print(f"DART STALE CACHE FALLBACK: age={int(age)}s key={key[:10]}")
-        return value
+        _write_memory(key, value)
+        print(f"DART {label} CACHE HIT: age={int(age)}s key={key[:10]}")
+        return copy.deepcopy(value)
     except Exception as error:
         print("DART CACHE READ WARNING:", type(error).__name__, error)
         return None
@@ -101,6 +148,7 @@ def _read_cache(url: str, params: Dict[str, Any], kind: str, max_age: int) -> Op
 def _write_cache(url: str, params: Dict[str, Any], kind: str, value: Any) -> None:
     key = _cache_key(url, params, kind)
     payload_path, meta_path = _paths(key, kind)
+    _write_memory(key, value)
     try:
         CACHE_ROOT.mkdir(parents=True, exist_ok=True)
         if kind == "json":
@@ -129,19 +177,22 @@ def _write_cache(url: str, params: Dict[str, Any], kind: str, value: Any) -> Non
 
 def _record_success() -> None:
     global _FAILURES, _OPEN_UNTIL
-    _FAILURES = 0
-    _OPEN_UNTIL = 0.0
+    with _STATE_LOCK:
+        _FAILURES = 0
+        _OPEN_UNTIL = 0.0
 
 
 def _record_failure() -> None:
     global _FAILURES, _OPEN_UNTIL
-    _FAILURES += 1
-    if _FAILURES >= 1:
-        _OPEN_UNTIL = max(_OPEN_UNTIL, time.time() + CIRCUIT_SECONDS)
+    with _STATE_LOCK:
+        _FAILURES += 1
+        if _FAILURES >= CIRCUIT_FAILURE_THRESHOLD:
+            _OPEN_UNTIL = max(_OPEN_UNTIL, time.time() + CIRCUIT_SECONDS)
 
 
 def _circuit_open() -> bool:
-    return time.time() < _OPEN_UNTIL
+    with _STATE_LOCK:
+        return time.time() < _OPEN_UNTIL
 
 
 def get_json(
@@ -150,8 +201,24 @@ def get_json(
     *,
     stale_seconds: int = JSON_STALE_SECONDS,
 ) -> Dict[str, Any]:
+    fresh = _read_cache(
+        url,
+        params,
+        "json",
+        FRESH_CACHE_SECONDS,
+        label="FRESH",
+    )
+    if fresh is not None:
+        return fresh
+
     if _circuit_open():
-        cached = _read_cache(url, params, "json", stale_seconds)
+        cached = _read_cache(
+            url,
+            params,
+            "json",
+            stale_seconds,
+            label="STALE FALLBACK",
+        )
         if cached is not None:
             return cached
         return {
@@ -161,7 +228,18 @@ def get_json(
         }
 
     try:
-        response = _SESSION.get(url, params=params, timeout=DEFAULT_TIMEOUT)
+        with _NETWORK_GATE:
+            # Another parallel worker may have completed the same request while waiting.
+            fresh = _read_cache(
+                url,
+                params,
+                "json",
+                FRESH_CACHE_SECONDS,
+                label="FRESH",
+            )
+            if fresh is not None:
+                return fresh
+            response = _session().get(url, params=params, timeout=DEFAULT_TIMEOUT)
         response.raise_for_status()
         data = response.json()
         if not isinstance(data, dict):
@@ -173,7 +251,13 @@ def get_json(
         return data
     except Exception as error:
         _record_failure()
-        cached = _read_cache(url, params, "json", stale_seconds)
+        cached = _read_cache(
+            url,
+            params,
+            "json",
+            stale_seconds,
+            label="STALE FALLBACK",
+        )
         if cached is not None:
             return cached
         return {
@@ -189,14 +273,40 @@ def get_bytes(
     *,
     stale_seconds: int = DOCUMENT_STALE_SECONDS,
 ) -> bytes:
+    fresh = _read_cache(
+        url,
+        params,
+        "bytes",
+        FRESH_CACHE_SECONDS,
+        label="FRESH",
+    )
+    if fresh is not None:
+        return fresh
+
     if _circuit_open():
-        cached = _read_cache(url, params, "bytes", stale_seconds)
+        cached = _read_cache(
+            url,
+            params,
+            "bytes",
+            stale_seconds,
+            label="STALE FALLBACK",
+        )
         if cached is not None:
             return cached
         raise RuntimeError("OpenDART circuit open and no cached document is available")
 
     try:
-        response = _SESSION.get(url, params=params, timeout=DEFAULT_TIMEOUT)
+        with _NETWORK_GATE:
+            fresh = _read_cache(
+                url,
+                params,
+                "bytes",
+                FRESH_CACHE_SECONDS,
+                label="FRESH",
+            )
+            if fresh is not None:
+                return fresh
+            response = _session().get(url, params=params, timeout=DEFAULT_TIMEOUT)
         response.raise_for_status()
         content = response.content
         if not content:
@@ -206,7 +316,13 @@ def get_bytes(
         return content
     except Exception:
         _record_failure()
-        cached = _read_cache(url, params, "bytes", stale_seconds)
+        cached = _read_cache(
+            url,
+            params,
+            "bytes",
+            stale_seconds,
+            label="STALE FALLBACK",
+        )
         if cached is not None:
             return cached
         raise

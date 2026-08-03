@@ -1,7 +1,9 @@
 import argparse
 import json
 import os
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
+from time import perf_counter
 
 from analyzers.disclosure import analyze_disclosures
 from analyzers.financial import analyze_financial
@@ -102,6 +104,29 @@ def safe_execute(
         )
 
         return fallback
+
+
+def timed_call(name, function):
+    started = perf_counter()
+    try:
+        return function()
+    finally:
+        print(
+            "PERF",
+            name,
+            f"{perf_counter() - started:.2f}s",
+        )
+
+
+def timed_safe_execute(name, function, fallback):
+    return timed_call(
+        name,
+        lambda: safe_execute(
+            name,
+            function,
+            fallback,
+        ),
+    )
 
 
 def safe_number(value, default=0.0):
@@ -1091,97 +1116,149 @@ def main():
         industry_code,
     )
 
-    dart_raw = get_financial(
-        dart_code
-    )
-
-    financial = analyze_financial(
-        dart_raw,
-        industry_code=industry_code,
-    )
-
-    market = get_market_data(
-        stock_code
-    )
-
-    history_bundle = safe_execute(
-        "HISTORY",
-        lambda: get_history_bundle(
-            stock_code,
-            market_code=market_code,
-        ),
-        {
-            "전체수집상태": "실패",
-            "가격추세": {},
-            "누적수급": {},
-            "프로그램매매": {},
-            "수집오류": [],
-        },
-    )
-
-    market["과거데이터"] = (
-        build_history_summary(
-            history_bundle
+    # Independent network collectors run together. DART HTTP itself is capped
+    # at two concurrent requests, so this overlaps waiting time without changing
+    # valuation formulas, collector payloads, or JSON field order.
+    with ThreadPoolExecutor(max_workers=7) as executor:
+        dart_future = executor.submit(
+            timed_call,
+            "DART FINANCIAL",
+            lambda: get_financial(dart_code),
         )
-    )
+        market_future = executor.submit(
+            timed_call,
+            "MARKET",
+            lambda: get_market_data(stock_code),
+        )
+        history_future = executor.submit(
+            timed_safe_execute,
+            "HISTORY",
+            lambda: get_history_bundle(
+                stock_code,
+                market_code=market_code,
+            ),
+            {
+                "전체수집상태": "실패",
+                "가격추세": {},
+                "누적수급": {},
+                "프로그램매매": {},
+                "수집오류": [],
+            },
+        )
+        news_future = executor.submit(
+            timed_safe_execute,
+            "COMPANY NEWS",
+            lambda: get_company_news(
+                company,
+                maximum_items=30,
+            ),
+            {
+                "수집상태": "실패",
+                "응답메시지": "기업 뉴스 수집 중 예외",
+                "뉴스개수": 0,
+                "뉴스목록": [],
+                "분석": {
+                    "분석상태": "실패",
+                    "신호": 0.0,
+                    "데이터품질": 0.0,
+                    "판정": "중립",
+                },
+            },
+        )
+        disclosure_future = executor.submit(
+            timed_safe_execute,
+            "DISCLOSURE",
+            lambda: get_recent_disclosures(
+                dart_code,
+                days=120,
+                page_count=100,
+            ),
+            {
+                "수집상태": "실패",
+                "응답메시지": "공시 수집 중 예외",
+                "공시개수": 0,
+                "공시목록": [],
+            },
+        )
+        global_future = executor.submit(
+            timed_safe_execute,
+            "GLOBAL MARKET",
+            get_global_market_bundle,
+            {
+                "전체수집상태": "실패",
+                "자산": {},
+                "수집오류": [],
+            },
+        )
+        fundamentals_future = executor.submit(
+            timed_safe_execute,
+            "DART FUNDAMENTALS",
+            lambda: get_fundamentals_bundle(dart_code),
+            {
+                "전체수집상태": "실패",
+                "재무기간": {},
+                "배당": {},
+                "자기주식": {},
+                "주식총수": {},
+            },
+        )
 
-    technical_bundle = safe_execute(
-        "MULTI TIMEFRAME TECHNICAL",
-        lambda: get_stock_technical_bundle(
-            stock_code,
-            market_code=market_code,
-            history_bundle=history_bundle,
-        ),
-        {
-            "수집상태": "실패",
-            "응답메시지": "멀티타임프레임 차트 수집 중 예외",
-            "일봉": {},
-            "주봉": {},
-            "월봉": {},
-            "수집오류": [],
-        },
-    )
+        industry_future = None
+        if industry_code in LIVE_INDUSTRY_CODES:
+            industry_future = executor.submit(
+                timed_safe_execute,
+                "INDUSTRY",
+                lambda: get_industry_bundle(industry_code),
+                {
+                    "전체수집상태": "실패",
+                    "산업코드": industry_code,
+                    "산업명": industry_code,
+                    "자산": {},
+                    "수집오류": [],
+                },
+            )
 
+        dart_raw = dart_future.result()
+        financial = analyze_financial(
+            dart_raw,
+            industry_code=industry_code,
+        )
+
+        market = market_future.result()
+        history_bundle = history_future.result()
+        technical_future = executor.submit(
+            timed_safe_execute,
+            "MULTI TIMEFRAME TECHNICAL",
+            lambda: get_stock_technical_bundle(
+                stock_code,
+                market_code=market_code,
+                history_bundle=history_bundle,
+            ),
+            {
+                "수집상태": "실패",
+                "응답메시지": "멀티타임프레임 차트 수집 중 예외",
+                "일봉": {},
+                "주봉": {},
+                "월봉": {},
+                "수집오류": [],
+            },
+        )
+
+        news_bundle = news_future.result()
+        disclosure_bundle = disclosure_future.result()
+        global_bundle = global_future.result()
+        fundamentals_bundle = fundamentals_future.result()
+        technical_bundle = technical_future.result()
+        industry_bundle_preloaded = (
+            industry_future.result()
+            if industry_future is not None
+            else None
+        )
+
+    market["과거데이터"] = build_history_summary(history_bundle)
     market = apply_technical_price_fallback(
         market,
         technical_bundle,
-    )
-
-    news_bundle = safe_execute(
-        "COMPANY NEWS",
-        lambda: get_company_news(
-            company,
-            maximum_items=30,
-        ),
-        {
-            "수집상태": "실패",
-            "응답메시지": "기업 뉴스 수집 중 예외",
-            "뉴스개수": 0,
-            "뉴스목록": [],
-            "분석": {
-                "분석상태": "실패",
-                "신호": 0.0,
-                "데이터품질": 0.0,
-                "판정": "중립",
-            },
-        },
-    )
-
-    disclosure_bundle = safe_execute(
-        "DISCLOSURE",
-        lambda: get_recent_disclosures(
-            dart_code,
-            days=120,
-            page_count=100,
-        ),
-        {
-            "수집상태": "실패",
-            "응답메시지": (
-                "공시 수집 중 예외"
-            ),
-            "공시개수": 0,
-            "공시목록": [],
-        },
     )
 
     disclosure_analysis = safe_execute(
@@ -1197,16 +1274,6 @@ def main():
         },
     )
 
-    global_bundle = safe_execute(
-        "GLOBAL MARKET",
-        get_global_market_bundle,
-        {
-            "전체수집상태": "실패",
-            "자산": {},
-            "수집오류": [],
-        },
-    )
-
     global_analysis = safe_execute(
         "GLOBAL ANALYSIS",
         lambda: analyze_global_market(
@@ -1218,20 +1285,6 @@ def main():
             "단기데이터품질": 0.0,
             "중기신호": 0.0,
             "중기데이터품질": 0.0,
-        },
-    )
-
-    fundamentals_bundle = safe_execute(
-        "DART FUNDAMENTALS",
-        lambda: get_fundamentals_bundle(
-            dart_code
-        ),
-        {
-            "전체수집상태": "실패",
-            "재무기간": {},
-            "배당": {},
-            "자기주식": {},
-            "주식총수": {},
         },
     )
 
@@ -1282,19 +1335,13 @@ def main():
         }
 
     else:
-        industry_bundle = safe_execute(
-            "INDUSTRY",
-            lambda: get_industry_bundle(
-                industry_code
-            ),
-            {
-                "전체수집상태": "실패",
-                "산업코드": industry_code,
-                "산업명": industry_code,
-                "자산": {},
-                "수집오류": [],
-            },
-        )
+        industry_bundle = industry_bundle_preloaded or {
+            "전체수집상태": "실패",
+            "산업코드": industry_code,
+            "산업명": industry_code,
+            "자산": {},
+            "수집오류": [],
+        }
 
         industry_analysis = safe_execute(
             "INDUSTRY ANALYSIS",

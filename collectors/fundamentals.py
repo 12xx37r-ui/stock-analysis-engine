@@ -12,6 +12,7 @@ OpenDART 실적·현금흐름·주주환원·주식수 수집기 V1.2
 """
 
 import os
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
@@ -824,30 +825,40 @@ def get_fundamentals_bundle(
             "주식총수": {},
         }
 
-    financials = get_financial_periods(
-        api_key,
-        corp_code,
-        maximum_success=6,
-    )
+    # The four OpenDART groups are independent. Two workers keep the API load
+    # bounded while overlapping report wait time. Returned structures and order
+    # are identical to the previous sequential implementation.
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        financials_future = executor.submit(
+            get_financial_periods,
+            api_key,
+            corp_code,
+            6,
+        )
+        stock_total_future = executor.submit(
+            get_stock_total_status,
+            api_key,
+            corp_code,
+        )
+        dividends_future = executor.submit(
+            get_annual_series,
+            api_key,
+            DART_DIVIDEND_URL,
+            corp_code,
+            3,
+        )
+        treasury_future = executor.submit(
+            get_annual_series,
+            api_key,
+            DART_TREASURY_URL,
+            corp_code,
+            2,
+        )
 
-    dividends = get_annual_series(
-        api_key,
-        DART_DIVIDEND_URL,
-        corp_code,
-        maximum_success=3,
-    )
-
-    treasury = get_annual_series(
-        api_key,
-        DART_TREASURY_URL,
-        corp_code,
-        maximum_success=2,
-    )
-
-    stock_total = get_stock_total_status(
-        api_key,
-        corp_code,
-    )
+        financials = financials_future.result()
+        dividends = dividends_future.result()
+        treasury = treasury_future.result()
+        stock_total = stock_total_future.result()
 
     statuses = [
         financials.get("수집상태"),
