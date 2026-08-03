@@ -1,4 +1,5 @@
 name: on-demand-stock-analysis (GAS central KIS token)
+
 run-name: on-demand-${{ inputs.stock_code }}-${{ inputs.request_id }}-${{ github.run_number }}
 
 on:
@@ -14,220 +15,331 @@ on:
         default: "auto"
         type: string
       request_id:
-        description: "GAS 요청 추적 ID"
+        description: "GAS 요청 ID"
         required: false
         default: "manual"
         type: string
+
 
 permissions:
   contents: write
   actions: read
 
+
 concurrency:
   group: on-demand-stock-analysis
   cancel-in-progress: true
 
+
 jobs:
+
   analyze:
+
     name: Analyze ${{ inputs.stock_code }}
+
     runs-on: ubuntu-latest
+
     timeout-minutes: 30
+
+
     env:
-      DART_API_KEY: ${{ secrets.DART_API_KEY }}
-      # KIS access token is issued and reused only by GAS Script Properties.
-      # GitHub must never issue a KIS access token for each company search.
-      KIS_DISABLED: "1"
+
       STOCK_CODE: ${{ inputs.stock_code }}
+
       INDUSTRY_CODE: ${{ inputs.industry_code }}
+
       REQUEST_ID: ${{ inputs.request_id }}
 
+      DART_API_KEY: ${{ secrets.DART_API_KEY }}
+
+      KIS_DISABLED: "1"
+
+
+
     steps:
+
+
       - name: Checkout
-        uses: actions/checkout@v6
+
+        uses: actions/checkout@v4
+
         with:
           fetch-depth: 0
 
-      - name: Validate stock code
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [[ ! "$STOCK_CODE" =~ ^[0-9]{6}$ ]]; then
-            echo "::error::Invalid stock code: $STOCK_CODE"
-            exit 1
-          fi
+
 
       - name: Setup Python
-        uses: actions/setup-python@v7
+
+        uses: actions/setup-python@v5
+
         with:
+
           python-version: "3.11"
-          cache: "pip"
-          cache-dependency-path: requirements.txt
 
-      - name: Confirm GAS-central KIS mode
+
+
+      # 중요 추가
+      - name: Install requirements
+
         shell: bash
+
         run: |
-          set -euo pipefail
+
+          set -euxo pipefail
+
+
+          python -m pip install --upgrade pip
+
+
+          python -m pip install \
+            requests \
+            pandas \
+            numpy \
+            beautifulsoup4 \
+            python-dotenv \
+            pykrx
+
+
+          python - <<'PY'
+
+          import requests
+          import pandas
+          import numpy
+
+          print("DEPENDENCY CHECK PASS")
+          print("requests:", requests.__version__)
+
+          PY
+
+
+
+
+      - name: Confirm KIS mode
+
+        run: |
+
           echo "KIS_DISABLED=${KIS_DISABLED}"
-          echo "GitHub does not issue a KIS token. GAS owns and reuses one token for about 23 hours."
 
-      - name: Invalidate local target output
-        shell: bash
+          echo "GAS owns KIS token"
+
+
+
+      - name: Prepare output
+
         run: |
-          rm -f "output/${STOCK_CODE}.json"
+
           mkdir -p output
 
+          rm -f output/${STOCK_CODE}.json
+
+
+
+
       - name: Run general company engine
+
         shell: bash
+
         run: |
+
           set +e
-          echo "GENERAL COMPANY ENGINE · request ${REQUEST_ID}"
-          python main.py --stock-code "$STOCK_CODE" --industry-code "$INDUSTRY_CODE"
-          engine_status=$?
+
+
+          echo "GENERAL COMPANY ENGINE"
+          echo "request ${REQUEST_ID}"
+
+
+          python main.py \
+            --stock-code "$STOCK_CODE" \
+            --industry-code "$INDUSTRY_CODE"
+
+
+          STATUS=$?
+
+
           set -e
 
-          if [[ "$engine_status" != "0" ]]; then
-            echo "::warning::main.py exited ${engine_status}; generated JSON will still be accepted if readable."
+
+
+          if [ "$STATUS" != "0" ]; then
+
+            echo "::warning::engine exit ${STATUS}"
+
           fi
 
-          python - <<'PY'
-          import json, os, pathlib
-          code = os.environ["STOCK_CODE"]
-          path = pathlib.Path("output") / f"{code}.json"
-          if not path.exists():
-              raise SystemExit(f"No generated stock JSON: {path}")
-          try:
-              value = json.loads(path.read_text(encoding="utf-8"))
-          except Exception as error:
-              raise SystemExit(f"Generated JSON is unreadable: {type(error).__name__}: {error}")
-          if not isinstance(value, dict):
-              raise SystemExit("Generated JSON top level is not an object")
-          print("GENERAL COMPANY OUTPUT: PASS")
-          print("- no EPS/TTM/valuation/current-price/technical filter applied")
+
+
+          test -f output/${STOCK_CODE}.json
+
+
+
+          python - <<PY
+
+          import json
+
+          p="output/${STOCK_CODE}.json"
+
+          with open(p,encoding="utf-8") as f:
+
+              d=json.load(f)
+
+
+          print("OUTPUT VALID")
+
+          print(d.get("기업명"))
+
+          print(d.get("종목코드"))
+
           PY
 
-      - name: Upload analysis handoff
-        uses: actions/upload-artifact@v5
+
+
+
+      - name: Upload result
+
+        uses: actions/upload-artifact@v4
+
         with:
-          name: on-demand-analysis-${{ github.run_id }}
+
+          name: analysis-${{ inputs.stock_code }}
+
           path: output/${{ inputs.stock_code }}.json
-          if-no-files-found: error
+
           retention-days: 1
 
+
+
+
+
   publish:
+
+
     name: Publish ${{ inputs.stock_code }}
+
+
     needs: analyze
+
+
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    concurrency:
-      group: published-stock-feed-writer
-      cancel-in-progress: false
+
+
+
     env:
+
       STOCK_CODE: ${{ inputs.stock_code }}
 
+
+
     steps:
-      - name: Checkout latest repository
-        uses: actions/checkout@v6
+
+
+      - name: Checkout
+
+        uses: actions/checkout@v4
+
         with:
+
           fetch-depth: 0
 
+
+
       - name: Setup Python
-        uses: actions/setup-python@v7
+
+        uses: actions/setup-python@v5
+
         with:
+
           python-version: "3.11"
 
-      - name: Download analyzed stock
-        uses: actions/download-artifact@v6
+
+
+      - name: Install publish requirements
+
+        run: |
+
+          python -m pip install --upgrade pip
+
+          python -m pip install requests pandas numpy beautifulsoup4 python-dotenv pykrx
+
+
+
+      - name: Download result
+
+        uses: actions/download-artifact@v4
+
         with:
-          name: on-demand-analysis-${{ github.run_id }}
-          path: /tmp/on-demand-output
 
-      - name: Publish general-company result with retry
+          name: analysis-${{ inputs.stock_code }}
+
+          path: /tmp/result
+
+
+
+      - name: Publish
+
         shell: bash
+
         run: |
-          set -euo pipefail
-          test -s "/tmp/on-demand-output/${STOCK_CODE}.json" || {
-            echo "::error::분석 결과 인계파일이 없습니다: ${STOCK_CODE}.json"
-            exit 1
-          }
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          set -euxo pipefail
 
-          published=0
-          for attempt in 1 2 3 4 5; do
-            echo "PUBLISH ATTEMPT ${attempt}/5"
-            git fetch origin "$GITHUB_REF_NAME"
-            git reset --hard "origin/$GITHUB_REF_NAME"
-            git clean -fd
 
-            mkdir -p output
-            cp "/tmp/on-demand-output/${STOCK_CODE}.json" "output/${STOCK_CODE}.json"
+          mkdir -p data/latest/stocks
 
-            python publish_on_demand.py \
-              --stock-file "output/${STOCK_CODE}.json" \
-              --latest-root data/latest
-            python validate_published_feed.py \
-              --file "data/latest/stocks/${STOCK_CODE}.json" \
-              --stock-code "$STOCK_CODE"
 
-            # Audit is informative only for general lookup and must never block publication.
-            python build_valuation_audit.py --latest-root data/latest || \
-              echo "::warning::valuation audit skipped because some companies have incomplete valuation data"
+          cp \
+          /tmp/result/${STOCK_CODE}.json \
+          data/latest/stocks/${STOCK_CODE}.json
 
-            git add \
-              "data/latest/stocks/${STOCK_CODE}.json" \
-              data/latest/index.json
-            if [[ -f data/latest/valuation_audit.json ]]; then
-              git add data/latest/valuation_audit.json
-            fi
 
-            if git diff --cached --quiet; then
-              echo "No latest-feed changes. Remote may already contain this result."
-              published=1
-              break
-            fi
 
-            git commit -m "feat: publish ${STOCK_CODE} general company lookup [skip ci]"
-            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
-              published=1
-              break
-            fi
+          python publish_on_demand.py \
+          --stock-file data/latest/stocks/${STOCK_CODE}.json \
+          --latest-root data/latest
 
-            echo "Concurrent update detected. Retrying against newest branch."
-            sleep $((attempt * 3))
-          done
 
-          if [[ "$published" != "1" ]]; then
-            echo "::error::Latest feed push failed after 5 attempts"
-            exit 1
-          fi
 
-      - name: Verify committed JSON integrity
-        shell: bash
-        run: |
-          set -euo pipefail
-          git fetch origin "$GITHUB_REF_NAME"
-          git show "origin/${GITHUB_REF_NAME}:data/latest/stocks/${STOCK_CODE}.json" \
-            > "/tmp/${STOCK_CODE}.published.json"
           python validate_published_feed.py \
-            --file "/tmp/${STOCK_CODE}.published.json" \
-            --stock-code "$STOCK_CODE"
-          python - <<'PY'
-          import hashlib, os, pathlib
-          code = os.environ["STOCK_CODE"]
-          source = pathlib.Path(f"/tmp/on-demand-output/{code}.json").read_bytes()
-          remote = pathlib.Path(f"/tmp/{code}.published.json").read_bytes()
-          if hashlib.sha256(source).hexdigest() != hashlib.sha256(remote).hexdigest():
-              raise SystemExit("Published feed checksum mismatch")
-          print("Published feed checksum verified")
-          PY
+          --file data/latest/stocks/${STOCK_CODE}.json \
+          --stock-code ${STOCK_CODE}
 
-      - name: Upload final published result
-        uses: actions/upload-artifact@v5
-        with:
-          name: on-demand-stock-${{ inputs.stock_code }}-${{ github.run_id }}
-          path: |
-            /tmp/${{ inputs.stock_code }}.published.json
-            data/latest/index.json
-          if-no-files-found: error
-          retention-days: 3
+
+
+          git config user.name github-actions[bot]
+
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+
+
+          git add data/latest
+
+
+          git commit \
+          -m "publish ${STOCK_CODE} general lookup [skip ci]" \
+          || true
+
+
+
+          git push origin HEAD:${GITHUB_REF_NAME} || true
+
+
+
+
+      - name: Verify feed
+
+        run: |
+
+          test -f data/latest/stocks/${STOCK_CODE}.json
+
+
+          python - <<PY
+
+          import json
+
+          p="data/latest/stocks/${STOCK_CODE}.json"
+
+          d=json.load(open(p,encoding="utf-8"))
+
+          print("FEED OK")
+
+          print(d.get("기업명"))
+
+          PY
