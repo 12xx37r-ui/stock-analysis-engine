@@ -15,6 +15,7 @@ EXPECTED_VALUATION_CONTRACT = "4.0"
 EXPECTED_INDUSTRY_PROFILE = "3.0.0"
 EXPECTED_BRIDGE_SCHEMA = "2.0"
 EXPECTED_VALUATION_MODEL_REVISION = "future-growth-v1.1.0-price-independent"
+EXPECTED_PRICE_SCHEMA = "3.0.0"
 
 
 def safe_dict(value: Any) -> Dict[str, Any]:
@@ -43,6 +44,23 @@ def inspect_published_stock(stock: Dict[str, Any], expected_code: str = "") -> T
     valuation = safe_dict(stock.get("가치평가"))
     qualification = safe_dict(valuation.get("데이터자격검사"))
     bridge = safe_dict(stock.get("화면브리지"))
+    market = safe_dict(stock.get("시장정보"))
+    price_diagnostic = safe_dict(market.get("가격진단"))
+
+    if str(price_diagnostic.get("가격스키마버전", "")) != EXPECTED_PRICE_SCHEMA:
+        reasons.append("현재가 검증 스키마 불일치")
+    elif price_diagnostic.get("최종채택") is True:
+        if float(market.get("현재가") or 0) <= 0:
+            reasons.append("현재가 채택 상태인데 가격 없음")
+        if price_diagnostic.get("조정주가여부") is not False:
+            reasons.append("현재가에 조정주가 사용")
+    elif price_diagnostic.get("최종채택") is False:
+        if float(market.get("현재가") or 0) > 0:
+            reasons.append("현재가 거부 상태인데 가격이 남아 있음")
+        if not safe_list(price_diagnostic.get("거부사유")):
+            reasons.append("현재가 거부 사유 누락")
+    else:
+        reasons.append("현재가 최종 검증상태 누락")
 
     if prediction.get("엔진버전") != EXPECTED_ENGINE_VERSION:
         reasons.append("주가예측 엔진버전 불일치")

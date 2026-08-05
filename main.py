@@ -22,8 +22,9 @@ from collectors.fundamentals import get_fundamentals_bundle
 from collectors.global_market import get_global_market_bundle
 from collectors.history import get_history_bundle
 from collectors.industry import get_industry_bundle
-from collectors.market import get_market_data
+from collectors.market import finalize_market_data, get_market_data
 from collectors.news import get_company_news
+from collectors.price import suppress_unverified_price_judgment
 from collectors.provisional import get_latest_provisional_earnings
 from collectors.technical import get_stock_technical_bundle
 from predictor import predict_stock
@@ -1128,7 +1129,7 @@ def main():
         market_future = executor.submit(
             timed_call,
             "MARKET",
-            lambda: get_market_data(stock_code),
+            lambda: get_market_data(stock_code, market_code=market_code),
         )
         history_future = executor.submit(
             timed_safe_execute,
@@ -1260,6 +1261,13 @@ def main():
         market,
         technical_bundle,
     )
+    market = finalize_market_data(
+        market,
+        stock_code=stock_code,
+        market_code=market_code,
+        fundamentals_bundle=fundamentals_bundle,
+        technical_bundle=technical_bundle,
+    )
 
     disclosure_analysis = safe_execute(
         "DISCLOSURE ANALYSIS",
@@ -1366,6 +1374,7 @@ def main():
         industry_bundle,
         target.get("기업조회", {}),
     )
+    valuation = suppress_unverified_price_judgment(valuation, market)
 
     prediction = predict_stock(
         market,
