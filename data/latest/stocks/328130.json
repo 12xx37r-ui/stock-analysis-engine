@@ -29,7 +29,7 @@
     "OpenDART업종코드": "58222",
     "데이터출처": "금융감독원 OpenDART"
   },
-  "생성시각": "2026-08-06T03:39:23.904430",
+  "생성시각": "2026-08-06T06:42:29.498282",
   "재무분석": {
     "재무분석모형버전": "financial-quality-v2.0.0",
     "재무지표": {
@@ -92,12 +92,12 @@
     }
   },
   "시장정보": {
-    "현재가": 10570.0,
-    "전일대비": -190.0,
-    "등락률": -1.7657992565055762,
-    "거래량": 169469,
+    "현재가": 10700.0,
+    "전일대비": -60.0,
+    "등락률": -0.5576208178438662,
+    "거래량": 295381,
     "시가": 10570.0,
-    "고가": 10790.0,
+    "고가": 10870.0,
     "저가": 10220.0,
     "PER": 0.0,
     "PBR": 0.0,
@@ -117,20 +117,20 @@
     "Yahoo거래소": "KOE",
     "과거데이터": {
       "가격추세": {
-        "종가": 10570.0,
-        "MA5": 10260.0,
-        "MA20": 9775.0,
-        "MA60": 12928.33,
-        "종가대비MA20": 8.132992327365729,
-        "종가대비MA60": -18.24156716296691,
-        "5일수익률": 24.061032863849775,
-        "20일수익률": -1.1225444340505097,
-        "60일수익률": -44.572627163083375,
-        "RSI14": 54.56,
+        "종가": 10700.0,
+        "MA5": 10286.0,
+        "MA20": 9781.5,
+        "MA60": 12930.5,
+        "종가대비MA20": 9.390175330981965,
+        "종가대비MA60": -17.24991299640385,
+        "5일수익률": 25.5868544600939,
+        "20일수익률": 0.093545369504211,
+        "60일수익률": -43.89092815941269,
+        "RSI14": 55.81,
         "20일일간변동성": 0.0,
-        "5일평균거래량": 351576.2,
-        "20일평균거래량": 288360.8,
-        "거래량비율5대20": 1.2192232786148465
+        "5일평균거래량": 376758.6,
+        "20일평균거래량": 294656.4,
+        "거래량비율5대20": 1.2786370837354966
       },
       "누적수급": {
         "외국인5일": 0.0,
@@ -195,8 +195,20 @@
     "응답메시지": "정상",
     "조회시작일": "20260408",
     "조회종료일": "20260806",
-    "공시개수": 61,
+    "공시개수": 62,
     "최근공시": [
+      {
+        "접수번호": "20260806000357",
+        "공시일": "20260806",
+        "기업명": "루닛",
+        "기업코드": "01397620",
+        "종목코드": "328130",
+        "보고서명": "[기재정정]주식매수선택권부여에관한신고",
+        "제출인": "루닛",
+        "공시유형": "",
+        "공시상세유형": "",
+        "비고": ""
+      },
       {
         "접수번호": "20260803900789",
         "공시일": "20260803",
@@ -519,7 +531,7 @@
         "제출인": "루닛",
         "공시유형": "",
         "공시상세유형": "",
-        "비고": ""
+        "비고": "정"
       },
       {
         "접수번호": "20260506000435",
@@ -544,18 +556,6 @@
         "공시유형": "",
         "공시상세유형": "",
         "비고": "코정"
-      },
-      {
-        "접수번호": "20260504000321",
-        "공시일": "20260504",
-        "기업명": "루닛",
-        "기업코드": "01397620",
-        "종목코드": "328130",
-        "보고서명": "[기재정정]주식매수선택권부여에관한신고",
-        "제출인": "루닛",
-        "공시유형": "",
-        "공시상세유형": "",
-        "비고": "정"
       }
     ],
     "분석": {
@@ -563,7 +563,7 @@
       "신호": 1.08,
       "데이터품질": 50,
       "판정": "중립",
-      "전체공시개수": 61,
+      "전체공시개수": 62,
       "이벤트개수": 1,
       "긍정이벤트": [
         {
@@ -581,6 +581,17 @@
       ],
       "부정이벤트": [],
       "중립이벤트": [
+        {
+          "공시일": "20260806",
+          "보고서명": "[기재정정]주식매수선택권부여에관한신고",
+          "접수번호": "20260806000357",
+          "원점수": 0.0,
+          "최종점수": 0.0,
+          "일자가중치": 1.0,
+          "매칭규칙": [
+            "정정공시 감점"
+          ]
+        },
         {
           "공시일": "20260803",
           "보고서명": "전환사채(해외전환사채포함)발행후만기전사채취득",
@@ -663,15 +674,6 @@
           "최종점수": 0.0,
           "일자가중치": 0.15,
           "매칭규칙": []
-        },
-        {
-          "공시일": "20260508",
-          "보고서명": "임원ㆍ주요주주특정증권등소유상황보고서",
-          "접수번호": "20260508000593",
-          "원점수": 0.0,
-          "최종점수": 0.0,
-          "일자가중치": 0.15,
-          "매칭규칙": []
         }
       ],
       "설명": "최근 공시 제목과 공시일을 기준으로 계산한 규칙형 신호입니다. 공시 원문 정량분석 전 단계이므로 데이터품질 상한은 70입니다."
@@ -688,16 +690,16 @@
         "단위": "KRW/USD",
         "수집상태": "정상",
         "응답메시지": "",
-        "현재값": 1418.839966,
+        "현재값": 1424.280029,
         "전일값": 1428.430054,
-        "1일변화율": -0.671373,
-        "5일변화율": -1.625209,
-        "20일변화율": -5.621446,
-        "MA5": 1426.413989,
-        "MA20": 1464.838495,
-        "현재값대비MA20": -3.140178,
-        "최종관측시각UTC": "2026-08-06T03:38:43+00:00",
-        "데이터지연시간": 0.003,
+        "1일변화율": -0.29053,
+        "5일변화율": -1.248024,
+        "20일변화율": -5.259583,
+        "MA5": 1427.502002,
+        "MA20": 1465.110498,
+        "현재값대비MA20": -2.786853,
+        "최종관측시각UTC": "2026-08-06T06:42:24+00:00",
+        "데이터지연시간": 0.0,
         "데이터개수": 67
       },
       "S&P500": {
@@ -716,7 +718,7 @@
         "MA20": 7507.978467,
         "현재값대비MA20": 2.87123,
         "최종관측시각UTC": "2026-08-05T13:30:00+00:00",
-        "데이터지연시간": 14.148,
+        "데이터지연시간": 17.207,
         "데이터개수": 63
       },
       "나스닥": {
@@ -735,7 +737,7 @@
         "MA20": 25645.004492,
         "현재값대비MA20": 2.801462,
         "최종관측시각UTC": "2026-08-05T13:30:00+00:00",
-        "데이터지연시간": 14.148,
+        "데이터지연시간": 17.207,
         "데이터개수": 63
       },
       "반도체지수": {
@@ -745,16 +747,16 @@
         "단위": "index",
         "수집상태": "정상",
         "응답메시지": "",
-        "현재값": 12008.882812,
+        "현재값": 12008.879883,
         "전일값": 12179.259766,
-        "1일변화율": -1.398911,
-        "5일변화율": 14.945145,
-        "20일변화율": -4.501696,
-        "MA5": 11646.5125,
-        "MA20": 11941.058057,
-        "현재값대비MA20": 0.567996,
+        "1일변화율": -1.398935,
+        "5일변화율": 14.945117,
+        "20일변화율": -4.501719,
+        "MA5": 11646.511914,
+        "MA20": 11941.05791,
+        "현재값대비MA20": 0.567973,
         "최종관측시각UTC": "2026-08-05T13:30:00+00:00",
-        "데이터지연시간": 14.148,
+        "데이터지연시간": 17.207,
         "데이터개수": 63
       },
       "VIX": {
@@ -773,7 +775,7 @@
         "MA20": 17.2055,
         "현재값대비MA20": -8.110775,
         "최종관측시각UTC": "2026-08-05T07:00:00+00:00",
-        "데이터지연시간": 20.648,
+        "데이터지연시간": 23.707,
         "데이터개수": 65
       },
       "미국10년물": {
@@ -785,14 +787,14 @@
         "응답메시지": "",
         "현재값": 4.617,
         "전일값": 4.627,
-        "1일변화율": -0.216128,
-        "5일변화율": -0.108191,
-        "20일변화율": 1.050555,
+        "1일변화율": -0.216117,
+        "5일변화율": -0.108181,
+        "20일변화율": 1.050566,
         "MA5": 4.6676,
         "MA20": 4.62135,
-        "현재값대비MA20": -0.094135,
+        "현재값대비MA20": -0.094126,
         "최종관측시각UTC": "2026-08-05T12:20:00+00:00",
-        "데이터지연시간": 15.315,
+        "데이터지연시간": 18.374,
         "데이터개수": 64
       },
       "미국5년물": {
@@ -804,14 +806,14 @@
         "응답메시지": "",
         "현재값": 4.324,
         "전일값": 4.333,
-        "1일변화율": -0.207704,
-        "5일변화율": -0.64338,
-        "20일변화율": 0.371408,
+        "1일변화율": -0.207715,
+        "5일변화율": -0.64339,
+        "20일변화율": 0.371397,
         "MA5": 4.3784,
         "MA20": 4.35325,
-        "현재값대비MA20": -0.671905,
+        "현재값대비MA20": -0.671915,
         "최종관측시각UTC": "2026-08-05T12:20:00+00:00",
-        "데이터지연시간": 15.315,
+        "데이터지연시간": 18.374,
         "데이터개수": 64
       },
       "미국13주": {
@@ -830,23 +832,23 @@
         "MA20": 3.72045,
         "현재값대비MA20": 0.122295,
         "최종관측시각UTC": "2026-08-05T12:20:00+00:00",
-        "데이터지연시간": 15.315,
+        "데이터지연시간": 18.374,
         "데이터개수": 64
       }
     },
     "분석": {
       "분석상태": "정상",
-      "단기신호": 35.18,
+      "단기신호": 34.04,
       "단기판정": "긍정",
       "단기데이터품질": 100.0,
       "단기요소별평가": [
         {
           "요소": "원달러",
-          "신호": 35.73,
+          "신호": 30.0,
           "판정": "긍정",
           "데이터품질": 100.0,
           "가중치": 20.0,
-          "설명": "5일 변화 -1.63%"
+          "설명": "5일 변화 -1.25%"
         },
         {
           "요소": "S&P500",
@@ -881,17 +883,17 @@
           "설명": "현재 15.81"
         }
       ],
-      "중기신호": 14.0,
+      "중기신호": 12.56,
       "중기판정": "중립",
       "중기데이터품질": 100.0,
       "중기요소별평가": [
         {
           "요소": "원달러",
-          "신호": 35.73,
+          "신호": 30.0,
           "판정": "긍정",
           "데이터품질": 100.0,
           "가중치": 25.0,
-          "설명": "20일 변화 -5.62%"
+          "설명": "20일 변화 -5.26%"
         },
         {
           "요소": "미국10년물",
@@ -937,7 +939,7 @@
       "설명": "국내주식 기준으로 원달러·미국 주가지수·반도체지수·VIX·미국 금리의 방향을 -100~100 신호로 합성했습니다."
     },
     "수집오류": [],
-    "수집시각": "2026-08-06T12:38:52.727452+09:00",
+    "수집시각": "2026-08-06T15:42:25.700945+09:00",
     "데이터출처": "Yahoo Finance Chart API"
   },
   "기업기초데이터": {
@@ -1272,7 +1274,7 @@
       },
       "데이터출처": "금융감독원 OpenDART"
     },
-    "수집시각": "2026-08-06T12:39:23.880879+09:00",
+    "수집시각": "2026-08-06T15:42:29.488070+09:00",
     "데이터출처": "금융감독원 OpenDART"
   },
   "산업분석": {
@@ -1297,45 +1299,45 @@
     "응답메시지": "",
     "일봉": {
       "available": true,
-      "score": 39.99,
+      "score": 41.08,
       "trend": "상승 우위",
-      "rsi14": 54.56,
-      "maFast": 10260.0,
-      "maMedium": 9775.0,
-      "maLong": 12928.33,
-      "momentumFast": 0.24061,
-      "momentumMedium": -0.011225,
+      "rsi14": 55.81,
+      "maFast": 10286.0,
+      "maMedium": 9781.5,
+      "maLong": 12930.5,
+      "momentumFast": 0.255869,
+      "momentumMedium": 0.000935,
       "observations": 987,
       "confidence": 95.0,
-      "latestClose": 10570.0
+      "latestClose": 10700.0
     },
     "주봉": {
       "available": true,
-      "score": -61.99,
+      "score": -60.55,
       "trend": "강한 하락",
-      "rsi14": 17.44,
-      "maFast": 9795.0,
-      "maMedium": 12826.92,
-      "maLong": 15659.23,
-      "momentumFast": -0.024908,
-      "momentumMedium": -0.465352,
+      "rsi14": 18.12,
+      "maFast": 9827.5,
+      "maMedium": 12836.92,
+      "maLong": 15664.23,
+      "momentumFast": -0.012915,
+      "momentumMedium": -0.458776,
       "observations": 212,
       "confidence": 95.0,
-      "latestClose": 10570.0
+      "latestClose": 10700.0
     },
     "월봉": {
       "available": true,
       "score": -84.0,
       "trend": "강한 하락",
-      "rsi14": 35.32,
-      "maFast": 10420.0,
-      "maMedium": 16627.35,
-      "maLong": 20692.27,
-      "momentumFast": -0.369332,
-      "momentumMedium": -0.406645,
+      "rsi14": 35.66,
+      "maFast": 10463.33,
+      "maMedium": 16638.18,
+      "maLong": 20697.69,
+      "momentumFast": -0.361575,
+      "momentumMedium": -0.399348,
       "observations": 50,
       "confidence": 95.0,
-      "latestClose": 10570.0
+      "latestClose": 10700.0
     },
     "일봉데이터개수": 987,
     "주봉데이터개수": 212,
@@ -2418,10 +2420,10 @@
         "timestamp": 1785974400,
         "시각UTC": "2026-08-06T00:00:00+00:00",
         "시가": 10570.0,
-        "고가": 10790.0,
+        "고가": 10870.0,
         "저가": 10220.0,
-        "종가": 10570.0,
-        "거래량": 169469.0
+        "종가": 10700.0,
+        "거래량": 295381.0
       }
     ],
     "수집오류": []
@@ -2434,9 +2436,9 @@
       {
         "제목": "루닛 투자분석 2026. 08. 04",
         "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE56dFh2R2Q3UkdCRDdTaUQ1dks2UmE1ang4M1U2elUwYWR1Q3pPOFBKaGVZWHNmb21fck55Y09aQXBabEcta0lPeGd0MDZoa3BGZ1JfRU9DTHkwV0VSdkhtcnJ3N1RwRElIQThER0FlQzRwb3c?oc=5",
-        "언론사": "주달",
+        "언론사": "judal.co.kr",
         "발행시각UTC": "2026-08-05T18:09:01+00:00",
-        "경과일": 0.4,
+        "경과일": 0.52,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2446,7 +2448,7 @@
         "링크": "https://news.google.com/rss/articles/CBMigwFBVV95cUxNTk5KeTNKbWVRdjl3VUc0S3QwZzIyQXBhcWNqUHc4dm4yc1J5XzZQTUZ3Q0xQdnMyaUIwQ2xIUHVEQnp5MHQwaVRaOUEwSGEtOFhFV2tOeGZydTAwTWpEU2ZXcWJkNU1fQ3QwcTc2M0xGd2l6WkE5alF1WlRXME5DRmxoQQ?oc=5",
         "언론사": "인베스트조선",
         "발행시각UTC": "2026-04-14T07:00:00+00:00",
-        "경과일": 113.86,
+        "경과일": 113.99,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2454,11 +2456,11 @@
       {
         "제목": "루닛, 英·美 대형병원 잇단 수주 … 'AI 검진 플랫폼' 글로벌 확장",
         "링크": "https://news.google.com/rss/articles/CBMie0FVX3lxTFBsR1QxS2xIMk5QRkxWYzBpUW5OYkc2Y3pfZ1dQN0FaazNXMG9STFBzeG5sV2JfSDdrbzZxLUpWY3VkV3l2TUs2cmRYOVl6bWI0M1kwX3U0TlRMelI2ZVJjXzhmOU1vX3ZDQ0Fvd1NXTlZsZEhnRUtkSGRuVdIBgAFBVV95cUxOMnlMOFdYYkV1NTFKSE9kTXpoTzFLY29kMzJVeG85YTFjZV81djZCT1RCYjFOd0wxYUEydl80THd2MHZaNUtidllwUWRpOVVkOUVZdWZob2hCVTRKQUFQdG1KcjF0R3JxOERrM1htWHZERF9Wa1JsQ0hpd1NDbWxHQw?oc=5",
-        "언론사": "뉴데일리",
+        "언론사": "biz.newdaily.co.kr",
         "발행시각UTC": "2026-08-03T04:58:02+00:00",
-        "경과일": 2.95,
+        "경과일": 3.07,
         "원점수": 12.0,
-        "최종점수": 11.21,
+        "최종점수": 11.18,
         "매칭규칙": [
           "수주"
         ]
@@ -2466,11 +2468,11 @@
       {
         "제목": "루닛, 영국·미국 대형 의료기관 잇단 수주",
         "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5qWWxBd2JJU0RPTFMwRFdwWFRRbVp1WHRFQm12S0dDOUlyY1h5Rks4dEt0eGJ2eDN2bXVYNDN2UmZtN2FpVDNoTjBqWXlMQUtydGhvUV8yTHVnTWJLcEsyR1FwSi1ydG80TnNvVNIBb0FVX3lxTE1QVGRIWjM1QlFxZ0lXU1Z5Q0VjaDdLWWlVTUJRTDZIdUFIUTFyWkZ4SVpkcWVOeGtLWDUwSVNmdDVZRTc1UnNPWVliVC1MSl9JeDZ0ckFPVk0xVVpZRFB1Si1ITHhURXRqT2I2YmhUbw?oc=5",
-        "언론사": "한스경제",
+        "언론사": "hansbiz.co.kr",
         "발행시각UTC": "2026-08-03T05:01:39+00:00",
-        "경과일": 2.94,
+        "경과일": 3.07,
         "원점수": 12.0,
-        "최종점수": 11.22,
+        "최종점수": 11.18,
         "매칭규칙": [
           "수주"
         ]
@@ -2478,9 +2480,9 @@
       {
         "제목": "[의료 AI 진단 줌인] 루닛, CB 풋옵션 '도미노' 임박...빚 갚아도 재무건전성 '흔들'",
         "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE5zQklQeDMzZlNwd0RsZWhDYXJibmVlbGxxWVlwdk55X3IydlcyM0VEZk05b21jckVvY1YwMjkyakFFMUh0Rm1RQnpSd0VDN2w3eXdfbElyMHVESnN2WnY3ZzFnYWo3aU44?oc=5",
-        "언론사": "녹색경제신문",
+        "언론사": "greened.kr",
         "발행시각UTC": "2026-06-05T07:00:00+00:00",
-        "경과일": 61.86,
+        "경과일": 61.99,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2490,7 +2492,7 @@
         "링크": "https://news.google.com/rss/articles/CBMibkFVX3lxTE5YeVUtSE1UdUlHZWJHbHN3bkl1cno1c205c1pITEZDYWF0ZUFLNkFRYk1ydXJYcm5HZXRTaXB6SEF3b0JxVndVQnYwaXNjZklqaU1WNVliM0ExSmNmRnlHSU9qSEVyT0MzMldNMmtn?oc=5",
         "언론사": "팜이데일리",
         "발행시각UTC": "2026-01-07T08:00:00+00:00",
-        "경과일": 210.82,
+        "경과일": 210.95,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2500,7 +2502,7 @@
         "링크": "https://news.google.com/rss/articles/CBMif0FVX3lxTE95Rl9zempKQWpfRXJrZExnOUdkNzhPcUt2TXFDZDl2c2JhaENpSW1hMlhHNWsxX3F5dWt6VExreklCNGhnV3MzdElweUIweVhOemFud3p3SXBqTWVObUZMYmxCTzhRNElDNWVSaFE4R1Rkc1JzLWVVQ21DNE9JVTA?oc=5",
         "언론사": "헬스조선",
         "발행시각UTC": "2026-07-20T07:00:00+00:00",
-        "경과일": 16.86,
+        "경과일": 16.99,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2510,7 +2512,7 @@
         "링크": "https://news.google.com/rss/articles/CBMia0FVX3lxTE5DV0xQa2hfeXgxekRIRVVwMlk2SUh4YlZBSHlOTFRQckpaNkNVazVpalpSdzRPZnhCWDk0TWMwblgxekYyZWlxdlF3SFk2ZUtSTHE2ajl3VVFWZXJiQjA5QnE3YWZBUEd6VlZn?oc=5",
         "언론사": "히트뉴스",
         "발행시각UTC": "2026-05-12T07:00:00+00:00",
-        "경과일": 85.86,
+        "경과일": 85.99,
         "원점수": 16.0,
         "최종점수": 5.6,
         "매칭규칙": [
@@ -2522,9 +2524,9 @@
         "링크": "https://news.google.com/rss/articles/CBMigwFBVV95cUxQbGdERWlvYWRyR3A2eTFOdDgxeFo0UVZ5U09XaWp6YVJYWEJaR0VCb0FkN1Y4eWFNTGJpX3U2eFppVmktX2JCUkEyZnhLdE9qc0hweWhaVHZtdUZfS2hoRWtIMnI2MTBPZ05LUkduREtyNm5nT2o1el8wLTd2emZTWjhEVQ?oc=5",
         "언론사": "메디칼타임즈",
         "발행시각UTC": "2026-07-20T21:18:05+00:00",
-        "경과일": 16.26,
+        "경과일": 16.39,
         "원점수": -12.0,
-        "최종점수": -7.66,
+        "최종점수": -7.63,
         "매칭규칙": [
           "유상증자"
         ]
@@ -2534,7 +2536,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE9JTXVlemlxQ3VRWVpVek1WTTlwUER3cVhMQjU1ZWVEaUUtaU5iMnUxRnR2R2V1RXd5NUpoUjMyajh2c3o1enFMaWJYa3hFV0QwTnhBRHNOUFlYenBTWEZiWUUtWEY?oc=5",
         "언론사": "데일리팜",
         "발행시각UTC": "2026-05-26T07:00:00+00:00",
-        "경과일": 71.86,
+        "경과일": 71.99,
         "원점수": 16.0,
         "최종점수": 5.6,
         "매칭규칙": [
@@ -2546,7 +2548,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiV0FVX3lxTFBUSnRRVWhXZXlRei1fX3MwZkU4bWo4LTNWeGRMTUliUXgtRHFBeHFjaEk4TGUxczBmb3BtSWpfaVhNMzhFczU1M3lTRWRVMWlydERsN2Q2NA?oc=5",
         "언론사": "바이오스펙테이터",
         "발행시각UTC": "2026-05-12T07:00:00+00:00",
-        "경과일": 85.86,
+        "경과일": 85.99,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2556,7 +2558,7 @@
         "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTE96ZVV3VVhYRHRvd21ZYkFycVJFdmR4NW1ENk43WDFjSXhoRGNWbk1yN3VGc0JiTzdwcTNybVMzUlNGaWJnek5hSHlZMzZsRGZ4ODVjUDBsZWpvSi1DeHJpTDJCUS1hVktoN3pSYQ?oc=5",
         "언론사": "팜뉴스",
         "발행시각UTC": "2026-05-12T07:00:00+00:00",
-        "경과일": 85.86,
+        "경과일": 85.99,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2566,7 +2568,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiY0FVX3lxTFA5VGpZbDhNczZpbE9uRUU0aEJzRVlxeURoLWFDcmNEeTA4aGdsaUVzSjNQYU9KeUdLZHRKb3RGYzN4cjI5Y0wzWlBkZ0ppSTMxZWhPWDFKaWJBTldJaWczeVNfZw?oc=5",
         "언론사": "더구루",
         "발행시각UTC": "2026-05-08T07:00:00+00:00",
-        "경과일": 89.86,
+        "경과일": 89.99,
         "원점수": 12.0,
         "최종점수": 4.2,
         "매칭규칙": [
@@ -2578,7 +2580,7 @@
         "링크": "https://news.google.com/rss/articles/CBMigwFBVV95cUxNWGxQRENVQUoxOHUwVWJRSUtGZzhaeU5TU1RldUpXNTgxSWZ1Z190d2NDLW5wSDdVLWVSbk45Nnk5Ql9zeGM0VGJwb2JYWE16M3JSMHpSWmhrc2QyMjN0WTlXbDZDeDEwR2Y3cGpCZEdQbmcyVDk5SnMyTkQyelZ5cHl4dw?oc=5",
         "언론사": "팜이데일리",
         "발행시각UTC": "2026-05-07T07:00:00+00:00",
-        "경과일": 90.86,
+        "경과일": 90.99,
         "원점수": 16.0,
         "최종점수": 5.6,
         "매칭규칙": [
@@ -2588,9 +2590,9 @@
       {
         "제목": "루닛 투자분석 2026. 07. 28",
         "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBsNTVpVnpsUmVYZ24xNlk1YmxKVkJqbWp2cnBUcXZud1hnQ0p6T3B0Qm1tOWM1TnJDeVdUYTNjVWVpSW1mRVlacjd5MUl0SU50c0lJTm8yeXlJVU9fQWxwX1ppYlBmbzdRdklpRThpQW9yQkU?oc=5",
-        "언론사": "주달",
+        "언론사": "judal.co.kr",
         "발행시각UTC": "2026-07-28T07:44:39+00:00",
-        "경과일": 8.83,
+        "경과일": 8.96,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2600,7 +2602,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE5HLTQ2YzZFclU4NHRZNU0tWkdUNjV3S3F2ZFFpbm5TYk1nQWpObjM1UnV1WHNpWklxcUlPc2hSQm41NGRGNVJlYjdncGtqRDZBU0RHZDJ3?oc=5",
         "언론사": "데일리팜",
         "발행시각UTC": "2026-04-13T07:00:00+00:00",
-        "경과일": 114.86,
+        "경과일": 114.99,
         "원점수": -12.0,
         "최종점수": -4.2,
         "매칭규칙": [
@@ -2610,9 +2612,9 @@
       {
         "제목": "루닛 투자분석 2026. 07. 21",
         "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBiTTM4THpQN3Z0ZXd3S1ZGRkhHSEh4eEsxVWFiUEk3R0QxenFPMV92VEdDOG5Wcy14MjNLeUhoM0tnbnhnbmhZSHJMbUpGQmpkM3E5UXJsSm81bzdoWjMxMDNSNlRCM3llTFp1SS12TkE1S2M?oc=5",
-        "언론사": "주달",
+        "언론사": "judal.co.kr",
         "발행시각UTC": "2026-07-21T07:38:37+00:00",
-        "경과일": 15.83,
+        "경과일": 15.96,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2622,7 +2624,7 @@
         "링크": "https://news.google.com/rss/articles/CBMigwFBVV95cUxNemQydmJtaEVHTmNxSUxTY3JBZkVQU3RiS0dKTV90SlJGVW9YY3RPT0VqZUhCN19kWDRUUmoxUVBrYW1YNmRNM2tneGhMZzl2OGdzLU00SHlzWGt4cl85WjVLMmY1ZjNBMTAtZEdaSmxkNjFqZ29yVTdkTVN0Zi1aWHZrdw?oc=5",
         "언론사": "팜이데일리",
         "발행시각UTC": "2026-05-12T07:00:00+00:00",
-        "경과일": 85.86,
+        "경과일": 85.99,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2632,7 +2634,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE5uM0NESUNWS1oxdlJlbzVVaERBSU42c0hfQ18teV9sWG44cS11aHBUSUNFNTZnUWU0ZkoxS1pXNXZhc3JLU1kzdW5SLXpxODVCUEtCY0loX0lXeGNsbjh5Yk93TU1rUFhk?oc=5",
         "언론사": "씽크풀 AI",
         "발행시각UTC": "2026-03-24T01:15:25+00:00",
-        "경과일": 135.1,
+        "경과일": 135.23,
         "원점수": 16.0,
         "최종점수": 5.6,
         "매칭규칙": [
@@ -2644,7 +2646,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE9Cd2ZwNFdOOVM5aXNPc0hRS1NwOVRsZ1lnR3ZVVDNBYy03OTZ4cVpnVVBGVkxDX3dfdE1fSXBWRi1kV2d2VHRnakxaSFB4V0VfN2owdA?oc=5",
         "언론사": "v.daum.net",
         "발행시각UTC": "2026-05-12T07:00:00+00:00",
-        "경과일": 85.86,
+        "경과일": 85.99,
         "원점수": -12.0,
         "최종점수": -4.2,
         "매칭규칙": [
@@ -2654,9 +2656,9 @@
       {
         "제목": "루닛, 1분기 매출 240억원… 전년동기 대비 매출 25% 성장, 진단·치료사업 동시 성장 확인",
         "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTFBzR1dSSC1DbFVwMTh3N2YyLVlpdE9KRHFJRVZZTFJVQlhHRl9yNFhiY3lUM1lmdmpaZXlYdmZ0d2dxZVNCUElUVVY4dnVVZWkzcWxXckZlSmJwc3RpYWdYRVB2RjRXb3c?oc=5",
-        "언론사": "aitimes.kr",
+        "언론사": "인공지능신문",
         "발행시각UTC": "2026-05-12T07:00:00+00:00",
-        "경과일": 85.86,
+        "경과일": 85.99,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2664,9 +2666,9 @@
       {
         "제목": "루닛, 권역책임의료기관 AI 진료시스템 사업 수주",
         "링크": "https://news.google.com/rss/articles/CBMiTkFVX3lxTE5oaTd3Y2VTZjk1dS1Walk5UEZOb1ZBRlBSMEl4Zk5oWmZmUUtuNzI4N3lsS0Y5VHFReTY4bDNIUWIwLUxtV29tZFd2b05FUQ?oc=5",
-        "언론사": "etnews.com",
+        "언론사": "전자신문",
         "발행시각UTC": "2026-06-18T07:00:00+00:00",
-        "경과일": 48.86,
+        "경과일": 48.99,
         "원점수": 12.0,
         "최종점수": 4.2,
         "매칭규칙": [
@@ -2678,7 +2680,7 @@
         "링크": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9MS3d3LVhSQVhKN2xpdFB5VXoyZzR3NHRWZXRkT3Nxd09aWXN1d0Z2Q0xkWUxfbkctWkJWVEFzTThQUzN2YnB1Z21iamZFbjBvbnZ5YzcyS3FyX09YMWZ6eUVsQlFtVVprQzM3NUc2OVNXeWQxYVE?oc=5",
         "언론사": "Investing.com 한국어",
         "발행시각UTC": "2026-03-08T08:00:00+00:00",
-        "경과일": 150.82,
+        "경과일": 150.95,
         "원점수": -6.0,
         "최종점수": -2.1,
         "매칭규칙": [
@@ -2690,7 +2692,7 @@
         "링크": "https://news.google.com/rss/articles/CBMibkFVX3lxTE5qQUpmS2NCOVlNYWh4R0xSUFdkWlR6NFFkRENHYzAyQkUyLTNPTkZOS0RmaEY1NEdSRU5iSkcwV0Q0akZkbHVCbS1xa18zR19mcXNYa2M5NnBLSnBiYzRIbjJMakczV0RnNTJjeTl3?oc=5",
         "언론사": "팜이데일리",
         "발행시각UTC": "2026-04-07T07:00:00+00:00",
-        "경과일": 120.86,
+        "경과일": 120.99,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2700,7 +2702,7 @@
         "링크": "https://news.google.com/rss/articles/CBMia0FVX3lxTE90XzFhc2Y0TmpVZDc1bUxFdzctbEFaS2gxRDgxa2hTSW5CWHZKa2hzaWdkb1ZxQzhoS1NhOGJRdGFqdzdoQWR5M3JpdVhrSXlKMzJoeWYwdk91RDI0QW9QRXVhNkc0anZsdkVn0gFvQVVfeXFMT0RtQzNld3BOZDYxM3FHdHJ4QWZyeGFCSGdOSEc2bWxycE1EQkVGdGd4MVV5eDFGTjh4bF9odnRlTWNReWFQTEJNM3FwbGtRSVQ4aVcwWXAxSU41RlZsaElGMkhOUTNMTlhCVkE3ZzFJ?oc=5",
         "언론사": "데일리인베스트",
         "발행시각UTC": "2026-04-14T07:00:00+00:00",
-        "경과일": 113.86,
+        "경과일": 113.99,
         "원점수": 16.0,
         "최종점수": 5.6,
         "매칭규칙": [
@@ -2710,9 +2712,9 @@
       {
         "제목": "루닛 투자분석 2026. 05. 03",
         "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTFB6bm9sRU1UdnlaWnA0b0E3cGx6bGR2U00wVm4tMnREYjQxRm5DUEpnS19oVHlpdTIzOTFNd0pJaGxHRlB1Y0NQZEE5bUpaY3B5SkcwMWlWYi16Zll6YzhfbUJxVF92TG5xQWd4bTNYNjBtY1k?oc=5",
-        "언론사": "주달",
+        "언론사": "judal.co.kr",
         "발행시각UTC": "2026-05-03T07:00:00+00:00",
-        "경과일": 94.86,
+        "경과일": 94.99,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2722,7 +2724,7 @@
         "링크": "https://news.google.com/rss/articles/CBMia0FVX3lxTE9PUGxiUWh1T0xmcEllN1dCMEtEdXg4M0c2VHh2RFdrd3BOWXZMbkNoaWM0RnRaS0YxRDhmc3JpelZ2ampRODdpUGhkLXVFVk1nTkloNTdTNDM2dmdLcVM2Y2M2Z2oxVGFkdE1B?oc=5",
         "언론사": "히트뉴스",
         "발행시각UTC": "2026-03-17T07:00:00+00:00",
-        "경과일": 141.86,
+        "경과일": 141.99,
         "원점수": 12.0,
         "최종점수": 4.2,
         "매칭규칙": [
@@ -2734,7 +2736,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE0ydEFNQXhsSjhQWTdBb2czVlVUS0VHSEk0V0RaVVRHN3lxYkN2cUU1SkI5ankwa0xfejZLWkUwWXh1S0NFclhrZHJFVXVKVHc?oc=5",
         "언론사": "와우테일",
         "발행시각UTC": "2026-04-13T07:00:00+00:00",
-        "경과일": 114.86,
+        "경과일": 114.99,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2744,7 +2746,7 @@
         "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE5kenh6endLQmN3VjBaRzlram4wdHVnVDFSYXpQXzZxXzJzM0U1Nlg4aWgyM0JnTlNadHlvUnRDdC13LXFJVXZ0YkRpZDVWbmRFNUZsX3hPU1hJb1pjbmVDODB0VlF2Q2s5V0dkQl82QUl1RUk?oc=5",
         "언론사": "Investing.com 한국어",
         "발행시각UTC": "2026-04-20T07:00:00+00:00",
-        "경과일": 107.86,
+        "경과일": 107.99,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2754,7 +2756,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE12bWx1cVpxTmNHRXFXNVpfdUoyYzlCdHA3TGkzWlVCZVlkMkZGM2RURGdYWnpTLXFObENUV1FELThhX3dlODgxQ1dheWNwN3JkMUJyaQ?oc=5",
         "언론사": "MEDI:GATE NEWS",
         "발행시각UTC": "2026-04-07T07:00:00+00:00",
-        "경과일": 120.86,
+        "경과일": 120.99,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2762,7 +2764,7 @@
     ],
     "분석": {
       "분석상태": "정상",
-      "신호": 16.83,
+      "신호": 16.81,
       "데이터품질": 88.0,
       "판정": "긍정",
       "긍정뉴스개수": 10,
@@ -2772,11 +2774,11 @@
         {
           "제목": "루닛, 英·美 대형병원 잇단 수주 … 'AI 검진 플랫폼' 글로벌 확장",
           "링크": "https://news.google.com/rss/articles/CBMie0FVX3lxTFBsR1QxS2xIMk5QRkxWYzBpUW5OYkc2Y3pfZ1dQN0FaazNXMG9STFBzeG5sV2JfSDdrbzZxLUpWY3VkV3l2TUs2cmRYOVl6bWI0M1kwX3U0TlRMelI2ZVJjXzhmOU1vX3ZDQ0Fvd1NXTlZsZEhnRUtkSGRuVdIBgAFBVV95cUxOMnlMOFdYYkV1NTFKSE9kTXpoTzFLY29kMzJVeG85YTFjZV81djZCT1RCYjFOd0wxYUEydl80THd2MHZaNUtidllwUWRpOVVkOUVZdWZob2hCVTRKQUFQdG1KcjF0R3JxOERrM1htWHZERF9Wa1JsQ0hpd1NDbWxHQw?oc=5",
-          "언론사": "뉴데일리",
+          "언론사": "biz.newdaily.co.kr",
           "발행시각UTC": "2026-08-03T04:58:02+00:00",
-          "경과일": 2.95,
+          "경과일": 3.07,
           "원점수": 12.0,
-          "최종점수": 11.21,
+          "최종점수": 11.18,
           "매칭규칙": [
             "수주"
           ]
@@ -2784,11 +2786,11 @@
         {
           "제목": "루닛, 영국·미국 대형 의료기관 잇단 수주",
           "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5qWWxBd2JJU0RPTFMwRFdwWFRRbVp1WHRFQm12S0dDOUlyY1h5Rks4dEt0eGJ2eDN2bXVYNDN2UmZtN2FpVDNoTjBqWXlMQUtydGhvUV8yTHVnTWJLcEsyR1FwSi1ydG80TnNvVNIBb0FVX3lxTE1QVGRIWjM1QlFxZ0lXU1Z5Q0VjaDdLWWlVTUJRTDZIdUFIUTFyWkZ4SVpkcWVOeGtLWDUwSVNmdDVZRTc1UnNPWVliVC1MSl9JeDZ0ckFPVk0xVVpZRFB1Si1ITHhURXRqT2I2YmhUbw?oc=5",
-          "언론사": "한스경제",
+          "언론사": "hansbiz.co.kr",
           "발행시각UTC": "2026-08-03T05:01:39+00:00",
-          "경과일": 2.94,
+          "경과일": 3.07,
           "원점수": 12.0,
-          "최종점수": 11.22,
+          "최종점수": 11.18,
           "매칭규칙": [
             "수주"
           ]
@@ -2798,7 +2800,7 @@
           "링크": "https://news.google.com/rss/articles/CBMia0FVX3lxTE5DV0xQa2hfeXgxekRIRVVwMlk2SUh4YlZBSHlOTFRQckpaNkNVazVpalpSdzRPZnhCWDk0TWMwblgxekYyZWlxdlF3SFk2ZUtSTHE2ajl3VVFWZXJiQjA5QnE3YWZBUEd6VlZn?oc=5",
           "언론사": "히트뉴스",
           "발행시각UTC": "2026-05-12T07:00:00+00:00",
-          "경과일": 85.86,
+          "경과일": 85.99,
           "원점수": 16.0,
           "최종점수": 5.6,
           "매칭규칙": [
@@ -2810,7 +2812,7 @@
           "링크": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE9JTXVlemlxQ3VRWVpVek1WTTlwUER3cVhMQjU1ZWVEaUUtaU5iMnUxRnR2R2V1RXd5NUpoUjMyajh2c3o1enFMaWJYa3hFV0QwTnhBRHNOUFlYenBTWEZiWUUtWEY?oc=5",
           "언론사": "데일리팜",
           "발행시각UTC": "2026-05-26T07:00:00+00:00",
-          "경과일": 71.86,
+          "경과일": 71.99,
           "원점수": 16.0,
           "최종점수": 5.6,
           "매칭규칙": [
@@ -2822,7 +2824,7 @@
           "링크": "https://news.google.com/rss/articles/CBMiY0FVX3lxTFA5VGpZbDhNczZpbE9uRUU0aEJzRVlxeURoLWFDcmNEeTA4aGdsaUVzSjNQYU9KeUdLZHRKb3RGYzN4cjI5Y0wzWlBkZ0ppSTMxZWhPWDFKaWJBTldJaWczeVNfZw?oc=5",
           "언론사": "더구루",
           "발행시각UTC": "2026-05-08T07:00:00+00:00",
-          "경과일": 89.86,
+          "경과일": 89.99,
           "원점수": 12.0,
           "최종점수": 4.2,
           "매칭규칙": [
@@ -2836,9 +2838,9 @@
           "링크": "https://news.google.com/rss/articles/CBMigwFBVV95cUxQbGdERWlvYWRyR3A2eTFOdDgxeFo0UVZ5U09XaWp6YVJYWEJaR0VCb0FkN1Y4eWFNTGJpX3U2eFppVmktX2JCUkEyZnhLdE9qc0hweWhaVHZtdUZfS2hoRWtIMnI2MTBPZ05LUkduREtyNm5nT2o1el8wLTd2emZTWjhEVQ?oc=5",
           "언론사": "메디칼타임즈",
           "발행시각UTC": "2026-07-20T21:18:05+00:00",
-          "경과일": 16.26,
+          "경과일": 16.39,
           "원점수": -12.0,
-          "최종점수": -7.66,
+          "최종점수": -7.63,
           "매칭규칙": [
             "유상증자"
           ]
@@ -2848,7 +2850,7 @@
           "링크": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE5HLTQ2YzZFclU4NHRZNU0tWkdUNjV3S3F2ZFFpbm5TYk1nQWpObjM1UnV1WHNpWklxcUlPc2hSQm41NGRGNVJlYjdncGtqRDZBU0RHZDJ3?oc=5",
           "언론사": "데일리팜",
           "발행시각UTC": "2026-04-13T07:00:00+00:00",
-          "경과일": 114.86,
+          "경과일": 114.99,
           "원점수": -12.0,
           "최종점수": -4.2,
           "매칭규칙": [
@@ -2860,7 +2862,7 @@
           "링크": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE9Cd2ZwNFdOOVM5aXNPc0hRS1NwOVRsZ1lnR3ZVVDNBYy03OTZ4cVpnVVBGVkxDX3dfdE1fSXBWRi1kV2d2VHRnakxaSFB4V0VfN2owdA?oc=5",
           "언론사": "v.daum.net",
           "발행시각UTC": "2026-05-12T07:00:00+00:00",
-          "경과일": 85.86,
+          "경과일": 85.99,
           "원점수": -12.0,
           "최종점수": -4.2,
           "매칭규칙": [
@@ -2872,7 +2874,7 @@
           "링크": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9MS3d3LVhSQVhKN2xpdFB5VXoyZzR3NHRWZXRkT3Nxd09aWXN1d0Z2Q0xkWUxfbkctWkJWVEFzTThQUzN2YnB1Z21iamZFbjBvbnZ5YzcyS3FyX09YMWZ6eUVsQlFtVVprQzM3NUc2OVNXeWQxYVE?oc=5",
           "언론사": "Investing.com 한국어",
           "발행시각UTC": "2026-03-08T08:00:00+00:00",
-          "경과일": 150.82,
+          "경과일": 150.95,
           "원점수": -6.0,
           "최종점수": -2.1,
           "매칭규칙": [
@@ -2883,7 +2885,7 @@
       "설명": "최근 뉴스 제목의 실적·수주·투자·증자·소송 등 규칙과 시간가중치를 합성합니다."
     },
     "데이터출처": "Google News RSS",
-    "수집시각UTC": "2026-08-06T03:38:53.026709+00:00"
+    "수집시각UTC": "2026-08-06T06:42:25.810565+00:00"
   },
   "가치평가": {
     "가치평가계약버전": "4.0",
@@ -2946,9 +2948,9 @@
       ],
       "데이터출처": "금융감독원 OpenDART"
     },
-    "현재가": 10570.0,
+    "현재가": 10700.0,
     "실제PER": 0.0,
-    "실제PBR": 2.479068192573908,
+    "실제PBR": 2.509558151422972,
     "EPS": -2057.849031964682,
     "BPS": 4263.69876861904,
     "발행주식수추정": 29256746,
@@ -3012,7 +3014,7 @@
     "기본적정가": 4903.25,
     "보수적적정가": 4903.25,
     "성장적정가": 5295.51,
-    "현재가대비": -53.61,
+    "현재가대비": -54.18,
     "판단": "판정 보류",
     "가치평가산업코드": "media_entertainment",
     "가치평가산업프로필": "미디어·콘텐츠 성장형",
@@ -3071,7 +3073,7 @@
     "엔진버전": "6.8.0-valuation-contract-v4",
     "단기1~5일": {
       "기간": "1~5일",
-      "점수": 56,
+      "점수": 57,
       "상승확률": 52,
       "판정": "중립",
       "신뢰도": 42,
@@ -3100,32 +3102,32 @@
         {
           "요소": "기술·거래량",
           "가중치": 20,
-          "신호": 32.15,
+          "신호": 35.21,
           "신호판정": "긍정",
           "데이터품질": 100.0,
-          "점수기여": 6.43,
+          "점수기여": 7.04,
           "출처": "KIS 일봉+현재가",
-          "설명": "5일수익률 24.06%, RSI14 54.56"
+          "설명": "5일수익률 25.59%, RSI14 55.81"
         },
         {
           "요소": "환율·글로벌",
           "가중치": 15,
-          "신호": 35.18,
+          "신호": 34.04,
           "신호판정": "긍정",
           "데이터품질": 100.0,
-          "점수기여": 5.28,
+          "점수기여": 5.11,
           "출처": "Yahoo 글로벌시장 분석",
-          "설명": "분석상태 정상, 신호 35.18"
+          "설명": "분석상태 정상, 신호 34.04"
         },
         {
           "요소": "뉴스·공시",
           "가중치": 10,
-          "신호": 10.38,
+          "신호": 10.36,
           "신호판정": "중립",
           "데이터품질": 67.1,
           "점수기여": 1.04,
           "출처": "OpenDART 최근 공시 + Google News RSS",
-          "설명": "분석상태 정상, 신호 10.38"
+          "설명": "분석상태 정상, 신호 10.36"
         }
       ],
       "미수집요소": [
@@ -3181,32 +3183,32 @@
         {
           "요소": "환율·금리·거시",
           "가중치": 15,
-          "신호": 14.0,
+          "신호": 12.56,
           "신호판정": "중립",
           "데이터품질": 100.0,
-          "점수기여": 2.1,
+          "점수기여": 1.88,
           "출처": "Yahoo 환율·미국금리·글로벌시장",
-          "설명": "분석상태 정상, 신호 14.00"
+          "설명": "분석상태 정상, 신호 12.56"
         },
         {
           "요소": "가격추세",
           "가중치": 10,
-          "신호": 43.88,
+          "신호": 45.09,
           "신호판정": "긍정",
           "데이터품질": 100.0,
-          "점수기여": 4.39,
+          "점수기여": 4.51,
           "출처": "KIS 일봉",
-          "설명": "20일수익률 -1.12%, 60일수익률 -44.57%"
+          "설명": "20일수익률 0.09%, 60일수익률 -43.89%"
         },
         {
           "요소": "뉴스·공시",
           "가중치": 10,
-          "신호": 10.38,
+          "신호": 10.36,
           "신호판정": "중립",
           "데이터품질": 67.1,
           "점수기여": 1.04,
           "출처": "OpenDART 최근 공시 + Google News RSS",
-          "설명": "분석상태 정상, 신호 10.38"
+          "설명": "분석상태 정상, 신호 10.36"
         }
       ],
       "미수집요소": [
@@ -3257,7 +3259,7 @@
           "데이터품질": 100.0,
           "점수기여": -20.0,
           "출처": "내부 가치평가",
-          "설명": "현재가 대비 -53.61%, 판단 판정 보류"
+          "설명": "현재가 대비 -54.18%, 판단 판정 보류"
         },
         {
           "요소": "경쟁력·시장점유율",
@@ -3332,7 +3334,7 @@
     "스키마버전": "2.0",
     "엔진버전": "6.8.0-valuation-contract-v4",
     "종목코드": "328130",
-    "생성시각": "2026-08-06T03:39:23.904430",
+    "생성시각": "2026-08-06T06:42:29.498282",
     "연결상태": "부분",
     "기술분석": {
       "수집상태": "정상",
@@ -3340,22 +3342,22 @@
       "일봉": {
         "사용가능": true,
         "available": true,
-        "점수": 39.99,
-        "score": 39.99,
+        "점수": 41.08,
+        "score": 41.08,
         "판정": "상승 우위",
         "trend": "상승 우위",
-        "RSI14": 54.56,
-        "rsi14": 54.56,
-        "빠른이동평균": 10260.0,
-        "maFast": 10260.0,
-        "중간이동평균": 9775.0,
-        "maMedium": 9775.0,
-        "장기이동평균": 12928.33,
-        "maLong": 12928.33,
-        "단기모멘텀": 0.24061,
-        "momentumFast": 0.24061,
-        "중기모멘텀": -0.011225,
-        "momentumMedium": -0.011225,
+        "RSI14": 55.81,
+        "rsi14": 55.81,
+        "빠른이동평균": 10286.0,
+        "maFast": 10286.0,
+        "중간이동평균": 9781.5,
+        "maMedium": 9781.5,
+        "장기이동평균": 12930.5,
+        "maLong": 12930.5,
+        "단기모멘텀": 0.255869,
+        "momentumFast": 0.255869,
+        "중기모멘텀": 0.000935,
+        "momentumMedium": 0.000935,
         "관측수": 987,
         "observations": 987,
         "자료신뢰도": 95.0,
@@ -3364,22 +3366,22 @@
       "주봉": {
         "사용가능": true,
         "available": true,
-        "점수": -61.99,
-        "score": -61.99,
+        "점수": -60.55,
+        "score": -60.55,
         "판정": "강한 하락",
         "trend": "강한 하락",
-        "RSI14": 17.44,
-        "rsi14": 17.44,
-        "빠른이동평균": 9795.0,
-        "maFast": 9795.0,
-        "중간이동평균": 12826.92,
-        "maMedium": 12826.92,
-        "장기이동평균": 15659.23,
-        "maLong": 15659.23,
-        "단기모멘텀": -0.024908,
-        "momentumFast": -0.024908,
-        "중기모멘텀": -0.465352,
-        "momentumMedium": -0.465352,
+        "RSI14": 18.12,
+        "rsi14": 18.12,
+        "빠른이동평균": 9827.5,
+        "maFast": 9827.5,
+        "중간이동평균": 12836.92,
+        "maMedium": 12836.92,
+        "장기이동평균": 15664.23,
+        "maLong": 15664.23,
+        "단기모멘텀": -0.012915,
+        "momentumFast": -0.012915,
+        "중기모멘텀": -0.458776,
+        "momentumMedium": -0.458776,
         "관측수": 212,
         "observations": 212,
         "자료신뢰도": 95.0,
@@ -3392,18 +3394,18 @@
         "score": -84.0,
         "판정": "강한 하락",
         "trend": "강한 하락",
-        "RSI14": 35.32,
-        "rsi14": 35.32,
-        "빠른이동평균": 10420.0,
-        "maFast": 10420.0,
-        "중간이동평균": 16627.35,
-        "maMedium": 16627.35,
-        "장기이동평균": 20692.27,
-        "maLong": 20692.27,
-        "단기모멘텀": -0.369332,
-        "momentumFast": -0.369332,
-        "중기모멘텀": -0.406645,
-        "momentumMedium": -0.406645,
+        "RSI14": 35.66,
+        "rsi14": 35.66,
+        "빠른이동평균": 10463.33,
+        "maFast": 10463.33,
+        "중간이동평균": 16638.18,
+        "maMedium": 16638.18,
+        "장기이동평균": 20697.69,
+        "maLong": 20697.69,
+        "단기모멘텀": -0.361575,
+        "momentumFast": -0.361575,
+        "중기모멘텀": -0.399348,
+        "momentumMedium": -0.399348,
         "관측수": 50,
         "observations": 50,
         "자료신뢰도": 95.0,
@@ -3414,7 +3416,7 @@
     "예측": {
       "단기": {
         "기간": "1~5일",
-        "점수": 56,
+        "점수": 57,
         "상승확률": 52,
         "판정": "중립",
         "자료신뢰도": 42,
@@ -3452,40 +3454,40 @@
             "요소": "기술·거래량",
             "사용가능": true,
             "가중치": 20.0,
-            "신호": 32.15,
+            "신호": 35.21,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
             "데이터품질": 100.0,
-            "점수기여": 6.43,
+            "점수기여": 7.04,
             "출처": "KIS 일봉+현재가",
-            "설명": "5일수익률 24.06%, RSI14 54.56"
+            "설명": "5일수익률 25.59%, RSI14 55.81"
           },
           {
             "요소": "환율·글로벌",
             "사용가능": true,
             "가중치": 15.0,
-            "신호": 35.18,
+            "신호": 34.04,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
             "데이터품질": 100.0,
-            "점수기여": 5.28,
+            "점수기여": 5.11,
             "출처": "Yahoo 글로벌시장 분석",
-            "설명": "분석상태 정상, 신호 35.18"
+            "설명": "분석상태 정상, 신호 34.04"
           },
           {
             "요소": "뉴스·공시",
             "사용가능": true,
             "가중치": 10.0,
-            "신호": 10.38,
+            "신호": 10.36,
             "판정": "중립",
             "신호판정": "중립",
             "데이터상태": "정상",
             "데이터품질": 67.1,
             "점수기여": 1.04,
             "출처": "OpenDART 최근 공시 + Google News RSS",
-            "설명": "분석상태 정상, 신호 10.38"
+            "설명": "분석상태 정상, 신호 10.36"
           }
         ],
         "미수집요소": [
@@ -3546,40 +3548,40 @@
             "요소": "환율·금리·거시",
             "사용가능": true,
             "가중치": 15.0,
-            "신호": 14.0,
+            "신호": 12.56,
             "판정": "중립",
             "신호판정": "중립",
             "데이터상태": "정상",
             "데이터품질": 100.0,
-            "점수기여": 2.1,
+            "점수기여": 1.88,
             "출처": "Yahoo 환율·미국금리·글로벌시장",
-            "설명": "분석상태 정상, 신호 14.00"
+            "설명": "분석상태 정상, 신호 12.56"
           },
           {
             "요소": "가격추세",
             "사용가능": true,
             "가중치": 10.0,
-            "신호": 43.88,
+            "신호": 45.09,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
             "데이터품질": 100.0,
-            "점수기여": 4.39,
+            "점수기여": 4.51,
             "출처": "KIS 일봉",
-            "설명": "20일수익률 -1.12%, 60일수익률 -44.57%"
+            "설명": "20일수익률 0.09%, 60일수익률 -43.89%"
           },
           {
             "요소": "뉴스·공시",
             "사용가능": true,
             "가중치": 10.0,
-            "신호": 10.38,
+            "신호": 10.36,
             "판정": "중립",
             "신호판정": "중립",
             "데이터상태": "정상",
             "데이터품질": 67.1,
             "점수기여": 1.04,
             "출처": "OpenDART 최근 공시 + Google News RSS",
-            "설명": "분석상태 정상, 신호 10.38"
+            "설명": "분석상태 정상, 신호 10.36"
           }
         ],
         "미수집요소": [
@@ -3634,7 +3636,7 @@
             "데이터품질": 100.0,
             "점수기여": -20.0,
             "출처": "내부 가치평가",
-            "설명": "현재가 대비 -53.61%, 판단 판정 보류"
+            "설명": "현재가 대비 -54.18%, 판단 판정 보류"
           },
           {
             "요소": "경쟁력·시장점유율",
@@ -3685,7 +3687,7 @@
     "요소상태": {
       "거시환경": {
         "사용가능": true,
-        "점수": 14.0,
+        "점수": 12.56,
         "데이터품질": 100.0,
         "판정": "중립",
         "출처": "Yahoo Finance Chart API"
@@ -3706,7 +3708,7 @@
       },
       "뉴스": {
         "사용가능": true,
-        "점수": 16.83,
+        "점수": 16.81,
         "데이터품질": 88.0,
         "판정": "긍정",
         "출처": "Google News RSS"
