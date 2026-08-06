@@ -4,4 +4,3 @@ numpy
 beautifulsoup4
 python-dotenv
 pykrx
-exchange-calendars>=4.11,<5

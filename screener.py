@@ -40,9 +40,8 @@ from collectors.fundamentals import get_fundamentals_bundle
 from collectors.global_market import get_global_market_bundle
 from collectors.history import get_history_bundle
 from collectors.industry import get_industry_bundle
-from collectors.market import finalize_market_data, get_market_data
+from collectors.market import get_market_data
 from collectors.news import get_company_news
-from collectors.price import suppress_unverified_price_judgment
 from collectors.technical import get_stock_technical_bundle
 from main import (
     build_disclosure_summary,
@@ -663,8 +662,7 @@ def analyze_one_stock(
     )
 
     market = get_market_data(
-        resolved_stock_code,
-        market_code=market_code,
+        resolved_stock_code
     )
 
     history_bundle = safe_execute(
@@ -782,14 +780,6 @@ def analyze_one_stock(
         },
     )
 
-    market = finalize_market_data(
-        market,
-        stock_code=resolved_stock_code,
-        market_code=market_code,
-        fundamentals_bundle=fundamentals_bundle,
-        technical_bundle=technical_bundle,
-    )
-
     if industry_code not in industry_cache:
         if industry_code not in LIVE_INDUSTRY_CODES:
             industry_cache[
@@ -850,7 +840,6 @@ def analyze_one_stock(
         industry_bundle,
         target.get("기업조회", {}),
     )
-    valuation = suppress_unverified_price_judgment(valuation, market)
 
     prediction = predict_stock(
         market,

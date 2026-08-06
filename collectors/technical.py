@@ -10,7 +10,7 @@
 """
 
 from collections import OrderedDict
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from collectors.global_market import parse_chart_result, request_chart
@@ -292,14 +292,48 @@ def timeframe_summary(
     }
 
 
-def yahoo_symbol_candidates(stock_code: str, market_code: str = "K") -> List[str]:
+def yahoo_symbol_candidates(stock_code: str, market_code: str = "") -> List[str]:
     stock_code = safe_text(stock_code)
-    market_code = safe_text(market_code, "K").upper()
+    market_code = safe_text(market_code).upper()
 
-    if market_code in {"Q", "KQ", "KOSDAQ"}:
+    if market_code in {"Q", "KQ", "KOSDAQ", "KOSDAQ GLOBAL"}:
         return [f"{stock_code}.KQ", f"{stock_code}.KS"]
 
+    if market_code in {"Y", "KS", "KOSPI", "KSE"}:
+        return [f"{stock_code}.KS", f"{stock_code}.KQ"]
+
     return [f"{stock_code}.KS", f"{stock_code}.KQ"]
+
+
+def latest_rows_are_fresh(
+    rows: List[Dict[str, Any]],
+    maximum_age_days: int = 10,
+) -> bool:
+    if not rows:
+        return False
+
+    latest_timestamp = int(
+        safe_float(
+            rows[-1].get("timestamp"),
+            0,
+        )
+    )
+
+    if latest_timestamp <= 0:
+        return False
+
+    observed = datetime.fromtimestamp(
+        latest_timestamp,
+        tz=timezone.utc,
+    )
+    now = datetime.now(timezone.utc)
+
+    if observed > now + timedelta(days=1):
+        return False
+
+    return now - observed <= timedelta(
+        days=max(1, maximum_age_days)
+    )
 
 
 def get_stock_technical_bundle(
@@ -323,11 +357,20 @@ def get_stock_technical_bundle(
 
         if chart.get("수집상태") == "정상":
             candidate_rows = normalize_yahoo_rows(chart.get("일별데이터"))
-            if len(candidate_rows) >= 240:
+            if (
+                len(candidate_rows) >= 240
+                and latest_rows_are_fresh(candidate_rows)
+            ):
                 selected_symbol = symbol
                 rows = candidate_rows
                 source = "Yahoo Finance Chart API 5년 일봉"
                 break
+
+            if len(candidate_rows) >= 240:
+                errors.append(
+                    f"{symbol}: 최신 거래일이 오래되어 기술자료에서 제외"
+                )
+                continue
 
         errors.append(f"{symbol}: {safe_text(chart.get('응답메시지'), '자료 부족')}")
 

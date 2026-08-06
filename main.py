@@ -22,9 +22,8 @@ from collectors.fundamentals import get_fundamentals_bundle
 from collectors.global_market import get_global_market_bundle
 from collectors.history import get_history_bundle
 from collectors.industry import get_industry_bundle
-from collectors.market import finalize_market_data, get_market_data
+from collectors.market import get_market_data
 from collectors.news import get_company_news
-from collectors.price import suppress_unverified_price_judgment
 from collectors.provisional import get_latest_provisional_earnings
 from collectors.technical import get_stock_technical_bundle
 from predictor import predict_stock
@@ -864,6 +863,63 @@ def resolve_target(
     }
 
 
+
+def resolve_market_code_for_price(
+    target,
+    configured_market_code,
+):
+    company_lookup = (
+        target.get("기업조회", {})
+        if isinstance(target, dict)
+        else {}
+    )
+    overview = (
+        company_lookup.get(
+            "OpenDART기업개황",
+            {}
+        )
+        if isinstance(company_lookup, dict)
+        else {}
+    )
+    corp_class = str(
+        overview.get(
+            "법인구분",
+            ""
+        )
+        if isinstance(overview, dict)
+        else ""
+    ).strip().upper()
+
+    # OpenDART corp_cls: Y=유가증권, K=코스닥, N=코넥스.
+    if corp_class == "Y":
+        return "KS"
+    if corp_class in {"K", "N"}:
+        return "KQ"
+
+    configured = str(
+        configured_market_code
+        or ""
+    ).strip().upper()
+
+    if configured in {
+        "KS",
+        "Y",
+        "KOSPI",
+        "KSE",
+    }:
+        return "KS"
+
+    if configured in {
+        "KQ",
+        "Q",
+        "KOSDAQ",
+        "KOSDAQ GLOBAL",
+    }:
+        return "KQ"
+
+    # 기존 기본값 K는 KIS 보조코드라 Yahoo 시장을 의미하지 않는다.
+    return ""
+
 def save_result(
     result,
     stock_code,
@@ -1101,10 +1157,11 @@ def main():
     industry_code = target[
         "산업코드"
     ]
-    market_code = str(
+    market_code = resolve_market_code_for_price(
+        target,
         args.market_code
-        or DEFAULT_MARKET_CODE
-    ).strip().upper()
+        or DEFAULT_MARKET_CODE,
+    )
 
     print("START ENGINE")
     print(
@@ -1115,6 +1172,8 @@ def main():
         dart_code,
         "INDUSTRY",
         industry_code,
+        "MARKET",
+        market_code or "AUTO",
     )
 
     # Independent network collectors run together. DART HTTP itself is capped
@@ -1129,7 +1188,10 @@ def main():
         market_future = executor.submit(
             timed_call,
             "MARKET",
-            lambda: get_market_data(stock_code, market_code=market_code),
+            lambda: get_market_data(
+                stock_code,
+                market_code=market_code,
+            ),
         )
         history_future = executor.submit(
             timed_safe_execute,
@@ -1261,13 +1323,6 @@ def main():
         market,
         technical_bundle,
     )
-    market = finalize_market_data(
-        market,
-        stock_code=stock_code,
-        market_code=market_code,
-        fundamentals_bundle=fundamentals_bundle,
-        technical_bundle=technical_bundle,
-    )
 
     disclosure_analysis = safe_execute(
         "DISCLOSURE ANALYSIS",
@@ -1374,7 +1429,6 @@ def main():
         industry_bundle,
         target.get("기업조회", {}),
     )
-    valuation = suppress_unverified_price_judgment(valuation, market)
 
     prediction = predict_stock(
         market,
