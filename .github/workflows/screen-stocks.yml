@@ -29,7 +29,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: forward-test-store
+  group: stock-screener
   cancel-in-progress: false
 
 jobs:
@@ -116,45 +116,6 @@ jobs:
           python validate_screener.py \
             --stock-codes "$STOCK_CODES"
 
-      - name: Record and evaluate forward tests
-        run: |
-          python forward_test.py \
-            --screener-file output/screener.json \
-            --store data/forward_tests.json \
-            --report output/forward_test_report.json
-
-      - name: Validate forward tests
-        run: |
-          python validate_forward_test.py \
-            --store data/forward_tests.json \
-            --report output/forward_test_report.json
-
-      - name: Build calibration report
-        run: |
-          python calibration_monitor.py \
-            --store data/forward_tests.json \
-            --report output/calibration_report.json
-
-      - name: Validate calibration report
-        run: |
-          python validate_calibration_report.py \
-            --report output/calibration_report.json
-
-      - name: Commit forward test store
-        shell: bash
-        run: |
-          if git diff --quiet -- data/forward_tests.json; then
-            echo "No forward-test store changes."
-            exit 0
-          fi
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add data/forward_tests.json
-          git commit -m "chore: update forward-test records [skip ci]"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
-
       - name: Upload screener results
         uses: actions/upload-artifact@v5
         with:
@@ -162,8 +123,6 @@ jobs:
           path: |
             output/screener.json
             output/screener.csv
-            output/forward_test_report.json
-            output/calibration_report.json
             output/*.json
           if-no-files-found: error
           retention-days: 30

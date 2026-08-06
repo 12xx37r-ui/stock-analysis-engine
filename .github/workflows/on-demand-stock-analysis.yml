@@ -74,25 +74,14 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
-      - name: Restore OpenDART response cache
+      - name: Restore collector response cache
         uses: actions/cache@v4
         with:
-          path: |
-            .cache/dart_corp_codes.json
-            .cache/dart_api
-          key: stock-engine-dart-v2-${{ runner.os }}-${{ inputs.stock_code }}-${{ github.run_id }}
+          path: .cache
+          key: stock-engine-cache-v2-${{ runner.os }}-${{ inputs.stock_code }}-${{ github.run_id }}
           restore-keys: |
-            stock-engine-dart-v2-${{ runner.os }}-${{ inputs.stock_code }}-
-            stock-engine-dart-v2-${{ runner.os }}-
-
-      - name: Restore validated current-price cache
-        uses: actions/cache@v4
-        with:
-          path: .cache/prices/v3
-          key: stock-engine-price-v3-${{ runner.os }}-${{ inputs.stock_code }}-${{ github.run_id }}
-          restore-keys: |
-            stock-engine-price-v3-${{ runner.os }}-${{ inputs.stock_code }}-
-            stock-engine-price-v3-${{ runner.os }}-
+            stock-engine-cache-v2-${{ runner.os }}-${{ inputs.stock_code }}-
+            stock-engine-cache-v2-${{ runner.os }}-
 
       - name: Confirm GAS-central KIS mode
         shell: bash
