@@ -1044,14 +1044,16 @@ def build_screen_bridge(
     technical = {
         "수집상태": technical_bundle.get("수집상태", ""),
         "데이터출처": technical_bundle.get("데이터출처", ""),
+        "4시간봉": _bridge_technical_item(technical_bundle.get("4시간봉")),
         "일봉": _bridge_technical_item(technical_bundle.get("일봉")),
         "주봉": _bridge_technical_item(technical_bundle.get("주봉")),
         "월봉": _bridge_technical_item(technical_bundle.get("월봉")),
+        "다이버전스": safe_dict(technical_bundle.get("다이버전스")),
     }
     technical["사용가능"] = any(
         technical[key]["사용가능"]
-        for key in ("일봉", "주봉", "월봉")
-    )
+        for key in ("4시간봉", "일봉", "주봉", "월봉")
+    ) or bool(safe_dict(technical_bundle.get("다이버전스")).get("시간봉"))
 
     horizons = {
         "단기": _bridge_horizon(prediction.get("단기1~5일")),
@@ -1300,9 +1302,11 @@ def main():
             {
                 "수집상태": "실패",
                 "응답메시지": "멀티타임프레임 차트 수집 중 예외",
+                "4시간봉": {},
                 "일봉": {},
                 "주봉": {},
                 "월봉": {},
+                "다이버전스": {},
                 "수집오류": [],
             },
         )
