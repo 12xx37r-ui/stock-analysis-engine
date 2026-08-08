@@ -1,0 +1,2253 @@
+{
+  "기업명": "한국비엔씨",
+  "DART기업코드": "01051339",
+  "KIS종목코드": "226610",
+  "산업코드": "general",
+  "기업조회정보": {
+    "기업명": "한국비엔씨",
+    "DART기업코드": "01051339",
+    "종목코드": "226610",
+    "최종변경일": "20191203",
+    "수집상태": "정상",
+    "응답메시지": "",
+    "산업코드": "general",
+    "가치평가산업코드": "general",
+    "산업분류출처": "업종코드 미확보",
+    "산업분류신뢰도": 35,
+    "산업프로필버전": "3.0.0",
+    "OpenDART기업개황": {
+      "수집상태": "실패",
+      "응답코드": "EXCEPTION",
+      "응답메시지": "ConnectTimeout: HTTPSConnectionPool(host='opendart.fss.or.kr', port=443): Max retries exceeded with url: /api/company.json?crtfc_key=09db7606fd5fc9afccf83754a8fc2f1ccb078225&corp_code=01051339 (Caused by ConnectTimeoutError(<HTTPSConnection(host='opendart.fss.or.kr', port=443) at 0x7fc2849a9010>, 'Connection to opendart.fss.or.kr timed out. (connect timeout=8)'))"
+    },
+    "OpenDART업종코드": "",
+    "데이터출처": "금융감독원 OpenDART"
+  },
+  "생성시각": "2026-08-08T09:01:08.957274",
+  "재무분석": {
+    "재무분석모형버전": "financial-quality-v2.0.0",
+    "재무지표": {
+      "ROE": 0.0,
+      "부채비율": 0.0,
+      "영업이익률": 0.0,
+      "순이익률": 0.0
+    },
+    "성장지표": {
+      "매출3년성장률": 0.0,
+      "영업이익3년성장률": 0.0,
+      "순이익3년성장률": 0.0,
+      "매출2년CAGR": null,
+      "영업이익2년CAGR": null,
+      "순이익2년CAGR": null,
+      "자본2년CAGR": null
+    },
+    "버핏평가": {
+      "점수": 20,
+      "판정": "조건 미달",
+      "평가기준": "일반기업 버핏형 품질평가",
+      "점수구성": {
+        "ROE": 0,
+        "재무안정성": 20,
+        "매출성장": 0,
+        "영업이익성장": 0,
+        "영업이익률": 0
+      },
+      "좋은점": [
+        "부채비율이 낮아 재무 안전성이 좋습니다."
+      ],
+      "주의점": [
+        "ROE 0.00%로 수익성 개선이 필요합니다.",
+        "매출 성장성이 강한지 확인이 필요합니다.",
+        "영업이익 성장성이 약합니다."
+      ]
+    },
+    "투자자해설": {
+      "ROE": "ROE는 회사가 주주의 돈을 이용해 얼마나 많은 이익을 만드는지 나타냅니다. 높을수록 자본 활용 능력이 좋습니다.",
+      "부채비율": "부채비율은 회사가 가진 자기 돈 대비 빚의 규모입니다. 낮을수록 경기 침체에도 버틸 힘이 있습니다.",
+      "영업이익률": "영업이익률은 본업에서 발생한 수익 대비 영업이익의 비율입니다."
+    },
+    "원본": {
+      "매출": 0.0,
+      "매출전기": 0.0,
+      "매출전전기": 0.0,
+      "영업이익": 0.0,
+      "영업이익전기": 0.0,
+      "영업이익전전기": 0.0,
+      "순이익": 0.0,
+      "순이익전기": 0.0,
+      "순이익전전기": 0.0,
+      "자본": 0.0,
+      "자본전기": 0.0,
+      "자본전전기": 0.0,
+      "부채": 0.0,
+      "매출계정명": "",
+      "영업이익계정명": "",
+      "순이익계정명": ""
+    }
+  },
+  "시장정보": {
+    "현재가": 0.0,
+    "전일대비": 0.0,
+    "등락률": 0.0,
+    "거래량": 0,
+    "시가": 0.0,
+    "고가": 0.0,
+    "저가": 0.0,
+    "PER": 0.0,
+    "PBR": 0.0,
+    "EPS": 0.0,
+    "BPS": 0.0,
+    "시가총액": 0.0,
+    "수급": {
+      "외국인순매수": 0.0,
+      "기관순매수": 0.0,
+      "개인순매수": 0.0
+    },
+    "현재가수집상태": "실패",
+    "현재가응답메시지": "KIS 현재가·거래량 실패 / Yahoo 보완도 실패: 226610.KS: 유효가격 없음 / 226610.KQ: 유효가격 없음",
+    "데이터출처": "한국투자증권 KIS",
+    "과거데이터": {
+      "가격추세": {
+        "종가": 0.0,
+        "MA5": 0.0,
+        "MA20": 0.0,
+        "MA60": 0.0,
+        "종가대비MA20": 0.0,
+        "종가대비MA60": 0.0,
+        "5일수익률": 0.0,
+        "20일수익률": 0.0,
+        "60일수익률": 0.0,
+        "RSI14": 0.0,
+        "20일일간변동성": 0.0,
+        "5일평균거래량": 0.0,
+        "20일평균거래량": 0.0,
+        "거래량비율5대20": 0.0
+      },
+      "누적수급": {
+        "외국인5일": 0.0,
+        "외국인20일": 0.0,
+        "기관5일": 0.0,
+        "기관20일": 0.0,
+        "개인5일": 0.0,
+        "개인20일": 0.0,
+        "외국인기관합산5일": 0.0,
+        "외국인기관합산20일": 0.0
+      },
+      "프로그램매매": {
+        "프로그램순매수수량5일": 0.0,
+        "프로그램순매수수량20일": 0.0,
+        "프로그램순매수금액5일": 0.0,
+        "프로그램순매수금액20일": 0.0
+      },
+      "수집상태": {
+        "전체수집상태": "실패",
+        "가격데이터상태": "실패",
+        "가격응답상태": "KIS_DISABLED",
+        "가격응답메시지": "GitHub KIS 호출 비활성화 · GAS 중앙 토큰 사용",
+        "가격데이터개수": 0,
+        "가격데이터출처": "한국투자증권 KIS",
+        "가격최초일": "",
+        "가격최종일": "",
+        "누적수급데이터상태": "실패",
+        "누적수급응답상태": "KIS_DISABLED",
+        "누적수급응답메시지": "GitHub KIS 호출 비활성화 · GAS 중앙 토큰 사용",
+        "누적수급데이터개수": 0,
+        "누적수급조회기준일": "20260807",
+        "누적수급최초일": "",
+        "누적수급최종일": "",
+        "프로그램데이터상태": "실패",
+        "프로그램응답상태": "KIS_DISABLED",
+        "프로그램응답메시지": "GitHub KIS 호출 비활성화 · GAS 중앙 토큰 사용",
+        "프로그램데이터개수": 0
+      },
+      "수집오류": [
+        {
+          "항목": "가격추세",
+          "응답상태": "KIS_DISABLED",
+          "응답메시지": "GitHub KIS 호출 비활성화 · GAS 중앙 토큰 사용"
+        },
+        {
+          "항목": "누적수급",
+          "응답상태": "KIS_DISABLED",
+          "응답메시지": "GitHub KIS 호출 비활성화 · GAS 중앙 토큰 사용"
+        },
+        {
+          "항목": "프로그램매매",
+          "응답상태": "KIS_DISABLED",
+          "응답메시지": "GitHub KIS 호출 비활성화 · GAS 중앙 토큰 사용"
+        }
+      ],
+      "데이터출처": "한국투자증권 KIS"
+    }
+  },
+  "공시정보": {
+    "수집상태": "실패",
+    "응답코드": "EXCEPTION",
+    "응답메시지": "ConnectTimeout: HTTPSConnectionPool(host='opendart.fss.or.kr', port=443): Max retries exceeded with url: /api/list.json?crtfc_key=09db7606fd5fc9afccf83754a8fc2f1ccb078225&corp_code=01051339&bgn_de=20260410&end_de=20260808&last_reprt_at=N&page_no=1&page_count=100&sort=date&sort_mth=desc (Caused by ConnectTimeoutError(<HTTPSConnection(host='opendart.fss.or.kr', port=443) at 0x7fc2849aa790>, 'Connection to opendart.fss.or.kr timed out. (connect timeout=8)'))",
+    "조회시작일": "20260410",
+    "조회종료일": "20260808",
+    "공시개수": 0,
+    "최근공시": [],
+    "분석": {
+      "분석상태": "실패",
+      "신호": 0.0,
+      "데이터품질": 0,
+      "판정": "중립",
+      "전체공시개수": 0,
+      "이벤트개수": 0,
+      "긍정이벤트": [],
+      "부정이벤트": [],
+      "중립이벤트": [],
+      "설명": "최근 공시 제목과 공시일을 기준으로 계산한 규칙형 신호입니다. 공시 원문 정량분석 전 단계이므로 데이터품질 상한은 70입니다."
+    },
+    "데이터출처": "금융감독원 OpenDART"
+  },
+  "글로벌시장": {
+    "전체수집상태": "정상",
+    "자산": {
+      "원달러": {
+        "자산명": "원달러",
+        "심볼": "KRW=X",
+        "유형": "fx",
+        "단위": "KRW/USD",
+        "수집상태": "정상",
+        "응답메시지": "",
+        "현재값": 1407.449951,
+        "전일값": 1422.300049,
+        "1일변화율": -1.04409,
+        "5일변화율": -1.967681,
+        "20일변화율": -6.074825,
+        "MA5": 1421.568018,
+        "MA20": 1456.222498,
+        "현재값대비MA20": -3.349251,
+        "최종관측시각UTC": "2026-08-07T21:20:17+00:00",
+        "데이터지연시간": 11.667,
+        "데이터개수": 68
+      },
+      "S&P500": {
+        "자산명": "S&P500",
+        "심볼": "^GSPC",
+        "유형": "equity_index",
+        "단위": "index",
+        "수집상태": "정상",
+        "응답메시지": "",
+        "현재값": 7757.640137,
+        "전일값": 7709.959961,
+        "1일변화율": 0.618423,
+        "5일변화율": 3.577169,
+        "20일변화율": 2.405817,
+        "MA5": 7705.633984,
+        "MA20": 7525.406958,
+        "현재값대비MA20": 3.085988,
+        "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
+        "데이터지연시간": 19.505,
+        "데이터개수": 63
+      },
+      "나스닥": {
+        "자산명": "나스닥",
+        "심볼": "^IXIC",
+        "유형": "equity_index",
+        "단위": "index",
+        "수집상태": "정상",
+        "응답메시지": "",
+        "현재값": 26690.619141,
+        "전일값": 26348.349609,
+        "1일변화율": 1.299017,
+        "5일변화율": 5.189475,
+        "20일변화율": 1.556258,
+        "MA5": 26380.259766,
+        "MA20": 25672.52793,
+        "현재값대비MA20": 3.965684,
+        "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
+        "데이터지연시간": 19.505,
+        "데이터개수": 63
+      },
+      "반도체지수": {
+        "자산명": "반도체지수",
+        "심볼": "^SOX",
+        "유형": "equity_index",
+        "단위": "index",
+        "수집상태": "정상",
+        "응답메시지": "",
+        "현재값": 12356.790039,
+        "전일값": 12048.69043,
+        "1일변화율": 2.557121,
+        "5일변화율": 9.245005,
+        "20일변화율": -4.707045,
+        "MA5": 12004.793945,
+        "MA20": 11864.973926,
+        "현재값대비MA20": 4.145109,
+        "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
+        "데이터지연시간": 19.505,
+        "데이터개수": 63
+      },
+      "VIX": {
+        "자산명": "VIX",
+        "심볼": "^VIX",
+        "유형": "volatility",
+        "단위": "index",
+        "수집상태": "정상",
+        "응답메시지": "",
+        "현재값": 14.9,
+        "전일값": 15.15,
+        "1일변화율": -1.650165,
+        "5일변화율": -6.816762,
+        "20일변화율": -0.864938,
+        "MA5": 15.644,
+        "MA20": 17.1645,
+        "현재값대비MA20": -13.192929,
+        "최종관측시각UTC": "2026-08-07T07:00:00+00:00",
+        "데이터지연시간": 26.005,
+        "데이터개수": 65
+      },
+      "미국10년물": {
+        "자산명": "미국10년물",
+        "심볼": "^TNX",
+        "유형": "yield",
+        "단위": "percent",
+        "수집상태": "정상",
+        "응답메시지": "",
+        "현재값": 4.66,
+        "전일값": 4.67,
+        "1일변화율": -0.214138,
+        "5일변화율": -1.79136,
+        "20일변화율": 1.991685,
+        "MA5": 4.652,
+        "MA20": 4.63245,
+        "현재값대비MA20": 0.594715,
+        "최종관측시각UTC": "2026-08-07T12:20:00+00:00",
+        "데이터지연시간": 20.672,
+        "데이터개수": 64
+      },
+      "미국5년물": {
+        "자산명": "미국5년물",
+        "심볼": "^FVX",
+        "유형": "yield",
+        "단위": "percent",
+        "수집상태": "정상",
+        "응답메시지": "",
+        "현재값": 4.362,
+        "전일값": 4.389,
+        "1일변화율": -0.615173,
+        "5일변화율": -2.197311,
+        "20일변화율": 1.25348,
+        "MA5": 4.3616,
+        "MA20": 4.36195,
+        "현재값대비MA20": 0.001146,
+        "최종관측시각UTC": "2026-08-07T12:20:00+00:00",
+        "데이터지연시간": 20.672,
+        "데이터개수": 64
+      },
+      "미국13주": {
+        "자산명": "미국13주",
+        "심볼": "^IRX",
+        "유형": "yield",
+        "단위": "percent",
+        "수집상태": "정상",
+        "응답메시지": "",
+        "현재값": 3.71,
+        "전일값": 3.732,
+        "1일변화율": -0.589498,
+        "5일변화율": 0.760459,
+        "20일변화율": 0.405957,
+        "MA5": 3.7194,
+        "MA20": 3.7237,
+        "현재값대비MA20": -0.367912,
+        "최종관측시각UTC": "2026-08-07T12:20:00+00:00",
+        "데이터지연시간": 20.672,
+        "데이터개수": 64
+      }
+    },
+    "분석": {
+      "분석상태": "정상",
+      "단기신호": 39.87,
+      "단기판정": "긍정",
+      "단기데이터품질": 100.0,
+      "단기요소별평가": [
+        {
+          "요소": "원달러",
+          "신호": 41.15,
+          "판정": "긍정",
+          "데이터품질": 100.0,
+          "가중치": 20.0,
+          "설명": "5일 변화 -1.97%"
+        },
+        {
+          "요소": "S&P500",
+          "신호": 35.71,
+          "판정": "긍정",
+          "데이터품질": 100.0,
+          "가중치": 15.0,
+          "설명": "5일 변화 3.58%"
+        },
+        {
+          "요소": "나스닥",
+          "신호": 46.9,
+          "판정": "긍정",
+          "데이터품질": 100.0,
+          "가중치": 20.0,
+          "설명": "5일 변화 5.19%"
+        },
+        {
+          "요소": "반도체지수",
+          "신호": 39.42,
+          "판정": "긍정",
+          "데이터품질": 100.0,
+          "가중치": 25.0,
+          "설명": "5일 변화 9.25%"
+        },
+        {
+          "요소": "VIX",
+          "신호": 35.23,
+          "판정": "긍정",
+          "데이터품질": 100.0,
+          "가중치": 20.0,
+          "설명": "현재 14.90"
+        }
+      ],
+      "중기신호": 23.02,
+      "중기판정": "긍정",
+      "중기데이터품질": 100.0,
+      "중기요소별평가": [
+        {
+          "요소": "원달러",
+          "신호": 41.15,
+          "판정": "긍정",
+          "데이터품질": 100.0,
+          "가중치": 25.0,
+          "설명": "20일 변화 -6.07%"
+        },
+        {
+          "요소": "미국10년물",
+          "신호": 2.73,
+          "판정": "중립",
+          "데이터품질": 100.0,
+          "가중치": 25.0,
+          "설명": "20일 변화 1.99%"
+        },
+        {
+          "요소": "미국5년물",
+          "신호": 10.4,
+          "판정": "중립",
+          "데이터품질": 100.0,
+          "가중치": 15.0,
+          "설명": "20일 변화 1.25%"
+        },
+        {
+          "요소": "미국13주",
+          "신호": -1.12,
+          "판정": "중립",
+          "데이터품질": 100.0,
+          "가중치": 10.0,
+          "설명": "20일 변화 0.41%"
+        },
+        {
+          "요소": "나스닥",
+          "신호": 46.9,
+          "판정": "긍정",
+          "데이터품질": 100.0,
+          "가중치": 10.0,
+          "설명": "20일 변화 1.56%"
+        },
+        {
+          "요소": "반도체지수",
+          "신호": 39.42,
+          "판정": "긍정",
+          "데이터품질": 100.0,
+          "가중치": 15.0,
+          "설명": "20일 변화 -4.71%"
+        }
+      ],
+      "설명": "국내주식 기준으로 원달러·미국 주가지수·반도체지수·VIX·미국 금리의 방향을 -100~100 신호로 합성했습니다."
+    },
+    "수집오류": [],
+    "수집시각": "2026-08-08T18:00:17.918636+09:00",
+    "데이터출처": "Yahoo Finance Chart API"
+  },
+  "기업기초데이터": {
+    "전체수집상태": "실패",
+    "재무기간": {
+      "수집상태": "실패",
+      "기간개수": 0,
+      "기간목록": [],
+      "수집오류": [
+        {
+          "사업연도": 2026,
+          "보고서코드": "11014",
+          "응답코드": "EXCEPTION",
+          "응답메시지": "ConnectTimeout: HTTPSConnectionPool(host='opendart.fss.or.kr', port=443): Max retries exceeded with url: /api/fnlttSinglAcntAll.json?crtfc_key=09db7606fd5fc9afccf83754a8fc2f1ccb078225&corp_code=01051339&bsns_year=2026&reprt_code=11014&fs_div=CFS (Caused by ConnectTimeoutError(<HTTPSConnection(host='opendart.fss.or.kr', port=443) at 0x7fc287a40f90>, 'Connection to opendart.fss.or.kr timed out. (connect timeout=8)'))"
+        },
+        {
+          "사업연도": 2026,
+          "보고서코드": "11012",
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        },
+        {
+          "사업연도": 2026,
+          "보고서코드": "11013",
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        },
+        {
+          "사업연도": 2025,
+          "보고서코드": "11011",
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        },
+        {
+          "사업연도": 2025,
+          "보고서코드": "11014",
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        },
+        {
+          "사업연도": 2025,
+          "보고서코드": "11012",
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        },
+        {
+          "사업연도": 2025,
+          "보고서코드": "11013",
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        },
+        {
+          "사업연도": 2024,
+          "보고서코드": "11011",
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        }
+      ]
+    },
+    "배당": {
+      "수집상태": "실패",
+      "보고서개수": 0,
+      "보고서목록": [],
+      "수집오류": [
+        {
+          "사업연도": 2025,
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        },
+        {
+          "사업연도": 2024,
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        },
+        {
+          "사업연도": 2023,
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        },
+        {
+          "사업연도": 2022,
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        }
+      ]
+    },
+    "자기주식": {
+      "수집상태": "실패",
+      "보고서개수": 0,
+      "보고서목록": [],
+      "수집오류": [
+        {
+          "사업연도": 2025,
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        },
+        {
+          "사업연도": 2024,
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        },
+        {
+          "사업연도": 2023,
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        }
+      ]
+    },
+    "주식총수": {
+      "수집상태": "실패",
+      "발행주식수": 0,
+      "자기주식수": 0,
+      "유통주식수": 0,
+      "가치평가주식수": 0,
+      "주식수기준": "미확보",
+      "수집오류": [
+        {
+          "사업연도": 2026,
+          "보고서코드": "11014",
+          "응답코드": "EXCEPTION",
+          "응답메시지": "ConnectTimeout: HTTPSConnectionPool(host='opendart.fss.or.kr', port=443): Max retries exceeded with url: /api/stockTotqySttus.json?crtfc_key=09db7606fd5fc9afccf83754a8fc2f1ccb078225&corp_code=01051339&bsns_year=2026&reprt_code=11014 (Caused by ConnectTimeoutError(<HTTPSConnection(host='opendart.fss.or.kr', port=443) at 0x7fc287a41f90>, 'Connection to opendart.fss.or.kr timed out. (connect timeout=8)'))"
+        },
+        {
+          "사업연도": 2026,
+          "보고서코드": "11012",
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        },
+        {
+          "사업연도": 2026,
+          "보고서코드": "11013",
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        },
+        {
+          "사업연도": 2025,
+          "보고서코드": "11011",
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        },
+        {
+          "사업연도": 2025,
+          "보고서코드": "11014",
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        },
+        {
+          "사업연도": 2025,
+          "보고서코드": "11012",
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        },
+        {
+          "사업연도": 2025,
+          "보고서코드": "11013",
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        },
+        {
+          "사업연도": 2024,
+          "보고서코드": "11011",
+          "응답코드": "DART_CIRCUIT_OPEN",
+          "응답메시지": "OpenDART 연결 실패 후 회로차단기가 동작했습니다. 잠시 후 재시도합니다."
+        }
+      ]
+    },
+    "잠정실적": {
+      "수집상태": "데이터없음",
+      "사용가능": false,
+      "검증사유": [
+        "최근 잠정실적 공시 없음"
+      ],
+      "데이터출처": "금융감독원 OpenDART"
+    },
+    "분석": {
+      "분석상태": "실패",
+      "분기실적": {
+        "신호": 0.0,
+        "데이터품질": 0,
+        "판정": "중립",
+        "설명": "비교할 재무기간이 없습니다."
+      },
+      "향후이익방향대용": {
+        "신호": 0.0,
+        "데이터품질": 0.0,
+        "판정": "중립",
+        "설명": "최신 전년동기 실적과 현금창출력을 합성한 대용지표이며 애널리스트 컨센서스는 아직 미반영입니다."
+      },
+      "현금흐름재무안전성": {
+        "신호": 0.0,
+        "데이터품질": 0,
+        "판정": "중립",
+        "설명": "현금흐름 자료가 없습니다."
+      },
+      "주주환원": {
+        "신호": 0.0,
+        "데이터품질": 0.0,
+        "판정": "중립",
+        "배당분석": {
+          "신호": 0.0,
+          "데이터품질": 0,
+          "판정": "중립",
+          "설명": "배당 자료가 없습니다."
+        },
+        "자기주식분석": {
+          "신호": 0.0,
+          "데이터품질": 0,
+          "판정": "중립",
+          "설명": "자기주식 자료가 없습니다."
+        }
+      },
+      "데이터출처": "금융감독원 OpenDART"
+    },
+    "수집시각": "2026-08-08T18:01:08.956270+09:00",
+    "데이터출처": "금융감독원 OpenDART"
+  },
+  "산업분석": {
+    "전체수집상태": "미적용",
+    "산업코드": "general",
+    "산업명": "general",
+    "자산": {},
+    "분석": {
+      "분석상태": "미적용",
+      "중기산업선행": {},
+      "장기산업사이클": {},
+      "산업국면": "미분류"
+    },
+    "수집오류": [],
+    "수집시각": "",
+    "데이터출처": "Yahoo Finance Chart API"
+  },
+  "기술분석": {
+    "수집상태": "실패",
+    "심볼": "",
+    "데이터출처": "",
+    "응답메시지": "226610.KS: 유효한 종가 데이터가 없습니다.; 226610.KQ: 유효한 종가 데이터가 없습니다.",
+    "4시간봉": {
+      "available": false,
+      "score": 0.0,
+      "trend": "자료 부족",
+      "observations": 0,
+      "confidence": 0
+    },
+    "일봉": {
+      "available": false,
+      "score": 0.0,
+      "trend": "자료 부족",
+      "observations": 0,
+      "confidence": 0
+    },
+    "주봉": {
+      "available": false,
+      "score": 0.0,
+      "trend": "자료 부족",
+      "observations": 0,
+      "confidence": 0
+    },
+    "월봉": {
+      "available": false,
+      "score": 0.0,
+      "trend": "자료 부족",
+      "observations": 0,
+      "confidence": 0
+    },
+    "다이버전스": {
+      "분석상태": "자료부족",
+      "계산방식": "RSI14(Wilder) + 우측1봉 확정 피벗 + 시간봉별 최근 대표 1신호 + 근접 Relative Volume + 가장 가까운 유효 스윙 종가 확인",
+      "엔진버전": "4.0-latest-one-per-timeframe",
+      "4시간봉집계": "KRX 09:00 KST anchor · 09:00-13:00 / 13:00-15:30",
+      "미래데이터사용": false,
+      "확정피벗사용": true,
+      "시간봉": {
+        "4시간봉": {
+          "분석가능": false,
+          "available": false,
+          "시간봉": "4시간봉",
+          "관측봉수": 0,
+          "탐색기간봉": 180,
+          "유효기간봉": 12,
+          "대표신호": {
+            "탐지": false,
+            "detected": false,
+            "상태": "미탐지",
+            "방향": "",
+            "사유": "분석 데이터 부족 · 0/80봉"
+          },
+          "상승": {
+            "탐지": false,
+            "detected": false,
+            "상태": "미탐지",
+            "방향": "상승",
+            "사유": "분석 데이터 부족 · 0/80봉"
+          },
+          "하락": {
+            "탐지": false,
+            "detected": false,
+            "상태": "미탐지",
+            "방향": "하락",
+            "사유": "분석 데이터 부족 · 0/80봉"
+          },
+          "활성신호": [],
+          "과거신호": [],
+          "사유": "분석 데이터 부족 · 0/80봉"
+        },
+        "일봉": {
+          "분석가능": false,
+          "available": false,
+          "시간봉": "일봉",
+          "관측봉수": 0,
+          "탐색기간봉": 150,
+          "유효기간봉": 10,
+          "대표신호": {
+            "탐지": false,
+            "detected": false,
+            "상태": "미탐지",
+            "방향": "",
+            "사유": "분석 데이터 부족 · 0/80봉"
+          },
+          "상승": {
+            "탐지": false,
+            "detected": false,
+            "상태": "미탐지",
+            "방향": "상승",
+            "사유": "분석 데이터 부족 · 0/80봉"
+          },
+          "하락": {
+            "탐지": false,
+            "detected": false,
+            "상태": "미탐지",
+            "방향": "하락",
+            "사유": "분석 데이터 부족 · 0/80봉"
+          },
+          "활성신호": [],
+          "과거신호": [],
+          "사유": "분석 데이터 부족 · 0/80봉"
+        },
+        "주봉": {
+          "분석가능": false,
+          "available": false,
+          "시간봉": "주봉",
+          "관측봉수": 0,
+          "탐색기간봉": 120,
+          "유효기간봉": 8,
+          "대표신호": {
+            "탐지": false,
+            "detected": false,
+            "상태": "미탐지",
+            "방향": "",
+            "사유": "분석 데이터 부족 · 0/52봉"
+          },
+          "상승": {
+            "탐지": false,
+            "detected": false,
+            "상태": "미탐지",
+            "방향": "상승",
+            "사유": "분석 데이터 부족 · 0/52봉"
+          },
+          "하락": {
+            "탐지": false,
+            "detected": false,
+            "상태": "미탐지",
+            "방향": "하락",
+            "사유": "분석 데이터 부족 · 0/52봉"
+          },
+          "활성신호": [],
+          "과거신호": [],
+          "사유": "분석 데이터 부족 · 0/52봉"
+        },
+        "월봉": {
+          "분석가능": false,
+          "available": false,
+          "시간봉": "월봉",
+          "관측봉수": 0,
+          "탐색기간봉": 72,
+          "유효기간봉": 6,
+          "대표신호": {
+            "탐지": false,
+            "detected": false,
+            "상태": "미탐지",
+            "방향": "",
+            "사유": "분석 데이터 부족 · 0/36봉"
+          },
+          "상승": {
+            "탐지": false,
+            "detected": false,
+            "상태": "미탐지",
+            "방향": "상승",
+            "사유": "분석 데이터 부족 · 0/36봉"
+          },
+          "하락": {
+            "탐지": false,
+            "detected": false,
+            "상태": "미탐지",
+            "방향": "하락",
+            "사유": "분석 데이터 부족 · 0/36봉"
+          },
+          "활성신호": [],
+          "과거신호": [],
+          "사유": "분석 데이터 부족 · 0/36봉"
+        }
+      },
+      "활성신호": [],
+      "활성신호수": 0,
+      "대표신호원칙": "각 시간봉에서 4종 전체 중 가장 최근 확정 1개만 활성"
+    },
+    "수집오류": [
+      "226610.KS: 유효한 종가 데이터가 없습니다.",
+      "226610.KQ: 유효한 종가 데이터가 없습니다."
+    ]
+  },
+  "뉴스분석": {
+    "수집상태": "정상",
+    "응답메시지": "",
+    "뉴스개수": 30,
+    "뉴스목록": [
+      {
+        "제목": "한국비엔씨 투자분석 2026. 08. 02",
+        "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTFAxQUxDSUxrdmRmR0Z1U1Z5cVY2cnB0Mm1ZZ2EzanhTUUg0aUs2eHk4aGFEaVZxVnVTWm9KMU1jZWdGQl9uclVoRU42WFNjZ3RDSjFFZVNnSDM0ZHJ0djJRN1VsWW1raGVRUm8wUmR5eWxCNkk?oc=5",
+        "언론사": "주달",
+        "발행시각UTC": "2026-08-02T10:08:19+00:00",
+        "경과일": 5.95,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "인베스팅프로 적정가치, 한국비엔씨 54% 하락을 예측한 방법",
+        "링크": "https://news.google.com/rss/articles/CBMidkFVX3lxTE12S1FoOS1Ba3ZQSk5QclBKTmRFVlhORmxoTDdoYmtvTkpaaWRmUnNZUHNzTkw4aDRCdVdnSEppQjBpZDAxcGFUMDFSTTJ3anV2RlltTTRvajBRd0pod0x1Y2Q4Uk9Dbzd2WUMtdGlYSjBscS1zelE?oc=5",
+        "언론사": "Investing.com 한국어",
+        "발행시각UTC": "2026-07-10T07:00:00+00:00",
+        "경과일": 29.08,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비티비, 최대주주 한국비엔씨 측 주식등 보유 비율 0.16%p 증가",
+        "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE9LNlZXMS0xdUxPMWN1d0FRLVkyREJPd3VCdDY3OWZrYlhreVJmQ281Z0xHTnIzeWM1MTE3UW5lMFBpSUhPZFpWd1NUMTNPODF0LTVsSHpnV0ZleHRNTkRnbFdQXzVpOHlCeHpneVUtcFM1Zm8?oc=5",
+        "언론사": "디지털투데이",
+        "발행시각UTC": "2026-07-27T07:14:04+00:00",
+        "경과일": 12.07,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비엔씨, '신약개발 액셀러레이터'로 변신…투자 신약 임상 성과 잇따라",
+        "링크": "https://news.google.com/rss/articles/CBMiZkFVX3lxTFBFd25SMFhCajhtMmt5SXVyVlM5XzJlY1ZuN2hDSVMxdGt6NUltQUNOZEduN1laQWFnb2IyOHgxVU50dWpfeHRNQjdfNGhWckRwNmp3ZnpRMUJKMHc1cTl6T3BUR2didw?oc=5",
+        "언론사": "PRESS9",
+        "발행시각UTC": "2026-06-26T07:00:00+00:00",
+        "경과일": 43.08,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비엔씨, 지방분해 주사 개발 美 레이오스에 지분투자 계약",
+        "링크": "https://news.google.com/rss/articles/CBMia0FVX3lxTE1iMjZ1dHBhWU9HVVc2dnJHcUhDTy13RUtQTzVJQndZYVNXY2dPRHJQOGNibnl5eHRhV1B4R2hvRlBwNU0zMjVUS0VFTWtHSWZSQWtlZ3dhdWVpRnZJZ1F4czJxcTZYMkYteGlR?oc=5",
+        "언론사": "히트뉴스",
+        "발행시각UTC": "2026-01-21T08:00:00+00:00",
+        "경과일": 199.04,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "[약업분석] 한국비엔씨, 1Q 매출 207억…적자전환 속 미용성형 비중 확대",
+        "링크": "https://news.google.com/rss/articles/CBMib0FVX3lxTE1QNVRGSDEyOEppWGZydnU1bTEyWE5wM3lNTDlRSnh4V2J1LXFLanUxQ2g4R25kMlBxS2k1dUk3ZENkVlZfWjMzLU1MV1A4ZGYxRkhjam1QMWwxdEM1RGFneXNwVEdrMlZ2ejF6SmpTYw?oc=5",
+        "언론사": "약업신문",
+        "발행시각UTC": "2026-05-29T07:00:00+00:00",
+        "경과일": 71.08,
+        "원점수": -22.0,
+        "최종점수": -7.7,
+        "매칭규칙": [
+          "적자전환"
+        ]
+      },
+      {
+        "제목": "한국비엔씨 투자한 온코젠, 이중타깃 항암신약 다국가 임상속도 - 머니투데이",
+        "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBYX0ZrVEFkTHJ6dElzOTRINkNpTm5GdGR6YmVqdHhvZ3g4d3VXVW4zVzlUclFOd19tXzRmTmpEYXVxZWNPTS1Bejl0MGJCci1SMmQzUzhaXzNpbkN2RU5zdjBVNzN2eVVy0gFuQVVfeXFMTzNsd3EzLXRnZDlpeGNueE9uUnZCME1sdE1kQjZnZmZGVmV1Njc2ZFBSOFJCM0VZX25Ocm1nQk92QjBMUGV5VHBkaDh1UW80dzEwaFhUbXk0ZUpaenpJd0paTnd3bTZZUWgwYl9MLVE?oc=5",
+        "언론사": "머니투데이",
+        "발행시각UTC": "2026-06-04T07:00:00+00:00",
+        "경과일": 65.08,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "황시영 전무, 한국비엔씨 주식 1만주 ↑…지분율 0.05%",
+        "링크": "https://news.google.com/rss/articles/CBMickFVX3lxTFBrMW1vVjdPMUM5QlZGZ2M2dlF3NG5EeGZlM2NDLURSbklROTUxRTNiZ3pCZ1dFeHlRbGJDSE5qUHJmbmptb1lUN19BNW53QlFxWV90ZTBvTjN3SlNqRlFXczZCQzViV3V3YkFpNzlhc0NfZw?oc=5",
+        "언론사": "데이터투자",
+        "발행시각UTC": "2026-06-29T07:00:00+00:00",
+        "경과일": 40.08,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비엔씨, 아시아 5개국 판권 확보 GLP-GIP 이중작용제 임상 1상 성공적 종료",
+        "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5UajVnRWl6T1docURLUDNlMFBXNm92SWI4b21MX2w1QVE4TVNvcWUtNFVibnN1QjVVSEU2MTl2VmMwell6ZnlpdjN1NEhTVmRsdkxVVlBQanRLNmhzRmpuVkYzSHRyS1ZmN19zUw?oc=5",
+        "언론사": "팜뉴스",
+        "발행시각UTC": "2026-06-24T07:00:00+00:00",
+        "경과일": 45.08,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "㈜한국비엔씨, 전략적 투자사인 덴마크 케리야사 JP Morgan 컨퍼런스 참가",
+        "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE9OZVRIS3ZSSWsyWTBtYkpTdzAtbjM4bzYxdWdtNl91a1I4bWI3Y1R6VTBuTTl6dVdwREk1V0twOFBKMTM5RkluQVVZU1pEcFNkb19xMTNkbTVJdw?oc=5",
+        "언론사": "한국경제",
+        "발행시각UTC": "2026-01-12T08:00:00+00:00",
+        "경과일": 208.04,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비엔씨 투자분석 2026. 07. 26",
+        "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE4xR0xNR1JqdjJMRTNKVURHUGFGVmJNaDVoRWFOUVp2ODJtYTltdTdvRk1nS1pyelBJSEhxVl9LbXFCVnJ5bDdULXR4LWlESHFEQU9Ic0FfYl9LamRROWUzeVA5ek5lcTRiSmdFMjNpdzRrZnM?oc=5",
+        "언론사": "주달",
+        "발행시각UTC": "2026-07-26T10:04:11+00:00",
+        "경과일": 12.96,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비엔씨 \"파트너사 로포라, 우울증 신약후보 'LPH-5' 1상 성공\"",
+        "링크": "https://news.google.com/rss/articles/CBMia0FVX3lxTFBnbTBJb21oZm1tTlc5aGhKcmwxdVlqRGItY1VEWE9PYnFVcE1aaktiNDJDMjRCZlVVVFJIV0NJOGF0X1FqUE11VTZTY3gxLWlkNWhVWUxLaGFOaldiYnRqeUhpV01DSElUUE8w?oc=5",
+        "언론사": "히트뉴스",
+        "발행시각UTC": "2026-07-10T07:00:00+00:00",
+        "경과일": 29.08,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비엔씨 지분투자 케리야, 알츠하이머·파킨슨 치료제 임상1상 완료 - 머니투데이",
+        "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE55RmtTRjRCYVYyS2pFSFpoaG1adGJaS0kyT0Z0M3JnMnNXakE0UUhabkc5WHV5N3ktN3N5X2RWckxmYzVWMGdxSDFMN2V1TVRvTUltX0xSNC1hWUYyNnZQYXR1ZnY1UHZo0gFuQVVfeXFMTjdLaEh6R2FHb194SEpLYm4wNkR1ZXAydXhTUjRORVAyMDhGT1B5RGNXYVhxVlFuODRBcnp0dUl4cWs1Szh5UDYzb2xvbVRkb1I3TzhHVHNjTjV3MjhoOXAzX1cxWUh5NDdJdHFHYkE?oc=5",
+        "언론사": "머니투데이",
+        "발행시각UTC": "2026-06-24T07:00:00+00:00",
+        "경과일": 45.08,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비엔씨 투자 덴마크 로포라, 우울증 신약 ‘LPH-5’ 임상 1상 완료",
+        "링크": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE9tLVJtSmhrc1ZzWl9vTmF1Wi1QYnJlM0dMMEpYVDlWczg3cUpPN0R3bTg5UXdmWHh2T1MxSDZQeWQyY2gyM1RJNzNzYnpDOGo0WWRKWUJpaUoxa2E0cG04RlFyS0IzUQ?oc=5",
+        "언론사": "PRESS9",
+        "발행시각UTC": "2026-07-10T07:00:00+00:00",
+        "경과일": 29.08,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비엔씨,미국 'Leios Therapeutics' 전략적 지분투자",
+        "링크": "https://news.google.com/rss/articles/CBMiZkFVX3lxTFB2SHcwdVZwZEhIMEdja1pfQ25nT1hyQ0pmV0ZJR01UTERsU3hmb3I0S21xTVFkUTBkRHROdGZKejI5X3BnbEVGejduT2QwR09QNWNqOFJQOG55a2FtQU1jaUtpWHg1Zw?oc=5",
+        "언론사": "약업신문",
+        "발행시각UTC": "2026-01-21T08:00:00+00:00",
+        "경과일": 199.04,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비엔씨 투자분석 2026. 03. 05",
+        "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE11ZXFoTGc5Tmk5ekxlWGNNUVNXNDBoWWhJUGlvZWpsQVE0dUxQX3kyYWVsNnhWTUZqWnVIS3NkRHhleFIzRTd4d0ZkdUlBNTJIMzhKREJPVXFBaVp0LW1fd2E3RVc2WXNhUlJaX2IyR2xrUXc?oc=5",
+        "언론사": "주달",
+        "발행시각UTC": "2026-03-05T08:00:00+00:00",
+        "경과일": 156.04,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비엔씨 투자한 프로앱텍, LYTAC기반 특허출원 \"표적단백분해물질 효과확인\" - 머니투데이",
+        "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE5maG1tT3RXNV9MZElFQS1HdENRU3VGV0xrTkZUTjRUWEtQUEZXYTliOFRDeUpvd3JTcHRTRnN1bXZFMlhONHROT2dsTUxLbXQ5SDd0ckhmS3pVbzUxYnp2MHEyU2ZKd0Np0gFuQVVfeXFMTmFPSi1DVVVBdWtzSkdLUnd0cVZaMjNQY25jRWRUVEI0cHlYdWdIMHE0SGptUjZPMmNsMUw0Z1FJSGFNeWxUMFZKRjZPTTJ4bFpjdXpubERNOG93ci1jMnFhNmlGOFk1amh3UEcyU2c?oc=5",
+        "언론사": "머니투데이",
+        "발행시각UTC": "2026-05-28T07:00:00+00:00",
+        "경과일": 72.08,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비엔씨 투자 케리야사, JPM컨퍼런스서 파킨슨병 치료제 기술수출 모색",
+        "링크": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE9URFliN1NITzg3ZVMySE5LTVFtS0RmZk05UE16Q0R3ckhJdllrQURsWklhYXdRR0dKazFMM0hLOTNKUjNOWHhiSzc4R1JTODczX0hwT0s4WlRiMkh4ek1aV0k4Z1k?oc=5",
+        "언론사": "PRESS9",
+        "발행시각UTC": "2026-01-12T08:00:00+00:00",
+        "경과일": 208.04,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비엔씨, 레이오스와 지방분해주사 9개국 독점 판권 계약 - 머니투데이",
+        "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE9QTjJUM1psZEpLdTNPUXp6ZUZHR1BJZWxKY1ZqVmZXUlNVY1UxX0tHUlkzcXFwcEpVRGc1cDRrX2s3dDFMc1lFcTh0STA2TjB0c3RnZ2lIQmt4UkVpdHRhdDhzaXJXSE5E0gFuQVVfeXFMT2dPbUEzYmRrSDNkdWRMNFhQV3hsV1pLdElhczhJaEpTSHo4S2FlcUw2cHJhaHlBaW5kTDFwZ1lpUzk3d1BtaU9SUUpkMkhvdnVjbXEySG9COE9NeWhPaWk3S3J0YzkwUE5LZTByV1E?oc=5",
+        "언론사": "머니투데이",
+        "발행시각UTC": "2026-01-26T08:00:00+00:00",
+        "경과일": 194.04,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비엔씨, 지방분해주사 '10XB-101' 라이선스 체결",
+        "링크": "https://news.google.com/rss/articles/CBMia0FVX3lxTFBJTXoxM3M4X19hdW4wcktwMVhJd29kemphbnBBOWp6enU3aEpsUGJWQnVDcWFNZ29fQXBxNWU0RE0yMjdlY2E5U2tnWFh5TmlLbTZnVXdOR1lLMXJUMk5fSHpDeWhfNnpzQ25z?oc=5",
+        "언론사": "히트뉴스",
+        "발행시각UTC": "2026-01-26T08:00:00+00:00",
+        "경과일": 194.04,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비엔씨, 미국 레이오스 테라퓨틱스에 전략적 지분투자",
+        "링크": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE9LVHRhT2pmQ2JDcHh6YThIWGExR09OQ3A0cXFuYkVJMnBJUkJWS3Vwb202Yk1jV3BHLVZaZkpueHFjQTJ1Zi1xX1VzYlFxX19acTJ3bmtKUQ?oc=5",
+        "언론사": "MEDI:GATE NEWS",
+        "발행시각UTC": "2026-01-21T08:00:00+00:00",
+        "경과일": 199.04,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비엔씨 투자분석 2026. 06. 20",
+        "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE5FaElsLUhWamo2cFZseThBazZnMEpGMy1BWVNGaW9zZjl3ODU4cHJaM2FTM2k5bDdfbTZCS0VJN3BqQkdkaXVMQkNYTUV6TlQ4UnhCR0hpM25IRlB3QU5fYmRuMlk2bktmdGtQVUp6S0FTSHc?oc=5",
+        "언론사": "주달",
+        "발행시각UTC": "2026-06-20T07:00:00+00:00",
+        "경과일": 49.08,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비엔씨 파트너 로포라, 우울증 신약 LPH-5 임상1상 톱라인 긍정적",
+        "링크": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFAtcTkxTDhLcjRMdEwxdnA4QXVVTDBlY3hZV2MyblNqYklYS2xVNFd6ZHBlc2o4enB6bzJ3Um5QN25VTmM4WXUxWHc3dElTcHJoMUJEY09OcDl0T295RU1maHo0Y28?oc=5",
+        "언론사": "PRESS9",
+        "발행시각UTC": "2026-06-11T07:00:00+00:00",
+        "경과일": 58.08,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비엔씨 파트너사 케리야사, 알츠하이머·파킨슨 치료제 임상1상 성공",
+        "링크": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE1YVnNkck1lbWlsZU9hRW9tWXBORWZyMjM3dDd4Zm44Y0FzamNsUmZqN3FhWTRkU2gzT1NSTDVfOFU0ckh6LU1jQ2VtUWVQWjZRRFBrazJxYVY3Wlh4ZWFxeldMWHd4Zw?oc=5",
+        "언론사": "PRESS9",
+        "발행시각UTC": "2026-06-24T07:00:00+00:00",
+        "경과일": 45.08,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비엔씨, 작년 연간 연결 영업이익 16억...전년비 84%↓",
+        "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBfbWVwVlJubmVtcVFZS3dwR1Y5SmwxQXdlSlUxUUZJQ3hrUEhoRUE5MWNlWFVJb3NzeEtCZFRoaHpaWEUxSWszWmJCaHJqWXc2SE50SGs1WWxSUk04cHY1ZllBUkRrVEZIeWNxZVhWVm45cWc?oc=5",
+        "언론사": "데이터투자",
+        "발행시각UTC": "2026-02-25T08:00:00+00:00",
+        "경과일": 164.04,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비엔씨, 미국 레이오스 테라퓨틱스와 10XB-101 후보물질 계약체결",
+        "링크": "https://news.google.com/rss/articles/CBMiV0FVX3lxTFBCUkJLMWozUnBSNEgwQVRqRWNZUDhsdHFlaVpJc0ZUazhDQ3BZX2lsXzJROXBQSTRncF9NVnhqMXFFamNwanFVTnNkT0RYYmJkd0hnM2dVQQ?oc=5",
+        "언론사": "MEDI:GATE NEWS",
+        "발행시각UTC": "2026-01-26T08:00:00+00:00",
+        "경과일": 194.04,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한국비엔씨, 미국 Leios Therapeutics사와 10XB-101 지방분해주사 후보약물의 9개국 독점제조 및 판권 라이센싱 계약체결",
+        "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5yX3AweEp1aFBJUEFOcjR1bW1fSktiUE5lc1M0cnJNX0h5RjhyX3J1c3NqR3dUd1U1Z3BsNmdVUlhEeU45WWZmTnQ3aTNWZjhGdjNmQklacUlEUQ?oc=5",
+        "언론사": "한국경제",
+        "발행시각UTC": "2026-01-26T08:00:00+00:00",
+        "경과일": 194.04,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "[생생한 주식쇼 생쇼] 한국비엔씨 (256840) 바닥권 탈출, 실적 성장으로 재평가 기대",
+        "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE40ZUcyWW1sUlZZdjd4ZktvdXFSVC1kUng0WnZLdGdBZllxaFgtUG5nYlRqeU0yVV9oQ2ZZWlRGdnY1cVJLTkdzcWVfX20wSDlhWDJzemtrUFdaNGV6eVkyS3FFRHhIVmE2?oc=5",
+        "언론사": "매일경제TV",
+        "발행시각UTC": "2025-10-28T07:00:00+00:00",
+        "경과일": 284.08,
+        "원점수": 16.0,
+        "최종점수": 5.6,
+        "매칭규칙": [
+          "실적"
+        ]
+      },
+      {
+        "제목": "[기업분석] 한국비엔씨 3Q 누적 매출 14% 증가-영업익 55.6% 감소",
+        "링크": "https://news.google.com/rss/articles/CBMib0FVX3lxTFBKMlc0bV9VVHYtZEVJS241VmdYQnZUb3ZzeGJtNmhiUEdCMGlocnBGbGoxbU5IclFZZ0o4TjNITHFrSERtWjlBcDdQOUhnWXMxZXlEUjBYM0FJSWRYNW1KMGtNV1hXWW9Rd2dpSjlwbw?oc=5",
+        "언론사": "약업신문",
+        "발행시각UTC": "2025-12-01T08:00:00+00:00",
+        "경과일": 250.04,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "[생생한 주식쇼 생쇼] 한국비엔씨 (256840) 요약",
+        "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE1ERnF6aG51VEc3TVJTMlZvM2psTFl5azdGRzZsNDZZNklUWkdfaGFVWjVyb3hNc0dva1ZycUVwLXd0Qkx4bTg5Q0hIZUEtaTB1dmMtMmJDeHRCS3FyNjg3dWhCNEdhdTRy?oc=5",
+        "언론사": "매일경제TV",
+        "발행시각UTC": "2025-11-21T08:00:00+00:00",
+        "경과일": 260.04,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      }
+    ],
+    "분석": {
+      "분석상태": "정상",
+      "신호": -3.15,
+      "데이터품질": 88.0,
+      "판정": "중립",
+      "긍정뉴스개수": 1,
+      "부정뉴스개수": 1,
+      "중립뉴스개수": 28,
+      "긍정뉴스": [
+        {
+          "제목": "[생생한 주식쇼 생쇼] 한국비엔씨 (256840) 바닥권 탈출, 실적 성장으로 재평가 기대",
+          "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE40ZUcyWW1sUlZZdjd4ZktvdXFSVC1kUng0WnZLdGdBZllxaFgtUG5nYlRqeU0yVV9oQ2ZZWlRGdnY1cVJLTkdzcWVfX20wSDlhWDJzemtrUFdaNGV6eVkyS3FFRHhIVmE2?oc=5",
+          "언론사": "매일경제TV",
+          "발행시각UTC": "2025-10-28T07:00:00+00:00",
+          "경과일": 284.08,
+          "원점수": 16.0,
+          "최종점수": 5.6,
+          "매칭규칙": [
+            "실적"
+          ]
+        }
+      ],
+      "부정뉴스": [
+        {
+          "제목": "[약업분석] 한국비엔씨, 1Q 매출 207억…적자전환 속 미용성형 비중 확대",
+          "링크": "https://news.google.com/rss/articles/CBMib0FVX3lxTE1QNVRGSDEyOEppWGZydnU1bTEyWE5wM3lNTDlRSnh4V2J1LXFLanUxQ2g4R25kMlBxS2k1dUk3ZENkVlZfWjMzLU1MV1A4ZGYxRkhjam1QMWwxdEM1RGFneXNwVEdrMlZ2ejF6SmpTYw?oc=5",
+          "언론사": "약업신문",
+          "발행시각UTC": "2026-05-29T07:00:00+00:00",
+          "경과일": 71.08,
+          "원점수": -22.0,
+          "최종점수": -7.7,
+          "매칭규칙": [
+            "적자전환"
+          ]
+        }
+      ],
+      "설명": "최근 뉴스 제목의 실적·수주·투자·증자·소송 등 규칙과 시간가중치를 합성합니다."
+    },
+    "데이터출처": "Google News RSS",
+    "수집시각UTC": "2026-08-08T09:00:18.010764+00:00"
+  },
+  "가치평가": {
+    "가치평가계약버전": "4.0",
+    "가치평가엔진버전": "6.8.0-valuation-contract-v4",
+    "가치평가모형개정버전": "future-growth-v1.1.0-price-independent",
+    "가격독립성검사": {
+      "통과": true,
+      "현재가산식사용": false,
+      "시가총액산식사용": false,
+      "시장EPS산식사용": false,
+      "시장BPS산식사용": false,
+      "주식수원칙": "현재가·시가총액 미사용"
+    },
+    "미래성장모형버전": "1.0.0",
+    "산출상태": "산출불가",
+    "최종값사용가능": false,
+    "최종값출처": "Python 가치평가 계약 v4",
+    "데이터자격검사": {
+      "버전": "1.1.0",
+      "통과": false,
+      "상태": "보류",
+      "핵심검사": {
+        "정식재무최신성": false,
+        "연속TTM": false,
+        "주식수": false,
+        "평가EPS": false,
+        "산업프로필": false,
+        "가치모형수": false,
+        "최신잠정실적정량화": true,
+        "정식보고서대체평가가능": true
+      },
+      "중단사유": [
+        "정식 재무보고서가 법정 제출시한 기준 최신분기보다 오래됨",
+        "연속 4개 단독분기 TTM 미확보",
+        "가치평가 주식수 미확보",
+        "양(+)의 평가 EPS 미확보"
+      ],
+      "주의사유": [
+        "산업 프로필이 일반기업 또는 저신뢰 분류",
+        "독립 가치모형 3개 미만",
+        "산업분류 신뢰도 35점"
+      ],
+      "정식재무기준분기키": 0,
+      "기대정식재무분기키": 8105,
+      "잠정실적분기키": 0,
+      "유효재무분기키": 0,
+      "잠정실적감지": false,
+      "잠정실적반영": false,
+      "잠정실적미정량화": false,
+      "정식보고서대체평가": false,
+      "평가기준": "최신 정식보고서 기준",
+      "산업분류신뢰도": 35,
+      "산업프로필버전": "3.0.0",
+      "극단적괴리": false
+    },
+    "산업프로필버전": "3.0.0",
+    "산업분류신뢰도": 35,
+    "정식재무기준분기키": 0,
+    "유효재무기준분기키": 0,
+    "잠정실적": {
+      "수집상태": "데이터없음",
+      "사용가능": false,
+      "검증사유": [
+        "최근 잠정실적 공시 없음"
+      ],
+      "데이터출처": "금융감독원 OpenDART"
+    },
+    "현재가": 0.0,
+    "실제PER": 0.0,
+    "실제PBR": 0.0,
+    "EPS": 0.0,
+    "BPS": 0.0,
+    "발행주식수추정": 0,
+    "발행주식수출처": "미확보",
+    "발행주식수품질": 0,
+    "발행주식수결정원칙": "현재가·시가총액 미사용",
+    "발행주식수후보": [],
+    "TTMEPS": 0.0,
+    "정상화EPS": 0.0,
+    "분기런레이트EPS": 0.0,
+    "FY1예상EPS": 0.0,
+    "FY2예상EPS": 0.0,
+    "FY3예상EPS": 0.0,
+    "FY4예상EPS": 0.0,
+    "평가EPS": 0.0,
+    "선행EPS": 0.0,
+    "FY1성장률": 0.0,
+    "FY2성장률": 0.0,
+    "FY3성장률": 0.0,
+    "FY4성장률": 0.0,
+    "TTM기준기간": "",
+    "TTM데이터품질": 0,
+    "TTM잠정실적반영": false,
+    "TTM현금흐름기준": "정식보고서 TTM",
+    "목표PER": 7.94,
+    "목표PBR": 0.65,
+    "암시PER": 0.0,
+    "암시PBR": 0.0,
+    "PER기준적정가": 0.0,
+    "PBR기준적정가": 0.0,
+    "그레이엄가치": 0.0,
+    "정상화회복가치": 0.0,
+    "잔여이익가치": 0.0,
+    "FCF가치": 0.0,
+    "실적전환보정가": 0.0,
+    "미래성장가치": 0.0,
+    "미래성장모형": {
+      "버전": "1.0.0",
+      "사용가능": false,
+      "차단사유": [
+        "미래성장모형 비대상 업종",
+        "양(+)의 TTM·FY1·FY2 EPS 미확보",
+        "TTM 데이터품질 70점 미만",
+        "주식수 품질 75점 미만",
+        "영업·순이익률 성장모형 최소기준 미달",
+        "구조적 성장 증거 부족"
+      ],
+      "선정근거": [],
+      "가치": 0.0,
+      "가중치": 0.0,
+      "품질": 0
+    },
+    "복합기업대용가치합산": 0.0,
+    "순현금주당가치": 0.0,
+    "재무적정가": 0.0,
+    "기본적정가": 0.0,
+    "보수적적정가": 0.0,
+    "성장적정가": 0.0,
+    "현재가대비": 0.0,
+    "판단": "판정 보류",
+    "가치평가산업코드": "general",
+    "가치평가산업프로필": "일반기업 적응형",
+    "복합기업대용모형": false,
+    "진짜SOTP자료확보": null,
+    "산업분류출처": "업종코드 미확보",
+    "OpenDART업종코드": "",
+    "산업신호반영": false,
+    "산업종합신호": 0.0,
+    "산업국면": "미분류",
+    "실적전환방향": "실적 안정/혼합",
+    "실적전환강도": 0.0,
+    "구조적실적가속": false,
+    "가치평가국면": "일반 가치평가",
+    "이익저점보정": false,
+    "자산대비이익가치배수": 0.0,
+    "그레이엄대비이익가치배수": 0.0,
+    "분기매출성장률": 0.0,
+    "분기영업이익성장률": 0.0,
+    "분기순이익성장률": 0.0,
+    "데이터신뢰도": 30,
+    "모형신뢰도": 60,
+    "가치신뢰도": 43,
+    "가치신뢰도등급": "D",
+    "가치신뢰도정의": "자료완전성과 모형합의도이며 실제 적중률이 아님",
+    "모형분산배수": 0.0,
+    "전체모형분산배수": 0.0,
+    "모형상세": [],
+    "제외모형": [],
+    "이상치검사": {
+      "통과": false,
+      "상태": "산출불가",
+      "사유": [
+        "정식 재무보고서가 법정 제출시한 기준 최신분기보다 오래됨",
+        "연속 4개 단독분기 TTM 미확보",
+        "가치평가 주식수 미확보",
+        "양(+)의 평가 EPS 미확보",
+        "연속 4개 단독분기 TTM 미확보",
+        "주식수 미확보",
+        "양(+)의 평가 EPS 미확보"
+      ]
+    },
+    "컨센서스반영": false,
+    "설명": [
+      "DART 누적 분기자료를 단독 분기로 변환한 뒤 최근 4개 분기 TTM을 산출했습니다.",
+      "KIS EPS·BPS·PER·PBR은 적정가 산식과 주식수 추정에서 제외하고 시장 진단에만 사용했습니다.",
+      "현재가는 적정가 산식에 넣지 않고 계산 완료 후 괴리 검증에만 사용했습니다.",
+      "일반기업 적응형 업종 프로필을 적용했습니다.",
+      "데이터 자격검사를 통과하지 못해 계산값은 진단용으로만 남기고 최종 적정가 사용을 차단했습니다."
+    ]
+  },
+  "주가예측": {
+    "엔진버전": "6.8.0-valuation-contract-v4",
+    "단기1~5일": {
+      "기간": "1~5일",
+      "점수": 53,
+      "상승확률": 50,
+      "판정": "중립",
+      "신뢰도": 19,
+      "신뢰도등급": "매우 낮음",
+      "요소별평가": [
+        {
+          "요소": "파생시장·프로그램",
+          "가중치": 30,
+          "신호": 0.0,
+          "신호판정": "중립",
+          "데이터품질": 0.0,
+          "점수기여": 0.0,
+          "출처": "KIS 종목별 프로그램매매",
+          "설명": "5일 수량 0, 20일 수량 0, 5일 거래량대비 0.000%, 20일 거래량대비 0.000%"
+        },
+        {
+          "요소": "외국인·기관수급",
+          "가중치": 25,
+          "신호": 0.0,
+          "신호판정": "중립",
+          "데이터품질": 0.0,
+          "점수기여": 0.0,
+          "출처": "KIS 투자자별 당일 매매",
+          "설명": "외국인+기관 합산 0주, 거래량 대비 0.000%"
+        },
+        {
+          "요소": "기술·거래량",
+          "가중치": 20,
+          "신호": 0.0,
+          "신호판정": "중립",
+          "데이터품질": 0.0,
+          "점수기여": 0.0,
+          "출처": "KIS 현재가 대용",
+          "설명": "5일수익률 0.00%, RSI14 0.00"
+        },
+        {
+          "요소": "환율·글로벌",
+          "가중치": 15,
+          "신호": 39.87,
+          "신호판정": "긍정",
+          "데이터품질": 100.0,
+          "점수기여": 5.98,
+          "출처": "Yahoo 글로벌시장 분석",
+          "설명": "분석상태 정상, 신호 39.87"
+        },
+        {
+          "요소": "뉴스·공시",
+          "가중치": 10,
+          "신호": -3.15,
+          "신호판정": "중립",
+          "데이터품질": 39.6,
+          "점수기여": -0.32,
+          "출처": "Google News RSS",
+          "설명": "분석상태 정상, 신호 -3.15"
+        }
+      ],
+      "미수집요소": [
+        "파생시장·프로그램",
+        "외국인·기관수급",
+        "기술·거래량"
+      ],
+      "약한대용지표": [
+        "뉴스·공시"
+      ],
+      "근거": [
+        "환율·미국시장·반도체·VIX 환경이 우호적"
+      ]
+    },
+    "중기1~8주": {
+      "기간": "1~8주",
+      "점수": 52,
+      "상승확률": 50,
+      "판정": "중립",
+      "신뢰도": 19,
+      "신뢰도등급": "매우 낮음",
+      "요소별평가": [
+        {
+          "요소": "분기실적",
+          "가중치": 25,
+          "신호": 0.0,
+          "신호판정": "중립",
+          "데이터품질": 0.0,
+          "점수기여": 0.0,
+          "출처": "DART 3년 성장률 대용",
+          "설명": "분기 비교 실패로 3년 성장률 대용"
+        },
+        {
+          "요소": "산업선행지표",
+          "가중치": 25,
+          "신호": 0.0,
+          "신호판정": "중립",
+          "데이터품질": 0.0,
+          "점수기여": 0.0,
+          "출처": "반도체 산업 대표자산 합성",
+          "설명": "산업국면 미분류"
+        },
+        {
+          "요소": "누적수급",
+          "가중치": 15,
+          "신호": 0.0,
+          "신호판정": "중립",
+          "데이터품질": 0.0,
+          "점수기여": 0.0,
+          "출처": "KIS 투자자별 일별 매매",
+          "설명": "5일 합산 0주, 20일 합산 0주"
+        },
+        {
+          "요소": "환율·금리·거시",
+          "가중치": 15,
+          "신호": 23.02,
+          "신호판정": "긍정",
+          "데이터품질": 100.0,
+          "점수기여": 3.45,
+          "출처": "Yahoo 환율·미국금리·글로벌시장",
+          "설명": "분석상태 정상, 신호 23.02"
+        },
+        {
+          "요소": "가격추세",
+          "가중치": 10,
+          "신호": 0.0,
+          "신호판정": "중립",
+          "데이터품질": 0.0,
+          "점수기여": 0.0,
+          "출처": "KIS 일봉",
+          "설명": "20일수익률 0.00%, 60일수익률 0.00%"
+        },
+        {
+          "요소": "뉴스·공시",
+          "가중치": 10,
+          "신호": -3.15,
+          "신호판정": "중립",
+          "데이터품질": 39.6,
+          "점수기여": -0.32,
+          "출처": "Google News RSS",
+          "설명": "분석상태 정상, 신호 -3.15"
+        }
+      ],
+      "미수집요소": [
+        "분기실적",
+        "산업선행지표",
+        "누적수급",
+        "가격추세"
+      ],
+      "약한대용지표": [
+        "뉴스·공시"
+      ],
+      "근거": [
+        "원달러·미국금리·글로벌 추세가 우호적"
+      ]
+    },
+    "장기6~18개월": {
+      "기간": "6~18개월",
+      "점수": 45,
+      "상승확률": 50,
+      "판정": "중립",
+      "신뢰도": 2,
+      "신뢰도등급": "매우 낮음",
+      "요소별평가": [
+        {
+          "요소": "향후이익방향",
+          "가중치": 30,
+          "신호": 0.0,
+          "신호판정": "중립",
+          "데이터품질": 0.0,
+          "점수기여": 0.0,
+          "출처": "DART 3년 성장률 대용",
+          "설명": "최신 분기자료 실패로 3년 성장률 대용"
+        },
+        {
+          "요소": "산업사이클",
+          "가중치": 25,
+          "신호": 0.0,
+          "신호판정": "중립",
+          "데이터품질": 0.0,
+          "점수기여": 0.0,
+          "출처": "반도체 산업 대표자산 1년 추세",
+          "설명": "산업국면 미분류"
+        },
+        {
+          "요소": "가치평가·안전마진",
+          "가중치": 20,
+          "신호": 0.0,
+          "신호판정": "중립",
+          "데이터품질": 0.0,
+          "점수기여": 0.0,
+          "출처": "내부 가치평가",
+          "설명": "현재가 대비 0.00%, 판단 판정 보류"
+        },
+        {
+          "요소": "경쟁력·시장점유율",
+          "가중치": 10,
+          "신호": -100.0,
+          "신호판정": "매우 부정",
+          "데이터품질": 23.3,
+          "점수기여": -10.0,
+          "출처": "ROE·영업이익률·버핏점수 대용",
+          "설명": "실제 시장점유율과 경쟁사 비교는 아직 미연결"
+        },
+        {
+          "요소": "현금흐름·재무안전성",
+          "가중치": 10,
+          "신호": 0.0,
+          "신호판정": "중립",
+          "데이터품질": 0.0,
+          "점수기여": 0.0,
+          "출처": "부채비율 대용",
+          "설명": "분석상태 부채비율 대용"
+        },
+        {
+          "요소": "주주환원·지배구조",
+          "가중치": 5,
+          "신호": 0.0,
+          "신호판정": "중립",
+          "데이터품질": 0.0,
+          "점수기여": 0.0,
+          "출처": "OpenDART 배당·자기주식",
+          "설명": "배당·자사주는 반영, 지배구조 정량평가는 아직 미연결"
+        }
+      ],
+      "미수집요소": [
+        "향후이익방향",
+        "산업사이클",
+        "가치평가·안전마진",
+        "현금흐름·재무안전성",
+        "주주환원·지배구조"
+      ],
+      "약한대용지표": [
+        "경쟁력·시장점유율"
+      ],
+      "근거": [
+        "기업 경쟁력 대용지표가 약함"
+      ]
+    },
+    "데이터완전성": {
+      "KIS현재가": false,
+      "KIS당일수급": false,
+      "KIS일봉": false,
+      "멀티타임프레임차트": false,
+      "KIS누적수급": false,
+      "KIS프로그램매매": false,
+      "현재가": false,
+      "가격이력": false,
+      "누적수급": false,
+      "프로그램매매": false,
+      "DART기본재무": true,
+      "DART분기실적": false,
+      "DART현금흐름": false,
+      "DART주주환원": false,
+      "DART최근공시": false,
+      "기업뉴스": true,
+      "글로벌시장": true,
+      "산업선행지표": false,
+      "산업사이클": false,
+      "가치평가": true,
+      "애널리스트컨센서스": false,
+      "실제시장점유율": false,
+      "지배구조정량평가": false
+    },
+    "주의": "미수집 요소는 추정하지 않고 중립 처리한다. 파생시장·프로그램 요소에는 현재 종목별 프로그램매매만 반영하며 파생시장 데이터는 아직 미반영이다. 뉴스와 공시 신호는 제목 기반 규칙형 분석이다. 향후이익 방향은 최신 실적과 현금창출력 기반 대용지표이며 애널리스트 컨센서스는 아직 반영되지 않았다. 상승확률은 데이터 커버리지에 따라 50% 방향으로 축소된 모델 확률이다."
+  },
+  "화면브리지": {
+    "스키마버전": "2.0",
+    "엔진버전": "6.8.0-valuation-contract-v4",
+    "종목코드": "226610",
+    "생성시각": "2026-08-08T09:01:08.957274",
+    "연결상태": "부분",
+    "기술분석": {
+      "수집상태": "실패",
+      "데이터출처": "",
+      "4시간봉": {
+        "사용가능": false,
+        "available": false,
+        "점수": 0.0,
+        "score": 0.0,
+        "판정": "자료 부족",
+        "trend": "자료 부족",
+        "RSI14": null,
+        "rsi14": null,
+        "빠른이동평균": null,
+        "maFast": null,
+        "중간이동평균": null,
+        "maMedium": null,
+        "장기이동평균": null,
+        "maLong": null,
+        "단기모멘텀": null,
+        "momentumFast": null,
+        "중기모멘텀": null,
+        "momentumMedium": null,
+        "관측수": 0,
+        "observations": 0,
+        "자료신뢰도": 0.0,
+        "confidence": 0.0
+      },
+      "일봉": {
+        "사용가능": false,
+        "available": false,
+        "점수": 0.0,
+        "score": 0.0,
+        "판정": "자료 부족",
+        "trend": "자료 부족",
+        "RSI14": null,
+        "rsi14": null,
+        "빠른이동평균": null,
+        "maFast": null,
+        "중간이동평균": null,
+        "maMedium": null,
+        "장기이동평균": null,
+        "maLong": null,
+        "단기모멘텀": null,
+        "momentumFast": null,
+        "중기모멘텀": null,
+        "momentumMedium": null,
+        "관측수": 0,
+        "observations": 0,
+        "자료신뢰도": 0.0,
+        "confidence": 0.0
+      },
+      "주봉": {
+        "사용가능": false,
+        "available": false,
+        "점수": 0.0,
+        "score": 0.0,
+        "판정": "자료 부족",
+        "trend": "자료 부족",
+        "RSI14": null,
+        "rsi14": null,
+        "빠른이동평균": null,
+        "maFast": null,
+        "중간이동평균": null,
+        "maMedium": null,
+        "장기이동평균": null,
+        "maLong": null,
+        "단기모멘텀": null,
+        "momentumFast": null,
+        "중기모멘텀": null,
+        "momentumMedium": null,
+        "관측수": 0,
+        "observations": 0,
+        "자료신뢰도": 0.0,
+        "confidence": 0.0
+      },
+      "월봉": {
+        "사용가능": false,
+        "available": false,
+        "점수": 0.0,
+        "score": 0.0,
+        "판정": "자료 부족",
+        "trend": "자료 부족",
+        "RSI14": null,
+        "rsi14": null,
+        "빠른이동평균": null,
+        "maFast": null,
+        "중간이동평균": null,
+        "maMedium": null,
+        "장기이동평균": null,
+        "maLong": null,
+        "단기모멘텀": null,
+        "momentumFast": null,
+        "중기모멘텀": null,
+        "momentumMedium": null,
+        "관측수": 0,
+        "observations": 0,
+        "자료신뢰도": 0.0,
+        "confidence": 0.0
+      },
+      "다이버전스": {
+        "분석상태": "자료부족",
+        "계산방식": "RSI14(Wilder) + 우측1봉 확정 피벗 + 시간봉별 최근 대표 1신호 + 근접 Relative Volume + 가장 가까운 유효 스윙 종가 확인",
+        "엔진버전": "4.0-latest-one-per-timeframe",
+        "4시간봉집계": "KRX 09:00 KST anchor · 09:00-13:00 / 13:00-15:30",
+        "미래데이터사용": false,
+        "확정피벗사용": true,
+        "시간봉": {
+          "4시간봉": {
+            "분석가능": false,
+            "available": false,
+            "시간봉": "4시간봉",
+            "관측봉수": 0,
+            "탐색기간봉": 180,
+            "유효기간봉": 12,
+            "대표신호": {
+              "탐지": false,
+              "detected": false,
+              "상태": "미탐지",
+              "방향": "",
+              "사유": "분석 데이터 부족 · 0/80봉"
+            },
+            "상승": {
+              "탐지": false,
+              "detected": false,
+              "상태": "미탐지",
+              "방향": "상승",
+              "사유": "분석 데이터 부족 · 0/80봉"
+            },
+            "하락": {
+              "탐지": false,
+              "detected": false,
+              "상태": "미탐지",
+              "방향": "하락",
+              "사유": "분석 데이터 부족 · 0/80봉"
+            },
+            "활성신호": [],
+            "과거신호": [],
+            "사유": "분석 데이터 부족 · 0/80봉"
+          },
+          "일봉": {
+            "분석가능": false,
+            "available": false,
+            "시간봉": "일봉",
+            "관측봉수": 0,
+            "탐색기간봉": 150,
+            "유효기간봉": 10,
+            "대표신호": {
+              "탐지": false,
+              "detected": false,
+              "상태": "미탐지",
+              "방향": "",
+              "사유": "분석 데이터 부족 · 0/80봉"
+            },
+            "상승": {
+              "탐지": false,
+              "detected": false,
+              "상태": "미탐지",
+              "방향": "상승",
+              "사유": "분석 데이터 부족 · 0/80봉"
+            },
+            "하락": {
+              "탐지": false,
+              "detected": false,
+              "상태": "미탐지",
+              "방향": "하락",
+              "사유": "분석 데이터 부족 · 0/80봉"
+            },
+            "활성신호": [],
+            "과거신호": [],
+            "사유": "분석 데이터 부족 · 0/80봉"
+          },
+          "주봉": {
+            "분석가능": false,
+            "available": false,
+            "시간봉": "주봉",
+            "관측봉수": 0,
+            "탐색기간봉": 120,
+            "유효기간봉": 8,
+            "대표신호": {
+              "탐지": false,
+              "detected": false,
+              "상태": "미탐지",
+              "방향": "",
+              "사유": "분석 데이터 부족 · 0/52봉"
+            },
+            "상승": {
+              "탐지": false,
+              "detected": false,
+              "상태": "미탐지",
+              "방향": "상승",
+              "사유": "분석 데이터 부족 · 0/52봉"
+            },
+            "하락": {
+              "탐지": false,
+              "detected": false,
+              "상태": "미탐지",
+              "방향": "하락",
+              "사유": "분석 데이터 부족 · 0/52봉"
+            },
+            "활성신호": [],
+            "과거신호": [],
+            "사유": "분석 데이터 부족 · 0/52봉"
+          },
+          "월봉": {
+            "분석가능": false,
+            "available": false,
+            "시간봉": "월봉",
+            "관측봉수": 0,
+            "탐색기간봉": 72,
+            "유효기간봉": 6,
+            "대표신호": {
+              "탐지": false,
+              "detected": false,
+              "상태": "미탐지",
+              "방향": "",
+              "사유": "분석 데이터 부족 · 0/36봉"
+            },
+            "상승": {
+              "탐지": false,
+              "detected": false,
+              "상태": "미탐지",
+              "방향": "상승",
+              "사유": "분석 데이터 부족 · 0/36봉"
+            },
+            "하락": {
+              "탐지": false,
+              "detected": false,
+              "상태": "미탐지",
+              "방향": "하락",
+              "사유": "분석 데이터 부족 · 0/36봉"
+            },
+            "활성신호": [],
+            "과거신호": [],
+            "사유": "분석 데이터 부족 · 0/36봉"
+          }
+        },
+        "활성신호": [],
+        "활성신호수": 0,
+        "대표신호원칙": "각 시간봉에서 4종 전체 중 가장 최근 확정 1개만 활성"
+      },
+      "사용가능": true
+    },
+    "예측": {
+      "단기": {
+        "기간": "1~5일",
+        "점수": 53,
+        "상승확률": 50,
+        "판정": "중립",
+        "자료신뢰도": 19,
+        "신뢰도": 19,
+        "자료신뢰도등급": "매우 낮음",
+        "신뢰도등급": "매우 낮음",
+        "요소별평가": [
+          {
+            "요소": "파생시장·프로그램",
+            "사용가능": false,
+            "가중치": 30.0,
+            "신호": 0.0,
+            "판정": "중립",
+            "신호판정": "중립",
+            "데이터상태": "미수집",
+            "데이터품질": 0.0,
+            "점수기여": 0.0,
+            "출처": "KIS 종목별 프로그램매매",
+            "설명": "5일 수량 0, 20일 수량 0, 5일 거래량대비 0.000%, 20일 거래량대비 0.000%"
+          },
+          {
+            "요소": "외국인·기관수급",
+            "사용가능": false,
+            "가중치": 25.0,
+            "신호": 0.0,
+            "판정": "중립",
+            "신호판정": "중립",
+            "데이터상태": "미수집",
+            "데이터품질": 0.0,
+            "점수기여": 0.0,
+            "출처": "KIS 투자자별 당일 매매",
+            "설명": "외국인+기관 합산 0주, 거래량 대비 0.000%"
+          },
+          {
+            "요소": "기술·거래량",
+            "사용가능": false,
+            "가중치": 20.0,
+            "신호": 0.0,
+            "판정": "중립",
+            "신호판정": "중립",
+            "데이터상태": "미수집",
+            "데이터품질": 0.0,
+            "점수기여": 0.0,
+            "출처": "KIS 현재가 대용",
+            "설명": "5일수익률 0.00%, RSI14 0.00"
+          },
+          {
+            "요소": "환율·글로벌",
+            "사용가능": true,
+            "가중치": 15.0,
+            "신호": 39.87,
+            "판정": "긍정",
+            "신호판정": "긍정",
+            "데이터상태": "정상",
+            "데이터품질": 100.0,
+            "점수기여": 5.98,
+            "출처": "Yahoo 글로벌시장 분석",
+            "설명": "분석상태 정상, 신호 39.87"
+          },
+          {
+            "요소": "뉴스·공시",
+            "사용가능": true,
+            "가중치": 10.0,
+            "신호": -3.15,
+            "판정": "중립",
+            "신호판정": "중립",
+            "데이터상태": "정상",
+            "데이터품질": 39.6,
+            "점수기여": -0.32,
+            "출처": "Google News RSS",
+            "설명": "분석상태 정상, 신호 -3.15"
+          }
+        ],
+        "미수집요소": [
+          "파생시장·프로그램",
+          "외국인·기관수급",
+          "기술·거래량"
+        ]
+      },
+      "중기": {
+        "기간": "1~8주",
+        "점수": 52,
+        "상승확률": 50,
+        "판정": "중립",
+        "자료신뢰도": 19,
+        "신뢰도": 19,
+        "자료신뢰도등급": "매우 낮음",
+        "신뢰도등급": "매우 낮음",
+        "요소별평가": [
+          {
+            "요소": "분기실적",
+            "사용가능": false,
+            "가중치": 25.0,
+            "신호": 0.0,
+            "판정": "중립",
+            "신호판정": "중립",
+            "데이터상태": "미수집",
+            "데이터품질": 0.0,
+            "점수기여": 0.0,
+            "출처": "DART 3년 성장률 대용",
+            "설명": "분기 비교 실패로 3년 성장률 대용"
+          },
+          {
+            "요소": "산업선행지표",
+            "사용가능": false,
+            "가중치": 25.0,
+            "신호": 0.0,
+            "판정": "중립",
+            "신호판정": "중립",
+            "데이터상태": "미수집",
+            "데이터품질": 0.0,
+            "점수기여": 0.0,
+            "출처": "반도체 산업 대표자산 합성",
+            "설명": "산업국면 미분류"
+          },
+          {
+            "요소": "누적수급",
+            "사용가능": false,
+            "가중치": 15.0,
+            "신호": 0.0,
+            "판정": "중립",
+            "신호판정": "중립",
+            "데이터상태": "미수집",
+            "데이터품질": 0.0,
+            "점수기여": 0.0,
+            "출처": "KIS 투자자별 일별 매매",
+            "설명": "5일 합산 0주, 20일 합산 0주"
+          },
+          {
+            "요소": "환율·금리·거시",
+            "사용가능": true,
+            "가중치": 15.0,
+            "신호": 23.02,
+            "판정": "긍정",
+            "신호판정": "긍정",
+            "데이터상태": "정상",
+            "데이터품질": 100.0,
+            "점수기여": 3.45,
+            "출처": "Yahoo 환율·미국금리·글로벌시장",
+            "설명": "분석상태 정상, 신호 23.02"
+          },
+          {
+            "요소": "가격추세",
+            "사용가능": false,
+            "가중치": 10.0,
+            "신호": 0.0,
+            "판정": "중립",
+            "신호판정": "중립",
+            "데이터상태": "미수집",
+            "데이터품질": 0.0,
+            "점수기여": 0.0,
+            "출처": "KIS 일봉",
+            "설명": "20일수익률 0.00%, 60일수익률 0.00%"
+          },
+          {
+            "요소": "뉴스·공시",
+            "사용가능": true,
+            "가중치": 10.0,
+            "신호": -3.15,
+            "판정": "중립",
+            "신호판정": "중립",
+            "데이터상태": "정상",
+            "데이터품질": 39.6,
+            "점수기여": -0.32,
+            "출처": "Google News RSS",
+            "설명": "분석상태 정상, 신호 -3.15"
+          }
+        ],
+        "미수집요소": [
+          "분기실적",
+          "산업선행지표",
+          "누적수급",
+          "가격추세"
+        ]
+      },
+      "장기": {
+        "기간": "6~18개월",
+        "점수": 45,
+        "상승확률": 50,
+        "판정": "중립",
+        "자료신뢰도": 2,
+        "신뢰도": 2,
+        "자료신뢰도등급": "매우 낮음",
+        "신뢰도등급": "매우 낮음",
+        "요소별평가": [
+          {
+            "요소": "향후이익방향",
+            "사용가능": false,
+            "가중치": 30.0,
+            "신호": 0.0,
+            "판정": "중립",
+            "신호판정": "중립",
+            "데이터상태": "미수집",
+            "데이터품질": 0.0,
+            "점수기여": 0.0,
+            "출처": "DART 3년 성장률 대용",
+            "설명": "최신 분기자료 실패로 3년 성장률 대용"
+          },
+          {
+            "요소": "산업사이클",
+            "사용가능": false,
+            "가중치": 25.0,
+            "신호": 0.0,
+            "판정": "중립",
+            "신호판정": "중립",
+            "데이터상태": "미수집",
+            "데이터품질": 0.0,
+            "점수기여": 0.0,
+            "출처": "반도체 산업 대표자산 1년 추세",
+            "설명": "산업국면 미분류"
+          },
+          {
+            "요소": "가치평가·안전마진",
+            "사용가능": false,
+            "가중치": 20.0,
+            "신호": 0.0,
+            "판정": "중립",
+            "신호판정": "중립",
+            "데이터상태": "미수집",
+            "데이터품질": 0.0,
+            "점수기여": 0.0,
+            "출처": "내부 가치평가",
+            "설명": "현재가 대비 0.00%, 판단 판정 보류"
+          },
+          {
+            "요소": "경쟁력·시장점유율",
+            "사용가능": true,
+            "가중치": 10.0,
+            "신호": -100.0,
+            "판정": "매우 부정",
+            "신호판정": "매우 부정",
+            "데이터상태": "정상",
+            "데이터품질": 23.3,
+            "점수기여": -10.0,
+            "출처": "ROE·영업이익률·버핏점수 대용",
+            "설명": "실제 시장점유율과 경쟁사 비교는 아직 미연결"
+          },
+          {
+            "요소": "현금흐름·재무안전성",
+            "사용가능": false,
+            "가중치": 10.0,
+            "신호": 0.0,
+            "판정": "중립",
+            "신호판정": "중립",
+            "데이터상태": "미수집",
+            "데이터품질": 0.0,
+            "점수기여": 0.0,
+            "출처": "부채비율 대용",
+            "설명": "분석상태 부채비율 대용"
+          },
+          {
+            "요소": "주주환원·지배구조",
+            "사용가능": false,
+            "가중치": 5.0,
+            "신호": 0.0,
+            "판정": "중립",
+            "신호판정": "중립",
+            "데이터상태": "미수집",
+            "데이터품질": 0.0,
+            "점수기여": 0.0,
+            "출처": "OpenDART 배당·자기주식",
+            "설명": "배당·자사주는 반영, 지배구조 정량평가는 아직 미연결"
+          }
+        ],
+        "미수집요소": [
+          "향후이익방향",
+          "산업사이클",
+          "가치평가·안전마진",
+          "현금흐름·재무안전성",
+          "주주환원·지배구조"
+        ]
+      }
+    },
+    "요소상태": {
+      "거시환경": {
+        "사용가능": true,
+        "점수": 23.02,
+        "데이터품질": 100.0,
+        "판정": "긍정",
+        "출처": "Yahoo Finance Chart API"
+      },
+      "산업선행지표": {
+        "사용가능": false,
+        "점수": 0.0,
+        "데이터품질": 0.0,
+        "판정": "중립",
+        "출처": "Yahoo Finance Chart API"
+      },
+      "산업사이클": {
+        "사용가능": false,
+        "점수": 0.0,
+        "데이터품질": 0.0,
+        "판정": "중립",
+        "출처": "Yahoo Finance Chart API"
+      },
+      "뉴스": {
+        "사용가능": true,
+        "점수": -3.15,
+        "데이터품질": 88.0,
+        "판정": "중립",
+        "출처": "Google News RSS"
+      },
+      "기업공시": {
+        "사용가능": false,
+        "점수": 0.0,
+        "데이터품질": 0.0,
+        "판정": "중립",
+        "출처": "금융감독원 OpenDART"
+      },
+      "외국인기관수급": {
+        "사용가능": true,
+        "점수": 0.0,
+        "데이터품질": 0.0,
+        "판정": "중립",
+        "출처": "한국투자증권 KIS"
+      },
+      "프로그램매매": {
+        "사용가능": false,
+        "점수": 0.0,
+        "데이터품질": 0.0,
+        "판정": "중립",
+        "출처": "한국투자증권 KIS 종목별 프로그램매매"
+      }
+    },
+    "검증오류": [
+      "산업선행지표 미연결",
+      "산업사이클 미연결",
+      "기업공시 미연결",
+      "프로그램매매 미연결"
+    ]
+  }
+}
