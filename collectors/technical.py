@@ -1015,18 +1015,49 @@ def _build_divergence_signal(
     actual_elapsed = _elapsed_text_from_timestamp(detection_timestamp)
 
     confirmation_label = "반전 확인도" if meta["nature"] == "반전" else "추세 지속 확인도"
-    beginner = meta["meaning"]
+    signal_bias = "상승" if direction == "상승" else "하락"
     if stage == "강한 확인 신호":
-        beginner += " 거래량 증가와 가장 가까운 유효 가격구조 확인선 돌파·이탈이 모두 확인된 강한 확인 단계입니다."
-    elif stage == "거래량 확인 신호":
-        beginner += " 거래량 증가는 확인됐지만 가격구조 돌파·이탈은 아직 확인되지 않았습니다."
+        beginner = (
+            f"이 신호는 비교적 강한 {signal_bias} 신호입니다. "
+            f"거래량 확인과 가격구조 확인이 함께 나와 {signal_bias} 쪽 힘이 실린 상태로 볼 수 있습니다."
+        )
     elif stage == "구조 확인 신호":
-        beginner += " 가격구조 돌파·이탈은 확인됐지만 거래량 증가는 아직 확인되지 않았습니다."
+        beginner = (
+            f"이 신호는 {signal_bias} 신호로 볼 수 있지만 강한 확정 단계까지는 아닙니다. "
+            f"가격구조는 확인됐지만 거래량 뒷받침이 약해 신뢰는 중간 수준입니다."
+        )
+    elif stage == "거래량 확인 신호":
+        beginner = (
+            f"이 신호는 {signal_bias} 신호이긴 하지만 아직 완전히 강한 신호는 아닙니다. "
+            f"거래량은 붙었지만 가격구조 돌파·이탈이 아직 없어 신뢰가 아주 높지는 않습니다."
+        )
     else:
-        beginner += " 거래량 증가와 가격구조 확인이 모두 부족한 초기 후보 신호입니다."
+        beginner = (
+            f"이 신호는 {signal_bias} 방향의 초기 신호입니다. "
+            f"아직 거래량과 가격구조 확인이 부족해 신뢰가 낮은 편이며, 관찰용에 더 가깝습니다."
+        )
+
+    if confirmation_score >= 80:
+        trust_phrase = "현재 완성도는 높은 편입니다."
+    elif confirmation_score >= 60:
+        trust_phrase = "현재 완성도는 보통 이상입니다."
+    elif confirmation_score >= 40:
+        trust_phrase = "현재 완성도는 보통 수준입니다."
+    else:
+        trust_phrase = "현재 완성도는 낮은 편입니다."
+
+    freshness_note = {
+        "매우 높음": "아주 최근에 나온 신호입니다.",
+        "높음": "비교적 최근에 나온 신호입니다.",
+        "보통": "너무 오래되진 않았지만 아주 새 신호는 아닙니다.",
+        "낮음": "시간이 조금 지난 신호라 힘이 약해졌을 수 있습니다.",
+    }.get(_freshness_label(age, validity), "시간이 지난 신호일 수 있습니다.")
+
     beginner += (
-        f" 다이버전스 품질 {divergence_quality_score}/100은 피벗 자체의 품질이고, "
-        f"신뢰도 {confirmation_score}/100은 현재 후속 확인 정도입니다. 둘 다 미래 확률을 뜻하지 않습니다."
+        f" {trust_phrase} {freshness_note} "
+        f"여기서 다이버전스 품질 {divergence_quality_score}/100은 피벗 모양의 깔끔함, "
+        f"신뢰도 {confirmation_score}/100은 거래량·가격구조까지 포함한 현재 확인 정도, "
+        f"신호 최근성은 신호가 얼마나 최근에 나왔는지를 뜻합니다. 미래 확률을 직접 의미하지는 않습니다."
     )
 
     summary = f"{meta['name']} · {_bar_age_text(age)} · {stage} · 신뢰도 {_confidence_grade(confirmation_score)}"
