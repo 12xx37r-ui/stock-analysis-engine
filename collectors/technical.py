@@ -1014,7 +1014,7 @@ def _build_divergence_signal(
     signal_confirmation_time = structure_confirmation_time if structure["confirmed"] else ""
     actual_elapsed = _elapsed_text_from_timestamp(detection_timestamp)
 
-    confirmation_label = "반전 확인도" if meta["nature"] == "반전" else "추세 지속 확인도"
+    confirmation_label = "실제 반전 확인 정도" if meta["nature"] == "반전" else "실제 추세 지속 확인 정도"
     signal_bias = "상승" if direction == "상승" else "하락"
     if stage == "강한 확인 신호":
         beginner = (
@@ -1055,8 +1055,8 @@ def _build_divergence_signal(
 
     beginner += (
         f" {trust_phrase} {freshness_note} "
-        f"여기서 다이버전스 품질 {divergence_quality_score}/100은 피벗 모양의 깔끔함, "
-        f"신뢰도 {confirmation_score}/100은 거래량·가격구조까지 포함한 현재 확인 정도, "
+        f"여기서 신호 모양 완성도 {divergence_quality_score}/100은 가격·RSI 피벗 모양이 얼마나 깔끔한지를 뜻하고, "
+        f"실제 확인 정도 {confirmation_score}/100은 거래량·가격구조까지 포함해 신호가 실제 움직임으로 확인된 정도를 뜻하며, "
         f"신호 최근성은 신호가 얼마나 최근에 나왔는지를 뜻합니다. 미래 확률을 직접 의미하지는 않습니다."
     )
 
