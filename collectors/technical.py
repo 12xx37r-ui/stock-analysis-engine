@@ -171,6 +171,7 @@ def aggregate_rows(rows: List[Dict[str, Any]], mode: str) -> List[Dict[str, Any]
                 "저가": safe_float(row.get("저가"), safe_float(row.get("종가"))),
                 "종가": safe_float(row.get("종가")),
                 "거래량": safe_float(row.get("거래량")),
+                "거래일수": 1,
             }
             continue
 
@@ -181,6 +182,7 @@ def aggregate_rows(rows: List[Dict[str, Any]], mode: str) -> List[Dict[str, Any]
         item["저가"] = min(item["저가"], low) if low > 0 else item["저가"]
         item["종가"] = safe_float(row.get("종가"), item["종가"])
         item["거래량"] += safe_float(row.get("거래량"))
+        item["거래일수"] = int(safe_float(item.get("거래일수"), 0)) + 1
 
     return list(grouped.values())
 
@@ -383,6 +385,8 @@ def aggregate_four_hour_rows(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]
         start_iso = datetime.fromtimestamp(start_timestamp, tz=timezone.utc).isoformat().replace("+00:00", "Z")
         key = f"{local_dt.date().isoformat()}-{bucket}"
 
+        slot_label = "오전" if bucket == 0 else "오후"
+
         if key not in grouped:
             grouped[key] = {
                 "기간": key,
@@ -395,6 +399,8 @@ def aggregate_four_hour_rows(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]
                 "저가": safe_float(row.get("저가"), close),
                 "종가": close,
                 "거래량": safe_float(row.get("거래량")),
+                "세션슬롯": slot_label,
+                "거래일수": 1,
                 "_bucketEndTimestamp": end_timestamp,
                 "_lastSourceTimestamp": source_timestamp,
             }
@@ -518,14 +524,15 @@ def _relative_volume_confirmation(
     increase_threshold: float = 1.20,
     clear_threshold: float = 2.00,
     strong_threshold: float = 4.00,
+    timeframe: str = "",
+    direction: str = "",
 ) -> Dict[str, Any]:
     """Evaluate relative volume close to the divergence detection point.
 
-    The engine keeps the previous 1.50x surge threshold as an explicit
-    "급증 기준" while also classifying 1.20x~1.49x as a weak increase.
-    This lets the stage model distinguish no increase / weak increase /
-    clear surge / strong confirmation without allowing a much later,
-    unrelated volume spike to validate an old divergence.
+    Improvements in v8:
+    - 4시간봉은 오전/오후 슬롯을 섞지 않고 같은 세션 슬롯끼리 비교한다.
+    - 주봉/월봉은 총거래량이 아니라 거래일수로 보정한 일평균 거래량으로 비교한다.
+    - 거래량 증가가 있어도 신호 방향과 반대 가격행동이면 확인 통과로 보지 않는다.
     """
     valid_volume_count = sum(1 for row in rows if safe_float(row.get("거래량")) > 0)
     if valid_volume_count < min(average_bars + 1, len(rows)):
@@ -537,30 +544,86 @@ def _relative_volume_confirmation(
             "status": "거래량 데이터 없음",
             "grade": "데이터 없음",
             "surge_confirmed": False,
+            "direction_aligned": False,
         }
 
-    best_ratio: Optional[float] = None
-    best_index: Optional[int] = None
-    start = max(start_index, average_bars)
+    def row_volume_metric(index: int) -> Optional[float]:
+        if index < 0 or index >= len(rows):
+            return None
+        row = rows[index]
+        volume = safe_float(row.get("거래량"))
+        if volume <= 0:
+            return None
+        if timeframe in {"주봉", "월봉"}:
+            trading_days = max(1.0, safe_float(row.get("거래일수"), 0.0))
+            return volume / trading_days
+        return volume
+
+    def previous_metrics(index: int) -> List[float]:
+        metrics: List[float] = []
+        if timeframe == "4시간봉":
+            current_slot = safe_text(rows[index].get("세션슬롯"))
+            for i in range(index - 1, -1, -1):
+                if current_slot and safe_text(rows[i].get("세션슬롯")) != current_slot:
+                    continue
+                metric = row_volume_metric(i)
+                if metric and metric > 0:
+                    metrics.append(metric)
+                if len(metrics) >= average_bars:
+                    break
+        else:
+            begin = max(0, index - average_bars)
+            for i in range(begin, index):
+                metric = row_volume_metric(i)
+                if metric and metric > 0:
+                    metrics.append(metric)
+        return metrics
+
+    def direction_supportive(index: int) -> bool:
+        if index < 0 or index >= len(rows):
+            return False
+        row = rows[index]
+        close = safe_float(row.get("종가"))
+        open_ = safe_float(row.get("시가"), close)
+        prev_close = safe_float(rows[index - 1].get("종가"), close) if index > 0 else close
+        if direction == "상승":
+            return (close >= prev_close) or (close > open_)
+        if direction == "하락":
+            return (close <= prev_close) or (close < open_)
+        return True
+
+    best_aligned_ratio: Optional[float] = None
+    best_aligned_index: Optional[int] = None
+    best_any_ratio: Optional[float] = None
+    best_any_index: Optional[int] = None
+    best_any_aligned = False
+
+    start = max(start_index, 1 if direction else 0)
     stop = len(rows)
     if confirmation_window_bars is not None and confirmation_window_bars > 0:
         stop = min(stop, start_index + int(confirmation_window_bars) + 1)
 
     for index in range(start, stop):
-        volume = safe_float(rows[index].get("거래량"))
-        previous = [safe_float(rows[i].get("거래량")) for i in range(index - average_bars, index)]
-        previous = [value for value in previous if value > 0]
-        if volume <= 0 or len(previous) < max(5, average_bars // 2):
+        metric = row_volume_metric(index)
+        previous = previous_metrics(index)
+        if metric is None or len(previous) < max(5, average_bars // 2):
             continue
         average = sum(previous) / len(previous)
         if average <= 0:
             continue
-        ratio = volume / average
-        if best_ratio is None or ratio > best_ratio:
-            best_ratio = ratio
-            best_index = index
+        ratio = metric / average
+        aligned = direction_supportive(index)
 
-    if best_ratio is None:
+        if best_any_ratio is None or ratio > best_any_ratio:
+            best_any_ratio = ratio
+            best_any_index = index
+            best_any_aligned = aligned
+
+        if aligned and (best_aligned_ratio is None or ratio > best_aligned_ratio):
+            best_aligned_ratio = ratio
+            best_aligned_index = index
+
+    if best_any_ratio is None:
         return {
             "available": False,
             "confirmed": False,
@@ -569,12 +632,20 @@ def _relative_volume_confirmation(
             "status": "거래량 데이터 없음",
             "grade": "데이터 없음",
             "surge_confirmed": False,
+            "direction_aligned": False,
         }
 
-    ratio = float(best_ratio)
+    use_ratio = best_aligned_ratio if best_aligned_ratio is not None else best_any_ratio
+    use_index = best_aligned_index if best_aligned_index is not None else best_any_index
+    aligned = best_aligned_ratio is not None if best_aligned_ratio is not None else best_any_aligned
+    ratio = float(use_ratio)
     increased = ratio >= increase_threshold
     surge_confirmed = ratio >= threshold
-    if ratio >= strong_threshold:
+    confirmed = increased and aligned
+
+    if not aligned and ratio >= increase_threshold:
+        grade = "거래량 증가 있으나 방향 미일치"
+    elif ratio >= strong_threshold:
         grade = "강한 거래량 확증"
     elif ratio >= clear_threshold:
         grade = "뚜렷한 거래량 증가"
@@ -587,12 +658,13 @@ def _relative_volume_confirmation(
 
     return {
         "available": True,
-        "confirmed": increased,
+        "confirmed": confirmed,
         "ratio": round(ratio, 2),
-        "index": best_index,
+        "index": use_index,
         "status": grade,
         "grade": grade,
-        "surge_confirmed": surge_confirmed,
+        "surge_confirmed": surge_confirmed and aligned,
+        "direction_aligned": aligned,
     }
 
 def _structure_reference(
@@ -824,6 +896,8 @@ def _build_divergence_signal(
         increase_threshold=float(config.get("volume_increase_threshold", 1.20)),
         clear_threshold=float(config.get("clear_volume_threshold", 2.00)),
         strong_threshold=float(config.get("strong_volume_threshold", 4.00)),
+        timeframe=timeframe,
+        direction=direction,
     )
     structure_reference = _structure_reference(
         rows,
@@ -990,6 +1064,7 @@ def _build_divergence_signal(
         "거래량배수": volume["ratio"],
         "거래량확인": bool(volume["confirmed"]),
         "거래량급증기준충족": bool(volume.get("surge_confirmed")),
+        "거래량방향일치": bool(volume.get("direction_aligned")),
         "거래량상태": volume["status"],
         "거래량확인시각UTC": volume_confirmation_time,
         "가격구조기준": round(structure_level, 2) if structure_level > 0 else None,
@@ -1174,6 +1249,12 @@ def analyze_divergence_timeframe(
             "뚜렷한거래량배수": float(config.get("clear_volume_threshold", 2.00)),
             "강한거래량확증배수": float(config.get("strong_volume_threshold", 4.00)),
             "거래량확인창봉": int(config.get("confirmation_window_bars", 0)),
+            "거래량비교방식": (
+                "같은 세션 슬롯 20봉 평균 대비" if timeframe == "4시간봉"
+                else "최근 20일 평균 대비" if timeframe == "일봉"
+                else "최근 20주 일평균 거래량 대비" if timeframe == "주봉"
+                else "최근 20개월 일평균 거래량 대비"
+            ),
         },
     }
 
