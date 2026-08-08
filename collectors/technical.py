@@ -799,7 +799,9 @@ def _build_divergence_signal(
 
     age = len(rows) - 1 - confirmation_index
     validity = int(config["validity_bars"])
-    if age > validity:
+    # "최근 N봉"은 현재 확정봉을 0봉 전으로 볼 때 0..N-1만 포함한다.
+    # 예: 최근 12봉이면 발생봉전 0~11만 유효하고 12봉 전은 만료다.
+    if age >= validity:
         return None
 
     direction = meta["direction"]
