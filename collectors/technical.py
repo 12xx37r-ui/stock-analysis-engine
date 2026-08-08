@@ -190,41 +190,53 @@ def aggregate_rows(rows: List[Dict[str, Any]], mode: str) -> List[Dict[str, Any]
 DIVERGENCE_CONFIG: Dict[str, Dict[str, Any]] = {
     "4시간봉": {
         "search_bars": 180,
-        "validity_bars": 30,
+        "validity_bars": 12,
         "minimum_observations": 80,
         "pivot_left": 2,
-        "pivot_right": 2,
+        "pivot_right": 1,
         "min_pivot_gap": 5,
         "max_pivot_gap": 50,
         "min_price_change_pct": 0.40,
         "min_rsi_delta": 2.0,
+        "volume_increase_threshold": 1.20,
         "relative_volume_threshold": 1.50,
+        "clear_volume_threshold": 2.00,
+        "strong_volume_threshold": 4.00,
+        "confirmation_window_bars": 4,
         "invalidation_buffer_pct": 0.50,
     },
     "일봉": {
         "search_bars": 150,
-        "validity_bars": 20,
+        "validity_bars": 10,
         "minimum_observations": 80,
         "pivot_left": 2,
-        "pivot_right": 2,
+        "pivot_right": 1,
         "min_pivot_gap": 5,
         "max_pivot_gap": 60,
         "min_price_change_pct": 0.60,
         "min_rsi_delta": 2.5,
+        "volume_increase_threshold": 1.20,
         "relative_volume_threshold": 1.50,
+        "clear_volume_threshold": 2.00,
+        "strong_volume_threshold": 4.00,
+        "confirmation_window_bars": 4,
         "invalidation_buffer_pct": 0.60,
     },
     "주봉": {
         "search_bars": 120,
-        "validity_bars": 12,
+        "validity_bars": 8,
         "minimum_observations": 52,
         "pivot_left": 2,
-        "pivot_right": 2,
+        "pivot_right": 1,
         "min_pivot_gap": 3,
         "max_pivot_gap": 40,
         "min_price_change_pct": 1.00,
         "min_rsi_delta": 3.0,
+        "volume_increase_threshold": 1.20,
         "relative_volume_threshold": 1.50,
+        "clear_volume_threshold": 2.00,
+        "strong_volume_threshold": 4.00,
+        "confirmation_window_bars": 3,
         "invalidation_buffer_pct": 0.80,
     },
     "월봉": {
@@ -232,12 +244,16 @@ DIVERGENCE_CONFIG: Dict[str, Dict[str, Any]] = {
         "validity_bars": 6,
         "minimum_observations": 36,
         "pivot_left": 2,
-        "pivot_right": 2,
+        "pivot_right": 1,
         "min_pivot_gap": 2,
         "max_pivot_gap": 24,
         "min_price_change_pct": 1.50,
         "min_rsi_delta": 3.0,
+        "volume_increase_threshold": 1.20,
         "relative_volume_threshold": 1.50,
+        "clear_volume_threshold": 2.00,
+        "strong_volume_threshold": 4.00,
+        "confirmation_window_bars": 2,
         "invalidation_buffer_pct": 1.00,
     },
 }
@@ -318,16 +334,24 @@ def calculate_rsi_series(values: List[float], period: int = 14) -> List[Optional
 
 
 def aggregate_four_hour_rows(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """Aggregate Yahoo 1h Korean-session rows into 09:00-13:00 and 13:00-close KST candles."""
+    """
+    Aggregate Yahoo 1h Korean-session rows using the KRX 09:00 KST session anchor.
+
+    Buckets are 09:00-13:00 and 13:00-15:30 KST.  The second candle is a
+    shortened end-of-session candle because the regular KRX session is 6.5h.
+    The public timestamp is the *bucket close time*, not the start time of the
+    last 1h source bar; this prevents a 09:00-13:00 candle from being displayed
+    misleadingly as 12:00.
+    """
     grouped: "OrderedDict[str, Dict[str, Any]]" = OrderedDict()
 
     for row in rows:
-        timestamp = int(safe_float(row.get("timestamp"), 0))
+        source_timestamp = int(safe_float(row.get("timestamp"), 0))
         close = safe_float(row.get("종가"))
-        if timestamp <= 0 or close <= 0:
+        if source_timestamp <= 0 or close <= 0:
             continue
 
-        local_dt = datetime.fromtimestamp(timestamp, tz=timezone.utc).astimezone(KST)
+        local_dt = datetime.fromtimestamp(source_timestamp, tz=timezone.utc).astimezone(KST)
         minute_of_day = local_dt.hour * 60 + local_dt.minute
         market_open = 9 * 60
         market_close = 15 * 60 + 30
@@ -338,33 +362,49 @@ def aggregate_four_hour_rows(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]
         bucket = 0 if session_minutes < 240 else 1
         bucket_start_minutes = market_open + bucket * 240
         bucket_end_minutes = min(bucket_start_minutes + 240, market_close)
+
+        start_hour, start_minute = divmod(bucket_start_minutes, 60)
         end_hour, end_minute = divmod(bucket_end_minutes, 60)
+        start_local = local_dt.replace(
+            hour=start_hour,
+            minute=start_minute,
+            second=0,
+            microsecond=0,
+        )
         end_local = local_dt.replace(
             hour=end_hour,
             minute=end_minute,
             second=0,
             microsecond=0,
         )
+        start_timestamp = int(start_local.astimezone(timezone.utc).timestamp())
         end_timestamp = int(end_local.astimezone(timezone.utc).timestamp())
+        end_iso = datetime.fromtimestamp(end_timestamp, tz=timezone.utc).isoformat().replace("+00:00", "Z")
+        start_iso = datetime.fromtimestamp(start_timestamp, tz=timezone.utc).isoformat().replace("+00:00", "Z")
         key = f"{local_dt.date().isoformat()}-{bucket}"
 
         if key not in grouped:
             grouped[key] = {
                 "기간": key,
-                "timestamp": timestamp,
-                "시각UTC": safe_text(row.get("시각UTC")),
+                "timestamp": end_timestamp,
+                "시각UTC": end_iso,
+                "봉시작시각UTC": start_iso,
+                "봉종료시각UTC": end_iso,
                 "시가": safe_float(row.get("시가"), close),
                 "고가": safe_float(row.get("고가"), close),
                 "저가": safe_float(row.get("저가"), close),
                 "종가": close,
                 "거래량": safe_float(row.get("거래량")),
                 "_bucketEndTimestamp": end_timestamp,
+                "_lastSourceTimestamp": source_timestamp,
             }
             continue
 
         item = grouped[key]
-        item["timestamp"] = timestamp
-        item["시각UTC"] = safe_text(row.get("시각UTC"), item.get("시각UTC", ""))
+        item["timestamp"] = end_timestamp
+        item["시각UTC"] = end_iso
+        item["봉종료시각UTC"] = end_iso
+        item["_lastSourceTimestamp"] = source_timestamp
         item["고가"] = max(item["고가"], safe_float(row.get("고가"), item["고가"]))
         low = safe_float(row.get("저가"), item["저가"])
         item["저가"] = min(item["저가"], low) if low > 0 else item["저가"]
@@ -474,7 +514,19 @@ def _relative_volume_confirmation(
     start_index: int,
     threshold: float,
     average_bars: int = 20,
+    confirmation_window_bars: Optional[int] = None,
+    increase_threshold: float = 1.20,
+    clear_threshold: float = 2.00,
+    strong_threshold: float = 4.00,
 ) -> Dict[str, Any]:
+    """Evaluate relative volume close to the divergence detection point.
+
+    The engine keeps the previous 1.50x surge threshold as an explicit
+    "급증 기준" while also classifying 1.20x~1.49x as a weak increase.
+    This lets the stage model distinguish no increase / weak increase /
+    clear surge / strong confirmation without allowing a much later,
+    unrelated volume spike to validate an old divergence.
+    """
     valid_volume_count = sum(1 for row in rows if safe_float(row.get("거래량")) > 0)
     if valid_volume_count < min(average_bars + 1, len(rows)):
         return {
@@ -483,12 +535,18 @@ def _relative_volume_confirmation(
             "ratio": None,
             "index": None,
             "status": "거래량 데이터 없음",
+            "grade": "데이터 없음",
+            "surge_confirmed": False,
         }
 
     best_ratio: Optional[float] = None
     best_index: Optional[int] = None
     start = max(start_index, average_bars)
-    for index in range(start, len(rows)):
+    stop = len(rows)
+    if confirmation_window_bars is not None and confirmation_window_bars > 0:
+        stop = min(stop, start_index + int(confirmation_window_bars) + 1)
+
+    for index in range(start, stop):
         volume = safe_float(rows[index].get("거래량"))
         previous = [safe_float(rows[i].get("거래량")) for i in range(index - average_bars, index)]
         previous = [value for value in previous if value > 0]
@@ -509,36 +567,92 @@ def _relative_volume_confirmation(
             "ratio": None,
             "index": None,
             "status": "거래량 데이터 없음",
+            "grade": "데이터 없음",
+            "surge_confirmed": False,
         }
 
-    confirmed = best_ratio >= threshold
+    ratio = float(best_ratio)
+    increased = ratio >= increase_threshold
+    surge_confirmed = ratio >= threshold
+    if ratio >= strong_threshold:
+        grade = "강한 거래량 확증"
+    elif ratio >= clear_threshold:
+        grade = "뚜렷한 거래량 증가"
+    elif ratio >= threshold:
+        grade = "거래량 증가 확인"
+    elif ratio >= increase_threshold:
+        grade = "약한 증가"
+    else:
+        grade = "거래량 증가 미확인"
+
     return {
         "available": True,
-        "confirmed": confirmed,
-        "ratio": round(best_ratio, 2),
+        "confirmed": increased,
+        "ratio": round(ratio, 2),
         "index": best_index,
-        "status": (
-            f"거래량 증가 확인 · {best_ratio:.2f}배"
-            if confirmed
-            else f"거래량 증가 미확인 · {best_ratio:.2f}배"
-        ),
+        "status": grade,
+        "grade": grade,
+        "surge_confirmed": surge_confirmed,
     }
-
 
 def _structure_reference(
     rows: List[Dict[str, Any]],
     first_index: int,
     second_index: int,
     direction: str,
-) -> float:
-    subset = rows[first_index:second_index + 1]
-    if not subset:
-        return 0.0
-    if direction == "상승":
-        return max(safe_float(row.get("고가")) for row in subset)
-    lows = [safe_float(row.get("저가")) for row in subset if safe_float(row.get("저가")) > 0]
-    return min(lows) if lows else 0.0
+    left: int = 2,
+    right: int = 1,
+) -> Dict[str, Any]:
+    """Select the nearest meaningful swing between the two divergence pivots.
 
+    For a bullish divergence, use the most recent confirmed swing high before
+    the second low. For a bearish divergence, use the most recent confirmed
+    swing low before the second high. Only the interval between the two
+    divergence pivots is considered, so a distant historical swing cannot be
+    imported accidentally.
+    """
+    start = first_index + 1
+    stop = second_index
+    if start >= stop:
+        return {"level": 0.0, "index": None, "time": "", "method": "없음"}
+
+    key = "고가" if direction == "상승" else "저가"
+    mode = "high" if direction == "상승" else "low"
+    candidate_indices: List[int] = []
+
+    # Search backwards so the nearest confirmed swing is chosen first.
+    for index in range(stop - 1, start - 1, -1):
+        if index - left < start or index + right >= stop:
+            continue
+        value = safe_float(rows[index].get(key))
+        if value <= 0:
+            continue
+        window = [safe_float(rows[i].get(key)) for i in range(index - left, index + right + 1)]
+        if any(item <= 0 for item in window):
+            continue
+        neighbors = window[:left] + window[left + 1:]
+        if mode == "high":
+            is_pivot = value >= max(neighbors) and value > min(neighbors)
+        else:
+            is_pivot = value <= min(neighbors) and value < max(neighbors)
+        if is_pivot:
+            candidate_indices.append(index)
+            break
+
+    if not candidate_indices:
+        # No confirmed local swing exists between the pivots. Do not fall back
+        # to an older external swing because that would distort the confirmation line.
+        return {"level": 0.0, "index": None, "time": "", "method": "두 피벗 사이 유효 스윙 없음"}
+
+    selected_index = candidate_indices[0]
+    level = safe_float(rows[selected_index].get(key))
+    row = rows[selected_index]
+    return {
+        "level": level,
+        "index": selected_index,
+        "time": safe_text(row.get("봉종료시각UTC") or row.get("시각UTC")),
+        "method": "두 피벗 사이 가장 가까운 유효 스윙",
+    }
 
 def _structure_confirmation(
     rows: List[Dict[str, Any]],
@@ -636,14 +750,25 @@ def _strength_grade(score: float) -> str:
     return "매우 강함"
 
 
-def _elapsed_text(timeframe: str, age: int) -> str:
-    if timeframe == "4시간봉":
-        return f"약 {age * 4}시간 전"
-    if timeframe == "일봉":
-        return f"약 {age}거래일 전"
-    if timeframe == "주봉":
-        return f"약 {age}주 전"
-    return f"약 {age}개월 전"
+def _elapsed_text_from_timestamp(timestamp: int) -> str:
+    if timestamp <= 0:
+        return ""
+    observed = datetime.fromtimestamp(timestamp, tz=timezone.utc)
+    now = datetime.now(timezone.utc)
+    if observed > now:
+        return "0분"
+    total_minutes = int((now - observed).total_seconds() // 60)
+    days, remainder = divmod(total_minutes, 24 * 60)
+    hours, minutes = divmod(remainder, 60)
+    if days > 0:
+        return f"{days}일 {hours}시간" if hours else f"{days}일"
+    if hours > 0:
+        return f"{hours}시간 {minutes}분" if minutes else f"{hours}시간"
+    return f"{max(0, minutes)}분"
+
+
+def _bar_age_text(age: int) -> str:
+    return f"{max(0, int(age))}개 거래봉 전"
 
 
 def _no_signal(direction: str, reason: str) -> Dict[str, Any]:
@@ -679,36 +804,34 @@ def _build_divergence_signal(
 
     direction = meta["direction"]
     invalidation_buffer = float(config["invalidation_buffer_pct"]) / 100.0
-    invalidated = False
-    invalidated_index: Optional[int] = None
     pivot2_price = float(second["price"])
     for index in range(confirmation_index, len(rows)):
         close = safe_float(rows[index].get("종가"))
         if close <= 0:
             continue
         if direction == "상승" and close < pivot2_price * (1.0 - invalidation_buffer):
-            invalidated = True
-            invalidated_index = index
-            break
+            return None
         if direction == "하락" and close > pivot2_price * (1.0 + invalidation_buffer):
-            invalidated = True
-            invalidated_index = index
-            break
-
-    if invalidated:
-        return None
+            return None
 
     volume = _relative_volume_confirmation(
         rows,
         confirmation_index,
         float(config["relative_volume_threshold"]),
+        confirmation_window_bars=int(config.get("confirmation_window_bars", 0)) or None,
+        increase_threshold=float(config.get("volume_increase_threshold", 1.20)),
+        clear_threshold=float(config.get("clear_volume_threshold", 2.00)),
+        strong_threshold=float(config.get("strong_volume_threshold", 4.00)),
     )
-    structure_level = _structure_reference(
+    structure_reference = _structure_reference(
         rows,
         first["index"],
         second["index"],
         direction,
+        left=int(config.get("pivot_left", 2)),
+        right=int(config.get("pivot_right", 1)),
     )
+    structure_level = safe_float(structure_reference.get("level"))
     structure = _structure_confirmation(
         rows,
         confirmation_index,
@@ -717,9 +840,11 @@ def _build_divergence_signal(
     )
 
     if volume["confirmed"] and structure["confirmed"]:
-        stage = "강한 상승 확인" if direction == "상승" else "강한 하락 확인"
-    elif volume["confirmed"] or structure["confirmed"]:
-        stage = "확인 진행"
+        stage = "강한 확인 신호"
+    elif volume["confirmed"]:
+        stage = "거래량 확인 신호"
+    elif structure["confirmed"]:
+        stage = "구조 확인 신호"
     else:
         stage = "초기 신호"
 
@@ -738,28 +863,52 @@ def _build_divergence_signal(
     trend_consistent = _trend_consistency(closes, second["index"], signal_type)
     freshness_score = max(0.0, 1.0 - age / max(validity, 1))
 
-    divergence_quality = (
-        15.0 +
-        min(8.0, price_change_pct * 1.4) +
-        min(7.0, rsi_change * 0.75)
-    )
-    confidence = (
-        divergence_quality +
-        min(10.0, prominence * 5.0) +
-        distance_quality * 10.0 +
-        freshness_score * 15.0 +
-        (15.0 if volume["confirmed"] else (4.0 if volume["available"] else 0.0)) +
-        (15.0 if structure["confirmed"] else 4.0) +
-        (5.0 if trend_consistent else 1.0)
-    )
-    confidence = round(clamp(confidence, 0.0, 100.0))
+    minimum_price_change = max(float(config["min_price_change_pct"]), 0.01)
+    minimum_rsi_delta = max(float(config["min_rsi_delta"]), 0.01)
+    divergence_quality_score = round(clamp(
+        min(20.0, (price_change_pct / minimum_price_change) * 10.0) +
+        min(20.0, (rsi_change / minimum_rsi_delta) * 10.0) +
+        min(20.0, prominence * 5.0) +
+        distance_quality * 20.0 +
+        (20.0 if trend_consistent else 8.0),
+        0.0,
+        100.0,
+    ))
 
     latest_close = closes[-1] if closes else 0.0
     if direction == "상승":
         followthrough_pct = max(0.0, (latest_close / pivot2_price - 1.0) * 100.0) if pivot2_price > 0 else 0.0
     else:
         followthrough_pct = max(0.0, (pivot2_price / latest_close - 1.0) * 100.0) if latest_close > 0 else 0.0
+
     rvol = float(volume["ratio"] or 0.0)
+    increase_threshold = max(float(config.get("volume_increase_threshold", 1.20)), 0.01)
+    if volume["confirmed"]:
+        volume_confirmation_points = 22.0 + min(8.0, max(0.0, rvol / increase_threshold - 1.0) * 10.0)
+    elif volume["available"]:
+        volume_confirmation_points = min(8.0, max(0.0, rvol / increase_threshold) * 8.0)
+    else:
+        volume_confirmation_points = 0.0
+
+    structure_confirmation_points = (
+        35.0 + min(5.0, max(0.0, float(structure["extent_pct"])) * 2.0)
+        if structure["confirmed"] else 0.0
+    )
+    confirmation_score = (
+        12.0 +
+        freshness_score * 10.0 +
+        volume_confirmation_points +
+        structure_confirmation_points +
+        min(10.0, followthrough_pct * 1.5)
+    )
+    if stage == "초기 신호":
+        confirmation_score = min(39.0, confirmation_score)
+    elif stage in {"거래량 확인 신호", "구조 확인 신호"}:
+        confirmation_score = clamp(confirmation_score, 40.0, 79.0)
+    else:
+        confirmation_score = clamp(confirmation_score, 70.0, 100.0)
+    confirmation_score = round(clamp(confirmation_score, 0.0, 100.0))
+
     strength_score = (
         min(20.0, price_change_pct * 2.0) +
         min(20.0, rsi_change * 1.5) +
@@ -769,26 +918,42 @@ def _build_divergence_signal(
     )
     strength_score = round(clamp(strength_score, 0.0, 100.0))
 
-    confirmation_row = rows[confirmation_index]
-    confirmation_time = safe_text(confirmation_row.get("시각UTC"))
-    if not confirmation_time:
-        confirmation_time = datetime.fromtimestamp(
-            int(safe_float(confirmation_row.get("timestamp"), 0)),
-            tz=timezone.utc,
-        ).isoformat()
+    def row_time(index: Optional[int]) -> str:
+        if index is None or index < 0 or index >= len(rows):
+            return ""
+        row = rows[index]
+        text = safe_text(row.get("봉종료시각UTC") or row.get("시각UTC"))
+        if text:
+            return text
+        timestamp = int(safe_float(row.get("timestamp"), 0))
+        if timestamp <= 0:
+            return ""
+        return datetime.fromtimestamp(timestamp, tz=timezone.utc).isoformat().replace("+00:00", "Z")
 
+    detection_row = rows[confirmation_index]
+    detection_timestamp = int(safe_float(detection_row.get("timestamp"), 0))
+    detection_time = row_time(confirmation_index)
+    structure_confirmation_time = row_time(structure.get("index")) if structure["confirmed"] else ""
+    volume_confirmation_time = row_time(volume.get("index")) if volume.get("confirmed") else ""
+    signal_confirmation_time = structure_confirmation_time if structure["confirmed"] else ""
+    actual_elapsed = _elapsed_text_from_timestamp(detection_timestamp)
+
+    confirmation_label = "반전 확인도" if meta["nature"] == "반전" else "추세 지속 확인도"
     beginner = meta["meaning"]
-    if volume["confirmed"] and structure["confirmed"]:
-        beginner += " 거래량 증가와 가격구조 확인이 모두 더해져 단순 다이버전스보다 확인 단계가 높습니다."
-    elif volume["confirmed"] or structure["confirmed"]:
-        beginner += " 거래량 또는 가격구조 중 한 가지 확인이 더해졌지만 아직 두 조건이 모두 확인된 것은 아닙니다."
+    if stage == "강한 확인 신호":
+        beginner += " 거래량 증가와 가장 가까운 유효 가격구조 확인선 돌파·이탈이 모두 확인된 강한 확인 단계입니다."
+    elif stage == "거래량 확인 신호":
+        beginner += " 거래량 증가는 확인됐지만 가격구조 돌파·이탈은 아직 확인되지 않았습니다."
+    elif stage == "구조 확인 신호":
+        beginner += " 가격구조 돌파·이탈은 확인됐지만 거래량 증가는 아직 확인되지 않았습니다."
     else:
-        beginner += " 아직 거래량 증가와 가격구조 확인이 부족하므로 선행 경고 성격의 초기 신호로 보는 편이 적절합니다."
-    beginner += " 신뢰도 점수는 미래 상승·하락 확률이 아니라 현재 기술적 조건의 충족도와 신호 품질 점수입니다."
-
-    summary = (
-        f"{meta['name']} · {age}봉 전 · 신뢰도 {_confidence_grade(confidence)}"
+        beginner += " 거래량 증가와 가격구조 확인이 모두 부족한 초기 후보 신호입니다."
+    beginner += (
+        f" 다이버전스 품질 {divergence_quality_score}/100은 피벗 자체의 품질이고, "
+        f"신뢰도 {confirmation_score}/100은 현재 후속 확인 정도입니다. 둘 다 미래 확률을 뜻하지 않습니다."
     )
+
+    summary = f"{meta['name']} · {_bar_age_text(age)} · {stage} · 신뢰도 {_confidence_grade(confirmation_score)}"
 
     return {
         "탐지": True,
@@ -804,8 +969,12 @@ def _build_divergence_signal(
         "의미": meta["meaning"],
         "요약": summary,
         "발생봉전": age,
-        "경과설명": _elapsed_text(timeframe, age),
-        "신호확정시각UTC": confirmation_time,
+        "거래봉설명": _bar_age_text(age),
+        "경과설명": actual_elapsed,
+        "실제경과설명": actual_elapsed,
+        "다이버전스탐지시각UTC": detection_time,
+        "피벗확정시각UTC": detection_time,
+        "신호확정시각UTC": signal_confirmation_time,
         "피벗1시각UTC": first.get("time", ""),
         "피벗2시각UTC": second.get("time", ""),
         "피벗간격봉": gap,
@@ -818,26 +987,36 @@ def _build_divergence_signal(
         "신선도": _freshness_label(age, validity),
         "거래량배수": volume["ratio"],
         "거래량확인": bool(volume["confirmed"]),
+        "거래량급증기준충족": bool(volume.get("surge_confirmed")),
         "거래량상태": volume["status"],
+        "거래량확인시각UTC": volume_confirmation_time,
         "가격구조기준": round(structure_level, 2) if structure_level > 0 else None,
+        "가격구조기준시각UTC": safe_text(structure_reference.get("time")),
+        "가격구조기준선정방식": safe_text(structure_reference.get("method")),
         "가격구조확인": bool(structure["confirmed"]),
         "가격구조상태": structure["status"],
         "가격구조확인폭퍼센트": structure["extent_pct"],
+        "가격구조확인시각UTC": structure_confirmation_time,
         "진행단계": stage,
-        "신뢰도": int(confidence),
-        "신뢰도등급": _confidence_grade(confidence),
+        "다이버전스품질": int(divergence_quality_score),
+        "다이버전스품질등급": _confidence_grade(divergence_quality_score),
+        "확인도명": confirmation_label,
+        "방향확인도": int(confirmation_score),
+        "방향확인도등급": _confidence_grade(confirmation_score),
+        "신뢰도": int(confirmation_score),
+        "신뢰도등급": _confidence_grade(confirmation_score),
         "강도점수": int(strength_score),
         "강도": _strength_grade(strength_score),
         "추세정합": bool(trend_consistent),
         "초보투자자해석": beginner,
         "유효기간봉": validity,
         "탐색기간봉": int(config["search_bars"]),
+        "거래량확인창봉": int(config.get("confirmation_window_bars", 0)),
         "무효화기준": (
             f"종가가 두 번째 피벗 {'저점' if direction == '상승' else '고점'}을 "
             f"{float(config['invalidation_buffer_pct']):.1f}% 이상 {'하회' if direction == '상승' else '상회'}하면 종료"
         ),
     }
-
 
 def analyze_divergence_timeframe(
     rows: List[Dict[str, Any]],
@@ -850,18 +1029,22 @@ def analyze_divergence_timeframe(
         rows = rows[-search_bars:]
 
     minimum = int(config["minimum_observations"])
+    validity = int(config["validity_bars"])
     if len(rows) < minimum:
         reason = f"분석 데이터 부족 · {len(rows)}/{minimum}봉"
+        no_signal = _no_signal("", reason)
         return {
             "분석가능": False,
             "available": False,
             "시간봉": timeframe,
             "관측봉수": len(rows),
             "탐색기간봉": search_bars,
-            "유효기간봉": int(config["validity_bars"]),
+            "유효기간봉": validity,
+            "대표신호": no_signal,
             "상승": _no_signal("상승", reason),
             "하락": _no_signal("하락", reason),
             "활성신호": [],
+            "과거신호": [],
             "사유": reason,
         }
 
@@ -919,28 +1102,50 @@ def analyze_divergence_timeframe(
     scan(low_pivots, "low")
     scan(high_pivots, "high")
 
-    def select(direction: str) -> Dict[str, Any]:
-        items = [item for item in candidates if item.get("방향") == direction]
-        if not items:
-            return _no_signal(direction, f"유효기간 내 {direction} 다이버전스 없음")
-        items.sort(
-            key=lambda item: (
-                -int(item.get("발생봉전", 999999)),
-                int(item.get("신뢰도", 0)),
-                int(item.get("강도점수", 0)),
-            ),
-            reverse=True,
+    # 핵심 원칙: 상승/하락을 각각 뽑지 않는다. 네 종류 전체에서
+    # 최근 유효 범위 안의 가장 최근 확정 다이버전스 한 개만 대표 신호로 선정한다.
+    candidates.sort(
+        key=lambda item: (
+            int(item.get("발생봉전", 999999)),
+            -int(item.get("신뢰도", 0)),
+            -int(item.get("다이버전스품질", 0)),
+            -int(item.get("강도점수", 0)),
         )
-        # 가장 최근 확정 신호를 우선하며 같은 시점이면 품질이 높은 신호를 선택한다.
-        items.sort(key=lambda item: int(item.get("발생봉전", 999999)))
-        newest_age = int(items[0].get("발생봉전", 999999))
-        newest = [item for item in items if int(item.get("발생봉전", 999999)) == newest_age]
-        newest.sort(key=lambda item: (int(item.get("신뢰도", 0)), int(item.get("강도점수", 0))), reverse=True)
-        return newest[0]
+    )
 
-    bullish = select("상승")
-    bearish = select("하락")
-    active = [item for item in (bullish, bearish) if item.get("탐지") is True]
+    representative: Dict[str, Any]
+    if candidates:
+        representative = dict(candidates[0])
+        representative["신호상태"] = "현재 대표 신호"
+        representative["대표신호"] = True
+        representative["요약"] = (
+            f"{representative.get('신호명', '')} · "
+            f"{representative.get('거래봉설명', '')} · "
+            f"{representative.get('진행단계', '')} · "
+            f"신뢰도 {representative.get('신뢰도', 0)}/100"
+        )
+    else:
+        representative = _no_signal("", f"최근 {validity}봉 내 RSI 다이버전스 없음")
+        representative["대표신호"] = False
+
+    # 과거 후보는 기록용으로만 보존하며 활성 신호/UI에는 노출하지 않는다.
+    history = []
+    for item in candidates[1:]:
+        copied = dict(item)
+        copied["신호상태"] = "과거 유효 신호"
+        copied["대표신호"] = False
+        history.append(copied)
+    history = history[:12]
+
+    bullish = _no_signal("상승", f"현재 대표 신호가 {'상승' if representative.get('방향') == '상승' else '상승이 아님'}")
+    bearish = _no_signal("하락", f"현재 대표 신호가 {'하락' if representative.get('방향') == '하락' else '하락이 아님'}")
+    if representative.get("탐지") is True:
+        if representative.get("방향") == "상승":
+            bullish = representative
+        elif representative.get("방향") == "하락":
+            bearish = representative
+
+    active = [representative] if representative.get("탐지") is True else []
 
     return {
         "분석가능": True,
@@ -948,21 +1153,27 @@ def analyze_divergence_timeframe(
         "시간봉": timeframe,
         "관측봉수": len(rows),
         "탐색기간봉": search_bars,
-        "유효기간봉": int(config["validity_bars"]),
+        "유효기간봉": validity,
+        "대표신호": representative,
         "상승": bullish,
         "하락": bearish,
         "활성신호": active,
+        "과거신호": history,
         "설정": {
+            "대표신호선정": "일반상승·일반하락·히든상승·히든하락 전체 중 가장 최근 확정 1개",
             "피벗좌측봉": left,
             "피벗우측확정봉": right,
             "최소피벗간격봉": min_gap,
             "최대피벗간격봉": max_gap,
             "최소가격차퍼센트": min_price_pct,
             "최소RSI차": min_rsi_delta,
-            "거래량급증배수": float(config["relative_volume_threshold"]),
+            "거래량증가기준배수": float(config.get("volume_increase_threshold", 1.20)),
+            "기존거래량급증배수": float(config["relative_volume_threshold"]),
+            "뚜렷한거래량배수": float(config.get("clear_volume_threshold", 2.00)),
+            "강한거래량확증배수": float(config.get("strong_volume_threshold", 4.00)),
+            "거래량확인창봉": int(config.get("confirmation_window_bars", 0)),
         },
     }
-
 
 def build_divergence_bundle(
     four_hour_rows: List[Dict[str, Any]],
@@ -978,19 +1189,23 @@ def build_divergence_bundle(
     }
     active: List[Dict[str, Any]] = []
     for timeframe, item in timeframes.items():
-        for signal in item.get("활성신호", []):
+        signal = item.get("대표신호", {})
+        if isinstance(signal, dict) and signal.get("탐지") is True:
             copied = dict(signal)
             copied["시간봉"] = timeframe
             active.append(copied)
     active.sort(key=lambda item: (int(item.get("발생봉전", 999999)), -int(item.get("신뢰도", 0))))
     return {
         "분석상태": "정상" if any(item.get("분석가능") for item in timeframes.values()) else "자료부족",
-        "계산방식": "RSI14(Wilder) + 확정 피벗 + Relative Volume(직전20봉) + 종가 가격구조 확인",
+        "계산방식": "RSI14(Wilder) + 우측1봉 확정 피벗 + 시간봉별 최근 대표 1신호 + 근접 Relative Volume + 가장 가까운 유효 스윙 종가 확인",
+        "엔진버전": "4.0-latest-one-per-timeframe",
+        "4시간봉집계": "KRX 09:00 KST anchor · 09:00-13:00 / 13:00-15:30",
         "미래데이터사용": False,
         "확정피벗사용": True,
         "시간봉": timeframes,
         "활성신호": active,
         "활성신호수": len(active),
+        "대표신호원칙": "각 시간봉에서 4종 전체 중 가장 최근 확정 1개만 활성",
     }
 
 def trend_label(score: float) -> str:
@@ -1276,7 +1491,7 @@ def get_stock_technical_bundle(
     overall = "정상" if available_count == 3 else "부분성공" if available_count > 0 else "실패"
 
     if four_hour_rows:
-        source = source + " + Yahoo 6개월 1시간봉→4시간봉"
+        source = source + " + Yahoo 6개월 1시간봉→KRX 09:00 기준 장중 4시간봉"
 
     return {
         "수집상태": overall,
