@@ -29,7 +29,7 @@
     "OpenDART업종코드": "2612",
     "데이터출처": "금융감독원 OpenDART"
   },
-  "생성시각": "2026-08-09T14:09:18.565783",
+  "생성시각": "2026-08-09T14:14:34.006612",
   "재무분석": {
     "재무분석모형버전": "financial-quality-v2.0.0",
     "재무지표": {
@@ -799,7 +799,7 @@
         "MA20": 1456.634998,
         "현재값대비MA20": -2.810247,
         "최종관측시각UTC": "2026-08-09T03:30:50+00:00",
-        "데이터지연시간": 10.628,
+        "데이터지연시간": 10.728,
         "데이터개수": 68
       },
       "S&P500": {
@@ -818,7 +818,7 @@
         "MA20": 7525.406958,
         "현재값대비MA20": 3.085988,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 48.642,
+        "데이터지연시간": 48.742,
         "데이터개수": 63
       },
       "나스닥": {
@@ -837,7 +837,7 @@
         "MA20": 25672.52793,
         "현재값대비MA20": 3.965684,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 48.642,
+        "데이터지연시간": 48.742,
         "데이터개수": 63
       },
       "반도체지수": {
@@ -856,7 +856,7 @@
         "MA20": 11864.973926,
         "현재값대비MA20": 4.145109,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 48.642,
+        "데이터지연시간": 48.742,
         "데이터개수": 63
       },
       "VIX": {
@@ -875,7 +875,7 @@
         "MA20": 17.1645,
         "현재값대비MA20": -13.192929,
         "최종관측시각UTC": "2026-08-07T07:00:00+00:00",
-        "데이터지연시간": 55.142,
+        "데이터지연시간": 55.242,
         "데이터개수": 65
       },
       "미국10년물": {
@@ -894,7 +894,7 @@
         "MA20": 4.63245,
         "현재값대비MA20": 0.594715,
         "최종관측시각UTC": "2026-08-07T12:20:00+00:00",
-        "데이터지연시간": 49.808,
+        "데이터지연시간": 49.909,
         "데이터개수": 64
       },
       "미국5년물": {
@@ -913,7 +913,7 @@
         "MA20": 4.36195,
         "현재값대비MA20": 0.001146,
         "최종관측시각UTC": "2026-08-07T12:20:00+00:00",
-        "데이터지연시간": 49.808,
+        "데이터지연시간": 49.909,
         "데이터개수": 64
       },
       "미국13주": {
@@ -932,7 +932,7 @@
         "MA20": 3.7237,
         "현재값대비MA20": -0.367912,
         "최종관측시각UTC": "2026-08-07T12:20:00+00:00",
-        "데이터지연시간": 49.808,
+        "데이터지연시간": 49.909,
         "데이터개수": 64
       }
     },
@@ -1039,7 +1039,7 @@
       "설명": "국내주식 기준으로 원달러·미국 주가지수·반도체지수·VIX·미국 금리의 방향을 -100~100 신호로 합성했습니다."
     },
     "수집오류": [],
-    "수집시각": "2026-08-09T23:08:29.911453+09:00",
+    "수집시각": "2026-08-09T23:14:31.698525+09:00",
     "데이터출처": "Yahoo Finance Chart API"
   },
   "기업기초데이터": {
@@ -1391,7 +1391,7 @@
       },
       "데이터출처": "금융감독원 OpenDART"
     },
-    "수집시각": "2026-08-09T23:09:16.406774+09:00",
+    "수집시각": "2026-08-09T23:14:33.952286+09:00",
     "데이터출처": "금융감독원 OpenDART"
   },
   "산업분석": {
@@ -1415,7 +1415,7 @@
         "MA20": 11864.973926,
         "현재값대비MA20": 4.145109,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 48.642,
+        "데이터지연시간": 48.742,
         "데이터개수": 251,
         "산업구간": "산업지수",
         "중기가중치": 20.0,
@@ -1446,7 +1446,7 @@
         "MA20": 564.009004,
         "현재값대비MA20": 3.313956,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 48.642,
+        "데이터지연시간": 48.742,
         "데이터개수": 251,
         "산업구간": "산업ETF",
         "중기가중치": 20.0,
@@ -1477,7 +1477,7 @@
         "MA20": 888.264505,
         "현재값대비MA20": -1.203977,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 48.642,
+        "데이터지연시간": 48.742,
         "데이터개수": 251,
         "산업구간": "메모리",
         "중기가중치": 15.0,
@@ -1508,7 +1508,7 @@
         "MA20": 409.290999,
         "현재값대비MA20": 2.626251,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 48.642,
+        "데이터지연시간": 48.742,
         "데이터개수": 251,
         "산업구간": "파운드리",
         "중기가중치": 15.0,
@@ -1539,7 +1539,7 @@
         "MA20": 1714.960492,
         "현재값대비MA20": 1.51779,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 48.642,
+        "데이터지연시간": 48.742,
         "데이터개수": 251,
         "산업구간": "노광장비",
         "중기가중치": 10.0,
@@ -1570,7 +1570,7 @@
         "MA20": 534.462999,
         "현재값대비MA20": 0.875087,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 48.642,
+        "데이터지연시간": 48.742,
         "데이터개수": 251,
         "산업구간": "반도체장비",
         "중기가중치": 10.0,
@@ -1601,7 +1601,7 @@
         "MA20": 1725300.0,
         "현재값대비MA20": -17.579551,
         "최종관측시각UTC": "2026-08-07T00:00:00+00:00",
-        "데이터지연시간": 62.142,
+        "데이터지연시간": 62.242,
         "데이터개수": 243,
         "산업구간": "메모리·HBM",
         "중기가중치": 10.0,
@@ -1807,7 +1807,7 @@
       "설명": "반도체 지수·ETF·메모리·파운드리·장비 대표자산의 가격추세와 시장폭을 합성합니다."
     },
     "수집오류": [],
-    "수집시각": "2026-08-09T23:08:30.375056+09:00",
+    "수집시각": "2026-08-09T23:14:32.133736+09:00",
     "데이터출처": "Yahoo Finance Chart API"
   },
   "기술분석": {
@@ -4694,7 +4694,7 @@
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE84VE53WVpROHRRZ2NsODZ6dEVMZE1UWUQ4cEVKWnNIck9ZWnRXa0ZsaldReS1RZjFKSDRrYWp0eXRQX253V1RPSXBuM042WURXWGRKV3c5WGdfN3c1dzR2RXBaVmFjZkZMbjRuVFFWRk4?oc=5",
         "언론사": "연합인포맥스",
         "발행시각UTC": "2026-08-09T04:00:12+00:00",
-        "경과일": 0.42,
+        "경과일": 0.43,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4714,7 +4714,7 @@
         "링크": "https://news.google.com/rss/articles/CBMie0FVX3lxTE1Fb3dwcWlsUDFoNGNtUjN6V2RhR1NwcWhKaGJaeUtkTEZUeFROR0h6RFZ3TkxPQ1JkTnd4VFJTSXhqVm56MU04emc4TkM4Q2JEaUJMUW5uS2VRNldISDB0WEJsemp6cmliLXExTDVfaUFhbFJiUmhLU3JURQ?oc=5",
         "언론사": "서울신문",
         "발행시각UTC": "2026-08-09T09:27:46+00:00",
-        "경과일": 0.19,
+        "경과일": 0.2,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4750,16 +4750,6 @@
         "매칭규칙": []
       },
       {
-        "제목": "“SK하이닉스, 中 충칭 후공정 공장 지분매각 검토”…국내엔 54조 투자",
-        "링크": "https://news.google.com/rss/articles/CBMibkFVX3lxTE12NmVyOHNvNDc3b2xXbG55LTIzU1NteEh5b0pfYVdxenk4MTBCVnA1am1EdGktbURBZTBiUlRqQXF3Wk1NM1lVS1Z6NHI4bHdBb0VKcTFkYXRzVms2SkpVT2VjVlM5Rkg1MXBZckZR?oc=5",
-        "언론사": "아시아투데이",
-        "발행시각UTC": "2026-08-08T23:20:53+00:00",
-        "경과일": 0.62,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
         "제목": "\"특별 주주환원 정책 나온다\" 뜬소문…SK하이닉스 향한 시장의 조급증",
         "링크": "https://news.google.com/rss/articles/CBMigwFBVV95cUxNbTZBRkxDS19CUHZ2cHZCTDRGcWd2MHV0LWF2ZUpEWktDS2dFQ1VBcHpadGJCQXY2SG94M3l4TmgyNzJ4S0NLYTdMdmtoWmM5WXp6ZEw5YkY5Vjl0T2FOb1R2cUpOWWhfVHM2Sl9CanRuVW4ybTZ4YmQxU0ROT1NMOHdLVQ?oc=5",
         "언론사": "인베스트조선",
@@ -4784,17 +4774,17 @@
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5UMGxMYUtPVFFKankzX2ZKT2ItdEhsenMxMVVLdGNDcmI2a1pQWTlVb05UcmFadTg2SWJYUVZqbHVaTmpLUTM1Uy03QjcteldZQldMQWpJRGk3eEJsZDh3MU91MWVfa2NZbEVuUkJkOHU?oc=5",
         "언론사": "충청일보",
         "발행시각UTC": "2026-08-09T07:49:01+00:00",
-        "경과일": 0.26,
+        "경과일": 0.27,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
       },
       {
-        "제목": "SK하이닉스 노사 '성과급 주식지급' 평행선, 곽노정 'N% 성과급' 법적 논란 벗을지 주목",
-        "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE9wX2NIMW5nVmdZeFN0cEFSREdxTTl3c0gxS3ZfUkhpcm5FYzJuRDBzU0pZRG9oSGk3b1NiS05pTE9uUUQzVFB2Y1ZzYVd0M0hMWThrU24tSUh3VTNKdXFxMVNsbEpJRGZ2YjBXcWdraThmQTg?oc=5",
-        "언론사": "비즈니스포스트",
-        "발행시각UTC": "2026-08-08T21:00:00+00:00",
-        "경과일": 0.71,
+        "제목": "“SK하이닉스, 中 충칭 후공정 공장 지분매각 검토”…국내엔 54조 투자",
+        "링크": "https://news.google.com/rss/articles/CBMibkFVX3lxTE12NmVyOHNvNDc3b2xXbG55LTIzU1NteEh5b0pfYVdxenk4MTBCVnA1am1EdGktbURBZTBiUlRqQXF3Wk1NM1lVS1Z6NHI4bHdBb0VKcTFkYXRzVms2SkpVT2VjVlM5Rkg1MXBZckZR?oc=5",
+        "언론사": "아시아투데이",
+        "발행시각UTC": "2026-08-08T23:20:53+00:00",
+        "경과일": 0.62,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4810,11 +4800,21 @@
         "매칭규칙": []
       },
       {
+        "제목": "SK하이닉스 노사 '성과급 주식지급' 평행선, 곽노정 'N% 성과급' 법적 논란 벗을지 주목",
+        "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE9wX2NIMW5nVmdZeFN0cEFSREdxTTl3c0gxS3ZfUkhpcm5FYzJuRDBzU0pZRG9oSGk3b1NiS05pTE9uUUQzVFB2Y1ZzYVd0M0hMWThrU24tSUh3VTNKdXFxMVNsbEpJRGZ2YjBXcWdraThmQTg?oc=5",
+        "언론사": "비즈니스포스트",
+        "발행시각UTC": "2026-08-08T21:00:00+00:00",
+        "경과일": 0.72,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
         "제목": "SK하이닉스, 중국 충칭 자산 매각 검토...국내 팹에 54조 투자",
         "링크": "https://news.google.com/rss/articles/CBMiakFVX3lxTE5DWloxMExueDFzV1J0NVRxUk1OUVB1blRZWFp1bFVfWGd0V1V5Um0tUzN2RUgyNnRMRXJIZExhUVpNMHJVMXpFQ294NFlKckxvZzRWQW5KZFBOdGlJamt4WDdqZnNEYlUxRUE?oc=5",
         "언론사": "AI타임스",
         "발행시각UTC": "2026-08-08T01:22:46+00:00",
-        "경과일": 1.53,
+        "경과일": 1.54,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4824,7 +4824,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiYkFVX3lxTE5EZ0hvZUNsaWZmZFJRcU52R0VoaWhabkJITUNrLUZXUGlfSi1Bd1dhUVRlQVNKdEtROHdVNWMxLTE3UndtMk5BZWdtcmIxUFdBV3hvR1NfTUhpZ28tUGZjU0RR?oc=5",
         "언론사": "충북일보",
         "발행시각UTC": "2026-08-09T04:54:43+00:00",
-        "경과일": 0.38,
+        "경과일": 0.39,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4874,7 +4874,7 @@
         "링크": "https://news.google.com/rss/articles/CBMigwFBVV95cUxPZ3JEUmhMLWpWeE92d3JtM2pDcVRWdDVUM2cteld2cWxfYUZOWWJtNWNXS3lsdnlDcjNLUGRPbnYxdW5jYThObzNuSXVyaTFuM255Q2pCcWZuWFd2UDdkNXd0VUVIOXo5bmE3WFlNMm1SSWp0NUxTS2dLX3lnMV9qclVxNA?oc=5",
         "언론사": "조선일보",
         "발행시각UTC": "2026-08-07T19:09:22+00:00",
-        "경과일": 1.79,
+        "경과일": 1.8,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4884,7 +4884,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiUkFVX3lxTFBUQzJqWF9KSUNhWFM1cmp2dXA1T1dDTkc0V0tOd3R6Y3hZT29RVGpFX2xhSUQzRTA0QXhtaThkamVsTXdPOHM2eTRnb1NiZGZ3cmfSAVNBVV95cUxQTHc1Zy1NUkFtLS1BSnJjZ1F1eUtfM2Zpb3l1YkxpNmkyZm1wNDZHQkRfQk9FQXFjTGlhZlQydVlUTDk1WEUtSVViWlktZlRZTUdUcw?oc=5",
         "언론사": "서울경제",
         "발행시각UTC": "2026-08-08T22:30:00+00:00",
-        "경과일": 0.65,
+        "경과일": 0.66,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4904,7 +4904,7 @@
         "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTE9pNTQ2TzVUZjFVeUx2Znk1aWdwa0JpSlQzcFRWb2dXaU5aWFpIWEh1RUh6bFNHcWhQb1ZUM1BCMTM3NFlZdmxWYW9sQms5T19CWGJXenY1VmpuMTRkR0syemRxZko3U244S1NLeA?oc=5",
         "언론사": "전기신문",
         "발행시각UTC": "2026-08-07T09:13:44+00:00",
-        "경과일": 2.2,
+        "경과일": 2.21,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4924,7 +4924,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5Wc3V3Y0dyOWFOZXVaQUxfNmhXVjJUUTBLSlRtbGxGVWtKeF9BeXkySXpHLURTNjl6bUJGeFVKakpzUDF5ZllQTG8zTkJGRkQ0NGh6dnRFRmRtZw?oc=5",
         "언론사": "한국경제",
         "발행시각UTC": "2026-08-09T07:37:22+00:00",
-        "경과일": 0.27,
+        "경과일": 0.28,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4964,7 +4964,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1Yc1BWM0lkRFcyRnY1RHYxQm1TN2lOWng3X3JLVk9paWI3RjFOVmw3dS1lNkpmUllsWGZVYWF0VTB3N3R1dHA4dFlGUnVZeWVUTUNNQWdLelEyNmvSAWBBVV95cUxNMGgyb2tFTWdCd3dxQmduV0puTGh4Z3VJSFpJY1ROclhuZGdMdFBWeHJpTzQwWXozZzdpeE9XQ2RCbmR4U0hCNGZJdU1sRHB4TFVUdFNtWGlPRjlyczAwWHk?oc=5",
         "언론사": "연합뉴스",
         "발행시각UTC": "2026-08-07T07:24:07+00:00",
-        "경과일": 2.28,
+        "경과일": 2.29,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4993,7 +4993,7 @@
       "설명": "최근 뉴스 제목의 실적·수주·투자·증자·소송 등 규칙과 시간가중치를 합성합니다."
     },
     "데이터출처": "Google News RSS",
-    "수집시각UTC": "2026-08-09T14:08:30.188299+00:00"
+    "수집시각UTC": "2026-08-09T14:14:31.803286+00:00"
   },
   "가치평가": {
     "가치평가계약버전": "4.0",
@@ -5451,13 +5451,15 @@
     "출처": "FnGuide 공개 Snapshot",
     "종목코드": "000660",
     "현재가미사용": true,
-    "목표주가직접가치미사용": true
+    "목표주가직접가치미사용": true,
+    "캐시": "disk",
+    "캐시나이초": 317.1
   },
   "전략거시원천": {
     "수집상태": "정상",
-    "출처": "https://raw.githubusercontent.com/12xx37r-ui/global-macro-data-collector/main/public/data/cards_8_12_bundle.json",
-    "캐시": "network_refresh",
-    "캐시나이초": "",
+    "출처": "disk_cache",
+    "캐시": "disk",
+    "캐시나이초": 315.5,
     "오류": ""
   },
   "주가예측": {
@@ -5723,7 +5725,7 @@
     "스키마버전": "2.0",
     "엔진버전": "6.8.0-valuation-contract-v4",
     "종목코드": "000660",
-    "생성시각": "2026-08-09T14:09:18.565783",
+    "생성시각": "2026-08-09T14:14:34.006612",
     "연결상태": "부분",
     "기술분석": {
       "수집상태": "정상",
