@@ -64,6 +64,20 @@ def main() -> int:
     elif valuation.get("최종값사용가능") is not True:
         warnings.append("적정가 산출보류 또는 자료부족")
 
+    # Strategic Forward는 회사 상태와 무관하게 새 엔진이 항상 내보내는
+    # 소프트웨어 계약 필드다. 이 필드가 없으면 구버전 main.py가 실행된 것이므로
+    # 게시를 성공으로 처리하지 않는다.
+    strategic = data.get("전략미래가치")
+    if not isinstance(strategic, dict):
+        print("PUBLISHED FEED VALIDATION: FAIL")
+        print("- Strategic Forward 필드 없음 · GitHub 저장소 루트 코드가 구버전일 가능성")
+        return 1
+    strategic_version = str(strategic.get("엔진버전") or "")
+    if strategic_version != "0.2.1-strategic-forward-low-load":
+        print("PUBLISHED FEED VALIDATION: FAIL")
+        print("- Strategic Forward 버전 불일치:", strategic_version or "미표기")
+        return 1
+
     print(
         "PUBLISHED FEED VALIDATION:",
         "PASS WITH WARNING" if warnings else "PASS",

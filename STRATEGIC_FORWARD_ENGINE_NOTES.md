@@ -1,3 +1,7 @@
+# 배포 주의 — v0.2.1
+
+이 패키지는 ZIP을 풀었을 때 보이는 `main.py`, `analyzers`, `collectors`, `.github` 등을 **GitHub 저장소의 루트에 직접 업로드**해야 합니다. 기존 저장소의 `data/latest/stocks/*.json`이 남아 있어도 GAS가 Strategic 필드가 없는 구형 JSON을 감지해 해당 종목만 on-demand 재생성합니다. 새 워크플로는 생성 JSON에 `전략미래가치` v0.2.1 필드가 없으면 게시를 실패시켜 구버전 코드가 조용히 사용되는 문제를 막습니다.
+
 # Strategic Forward Valuation Engine V0.2 — Shadow + Low-Load 검증판
 
 ## 목적

@@ -19,7 +19,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 
-ENGINE_VERSION = "0.2.0-strategic-forward-shadow-low-load"
+ENGINE_VERSION = "0.2.1-strategic-forward-low-load"
 
 
 def safe_float(value: Any, default: float = 0.0) -> float:

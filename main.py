@@ -1456,7 +1456,7 @@ def main():
             segment_data=safe_dict(fundamentals_bundle).get("SOTP", {}),
         ),
         {
-            "엔진버전": "0.2.0-strategic-forward-shadow-low-load",
+            "엔진버전": "0.2.1-strategic-forward-low-load",
             "모드": "shadow",
             "전략펀더멘털적정가": 0.0,
             "원시미래증분가치": 0.0,
