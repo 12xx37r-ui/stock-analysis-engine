@@ -54,18 +54,17 @@ def main() -> int:
         stocks = root / "stocks"
         write_json(stocks / "009150.json", current_stock("009150"))
         write_json(stocks / "000660.json", stale_stock("000660"))
-        index = rebuild_latest_index(root, current_stock("009150"))
+        index = rebuild_latest_index(root, current_stock("009150"), "009150")
 
         active = [item["종목코드"] for item in index["종목목록"]]
-        assert active == ["009150"], index
-        assert index["제외종목수"] == 1, index
-        assert index["상태"] == "WARNING", index
-        assert index["제외종목"][0]["종목코드"] == "000660", index
+        assert set(active) == {"009150", "000660"}, index
+        assert index["제외종목수"] == 0, index
+        assert index["상태"] == "PASS", index
 
     print("PUBLISHED CACHE COHERENCE: PASS")
-    print("- current file remains active")
-    print("- stale file is excluded but retained for refresh")
-    print("- index cannot report PASS while stale files remain")
+    print("- every readable company JSON remains published")
+    print("- version/valuation compatibility is a display/audit state, not a publication filter")
+    print("- current general-company lookup contract is preserved")
     return 0
 
 

@@ -11,6 +11,7 @@ from analyzers.fundamentals import analyze_fundamentals
 from analyzers.global_market import analyze_global_market
 from analyzers.industry import analyze_industry
 from analyzers.valuation import calculate_value
+from analyzers.strategic_forward_value import build_strategic_forward_value
 from collectors.company import (
     infer_industry_code,
     normalize_stock_code,
@@ -26,6 +27,7 @@ from collectors.market import get_market_data
 from collectors.news import get_company_news
 from collectors.provisional import get_latest_provisional_earnings
 from collectors.technical import get_stock_technical_bundle
+from collectors.strategic_context import get_strategic_macro_context
 from predictor import predict_stock
 
 
@@ -56,6 +58,7 @@ VALUATION_INDUSTRY_CODES = {
     "finance",
     "insurance",
     "consumer_staples",
+    "beauty_consumer",
     "consumer_discretionary",
     "retail",
     "media_entertainment",
@@ -766,7 +769,7 @@ def parse_arguments():
         ),
         help=(
             "auto, semiconductor, electronic_components, automotive, battery, "
-            "biotechnology, construction, finance, none"
+            "biotechnology, beauty_consumer, construction, finance, none"
         ),
     )
 
@@ -1434,6 +1437,62 @@ def main():
         target.get("기업조회", {}),
     )
 
+    # Strategic Forward는 먼저 로컬 입력만으로 계산한다.
+    # 실제 미래증분가치 후보가 있고 인정률도 0보다 클 때만 글로벌 매크로
+    # bundle을 읽어 불필요한 GitHub/raw 외부 호출을 피한다.
+    strategic_macro_bundle = {
+        "수집상태": "미호출",
+        "출처": "not_needed",
+        "payload": {},
+    }
+    strategic_forward_value = safe_execute(
+        "STRATEGIC FORWARD VALUE (LOCAL FIRST)",
+        lambda: build_strategic_forward_value(
+            valuation=valuation,
+            financial=financial,
+            fundamentals_analysis=fundamentals_analysis,
+            industry_analysis=industry_analysis,
+            global_macro_context={},
+            segment_data=safe_dict(fundamentals_bundle).get("SOTP", {}),
+        ),
+        {
+            "엔진버전": "0.2.0-strategic-forward-shadow-low-load",
+            "모드": "shadow",
+            "전략펀더멘털적정가": 0.0,
+            "원시미래증분가치": 0.0,
+            "미래가치인정률": 0.0,
+            "미래증분가치": 0.0,
+            "미래성장가치표시": "미래성장가치 산출불가",
+        },
+    )
+
+    needs_macro = (
+        safe_number(strategic_forward_value.get("원시미래증분가치"), 0.0) > 0
+        and safe_number(strategic_forward_value.get("미래가치인정률"), 0.0) > 0
+    )
+    if needs_macro:
+        strategic_macro_bundle = timed_safe_execute(
+            "STRATEGIC GLOBAL MACRO (LAZY/CACHED)",
+            get_strategic_macro_context,
+            {
+                "수집상태": "실패",
+                "출처": "",
+                "payload": {},
+            },
+        )
+        strategic_forward_value = safe_execute(
+            "STRATEGIC FORWARD VALUE (MACRO ADJUSTED)",
+            lambda: build_strategic_forward_value(
+                valuation=valuation,
+                financial=financial,
+                fundamentals_analysis=fundamentals_analysis,
+                industry_analysis=industry_analysis,
+                global_macro_context=safe_dict(strategic_macro_bundle).get("payload", {}),
+                segment_data=safe_dict(fundamentals_bundle).get("SOTP", {}),
+            ),
+            strategic_forward_value,
+        )
+
     prediction = predict_stock(
         market,
         financial,
@@ -1507,6 +1566,14 @@ def main():
         "기술분석": technical_bundle,
         "뉴스분석": news_bundle,
         "가치평가": valuation,
+        "전략미래가치": strategic_forward_value,
+        "전략거시원천": {
+            "수집상태": safe_dict(strategic_macro_bundle).get("수집상태", ""),
+            "출처": safe_dict(strategic_macro_bundle).get("출처", ""),
+            "캐시": safe_dict(strategic_macro_bundle).get("캐시", ""),
+            "캐시나이초": safe_dict(strategic_macro_bundle).get("캐시나이초", ""),
+            "오류": safe_dict(strategic_macro_bundle).get("오류", ""),
+        },
         "주가예측": prediction,
         "화면브리지": screen_bridge,
     }

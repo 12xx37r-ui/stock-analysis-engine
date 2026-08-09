@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import List, Tuple
 
 from feed_contract import inspect_published_stock
+from publish_on_demand import rebuild_latest_index
 
 
 def run_step(command: List[str]) -> int:
@@ -167,6 +168,12 @@ def main() -> int:
         print("REFRESH OK:", code, flush=True)
 
     shutil.rmtree(backup_root, ignore_errors=True)
+
+    # Bootstrap-safe: a slim GitHub upload may intentionally omit generated
+    # data/latest/index.json and stock cache files. Rebuild an empty/current
+    # index locally before audit/validation; published files are regenerated
+    # by on-demand/weekly workflows. This performs no external API call.
+    rebuild_latest_index(Path("data/latest"), None, "")
 
     audit_rc = run_step([
         sys.executable,

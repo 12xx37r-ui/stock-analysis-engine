@@ -210,6 +210,16 @@ VALUATION_PROFILES: Dict[str, Dict[str, Any]] = {
         "model_floor": 0.48, "model_ceiling": 2.15,
         "cyclical": False, "growth": False,
     },
+    "beauty_consumer": {
+        "label": "화장품·생활용품 브랜드 소비재",
+        "base_per": 17.0, "per_min": 10.0, "per_max": 34.0,
+        "base_pbr": 1.65, "pbr_min": 0.80, "pbr_max": 5.00,
+        "weights": {"per": 0.34, "pbr": 0.26, "residual": 0.18, "transition": 0.22},
+        "eps_floor": 0.72, "eps_cap": 1.75,
+        "downside": 0.68, "upside": 1.48,
+        "model_floor": 0.34, "model_ceiling": 2.90,
+        "cyclical": False, "growth": True,
+    },
     "consumer_discretionary": {
         "label": "경기소비재",
         "base_per": 12.0, "per_min": 7.0, "per_max": 28.0,
@@ -377,6 +387,7 @@ FUTURE_GROWTH_CONFIG: Dict[str, Dict[str, float]] = {
     "pharmaceutical": {"weight": 0.16, "fy3_cap": 0.20, "fy4_cap": 0.14, "exit_premium": 1.8, "eps_cap": 1.90, "value_cap": 1.60, "min_growth": 0.04},
     "media_entertainment": {"weight": 0.18, "fy3_cap": 0.24, "fy4_cap": 0.16, "exit_premium": 2.2, "eps_cap": 2.10, "value_cap": 1.75, "min_growth": 0.05},
     "software_platform": {"weight": 0.20, "fy3_cap": 0.28, "fy4_cap": 0.18, "exit_premium": 2.8, "eps_cap": 2.40, "value_cap": 1.95, "min_growth": 0.06},
+    "beauty_consumer": {"weight": 0.18, "fy3_cap": 0.18, "fy4_cap": 0.12, "exit_premium": 2.5, "eps_cap": 1.85, "value_cap": 1.70, "min_growth": 0.03},
     "services": {"weight": 0.14, "fy3_cap": 0.18, "fy4_cap": 0.12, "exit_premium": 1.5, "eps_cap": 1.80, "value_cap": 1.50, "min_growth": 0.04},
 }
 
@@ -965,6 +976,203 @@ def build_future_growth_model(
 def _model_row(name: str, value: float, weight: float, role: str = "기준") -> Dict[str, Any]:
     return {"name": name, "value": value, "weight": weight, "role": role}
 
+
+def build_fundamental_value_decomposition(
+    *,
+    profile_code: str,
+    profile: Dict[str, Any],
+    ttm_eps: float,
+    normalized_eps: float,
+    run_rate_eps: float,
+    bps: float,
+    roe: float,
+    operating_margin: float,
+    revenue_growth_3y: float,
+    debt_ratio: float,
+    pbr_value: float,
+    residual_value: float,
+    normalized_fcf_ps: float,
+    net_cash_per_share: float,
+    quarter: Dict[str, Any],
+    positive_transition: bool,
+    negative_transition: bool,
+    structural_acceleration: bool,
+    industry: Dict[str, Any],
+    future_growth_model: Dict[str, Any],
+    cost_of_equity: float,
+) -> Dict[str, Any]:
+    """현재 재무가치와 객관적 미래 증분가치를 분리한다.
+
+    현재가는 어떤 단계에서도 입력하지 않는다.
+    현재 재무기초가치는 확정 TTM/정상화 이익, 순자산, 잔여이익, FCF처럼
+    이미 관측된 재무정보만 사용한다. 미래 증분가치는 별도 성장모형의
+    미래 총가치가 현재 재무기초가치를 초과하는 부분만 반영해 이중계산을 막는다.
+    """
+    current_eps = _weighted_positive([
+        {"value": ttm_eps, "weight": 0.68 if not profile.get("cyclical") else 0.58},
+        {"value": normalized_eps, "weight": 0.32 if not profile.get("cyclical") else 0.42},
+    ])
+    if current_eps <= 0 and normalized_eps > 0:
+        current_eps = normalized_eps
+
+    base_per = safe_float(profile.get("base_per"), 10.5)
+    per_min = safe_float(profile.get("per_min"), 6.0)
+    per_max = safe_float(profile.get("per_max"), 26.0)
+    base_per += clamp((roe - 0.08) * 18.0, -1.8, 4.0)
+    if profile_code not in {"finance", "insurance"}:
+        base_per += clamp((operating_margin - 0.08) * 8.0, -1.0, 2.2)
+    base_per += clamp(revenue_growth_3y * 2.5, -0.8, 1.5)
+    if debt_ratio > 2.0 and profile_code not in {"finance", "insurance"}:
+        base_per -= 1.2
+    base_per = clamp(base_per, per_min, per_max)
+
+    current_earnings_value = current_eps * base_per if current_eps > 0 else 0.0
+    current_graham_value = (
+        (22.5 * current_eps * bps) ** 0.5
+        if current_eps > 0 and bps > 0
+        else 0.0
+    )
+    current_fcf_value = 0.0
+    if normalized_fcf_ps > 0:
+        fcf_multiple = clamp(base_per * 0.78, 7.0, 18.0)
+        current_fcf_value = (
+            normalized_fcf_ps * fcf_multiple
+            + max(0.0, net_cash_per_share) * 0.65
+        )
+
+    run_rate_ratio = (
+        run_rate_eps / normalized_eps
+        if run_rate_eps > 0 and normalized_eps > 0
+        else 0.0
+    )
+    earnings_dislocation = bool(
+        positive_transition
+        and not negative_transition
+        and run_rate_ratio >= 2.0
+        and safe_float(quarter.get("operating_yoy")) >= 35.0
+        and safe_float(quarter.get("net_yoy")) >= 25.0
+    )
+
+    if profile_code == "beauty_consumer" and earnings_dislocation:
+        weights = {
+            "earnings": 0.12,
+            "pbr": 0.32,
+            "residual": 0.08,
+            "fcf": 0.30,
+            "graham": 0.18,
+        }
+    elif profile_code == "beauty_consumer":
+        weights = {
+            "earnings": 0.30,
+            "pbr": 0.24,
+            "residual": 0.10,
+            "fcf": 0.20,
+            "graham": 0.16,
+        }
+    elif profile.get("growth"):
+        weights = {
+            "earnings": 0.44,
+            "pbr": 0.18,
+            "residual": 0.14,
+            "fcf": 0.09,
+            "graham": 0.15,
+        }
+    else:
+        weights = {
+            "earnings": 0.40,
+            "pbr": 0.22,
+            "residual": 0.16,
+            "fcf": 0.12,
+            "graham": 0.10,
+        }
+
+    current_models = [
+        {"name": "현재·정상화 이익가치", "value": current_earnings_value, "weight": weights["earnings"]},
+        {"name": "순자산 기반가치", "value": pbr_value, "weight": weights["pbr"]},
+        {"name": "잔여이익 현재가치", "value": residual_value, "weight": weights["residual"]},
+        {"name": "정상화 FCF 가치", "value": current_fcf_value, "weight": weights["fcf"]},
+        {"name": "현재 그레이엄 결합가치", "value": current_graham_value, "weight": weights["graham"]},
+    ]
+    current_models = [
+        row for row in current_models
+        if safe_float(row.get("value")) > 0 and safe_float(row.get("weight")) > 0
+    ]
+    current_base = weighted_average(current_models) or 0.0
+
+    future_total = (
+        safe_float(future_growth_model.get("가치"))
+        if future_growth_model.get("사용가능") is True
+        else 0.0
+    )
+    future_increment = max(0.0, future_total - current_base) if current_base > 0 else 0.0
+    fundamental_value = current_base + future_increment if current_base > 0 else 0.0
+
+    adaptive_eligible = bool(
+        current_base > 0
+        and (
+            profile_code == "beauty_consumer"
+            or (
+                profile_code in {"electronic_components"}
+                and profile.get("growth") is True
+                and future_growth_model.get("사용가능") is True
+                and safe_float(future_growth_model.get("품질")) >= 80
+                and (structural_acceleration or earnings_dislocation)
+            )
+        )
+    )
+
+    values = [safe_float(row.get("value")) for row in current_models if safe_float(row.get("value")) > 0]
+    current_dispersion = (
+        max(values) / min(values)
+        if len(values) >= 2 and min(values) > 0
+        else 0.0
+    )
+    evidence = []
+    if earnings_dislocation:
+        evidence.append("최근 분기 이익 급회복과 과거 정상화이익의 큰 괴리를 감지")
+    if structural_acceleration:
+        evidence.append("매출·영업이익·순이익 동반 가속")
+    if future_growth_model.get("사용가능") is True:
+        evidence.extend(safe_list(future_growth_model.get("선정근거")))
+    if safe_float(industry.get("long")) >= 20.0:
+        evidence.append("장기 산업사이클 우호")
+
+    quality = 55.0
+    quality += 10.0 if ttm_eps > 0 else 3.0 if normalized_eps > 0 else 0.0
+    quality += 8.0 if bps > 0 else 0.0
+    quality += 8.0 if current_fcf_value > 0 else 0.0
+    quality += 7.0 if len(current_models) >= 4 else 3.0 if len(current_models) >= 3 else 0.0
+    quality += 7.0 if future_growth_model.get("사용가능") is True else 0.0
+    if current_dispersion >= 8.0:
+        quality -= 12.0
+    elif current_dispersion >= 4.0:
+        quality -= 7.0
+    quality = int(clamp(quality, 45.0, 90.0))
+
+    return {
+        "버전": "adaptive-fundamental-v1.0.0",
+        "현재가미사용": True,
+        "적용가능": adaptive_eligible,
+        "현재재무기초가치": current_base,
+        "미래총가치": future_total,
+        "미래증분가치": future_increment,
+        "펀더멘털적정가": fundamental_value,
+        "현재기준PER": base_per,
+        "현재EPS앵커": current_eps,
+        "이익급회복괴리": earnings_dislocation,
+        "분기런레이트대정상화배수": run_rate_ratio,
+        "현재모형분산배수": current_dispersion,
+        "품질": quality,
+        "근거": list(dict.fromkeys(evidence)),
+        "현재가치모형": [
+            {
+                "모형": row["name"],
+                "값": round(safe_float(row["value"]), 2),
+                "가중치": round(safe_float(row["weight"]), 4),
+            }
+            for row in current_models
+        ],
+    }
 
 
 def provisional_record(fundamentals_bundle: Dict[str, Any]) -> Dict[str, Any]:
@@ -1713,6 +1921,61 @@ def calculate_value(
         growth_value = min(high_anchor * 1.08, basic * safe_float(profile.get("upside"), 1.35)) if basic > 0 else high_anchor
         growth_value = max(growth_value, basic)
 
+    # 현재 재무가치와 미래 증분가치를 분리한 적응형 펀더멘털 모형.
+    # 기존 v4 기준가는 회귀감사를 위해 보존하고, 객관적 적용조건을 충족한 경우에만
+    # 적응형 펀더멘털 적정가를 최종 기준가로 승격한다.
+    legacy_basic = basic
+    legacy_conservative = conservative
+    legacy_growth_value = growth_value
+    adaptive_value = build_fundamental_value_decomposition(
+        profile_code=profile_code,
+        profile=profile,
+        ttm_eps=ttm_eps,
+        normalized_eps=normalized_eps,
+        run_rate_eps=run_rate_eps,
+        bps=bps,
+        roe=roe,
+        operating_margin=operating_margin,
+        revenue_growth_3y=revenue_growth_3y,
+        debt_ratio=debt_ratio,
+        pbr_value=pbr_value,
+        residual_value=residual_value,
+        normalized_fcf_ps=normalized_fcf_ps,
+        net_cash_per_share=net_cash_per_share,
+        quarter=quarter,
+        positive_transition=positive_transition,
+        negative_transition=negative_transition,
+        structural_acceleration=structural_acceleration,
+        industry=industry,
+        future_growth_model=future_growth_model,
+        cost_of_equity=cost_of_equity,
+    )
+    adaptive_applied = bool(
+        adaptive_value.get("적용가능") is True
+        and safe_float(adaptive_value.get("펀더멘털적정가")) > 0
+        and safe_float(adaptive_value.get("품질")) >= 60
+    )
+    if adaptive_applied:
+        basic = safe_float(adaptive_value.get("펀더멘털적정가"))
+        current_base = safe_float(adaptive_value.get("현재재무기초가치"))
+        future_total = safe_float(adaptive_value.get("미래총가치"))
+        conservative = min(
+            basic,
+            max(
+                legacy_conservative,
+                current_base * 0.75 if current_base > 0 else 0.0,
+            ),
+        )
+        growth_value = max(
+            basic,
+            legacy_growth_value,
+            future_total * 1.08 if future_total > 0 else 0.0,
+        )
+        growth_value = min(
+            growth_value,
+            basic * max(1.15, safe_float(profile.get("upside"), 1.35)),
+        )
+
     basis_dispersion = max(basis_values) / min(basis_values) if len(basis_values) >= 2 and min(basis_values) > 0 else 0.0
     all_model_dispersion = max(all_values) / min(all_values) if len(all_values) >= 2 and min(all_values) > 0 else 0.0
     model_dispersion = basis_dispersion
@@ -1741,7 +2004,11 @@ def calculate_value(
         abnormal_reasons.append("주식수 미확보")
     if valuation_eps <= 0:
         abnormal_reasons.append("양(+)의 평가 EPS 미확보")
-    if not earnings_trough and implied_per > 0 and not (per_min * 0.75 <= implied_per <= per_max * 1.30):
+    adaptive_earnings_dislocation = bool(adaptive_value.get("이익급회복괴리")) if adaptive_applied else False
+    if adaptive_applied and profile_code == "beauty_consumer" and adaptive_earnings_dislocation:
+        if implied_pbr > 0 and not (0.45 <= implied_pbr <= safe_float(profile.get("pbr_max"), 5.0) * 1.20):
+            abnormal_reasons.append("브랜드소비재 급회복 기준가의 암시 PBR이 업종 허용범위를 벗어남")
+    elif not earnings_trough and implied_per > 0 and not (per_min * 0.75 <= implied_per <= per_max * 1.30):
         abnormal_reasons.append("최종가 암시 PER이 업종 허용범위를 벗어남")
     if earnings_trough and implied_pbr > 0 and not (0.35 <= implied_pbr <= safe_float(profile.get("pbr_max"), 4.0) * 1.20):
         abnormal_reasons.append("이익저점 기준가의 암시 PBR이 업종 허용범위를 벗어남")
@@ -1761,6 +2028,7 @@ def calculate_value(
         for reason in (
             "연속 4개 단독분기 TTM 미확보",
             "최종가 암시 PER이 업종 허용범위를 벗어남",
+            "브랜드소비재 급회복 기준가의 암시 PBR이 업종 허용범위를 벗어남",
             "이익저점 기준가의 암시 PBR이 업종 허용범위를 벗어남",
             "모형 간 가치 차이가 4배 이상",
             "이익저점 모형 간 가치 차이가 5.5배 이상",
@@ -1817,6 +2085,9 @@ def calculate_value(
             model_confidence -= 20
     if future_growth_model.get("사용가능") is True:
         model_confidence += 3 if safe_float(future_growth_model.get("품질")) >= 85 else 0
+    if adaptive_applied:
+        adaptive_quality = safe_float(adaptive_value.get("품질"), 60.0)
+        model_confidence = int(round(model_confidence * 0.72 + adaptive_quality * 0.28))
     if complex_config:
         model_confidence = min(model_confidence, 78)  # 세부 사업부 자료 없는 대용 SOTP
     if not ttm.get("available"):
@@ -1860,6 +2131,8 @@ def calculate_value(
         notes.append("기업 유형에 부적합하거나 독립 가치앵커에서 과도하게 벗어난 모형은 기준가에서 제외했습니다.")
     if future_growth_model.get("사용가능") is True:
         notes.append("구조적 성장 증거가 확인된 경우에만 FY3·FY4 성장률을 감쇠 적용하고 업종별 EPS·가치 상한 및 할인율을 거친 미래 성장가치를 일부 반영했습니다.")
+    if adaptive_applied:
+        notes.append("현재 재무기초가치와 미래 총가치를 분리한 뒤 미래 총가치가 현재 재무기초가치를 초과하는 부분만 미래 증분가치로 더해 이중계산을 방지했습니다.")
     if ttm.get("잠정실적반영"):
         notes.append("정식 보고서보다 최신인 OpenDART 잠정실적을 매출·영업이익·순이익 TTM에 반영했으며 현금흐름은 최근 정식보고서를 유지했습니다.")
     if data_qualification.get("정식보고서대체평가") is True:
@@ -1931,6 +2204,12 @@ def calculate_value(
         "미래성장모형": future_growth_model,
         "복합기업대용가치합산": round(complex_proxy_value, 2),
         "순현금주당가치": round(net_cash_per_share, 2),
+        "기존V4재무적정가": round(legacy_basic, 2),
+        "현재재무기초가치": round(safe_float(adaptive_value.get("현재재무기초가치")), 2),
+        "미래증분가치": round(safe_float(adaptive_value.get("미래증분가치")), 2),
+        "펀더멘털적정가": round(safe_float(adaptive_value.get("펀더멘털적정가")), 2),
+        "적응형가치적용": adaptive_applied,
+        "적응형가치모형": adaptive_value,
         "재무적정가": round(basic, 2),
         "기본적정가": round(basic, 2),
         "보수적적정가": round(conservative, 2),
@@ -1950,7 +2229,8 @@ def calculate_value(
         "실적전환강도": round(transition_strength, 2),
         "구조적실적가속": structural_acceleration,
         "가치평가국면": (
-            "이익저점·회복가치 혼합" if earnings_trough
+            "현재재무+미래증분 적응형" if adaptive_applied
+            else "이익저점·회복가치 혼합" if earnings_trough
             else "구조적 성장·미래이익 혼합" if future_growth_model.get("사용가능") is True
             else "일반 가치평가"
         ),

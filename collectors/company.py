@@ -87,6 +87,7 @@ VALUATION_INDUSTRIES = {
     "finance",
     "insurance",
     "consumer_staples",
+    "beauty_consumer",
     "consumer_discretionary",
     "retail",
     "media_entertainment",
@@ -153,7 +154,11 @@ def classify_dart_industry_detail(
 
     prefix3 = code[:3]
     major = int(code[:2])
-    if prefix3 == "261":
+    if code[:5] in {"20422", "20423", "20424"}:
+        # KSIC 20422(치약·비누·세제), 20423(화장품), 20424(광택·가향)처럼
+        # 브랜드/생활소비재 성격이 강한 세부업종은 광범위한 화학·소재 배수를 쓰지 않는다.
+        result = "beauty_consumer"
+    elif prefix3 == "261":
         result = "semiconductor"
     elif prefix3 in {"262", "263", "264", "265", "266"}:
         result = "electronic_components"
@@ -196,10 +201,16 @@ def classify_dart_industry_detail(
     else:
         result = "general"
 
+    exact_consumer = code[:5] in {"20422", "20423", "20424"}
     return {
         "산업코드": result,
         "분류출처": "OpenDART 기업개황 업종코드 세분류",
-        "분류신뢰도": 92 if prefix3 in {"261", "262", "263", "264", "265", "266"} else 72 if result != "general" else 48,
+        "분류신뢰도": (
+            94 if exact_consumer
+            else 92 if prefix3 in {"261", "262", "263", "264", "265", "266"}
+            else 72 if result != "general"
+            else 48
+        ),
         "산업프로필버전": INDUSTRY_PROFILE_VERSION,
     }
 
