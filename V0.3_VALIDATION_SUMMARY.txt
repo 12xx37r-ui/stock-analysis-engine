@@ -1,0 +1,29 @@
+Strategic Forward V0.3 validation summary
+
+검증 통과
+- validate_industry_profiles.py
+- validate_valuation_profiles.py
+- validate_valuation_contract.py
+- validate_valuation_pipeline_v4.py
+- validate_future_growth_model.py
+- validate_adaptive_fundamental_value.py
+- validate_strategic_forward_value.py
+- validate_strategic_context_cache.py
+- validate_insurance_financials.py
+- validate_signal_bridge.py
+- validate_sdi_trough.py
+- validate_universe_catalog.py
+
+Strategic 주요 property
+- 평가대상 현재가 변경에도 전략 적정가 불변
+- 애널리스트 목표주가 변경에도 전략 적정가 불변
+- 외부 FY1 EPS 컨센서스가 내부 전망을 상향 검증하면 미래가치 인정 증가
+- 산업 바스켓에서 평가대상 자체 주가 제거
+- 산업/컨센서스 근거가 모두 없으면 미래증분가치 최대 12%
+- 산업만 있고 컨센서스가 없으면 최대 45%
+- 미검증 글로벌 거시는 1.0배 중립
+- 실제 SOTP는 2개 이상 사업부 + 희석주식수 등 감사 가능한 입력이 있을 때만 사용
+
+주의
+- 이것은 cross-sectional/property/stress 검증이며 장기 historical point-in-time OOS 백테스트를 대체하지 않습니다.
+- validate_published_feed.py는 별도 --file/--stock-code 인수가 필요한 CLI 검증기라 위 일괄 무인검증에서 제외했습니다.

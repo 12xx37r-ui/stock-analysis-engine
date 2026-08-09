@@ -28,6 +28,7 @@ from collectors.news import get_company_news
 from collectors.provisional import get_latest_provisional_earnings
 from collectors.technical import get_stock_technical_bundle
 from collectors.strategic_context import get_strategic_macro_context
+from collectors.analyst_consensus import get_analyst_consensus
 from predictor import predict_stock
 
 
@@ -1437,13 +1438,18 @@ def main():
         target.get("기업조회", {}),
     )
 
-    # Strategic Forward는 먼저 로컬 입력만으로 계산한다.
-    # 실제 미래증분가치 후보가 있고 인정률도 0보다 클 때만 글로벌 매크로
-    # bundle을 읽어 불필요한 GitHub/raw 외부 호출을 피한다.
+    # Strategic Forward는 로컬 계산 -> 필요한 경우에만 컨센서스 1회 ->
+    # 필요한 경우에만 글로벌 매크로 1회 순서로 진행한다.
+    # 외부 호출은 미래가치 후보가 없는 기업에서는 아예 발생하지 않는다.
     strategic_macro_bundle = {
         "수집상태": "미호출",
         "출처": "not_needed",
         "payload": {},
+    }
+    analyst_consensus = {
+        "사용가능": False,
+        "수집상태": "미호출",
+        "출처": "not_needed",
     }
     strategic_forward_value = safe_execute(
         "STRATEGIC FORWARD VALUE (LOCAL FIRST)",
@@ -1454,9 +1460,12 @@ def main():
             industry_analysis=industry_analysis,
             global_macro_context={},
             segment_data=safe_dict(fundamentals_bundle).get("SOTP", {}),
+            external_consensus={},
+            stock_code=stock_code,
+            company_name=company,
         ),
         {
-            "엔진버전": "0.2.1-strategic-forward-low-load",
+            "엔진버전": "0.3.0-strategic-forward-consensus-low-load",
             "모드": "shadow",
             "전략펀더멘털적정가": 0.0,
             "원시미래증분가치": 0.0,
@@ -1465,6 +1474,35 @@ def main():
             "미래성장가치표시": "미래성장가치 산출불가",
         },
     )
+
+    needs_consensus = safe_number(
+        strategic_forward_value.get("원시미래증분가치"), 0.0
+    ) > 0
+    if needs_consensus:
+        analyst_consensus = timed_safe_execute(
+            "ANALYST CONSENSUS (LAZY/CACHED)",
+            lambda: get_analyst_consensus(stock_code),
+            {
+                "사용가능": False,
+                "수집상태": "실패",
+                "출처": "FnGuide 공개 Snapshot",
+            },
+        )
+        strategic_forward_value = safe_execute(
+            "STRATEGIC FORWARD VALUE (CONSENSUS ADJUSTED)",
+            lambda: build_strategic_forward_value(
+                valuation=valuation,
+                financial=financial,
+                fundamentals_analysis=fundamentals_analysis,
+                industry_analysis=industry_analysis,
+                global_macro_context={},
+                segment_data=safe_dict(fundamentals_bundle).get("SOTP", {}),
+                external_consensus=analyst_consensus,
+                stock_code=stock_code,
+                company_name=company,
+            ),
+            strategic_forward_value,
+        )
 
     needs_macro = (
         safe_number(strategic_forward_value.get("원시미래증분가치"), 0.0) > 0
@@ -1489,6 +1527,9 @@ def main():
                 industry_analysis=industry_analysis,
                 global_macro_context=safe_dict(strategic_macro_bundle).get("payload", {}),
                 segment_data=safe_dict(fundamentals_bundle).get("SOTP", {}),
+                external_consensus=analyst_consensus,
+                stock_code=stock_code,
+                company_name=company,
             ),
             strategic_forward_value,
         )
@@ -1567,6 +1608,7 @@ def main():
         "뉴스분석": news_bundle,
         "가치평가": valuation,
         "전략미래가치": strategic_forward_value,
+        "애널리스트컨센서스": analyst_consensus,
         "전략거시원천": {
             "수집상태": safe_dict(strategic_macro_bundle).get("수집상태", ""),
             "출처": safe_dict(strategic_macro_bundle).get("출처", ""),

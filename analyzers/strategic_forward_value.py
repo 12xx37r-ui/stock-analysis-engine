@@ -1,4 +1,4 @@
-"""Strategic Forward Valuation Engine V0.2 (shadow-first, low-load).
+"""Strategic Forward Valuation Engine V0.3 (consensus + shadow-first + low-load).
 
 목적
 - 기존 재무가치 엔진을 변경하지 않고, 현재 재무기초가치 위에 실제로 근거가
@@ -19,7 +19,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 
-ENGINE_VERSION = "0.2.1-strategic-forward-low-load"
+ENGINE_VERSION = "0.3.0-strategic-forward-consensus-low-load"
 
 
 def safe_float(value: Any, default: float = 0.0) -> float:
@@ -118,10 +118,73 @@ def company_growth_axis(
     }
 
 
-def industry_growth_axis(industry_analysis: Dict[str, Any]) -> Dict[str, Any]:
-    """산업 가격/시장폭으로 확인되는 현재·장기 산업 확장 신호.
+def _industry_detail_without_target(
+    block: Dict[str, Any],
+    stock_code: str = "",
+    company_name: str = "",
+) -> Tuple[float, float, bool, int]:
+    """산업 요소별 평가에서 대상기업 자체 주가 행을 제외해 신호를 재집계한다.
 
-    산업 데이터가 없으면 0점/미사용이며 임의 업종 프리미엄을 만들지 않는다.
+    산업 바스켓에 평가대상 종목이 포함되면 그 종목의 주가가 다시 미래가치의
+    근거가 되는 순환오염이 생길 수 있다. 요소별평가가 제공되는 경우 해당 행을
+    제거한 뒤 원래와 동일하게 가중치×데이터품질로 재집계한다.
+    """
+    details = block.get("요소별평가") if isinstance(block, dict) else None
+    if not isinstance(details, list) or not details:
+        return safe_float(block.get("신호")), _bounded_quality(block.get("데이터품질"), 0.0), False, 0
+
+    code = str(stock_code or "").strip()
+    name = str(company_name or "").strip()
+    kept = []
+    removed = 0
+    for row in details:
+        if not isinstance(row, dict):
+            continue
+        symbol = str(row.get("심볼") or "").strip().upper()
+        asset_name = str(row.get("자산명") or "").strip()
+        is_self = bool(code and (symbol == code or symbol.startswith(code + "."))) or bool(name and asset_name == name)
+        if is_self:
+            removed += 1
+            continue
+        kept.append(row)
+
+    if removed <= 0:
+        return safe_float(block.get("신호")), _bounded_quality(block.get("데이터품질"), 0.0), False, 0
+
+    weighted_sum = 0.0
+    effective_weight_sum = 0.0
+    nominal_weight_sum = 0.0
+    quality_sum = 0.0
+    for row in kept:
+        weight = max(0.0, safe_float(row.get("가중치")))
+        quality = clamp(safe_float(row.get("데이터품질"), 0.0) / 100.0, 0.0, 1.0)
+        signal = clamp(safe_float(row.get("신호")), -100.0, 100.0)
+        effective = weight * quality
+        weighted_sum += signal * effective
+        effective_weight_sum += effective
+        nominal_weight_sum += weight
+        quality_sum += weight * quality
+
+    if effective_weight_sum <= 0 or nominal_weight_sum <= 0:
+        return 0.0, 0.0, True, removed
+
+    signal = weighted_sum / effective_weight_sum
+    quality = quality_sum / nominal_weight_sum * 100.0
+    return clamp(signal, -100.0, 100.0), clamp(quality, 0.0, 100.0), True, removed
+
+
+def industry_growth_axis(
+    industry_analysis: Dict[str, Any],
+    stock_code: str = "",
+    company_name: str = "",
+) -> Dict[str, Any]:
+    """산업의 현재·장기 확장 신호를 평가한다.
+
+    핵심 원칙
+    - 산업 데이터가 없으면 임의 프리미엄을 만들지 않는다.
+    - 산업 바스켓에 대상기업 자체가 들어 있으면 해당 주가 행은 제거한다.
+    - 자체 행 제거 시 그 행이 섞여 있는 시장폭/상대강도 집계값도 가치평가에는
+      사용하지 않고, 독립 peer들의 중기·장기 신호만 사용한다.
     """
     if not isinstance(industry_analysis, dict) or industry_analysis.get("분석상태") != "정상":
         return {
@@ -136,34 +199,49 @@ def industry_growth_axis(industry_analysis: Dict[str, Any]) -> Dict[str, Any]:
     breadth = _analysis_dict(industry_analysis, "시장폭")
     relative = _analysis_dict(industry_analysis, "상대강도")
 
-    mid_signal = safe_float(mid.get("신호"))
-    long_signal = safe_float(long.get("신호"))
+    mid_signal, mid_quality, mid_self_removed, mid_removed_count = _industry_detail_without_target(
+        mid, stock_code=stock_code, company_name=company_name
+    )
+    long_signal, long_quality, long_self_removed, long_removed_count = _industry_detail_without_target(
+        long, stock_code=stock_code, company_name=company_name
+    )
+    self_removed = mid_self_removed or long_self_removed
+
     ma20 = safe_float(breadth.get("MA20상회비율"), 50.0)
     ma120 = safe_float(breadth.get("MA120상회비율"), 50.0)
     excess = safe_float(relative.get("기준시장대비초과수익률"), 0.0)
 
-    # 미래가치에는 양(+)의 확장 증거만 기여한다. 단기 모멘텀보다 장기 사이클 비중을 높인다.
-    score = (
-        _positive_score(mid_signal, 60.0) * 0.22
-        + _positive_score(long_signal, 70.0) * 0.43
-        + clamp((ma20 - 45.0) / 55.0 * 100.0, 0.0, 100.0) * 0.10
-        + clamp((ma120 - 45.0) / 55.0 * 100.0, 0.0, 100.0) * 0.15
-        + _positive_score(excess, 15.0) * 0.10
-    )
-    mid_quality = _bounded_quality(mid.get("데이터품질"), 0.0)
-    long_quality = _bounded_quality(long.get("데이터품질"), 0.0)
-    quality = clamp(mid_quality * 0.40 + long_quality * 0.60, 0.0, 100.0)
+    if self_removed:
+        # 시장폭·상대강도도 대상기업 자체 가격을 포함한 집계일 수 있으므로 제외.
+        # 독립 peer의 중기/장기 신호만 34:66으로 재정규화한다.
+        score = (
+            _positive_score(mid_signal, 60.0) * 0.34
+            + _positive_score(long_signal, 70.0) * 0.66
+        )
+        quality = clamp(mid_quality * 0.40 + long_quality * 0.60, 0.0, 100.0)
+    else:
+        # 미래가치에는 양(+)의 확장 증거만 기여한다. 단기 모멘텀보다 장기 사이클 비중을 높인다.
+        score = (
+            _positive_score(mid_signal, 60.0) * 0.22
+            + _positive_score(long_signal, 70.0) * 0.43
+            + clamp((ma20 - 45.0) / 55.0 * 100.0, 0.0, 100.0) * 0.10
+            + clamp((ma120 - 45.0) / 55.0 * 100.0, 0.0, 100.0) * 0.15
+            + _positive_score(excess, 15.0) * 0.10
+        )
+        quality = clamp(mid_quality * 0.40 + long_quality * 0.60, 0.0, 100.0)
 
     reasons: List[str] = []
+    if self_removed:
+        reasons.append("대상기업 자체 주가를 산업 성장근거에서 제외")
     if long_signal >= 35:
         reasons.append("장기 산업사이클 강세")
     elif long_signal >= 15:
         reasons.append("장기 산업사이클 우호")
     if mid_signal >= 25:
         reasons.append("중기 산업선행 강세")
-    if ma120 >= 70:
+    if not self_removed and ma120 >= 70:
         reasons.append("산업 구성자산 장기 시장폭 양호")
-    if excess >= 5:
+    if not self_removed and excess >= 5:
         reasons.append("기준시장 대비 산업 상대강도 우위")
 
     return {
@@ -172,82 +250,169 @@ def industry_growth_axis(industry_analysis: Dict[str, Any]) -> Dict[str, Any]:
         "사용가능": quality >= 55.0,
         "근거": reasons,
         "입력": {
-            "중기산업신호": mid_signal,
-            "장기산업신호": long_signal,
-            "MA20상회비율": ma20,
-            "MA120상회비율": ma120,
-            "기준시장대비초과수익률": excess,
+            "중기산업신호": round(mid_signal, 2),
+            "장기산업신호": round(long_signal, 2),
+            "MA20상회비율": None if self_removed else ma20,
+            "MA120상회비율": None if self_removed else ma120,
+            "기준시장대비초과수익률": None if self_removed else excess,
+            "대상기업자체행제외": self_removed,
+            "제외행수": max(mid_removed_count, long_removed_count),
         },
     }
 
 
-def analyst_expectation_axis(fundamentals_analysis: Dict[str, Any]) -> Dict[str, Any]:
-    """애널리스트 실적 컨센서스의 '수정 방향'만 사용한다.
+def analyst_expectation_axis(
+    fundamentals_analysis: Dict[str, Any],
+    valuation: Optional[Dict[str, Any]] = None,
+    external_consensus: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """애널리스트 *실적* 기대를 시장가와 분리해 사용한다.
 
-    목표주가 수준은 가치 산식에 넣지 않는다. 현재 stock engine에는 보통 이 자료가
-    없으므로, 없을 때는 명시적으로 0점/미사용 처리한다.
+    우선순위
+    1) 명시적인 EPS/영업이익 수정률 데이터가 있으면 기존 revision 방식 사용.
+    2) revision 이력이 없지만 외부 FY1 EPS 컨센서스가 있으면 내부 FY1 EPS와의
+       괴리, 추정기관수, 투자의견을 이용해 '기대 강도'만 산출한다.
 
-    지원 입력 예시::
-      fundamentals_analysis['애널리스트컨센서스'] = {
-        '사용가능': True, '애널리스트수': 12,
-        'FY1_EPS_3개월수정률': 15.0, 'FY2_EPS_3개월수정률': 12.0,
-        '영업이익_3개월수정률': 18.0, '상향비율': 75.0,
-        '추정치분산': 12.0, '데이터품질': 90.0
-      }
+    목표주가는 저장/표시용 진단값으로만 보존한다. 적정가에 직접 합산하지 않는다.
+    현재주가/시가총액도 사용하지 않는다.
     """
+    valuation = valuation or {}
+    external_consensus = external_consensus or {}
+
     consensus = _analysis_dict(fundamentals_analysis, "애널리스트컨센서스")
-    if not consensus or consensus.get("사용가능") is not True:
+    if consensus and consensus.get("사용가능") is True:
+        n = int(max(0, safe_float(consensus.get("애널리스트수"))))
+        fy1_rev = safe_float(consensus.get("FY1_EPS_3개월수정률"))
+        fy2_rev = safe_float(consensus.get("FY2_EPS_3개월수정률"))
+        op_rev = safe_float(consensus.get("영업이익_3개월수정률"))
+        upward = safe_float(consensus.get("상향비율"), 50.0)
+        dispersion = safe_float(consensus.get("추정치분산"), 50.0)
+
+        score = (
+            _positive_score(fy1_rev, 25.0) * 0.35
+            + _positive_score(fy2_rev, 25.0) * 0.25
+            + _positive_score(op_rev, 30.0) * 0.20
+            + clamp((upward - 50.0) / 40.0 * 100.0, 0.0, 100.0) * 0.15
+            + clamp((30.0 - dispersion) / 25.0 * 100.0, 0.0, 100.0) * 0.05
+        )
+        source_quality = _bounded_quality(consensus.get("데이터품질"), 70.0)
+        coverage_quality = clamp(n / 10.0 * 100.0, 20.0 if n > 0 else 0.0, 100.0)
+        quality = clamp(source_quality * 0.70 + coverage_quality * 0.30, 0.0, 100.0)
+
+        reasons = []
+        if fy1_rev >= 8:
+            reasons.append("FY1 EPS 컨센서스 상향")
+        if fy2_rev >= 8:
+            reasons.append("FY2 EPS 컨센서스 상향")
+        if op_rev >= 10:
+            reasons.append("영업이익 컨센서스 상향")
+        if upward >= 65:
+            reasons.append("상향 애널리스트 비율 우세")
+
         return {
-            "점수": 0.0,
-            "품질": 0.0,
-            "사용가능": False,
-            "근거": ["애널리스트 실적 컨센서스 수정자료 없음"],
-            "주의": "목표주가를 임의 대용하지 않음",
+            "점수": round(clamp(score, 0.0, 100.0), 2),
+            "품질": round(quality, 2),
+            "사용가능": quality >= 55.0 and n >= 3,
+            "근거": reasons,
+            "방식": "revision",
+            "입력": {
+                "애널리스트수": n,
+                "FY1_EPS_3개월수정률": fy1_rev,
+                "FY2_EPS_3개월수정률": fy2_rev,
+                "영업이익_3개월수정률": op_rev,
+                "상향비율": upward,
+                "추정치분산": dispersion,
+            },
         }
 
-    n = int(max(0, safe_float(consensus.get("애널리스트수"))))
-    fy1_rev = safe_float(consensus.get("FY1_EPS_3개월수정률"))
-    fy2_rev = safe_float(consensus.get("FY2_EPS_3개월수정률"))
-    op_rev = safe_float(consensus.get("영업이익_3개월수정률"))
-    upward = safe_float(consensus.get("상향비율"), 50.0)
-    dispersion = safe_float(consensus.get("추정치분산"), 50.0)
+    if external_consensus.get("사용가능") is True:
+        n = int(max(0, safe_float(external_consensus.get("추정기관수"))))
+        opinion = safe_float(external_consensus.get("투자의견"), 3.0)
+        external_eps = safe_float(external_consensus.get("FY1_EPS"))
+        internal_eps = safe_float(valuation.get("FY1예상EPS"))
+        target_price = safe_float(external_consensus.get("목표주가"))
+        implied_per = target_price / external_eps if target_price > 0 and external_eps > 0 else 0.0
+        eps_gap_pct = ((external_eps / internal_eps) - 1.0) * 100.0 if internal_eps > 0 else 0.0
 
-    score = (
-        _positive_score(fy1_rev, 25.0) * 0.35
-        + _positive_score(fy2_rev, 25.0) * 0.25
-        + _positive_score(op_rev, 30.0) * 0.20
-        + clamp((upward - 50.0) / 40.0 * 100.0, 0.0, 100.0) * 0.15
-        + clamp((30.0 - dispersion) / 25.0 * 100.0, 0.0, 100.0) * 0.05
-    )
-    source_quality = _bounded_quality(consensus.get("데이터품질"), 70.0)
-    coverage_quality = clamp(n / 10.0 * 100.0, 20.0 if n > 0 else 0.0, 100.0)
-    quality = clamp(source_quality * 0.70 + coverage_quality * 0.30, 0.0, 100.0)
+        # 실적 컨센서스가 내부 전망보다 높을수록 강한 미래이익 검증으로 본다.
+        # 목표주가와 목표가 암시 PER은 진단용으로만 보존하며 점수/적정가에는 0% 반영한다.
+        score = (
+            _positive_score(eps_gap_pct, 30.0) * 0.60
+            + clamp((opinion - 3.0) / 1.5 * 100.0, 0.0, 100.0) * 0.18
+            + clamp(n / 15.0 * 100.0, 0.0, 100.0) * 0.22
+        )
+        source_quality = _bounded_quality(external_consensus.get("데이터품질"), 70.0)
+        coverage_quality = clamp(n / 12.0 * 100.0, 0.0, 100.0)
+        quality = clamp(source_quality * 0.72 + coverage_quality * 0.28, 0.0, 100.0)
+        reasons: List[str] = []
+        if eps_gap_pct >= 10:
+            reasons.append("외부 FY1 EPS 컨센서스가 내부 전망보다 상향")
+        elif eps_gap_pct <= -10:
+            reasons.append("외부 FY1 EPS 컨센서스가 내부 전망보다 하향")
+        if n >= 10:
+            reasons.append("다수 추정기관의 실적 컨센서스 확보")
+        if opinion >= 3.8:
+            reasons.append("애널리스트 투자의견 기대 강함")
 
-    reasons = []
-    if fy1_rev >= 8:
-        reasons.append("FY1 EPS 컨센서스 상향")
-    if fy2_rev >= 8:
-        reasons.append("FY2 EPS 컨센서스 상향")
-    if op_rev >= 10:
-        reasons.append("영업이익 컨센서스 상향")
-    if upward >= 65:
-        reasons.append("상향 애널리스트 비율 우세")
+        return {
+            "점수": round(clamp(score, 0.0, 100.0), 2),
+            "품질": round(quality, 2),
+            "사용가능": quality >= 55.0 and n >= 3 and external_eps > 0,
+            "근거": reasons,
+            "방식": "current_consensus_anchor",
+            "입력": {
+                "애널리스트수": n,
+                "투자의견": round(opinion, 2),
+                "외부FY1EPS": round(external_eps, 4),
+                "내부FY1EPS": round(internal_eps, 4),
+                "EPS전망격차율": round(eps_gap_pct, 2),
+                "목표암시PER_진단전용": round(implied_per, 2),
+                "목표주가직접가치미사용": True,
+            },
+        }
 
     return {
-        "점수": round(clamp(score, 0.0, 100.0), 2),
-        "품질": round(quality, 2),
-        "사용가능": quality >= 55.0 and n >= 3,
-        "근거": reasons,
-        "입력": {
-            "애널리스트수": n,
-            "FY1_EPS_3개월수정률": fy1_rev,
-            "FY2_EPS_3개월수정률": fy2_rev,
-            "영업이익_3개월수정률": op_rev,
-            "상향비율": upward,
-            "추정치분산": dispersion,
-        },
+        "점수": 0.0,
+        "품질": 0.0,
+        "사용가능": False,
+        "근거": ["애널리스트 실적 컨센서스 자료 없음"],
+        "주의": "목표주가/현재주가를 임의 대용하지 않음",
+        "방식": "none",
     }
 
+
+def _consensus_adjusted_future_total(
+    future_total: float,
+    valuation: Dict[str, Any],
+    expectation: Dict[str, Any],
+) -> Tuple[float, Dict[str, Any]]:
+    """외부 FY1 EPS가 있을 때 기존 FY3/FY4 미래가치 후보를 보수적으로 보정한다.
+
+    외부 컨센서스는 FY1 앵커일 뿐이므로 전체 격차를 100% 장기화하지 않는다.
+    품질에 따라 최대 80%만 미래 경로에 전달하고, 상향/하향 비율은 0.75~1.35로
+    제한한다. 목표주가/현재가는 전혀 사용하지 않는다.
+    """
+    if future_total <= 0 or expectation.get("사용가능") is not True:
+        return future_total, {"적용": False, "배수": 1.0}
+    inp = expectation.get("입력", {}) if isinstance(expectation.get("입력"), dict) else {}
+    external_eps = safe_float(inp.get("외부FY1EPS"))
+    internal_eps = safe_float(inp.get("내부FY1EPS"))
+    if external_eps <= 0 or internal_eps <= 0:
+        return future_total, {"적용": False, "배수": 1.0}
+
+    raw_ratio = external_eps / internal_eps
+    bounded_ratio = clamp(raw_ratio, 0.75, 1.35)
+    quality_weight = clamp(safe_float(expectation.get("품질")) / 100.0 * 0.80, 0.0, 0.80)
+    applied_ratio = 1.0 + (bounded_ratio - 1.0) * quality_weight
+    adjusted = max(0.0, future_total * applied_ratio)
+    return adjusted, {
+        "적용": True,
+        "외부대내부FY1EPS배수": round(raw_ratio, 4),
+        "상하한적용배수": round(bounded_ratio, 4),
+        "품질전달률": round(quality_weight, 4),
+        "최종미래가치보정배수": round(applied_ratio, 4),
+        "목표주가미사용": True,
+    }
 
 def macro_axis(global_macro_context: Optional[Dict[str, Any]]) -> Dict[str, Any]:
     """별도 글로벌 거시 엔진의 카드11 통합판정을 읽는다.
@@ -468,6 +633,9 @@ def build_strategic_forward_value(
     industry_analysis: Optional[Dict[str, Any]] = None,
     global_macro_context: Optional[Dict[str, Any]] = None,
     segment_data: Optional[Dict[str, Any]] = None,
+    external_consensus: Optional[Dict[str, Any]] = None,
+    stock_code: str = "",
+    company_name: str = "",
 ) -> Dict[str, Any]:
     """전략적 미래가치 Shadow 결과를 생성한다."""
     financial = financial or {}
@@ -497,8 +665,12 @@ def build_strategic_forward_value(
         base_source = "SOTP기초가치"
 
     company = company_growth_axis(valuation, fundamentals_analysis)
-    industry = industry_growth_axis(industry_analysis)
-    expectation = analyst_expectation_axis(fundamentals_analysis)
+    industry = industry_growth_axis(
+        industry_analysis, stock_code=stock_code, company_name=company_name
+    )
+    expectation = analyst_expectation_axis(
+        fundamentals_analysis, valuation=valuation, external_consensus=external_consensus
+    )
     macro = macro_axis(global_macro_context)
 
     # 기존 미래성장모형은 가격독립적인 FY3/FY4 총가치 후보로만 활용한다.
@@ -506,6 +678,11 @@ def build_strategic_forward_value(
     future_total = safe_float(future_model.get("가치")) if future_model.get("사용가능") is True else 0.0
     if future_total <= 0:
         future_total = safe_float(adaptive.get("미래총가치"))
+
+    original_future_total = future_total
+    future_total, consensus_future_adjustment = _consensus_adjusted_future_total(
+        future_total, valuation, expectation
+    )
 
     raw_increment = max(0.0, future_total - strategic_base) if strategic_base > 0 else 0.0
     evidence_factor, cap_reasons = _evidence_recognition_factor(company, industry, expectation)
@@ -543,7 +720,9 @@ def build_strategic_forward_value(
         "기초가치": round(strategic_base, 2),
         "기초가치출처": base_source,
         "SOTP": sotp,
+        "기존미래총가치": round(original_future_total, 2),
         "원시미래총가치": round(future_total, 2),
+        "컨센서스미래가치보정": consensus_future_adjustment,
         "원시미래증분가치": round(raw_increment, 2),
         "미래가치인정률": round(evidence_factor * 100.0, 2),
         "거시조정배수": round(macro_modifier, 4),
@@ -560,7 +739,8 @@ def build_strategic_forward_value(
         },
         "근거": list(dict.fromkeys(str(x) for x in reasons if x)),
         "정책": {
-            "시장기대없음": "애널리스트 실적수정 자료가 없으면 임의 목표주가/시장가로 대체하지 않음",
+            "시장기대없음": "애널리스트 실적자료가 없으면 임의 목표주가/시장가로 대체하지 않음",
+            "시장기대있음": "외부 FY1 EPS/추정기관수/투자의견은 미래가치 근거로 사용하되 목표주가는 적정가에 직접 합산하지 않음",
             "산업자료없음": "산업 선행자료가 없으면 산업 프리미엄 0점",
             "산업시장기대모두부족": "미래증분가치 최대 12% 인정",
             "산업만확인": "컨센서스 없으면 미래증분가치 최대 45% 인정",

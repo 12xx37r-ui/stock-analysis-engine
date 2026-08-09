@@ -1,4 +1,4 @@
-"""Strategic Forward Value V0.2 simulation/property validation.
+"""Strategic Forward Value V0.3 simulation/property validation.
 
 실제 과거 애널리스트 revision/산업/거시 vintage가 현재 ZIP에 없으므로 이 검증은
 미래 수익률을 증명하는 백테스트가 아니다. 대신 다음을 검증한다.
@@ -22,6 +22,7 @@ from analyzers.strategic_forward_value import (
 )
 from analyzers.valuation import calculate_value
 from collectors.company import classify_dart_industry_detail
+from collectors.analyst_consensus import parse_consensus_html
 
 
 MACRO_FIXTURE = os.getenv(
@@ -82,6 +83,8 @@ def recalc(snapshot: Dict[str, Any], code: str, price_override=None):
         fundamentals_analysis=snapshot["기업기초데이터"].get("분석", {}),
         industry_analysis=snapshot["산업분석"].get("분석", {}),
         global_macro_context=load_macro(),
+        stock_code=code,
+        company_name=snapshot.get("기업명", ""),
     )
     return valuation, strategic
 
@@ -100,6 +103,23 @@ def synthetic_consensus(strength: str) -> Dict[str, Any]:
             "FY1_EPS_3개월수정률": 2, "FY2_EPS_3개월수정률": 1,
             "영업이익_3개월수정률": 2, "상향비율": 52,
             "추정치분산": 25, "데이터품질": 75,
+        }
+    return {}
+
+
+def current_consensus_fixture(company: str, target_price: float = 2_350_500) -> Dict[str, Any]:
+    """현재 컨센서스 형태를 재현하는 검증 fixture. 런타임 하드코딩에는 사용하지 않는다."""
+    if company == "삼성전기":
+        return {
+            "사용가능": True, "투자의견": 4.0, "목표주가": target_price,
+            "FY1_EPS": 19_742, "PER": 64.7, "추정기관수": 20,
+            "데이터품질": 100, "수집상태": "fixture",
+        }
+    if company == "LG생활건강":
+        return {
+            "사용가능": True, "투자의견": 3.5, "목표주가": 305_143,
+            "FY1_EPS": 13_190, "PER": 21.8, "추정기관수": 14,
+            "데이터품질": 100, "수집상태": "fixture",
         }
     return {}
 
@@ -152,26 +172,70 @@ def main() -> int:
     weak = build_strategic_forward_value(
         valuation=samsung_v, financial=samsung["재무분석"], fundamentals_analysis=weak_fa,
         industry_analysis=samsung["산업분석"].get("분석", {}), global_macro_context=macro,
+        stock_code="009150", company_name="삼성전기",
     )
     strong = build_strategic_forward_value(
         valuation=samsung_v, financial=samsung["재무분석"], fundamentals_analysis=strong_fa,
         industry_analysis=samsung["산업분석"].get("분석", {}), global_macro_context=macro,
+        stock_code="009150", company_name="삼성전기",
     )
     assert weak["전략펀더멘털적정가"] >= samsung_s["전략펀더멘털적정가"] - 1e-6
     assert strong["전략펀더멘털적정가"] >= weak["전략펀더멘털적정가"] - 1e-6
+
+    # 5-b) 실제 Snapshot 형태의 외부 FY1 EPS 컨센서스는 미래이익 근거로 작동한다.
+    # 목표주가는 진단용일 뿐 점수/적정가에 영향이 0이어야 한다.
+    current_consensus = build_strategic_forward_value(
+        valuation=samsung_v, financial=samsung["재무분석"], fundamentals_analysis=fa,
+        industry_analysis=samsung["산업분석"].get("분석", {}), global_macro_context=macro,
+        external_consensus=current_consensus_fixture("삼성전기"),
+        stock_code="009150", company_name="삼성전기",
+    )
+    target_low = build_strategic_forward_value(
+        valuation=samsung_v, financial=samsung["재무분석"], fundamentals_analysis=fa,
+        industry_analysis=samsung["산업분석"].get("분석", {}), global_macro_context=macro,
+        external_consensus=current_consensus_fixture("삼성전기", target_price=1_000_000),
+        stock_code="009150", company_name="삼성전기",
+    )
+    target_high = build_strategic_forward_value(
+        valuation=samsung_v, financial=samsung["재무분석"], fundamentals_analysis=fa,
+        industry_analysis=samsung["산업분석"].get("분석", {}), global_macro_context=macro,
+        external_consensus=current_consensus_fixture("삼성전기", target_price=5_000_000),
+        stock_code="009150", company_name="삼성전기",
+    )
+    assert current_consensus["근거축"]["시장기대_애널리스트"]["사용가능"] is True
+    assert current_consensus["전략펀더멘털적정가"] > samsung_s["전략펀더멘털적정가"]
+    assert abs(target_low["전략펀더멘털적정가"] - target_high["전략펀더멘털적정가"]) < 1e-9
+
+    # 5-c) 산업근거에서 삼성전기 자체 주가 행이 제거되어야 한다.
+    industry_axis = current_consensus["근거축"]["산업현재미래"]
+    assert industry_axis["입력"]["대상기업자체행제외"] is True
+    assert "대상기업 자체 주가를 산업 성장근거에서 제외" in industry_axis["근거"]
+
+    # 5-d) 저부하 공개 Snapshot parser 자체 회귀검증.
+    synthetic_html = """
+    <table><tr><th>투자의견</th><th>목표주가</th><th>EPS</th><th>PER</th><th>추정기관수</th></tr>
+    <tr><td>4.00</td><td>2,350,500</td><td>19,742</td><td>64.70</td><td>20</td></tr></table>
+    """
+    parsed = parse_consensus_html(synthetic_html)
+    assert parsed["사용가능"] is True
+    assert parsed["FY1_EPS"] == 19742.0 and parsed["추정기관수"] == 20
+    assert parse_consensus_html("<html>broken</html>")["사용가능"] is False
 
     # 6) 미검증 거시는 영향 0, 검증된 악화/호전은 raw increment의 실현률만 조정.
     neutral_unvalidated = build_strategic_forward_value(
         valuation=samsung_v, financial=samsung["재무분석"], fundamentals_analysis=strong_fa,
         industry_analysis=samsung["산업분석"].get("분석", {}), global_macro_context=macro_scenario(-80, False),
+        stock_code="009150", company_name="삼성전기",
     )
     bad_macro = build_strategic_forward_value(
         valuation=samsung_v, financial=samsung["재무분석"], fundamentals_analysis=strong_fa,
         industry_analysis=samsung["산업분석"].get("분석", {}), global_macro_context=macro_scenario(-80, True),
+        stock_code="009150", company_name="삼성전기",
     )
     good_macro = build_strategic_forward_value(
         valuation=samsung_v, financial=samsung["재무분석"], fundamentals_analysis=strong_fa,
         industry_analysis=samsung["산업분석"].get("분석", {}), global_macro_context=macro_scenario(80, True),
+        stock_code="009150", company_name="삼성전기",
     )
     assert abs(neutral_unvalidated["거시조정배수"] - 1.0) < 1e-9
     assert bad_macro["전략펀더멘털적정가"] <= neutral_unvalidated["전략펀더멘털적정가"] + 1e-6
@@ -219,7 +283,7 @@ def main() -> int:
     assert all(r["recognition_pct"] <= 12.0001 for r in no_external_expect)
 
     report = {
-        "engine_version": "0.2.1-strategic-forward-low-load",
+        "engine_version": "0.3.0-strategic-forward-consensus-low-load",
         "validation_type": "cross-sectional + property/stress simulation; not historical predictive backtest",
         "universe_count": len(rows),
         "price_independence": True,
@@ -231,6 +295,9 @@ def main() -> int:
             "unvalidated_macro_modifier": 1.0,
             "validated_macro_modifier_range": [0.8, 1.1],
             "true_sotp_requires_two_segments": True,
+            "target_price_influence_on_fair_value": 0,
+            "target_company_price_excluded_from_industry_axis": True,
+            "analyst_consensus_lazy_cached": True,
         },
         "examples": {
             "삼성전기": samsung_s,
@@ -238,6 +305,7 @@ def main() -> int:
             "아모레퍼시픽": amore_s,
             "삼성전기_weak_consensus": weak,
             "삼성전기_strong_consensus": strong,
+            "삼성전기_current_consensus_fixture": current_consensus,
             "삼성전기_bad_macro": bad_macro,
             "삼성전기_good_macro": good_macro,
         },
@@ -257,7 +325,7 @@ def main() -> int:
     }
     json.dump(report, open("strategic_forward_validation_report.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
 
-    print("STRATEGIC FORWARD VALUE V0.2: PASS")
+    print("STRATEGIC FORWARD VALUE V0.3: PASS")
     print("universe", len(rows))
     print("Samsung Electro-Mechanics:", samsung_s["미래성장가치표시문구"], samsung_s["전략펀더멘털적정가"])
     print("LG H&H:", lg_s["미래성장가치표시문구"], lg_s["전략펀더멘털적정가"])
