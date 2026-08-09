@@ -373,7 +373,9 @@ def validate_valuation_contract(data, result):
     stock_code = str(data.get("KIS종목코드", "")).zfill(6)
     if stock_code == "005930":
         if valuation.get("복합기업대용모형") is not True:
-            result.error("삼성전자 복합기업 대용 가치합산 미적용")
+            result.error("삼성전자 복합기업 대용 진단값 누락")
+        if valuation.get("복합기업대용모형최종반영") is not False:
+            result.error("검증되지 않은 복합기업 대용가치가 최종 기준가에 반영됨")
         pbr_value = safe_float(valuation.get("PBR기준적정가"))
         if base > 0 and pbr_value > 0 and abs(base - pbr_value) / base < 0.08:
             result.error("삼성전자 최종가가 PBR 하단가치와 사실상 동일")

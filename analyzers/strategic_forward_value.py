@@ -1,4 +1,4 @@
-"""Strategic Forward Valuation Engine V0.3 (consensus + shadow-first + low-load).
+"""Strategic Forward Valuation Engine V0.3.1 (double-count guard + audited SOTP + low-load).
 
 목적
 - 기존 재무가치 엔진을 변경하지 않고, 현재 재무기초가치 위에 실제로 근거가
@@ -19,7 +19,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 
-ENGINE_VERSION = "0.3.0-strategic-forward-consensus-low-load"
+ENGINE_VERSION = "0.3.1-strategic-forward-doublecount-sotp-guard"
 
 
 def safe_float(value: Any, default: float = 0.0) -> float:
@@ -472,76 +472,150 @@ def macro_axis(global_macro_context: Optional[Dict[str, Any]]) -> Dict[str, Any]
 
 
 def build_sotp_base(segment_data: Optional[Dict[str, Any]]) -> Dict[str, Any]:
-    """감사 가능한 사업부 입력이 있을 때만 진짜 SOTP 기초가치를 계산한다.
+    """검증된 사업부 원천자료가 있을 때만 진짜 SOTP 기초가치를 계산한다.
 
-    ``segments`` 각 행은 이미 산출된 사업부 기업가치(EV) 또는 지분가치(equity_value)를
-    제공할 수 있다. EV를 제공하면 전체 회사 수준의 cash/debt/minority_interest를
-    한 번만 조정한다. listed_stakes/non_operating_assets는 지분가치로 더한다.
-    주당가치는 diluted_shares로 나눈다.
-
-    데이터가 없으면 0을 반환해 기존 재무기초가치로 fallback하게 한다.
+    치명적 오판 방지 원칙
+    - ``audit_status``가 verified/audited가 아니면 사용하지 않는다.
+    - 최소 2개 독립 사업부, 희석주식수, 기준일, 통화가 모두 필요하다.
+    - 각 영업사업부는 EV 기준만 허용한다. EV/Equity 혼합은 순부채 이중조정 위험 때문에 차단한다.
+    - 각 사업부에는 출처와 기준일이 있어야 하며 중복 사업부명은 허용하지 않는다.
+    - 조건을 하나라도 충족하지 못하면 기존 현재재무기초가치로 fallback한다.
     """
     data = segment_data or {}
-    segments = data.get("segments", []) if isinstance(data, dict) else []
-    if not isinstance(segments, list) or not segments:
+    if not isinstance(data, dict):
+        data = {}
+
+    blocked: List[str] = []
+    audit_status = str(data.get("audit_status", "")).strip().lower()
+    if audit_status not in {"verified", "audited"}:
+        blocked.append("SOTP 감사상태 미검증")
+
+    source_date = str(data.get("source_date") or data.get("as_of") or "").strip()
+    if not source_date:
+        blocked.append("SOTP 기준일 없음")
+
+    currency = str(data.get("currency", "")).strip().upper()
+    if not currency:
+        blocked.append("SOTP 통화 기준 없음")
+
+    diluted_shares = max(0.0, safe_float(data.get("diluted_shares")))
+    if diluted_shares <= 0:
+        blocked.append("희석주식수 미확보")
+
+    segments = data.get("segments", [])
+    if not isinstance(segments, list) or len(segments) < 2:
+        blocked.append("유효 사업부 2개 미만")
         return {
             "사용가능": False,
+            "검증상태": "차단",
             "주당SOTP기초가치": 0.0,
-            "근거": ["감사 가능한 사업부별 가치자료 없음"],
+            "차단사유": list(dict.fromkeys(blocked)),
+            "근거": ["감사 가능한 2개 이상 사업부 원천자료가 없어 SOTP 비적용"],
         }
 
     total_ev = 0.0
-    direct_equity = 0.0
     valid_segments = 0
     detail = []
-    for row in segments:
+    seen_names = set()
+    for idx, row in enumerate(segments):
         if not isinstance(row, dict):
+            blocked.append(f"사업부 {idx+1} 형식 오류")
             continue
+        name = str(row.get("name") or row.get("segment_id") or "").strip()
+        if not name:
+            blocked.append(f"사업부 {idx+1} 식별자 없음")
+            continue
+        key = name.lower()
+        if key in seen_names:
+            blocked.append(f"사업부 중복: {name}")
+            continue
+        seen_names.add(key)
+
+        row_source = str(row.get("source") or row.get("data_source") or "").strip()
+        row_date = str(row.get("source_date") or row.get("as_of") or source_date).strip()
+        row_currency = str(row.get("currency") or currency).strip().upper()
+        if not row_source:
+            blocked.append(f"사업부 출처 없음: {name}")
+            continue
+        if not row_date:
+            blocked.append(f"사업부 기준일 없음: {name}")
+            continue
+        if currency and row_currency and row_currency != currency:
+            blocked.append(f"사업부 통화 불일치: {name}")
+            continue
+
+        # 지분가치 직접 입력은 회사 전체 순부채 조정과 중복될 수 있으므로 차단한다.
+        if safe_float(row.get("equity_value")) > 0:
+            blocked.append(f"사업부 Equity 직접값 혼합 차단: {name}")
+            continue
+
         ev = safe_float(row.get("enterprise_value"))
-        eq = safe_float(row.get("equity_value"))
-        value = 0.0
-        basis = ""
-        if ev > 0:
-            total_ev += ev
-            value = ev
-            basis = "EV"
-        elif eq > 0:
-            direct_equity += eq
-            value = eq
-            basis = "Equity"
-        else:
+        basis = "enterprise_value"
+        if ev <= 0:
             metric = safe_float(row.get("metric"))
             multiple = safe_float(row.get("multiple"))
-            if metric > 0 and multiple > 0:
-                total_ev += metric * multiple
-                value = metric * multiple
+            metric_name = str(row.get("metric_name", "")).strip()
+            multiple_source = str(row.get("multiple_source", "")).strip()
+            if metric > 0 and multiple > 0 and metric_name and multiple_source:
+                ev = metric * multiple
                 basis = "metric×multiple"
-        if value > 0:
-            valid_segments += 1
-            detail.append({"name": row.get("name", "segment"), "value": value, "basis": basis})
+            else:
+                blocked.append(f"검증 가능한 EV 산식 없음: {name}")
+                continue
+
+        if ev <= 0:
+            blocked.append(f"사업부 EV 비정상: {name}")
+            continue
+        total_ev += ev
+        valid_segments += 1
+        detail.append({
+            "name": name,
+            "value": round(ev, 2),
+            "basis": basis,
+            "source": row_source,
+            "as_of": row_date,
+            "currency": row_currency or currency,
+        })
 
     if valid_segments < 2:
-        return {
-            "사용가능": False,
-            "주당SOTP기초가치": 0.0,
-            "근거": ["유효 사업부가 2개 미만이라 SOTP 비적용"],
-        }
+        blocked.append("검증 통과 사업부 2개 미만")
 
     stakes = data.get("listed_stakes", [])
-    stake_value = sum(
-        max(0.0, safe_float(row.get("equity_value")))
-        for row in stakes if isinstance(row, dict)
-    ) if isinstance(stakes, list) else 0.0
+    stake_value = 0.0
+    if isinstance(stakes, list):
+        for row in stakes:
+            if not isinstance(row, dict):
+                continue
+            value = max(0.0, safe_float(row.get("equity_value")))
+            source = str(row.get("source") or row.get("data_source") or "").strip()
+            if value > 0 and source:
+                stake_value += value
+            elif value > 0:
+                blocked.append("상장지분가치 출처 없음")
+
     non_operating_assets = max(0.0, safe_float(data.get("non_operating_assets")))
     cash = max(0.0, safe_float(data.get("cash")))
     debt = max(0.0, safe_float(data.get("debt")))
     minority = max(0.0, safe_float(data.get("minority_interest")))
     preferred = max(0.0, safe_float(data.get("preferred_equity")))
-    diluted_shares = max(0.0, safe_float(data.get("diluted_shares")))
+
+    if any(v > 0 for v in (cash, debt, minority, preferred, non_operating_assets)):
+        if not str(data.get("balance_sheet_source", "")).strip():
+            blocked.append("순현금·비지배지분 조정 원천 없음")
+
+    if blocked:
+        return {
+            "사용가능": False,
+            "검증상태": "차단",
+            "주당SOTP기초가치": 0.0,
+            "사업부개수": valid_segments,
+            "사업부": detail,
+            "차단사유": list(dict.fromkeys(blocked)),
+            "근거": ["SOTP 원천·기준일·사업부 EV·순부채 조정의 감사조건 미충족"],
+        }
 
     equity_value = (
         total_ev
-        + direct_equity
         + stake_value
         + non_operating_assets
         + cash
@@ -549,17 +623,41 @@ def build_sotp_base(segment_data: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         - minority
         - preferred
     )
-    per_share = equity_value / diluted_shares if equity_value > 0 and diluted_shares > 0 else 0.0
+    per_share = equity_value / diluted_shares if equity_value > 0 else 0.0
     usable = per_share > 0 and valid_segments >= 2
     return {
         "사용가능": usable,
+        "검증상태": "verified" if usable else "차단",
         "주당SOTP기초가치": round(per_share, 2) if usable else 0.0,
         "총SOTP지분가치": round(equity_value, 2) if equity_value > 0 else 0.0,
         "사업부개수": valid_segments,
         "사업부": detail,
-        "근거": ["사업부별 가치합산 후 순현금·비지배지분·우선주를 단일 조정"] if usable else ["희석주식수 또는 양(+)의 지분가치 미확보"],
+        "기준일": source_date,
+        "통화": currency,
+        "차단사유": [],
+        "근거": ["검증된 사업부 EV 합산 후 회사단위 순현금·비지배지분·우선주를 1회만 조정"],
     }
 
+
+def _select_current_only_base(valuation: Dict[str, Any]) -> Tuple[float, str, bool, List[str]]:
+    """Strategic 미래가치를 더하기 전 '현재만'의 기초가치를 고른다.
+
+    반환: (base, source, future_addition_allowed, reasons)
+    current-only 기초가치가 없고 기존 라이브 적정가만 남아 있으면 그 값에는 FY1/FY2 또는
+    미래성장모형이 섞였을 수 있으므로 미래증분을 추가하지 않는다.
+    """
+    adaptive = valuation.get("적응형가치모형", {}) if isinstance(valuation.get("적응형가치모형"), dict) else {}
+    candidates = [
+        (safe_float(valuation.get("현재재무기초가치")), "현재재무기초가치"),
+        (safe_float(adaptive.get("현재재무기초가치")), "적응형 현재재무기초가치"),
+    ]
+    for value, source in candidates:
+        if value > 0:
+            return value, source, True, ["TTM·정상화·자산·FCF 기반 현재가치와 미래증분을 분리"]
+
+    return 0.0, "현재-only 기초가치 없음", False, [
+        "현재-only 기초가치가 없어 FY1/FY2·미래성장과의 이중계산 가능성을 차단"
+    ]
 
 def _evidence_recognition_factor(
     company: Dict[str, Any],
@@ -643,26 +741,21 @@ def build_strategic_forward_value(
     industry_analysis = industry_analysis or {}
 
     adaptive = valuation.get("적응형가치모형", {}) if isinstance(valuation.get("적응형가치모형"), dict) else {}
-    adaptive_applied = valuation.get("적응형가치적용") is True
-    if adaptive_applied:
-        current_base = safe_float(valuation.get("현재재무기초가치"))
-        if current_base <= 0:
-            current_base = safe_float(adaptive.get("현재재무기초가치"))
-        base_source = "적응형 현재재무기초가치"
-    else:
-        # 기존 엔진이 정상 동작하는 종목은 기존 라이브 기준가를 기초가치로 유지한다.
-        # 계산은 되어 있으나 승격되지 않은 adaptive current_base를 새 엔진이 임의 승격하지 않는다.
-        current_base = safe_float(valuation.get("재무적정가"))
-        base_source = "기존 라이브 재무적정가"
-    if current_base <= 0:
-        current_base = safe_float(valuation.get("기존V4재무적정가"))
-        base_source = "기존 V4 재무적정가"
+    current_only_base, current_only_source, current_only_available, double_count_reasons = _select_current_only_base(valuation)
+    legacy_base = safe_float(valuation.get("재무적정가"))
+    if legacy_base <= 0:
+        legacy_base = safe_float(valuation.get("기존V4재무적정가"))
+    strategic_base = legacy_base if legacy_base > 0 else current_only_base
+    base_source = "기존 라이브 재무적정가" if legacy_base > 0 else current_only_source
+    future_addition_allowed = False
 
     sotp = build_sotp_base(segment_data)
-    strategic_base = current_base
-    if sotp.get("사용가능") is True:
+    verified_sotp = sotp.get("사용가능") is True
+    if verified_sotp:
         strategic_base = safe_float(sotp.get("주당SOTP기초가치"))
-        base_source = "SOTP기초가치"
+        base_source = "검증된 SOTP기초가치"
+        future_addition_allowed = True
+        double_count_reasons = ["검증된 SOTP 현재가치와 미래증분을 분리"]
 
     company = company_growth_axis(valuation, fundamentals_analysis)
     industry = industry_growth_axis(
@@ -684,7 +777,23 @@ def build_strategic_forward_value(
         future_total, valuation, expectation
     )
 
-    raw_increment = max(0.0, future_total - strategic_base) if strategic_base > 0 else 0.0
+    # 미래가치를 실제로 더할 때만 current-only 기초가치를 승격한다.
+    # 미래후보가 0인 기업은 기존 재무적정가를 그대로 유지해 불필요한 기준가 교체를 막는다.
+    if not verified_sotp and future_total > 0:
+        if current_only_available and current_only_base > 0:
+            strategic_base = current_only_base
+            base_source = current_only_source
+            future_addition_allowed = True
+        else:
+            strategic_base = legacy_base if legacy_base > 0 else strategic_base
+            base_source = "기존 혼합 재무적정가(미래증분 추가 금지)"
+            future_addition_allowed = False
+
+    raw_increment = (
+        max(0.0, future_total - strategic_base)
+        if strategic_base > 0 and future_addition_allowed
+        else 0.0
+    )
     evidence_factor, cap_reasons = _evidence_recognition_factor(company, industry, expectation)
     macro_modifier = safe_float(macro.get("조정배수"), 1.0)
     recognized_increment = raw_increment * evidence_factor * macro_modifier
@@ -705,6 +814,7 @@ def build_strategic_forward_value(
 
     label = future_value_label(strategic_base, recognized_increment)
     reasons = []
+    reasons.extend(double_count_reasons)
     reasons.extend(company.get("근거", []))
     reasons.extend(industry.get("근거", []))
     reasons.extend(expectation.get("근거", []))
@@ -719,6 +829,8 @@ def build_strategic_forward_value(
         "시장PER_PBR미사용": True,
         "기초가치": round(strategic_base, 2),
         "기초가치출처": base_source,
+        "미래이중계산차단": True,
+        "미래증분추가허용": bool(future_addition_allowed),
         "SOTP": sotp,
         "기존미래총가치": round(original_future_total, 2),
         "원시미래총가치": round(future_total, 2),
@@ -745,6 +857,7 @@ def build_strategic_forward_value(
             "산업시장기대모두부족": "미래증분가치 최대 12% 인정",
             "산업만확인": "컨센서스 없으면 미래증분가치 최대 45% 인정",
             "거시환경": "품질게이트 통과시에만 0.80~1.10 범위의 실현확률 조정; 새 가치를 만들지 않음",
-            "SOTP": "감사 가능한 2개 이상 사업부와 희석주식수 있을 때만 진짜 SOTP 사용",
+            "SOTP": "verified/audited 원천·기준일·통화·2개 이상 사업부 EV·희석주식수·순부채 원천이 모두 확인될 때만 진짜 SOTP 사용",
+            "미래이중계산": "현재-only 기초가치가 없으면 기존 혼합 재무적정가에 미래증분을 추가하지 않음",
         },
     }

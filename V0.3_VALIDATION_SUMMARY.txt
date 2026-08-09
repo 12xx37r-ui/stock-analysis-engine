@@ -1,4 +1,4 @@
-Strategic Forward V0.3 validation summary
+Strategic Forward V0.3.1 validation summary
 
 검증 통과
 - validate_industry_profiles.py
@@ -22,7 +22,9 @@ Strategic 주요 property
 - 산업/컨센서스 근거가 모두 없으면 미래증분가치 최대 12%
 - 산업만 있고 컨센서스가 없으면 최대 45%
 - 미검증 글로벌 거시는 1.0배 중립
-- 실제 SOTP는 2개 이상 사업부 + 희석주식수 등 감사 가능한 입력이 있을 때만 사용
+- 현재-only 기초가치가 없으면 기존 혼합 적정가에 미래증분을 추가하지 않아 FY1/FY2 이중반영 차단
+- 실제 SOTP는 verified/audited 상태 + 기준일 + 통화 + 2개 이상 사업부 EV + 출처 + 희석주식수 + 순부채 원천이 모두 확인될 때만 사용
+- 복합기업 대용가치합산은 진단값으로만 계산하고 최종 기준가에는 미반영
 
 주의
 - 이것은 cross-sectional/property/stress 검증이며 장기 historical point-in-time OOS 백테스트를 대체하지 않습니다.

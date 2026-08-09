@@ -2,7 +2,7 @@
 
 이 패키지는 ZIP을 풀었을 때 보이는 `main.py`, `analyzers`, `collectors`, `.github` 등을 **GitHub 저장소의 루트에 직접 업로드**해야 합니다. 기존 저장소의 `data/latest/stocks/*.json`이 남아 있어도 GAS가 Strategic 필드가 없는 구형 JSON을 감지해 해당 종목만 on-demand 재생성합니다. 새 워크플로는 생성 JSON에 `전략미래가치` v0.2.1 필드가 없으면 게시를 실패시켜 구버전 코드가 조용히 사용되는 문제를 막습니다.
 
-# Strategic Forward Valuation Engine V0.3 — Consensus + Shadow + Low-Load 검증판
+# Strategic Forward Valuation Engine V0.3.1 — Consensus + Shadow + Low-Load 검증판
 
 ## 목적
 기존 Adaptive Fundamental V1 / valuation-contract-v4를 뜯어고치지 않고, 별도 엔진으로 다음을 결합합니다.
@@ -148,9 +148,16 @@ recreates those files. Strategic regression snapshots live under
 `fixtures/strategic/` so validation does not depend on the runtime cache.
 
 
-## V0.3 핵심 변경
+## V0.3.1 핵심 변경
 - 미래가치 후보가 있는 종목만 외부 FY1 EPS 컨센서스를 1회 지연수집합니다.
 - 종목별 24시간 디스크/메모리 캐시, 실패 시 7일 last-known-good를 사용하며 retry loop는 없습니다.
 - 목표주가는 진단용으로만 저장하고 적정가/기대점수에는 0% 반영합니다.
 - 산업 바스켓에 대상기업 자체가 포함되면 해당 주가 행과 오염된 시장폭/상대강도를 가치근거에서 제외합니다.
 - 글로벌 거시는 기존 별도 엔진 bundle만 지연/캐시 조회하며 새 값을 만들지 않습니다.
+
+
+## V0.3.1 치명오류 방지 패치
+- Strategic 기초가치는 `현재재무기초가치`를 우선 사용합니다. 이 값이 없고 FY1/FY2·미래성장이 섞일 수 있는 기존 라이브 적정가만 있으면 미래증분 추가를 **0으로 차단**합니다.
+- 검증된 SOTP가 있으면 그 SOTP를 현재기초가치로 사용한 뒤 미래증분을 별도로 계산합니다.
+- SOTP는 `audit_status=verified|audited`, 기준일, 통화, 2개 이상 독립 사업부 EV, 사업부별 출처, 희석주식수, 순부채 조정 원천을 모두 요구합니다. Equity/EV 혼합은 이중조정 위험 때문에 차단합니다.
+- 기존 `복합기업 대용 가치합산`은 진짜 SOTP가 아니므로 **진단값만 유지하고 최종 기준가에는 반영하지 않습니다.**

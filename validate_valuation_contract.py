@@ -107,6 +107,7 @@ def main():
     assert value["가치평가모형개정버전"] == "future-growth-v1.1.0-price-independent", value
     assert value["최종값사용가능"] is True, value["이상치검사"]
     assert value["복합기업대용모형"] is True
+    assert value["복합기업대용모형최종반영"] is False
     assert value["TTMEPS"] > value["EPS"]
     assert value["기본적정가"] > 150_000, value
     assert value["기본적정가"] > value["PBR기준적정가"] * 1.8, value

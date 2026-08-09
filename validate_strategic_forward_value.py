@@ -1,4 +1,4 @@
-"""Strategic Forward Value V0.3 simulation/property validation.
+"""Strategic Forward Value V0.3.1 simulation/property validation.
 
 실제 과거 애널리스트 revision/산업/거시 vintage가 현재 ZIP에 없으므로 이 검증은
 미래 수익률을 증명하는 백테스트가 아니다. 대신 다음을 검증한다.
@@ -7,7 +7,8 @@
 - 산업/시장기대 부재 시 미래가치 억제
 - 산업 또는 컨센서스 증거가 강해질수록 인정가치 단조 증가
 - 검증된 악화 거시는 미래가치를 낮추고, 미검증 거시는 가치에 영향 없음
-- 진짜 SOTP는 사업부자료가 있을 때만 계산하며 이중조정 방지
+- 진짜 SOTP는 감사상태·원천·기준일이 검증된 사업부 EV 자료가 있을 때만 계산
+- 현재-only 기초가치가 없으면 미래증분 추가를 차단해 FY1/FY2 이중반영 방지
 """
 
 import copy
@@ -241,21 +242,55 @@ def main() -> int:
     assert bad_macro["전략펀더멘털적정가"] <= neutral_unvalidated["전략펀더멘털적정가"] + 1e-6
     assert good_macro["전략펀더멘털적정가"] >= neutral_unvalidated["전략펀더멘털적정가"] - 1e-6
 
-    # 7) SOTP: 두 사업부와 희석주식수가 있을 때만 계산.
+    # 7) SOTP: 단순 숫자만 넣은 대용값은 차단하고, 감사된 원천자료만 허용한다.
     no_sotp = build_sotp_base({"segments": [{"name": "A", "enterprise_value": 100}]})
     assert no_sotp["사용가능"] is False
-    yes_sotp = build_sotp_base({
+    unverified_sotp = build_sotp_base({
         "segments": [
-            {"name": "A", "enterprise_value": 1000},
-            {"name": "B", "enterprise_value": 500},
+            {"name": "A", "enterprise_value": 1000, "source": "DART"},
+            {"name": "B", "enterprise_value": 500, "source": "DART"},
         ],
-        "listed_stakes": [{"equity_value": 100}],
+        "source_date": "2026-06-30", "currency": "KRW", "diluted_shares": 10,
+    })
+    assert unverified_sotp["사용가능"] is False
+    mixed_basis = build_sotp_base({
+        "audit_status": "verified", "source_date": "2026-06-30", "currency": "KRW",
+        "segments": [
+            {"name": "A", "enterprise_value": 1000, "source": "DART"},
+            {"name": "B", "equity_value": 500, "source": "DART"},
+        ],
+        "diluted_shares": 10,
+    })
+    assert mixed_basis["사용가능"] is False
+    yes_sotp = build_sotp_base({
+        "audit_status": "verified", "source_date": "2026-06-30", "currency": "KRW",
+        "segments": [
+            {"name": "A", "enterprise_value": 1000, "source": "DART", "source_date": "2026-06-30"},
+            {"name": "B", "enterprise_value": 500, "source": "DART", "source_date": "2026-06-30"},
+        ],
+        "listed_stakes": [{"equity_value": 100, "source": "KRX"}],
         "cash": 200, "debt": 300, "minority_interest": 50,
         "preferred_equity": 0, "diluted_shares": 10,
+        "balance_sheet_source": "OpenDART 2026-06-30",
     })
     # (1500 +100 +200 -300 -50) / 10 = 145
     assert yes_sotp["사용가능"] is True
     assert abs(yes_sotp["주당SOTP기초가치"] - 145.0) < 1e-9
+
+    # 7-b) current-only 기초가치가 없으면 기존 혼합 적정가에 미래증분을 절대 더하지 않는다.
+    mixed_legacy_valuation = copy.deepcopy(samsung_v)
+    mixed_legacy_valuation["현재재무기초가치"] = 0
+    mixed_legacy_valuation.setdefault("적응형가치모형", {})["현재재무기초가치"] = 0
+    blocked_double_count = build_strategic_forward_value(
+        valuation=mixed_legacy_valuation,
+        financial=samsung["재무분석"], fundamentals_analysis=strong_fa,
+        industry_analysis=samsung["산업분석"].get("분석", {}), global_macro_context=macro,
+        stock_code="009150", company_name="삼성전기",
+    )
+    assert blocked_double_count["미래이중계산차단"] is True
+    assert blocked_double_count["미래증분추가허용"] is False
+    assert blocked_double_count["미래증분가치"] == 0
+    assert abs(blocked_double_count["전략펀더멘털적정가"] - mixed_legacy_valuation["재무적정가"]) < 1e-6
 
     # 8) 전체 저장 유니버스 시뮬레이션: 결과 분포와 억제 정책 확인.
     rows = []
@@ -283,7 +318,7 @@ def main() -> int:
     assert all(r["recognition_pct"] <= 12.0001 for r in no_external_expect)
 
     report = {
-        "engine_version": "0.3.0-strategic-forward-consensus-low-load",
+        "engine_version": "0.3.1-strategic-forward-doublecount-sotp-guard",
         "validation_type": "cross-sectional + property/stress simulation; not historical predictive backtest",
         "universe_count": len(rows),
         "price_independence": True,
@@ -294,7 +329,8 @@ def main() -> int:
             "industry_only_no_consensus_future_cap_pct": 45,
             "unvalidated_macro_modifier": 1.0,
             "validated_macro_modifier_range": [0.8, 1.1],
-            "true_sotp_requires_two_segments": True,
+            "true_sotp_requires_verified_sources": True,
+            "future_double_count_guard": True,
             "target_price_influence_on_fair_value": 0,
             "target_company_price_excluded_from_industry_axis": True,
             "analyst_consensus_lazy_cached": True,
@@ -325,7 +361,7 @@ def main() -> int:
     }
     json.dump(report, open("strategic_forward_validation_report.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
 
-    print("STRATEGIC FORWARD VALUE V0.3: PASS")
+    print("STRATEGIC FORWARD VALUE V0.3.1: PASS")
     print("universe", len(rows))
     print("Samsung Electro-Mechanics:", samsung_s["미래성장가치표시문구"], samsung_s["전략펀더멘털적정가"])
     print("LG H&H:", lg_s["미래성장가치표시문구"], lg_s["전략펀더멘털적정가"])

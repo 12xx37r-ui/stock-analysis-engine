@@ -392,7 +392,7 @@ FUTURE_GROWTH_CONFIG: Dict[str, Dict[str, float]] = {
 }
 
 # 복합기업은 사업부 세부 공시가 자동 수집되지 않으면 진짜 SOTP를 만들 수 없다.
-# 아래 설정은 '사업부 대용 가치합산'을 위한 보수적 복합배수이며, 출력에 대용모형임을 명시한다.
+# 아래 설정의 대용가치는 진짜 SOTP가 아니므로 진단용으로만 계산한다. 최종 기준가에는 직접 반영하지 않는다.
 COMPLEX_COMPANY_CONFIG: Dict[str, Dict[str, Any]] = {
     "005930": {
         "label": "삼성전자 복합기술기업 대용 가치합산",
@@ -1794,14 +1794,15 @@ def calculate_value(
             _model_row("FCF 가치", fcf_value, 0.04, "보조"),
         ])
     elif complex_config:
+        # 실제 사업부별 SOTP 원천자료가 없는 복합기업 대용값은 진단값으로만 남긴다.
+        # 최종 기준가는 감사 가능한 일반 재무모형(이익·전환·FCF·자산·잔여이익)만 사용한다.
         models.extend([
             _model_row("선행·정상화 이익가치", earnings_value, safe_float(complex_config.get("earnings_weight"), 0.58)),
-            _model_row("복합기업 대용 가치합산", complex_proxy_value, safe_float(complex_config.get("complex_weight"), 0.24)),
-            _model_row("실적전환 가치", transition_value, 0.12),
-            _model_row("FCF 가치", fcf_value, safe_float(complex_config.get("fcf_weight"), 0.06)),
-            _model_row("PBR 하단가치", pbr_value, safe_float(complex_config.get("asset_weight"), 0.06), "하단"),
-            _model_row("잔여이익 하단가치", residual_value, safe_float(complex_config.get("residual_weight"), 0.06), "하단"),
-            _model_row("그레이엄 결합가치", graham_value, 0.04, "보조"),
+            _model_row("실적전환 가치", transition_value, 0.18),
+            _model_row("FCF 가치", fcf_value, max(0.10, safe_float(complex_config.get("fcf_weight"), 0.06))),
+            _model_row("PBR 하단가치", pbr_value, max(0.08, safe_float(complex_config.get("asset_weight"), 0.06)), "하단"),
+            _model_row("잔여이익 하단가치", residual_value, max(0.08, safe_float(complex_config.get("residual_weight"), 0.06)), "하단"),
+            _model_row("그레이엄 결합가치", graham_value, 0.06, "보조"),
         ])
     elif profile_code == "semiconductor":
         models.extend([
@@ -1917,7 +1918,7 @@ def calculate_value(
     else:
         conservative = max(q25, normalized_floor, earnings_floor)
         conservative = min(conservative, basic) if basic > 0 else conservative
-        high_anchor = max(earnings_value, transition_value, complex_proxy_value, future_growth_value, q75)
+        high_anchor = max(earnings_value, transition_value, future_growth_value, q75)
         growth_value = min(high_anchor * 1.08, basic * safe_float(profile.get("upside"), 1.35)) if basic > 0 else high_anchor
         growth_value = max(growth_value, basic)
 
@@ -2124,7 +2125,7 @@ def calculate_value(
         f"{profile.get('label', profile_code)} 업종 프로필을 적용했습니다.",
     ]
     if complex_config:
-        notes.append("사업부 세부 손익 자동수집이 없어 진짜 SOTP가 아닌 복합기업 대용 가치합산을 적용했습니다.")
+        notes.append("사업부 세부 원천자료가 없어 복합기업 대용가치는 진단용으로만 계산하고 최종 기준가에는 반영하지 않았습니다. 진짜 SOTP는 검증된 사업부 데이터가 있을 때 Strategic 모듈에서만 사용합니다.")
     if earnings_trough:
         notes.append("이익저점 국면을 감지해 현재 이익가치보다 자산·그레이엄·정상화 회복가치의 비중을 높였습니다.")
     if excluded_models:
@@ -2219,6 +2220,7 @@ def calculate_value(
         "가치평가산업코드": profile_code,
         "가치평가산업프로필": complex_config.get("label") if complex_config else profile.get("label"),
         "복합기업대용모형": bool(complex_config),
+        "복합기업대용모형최종반영": False if complex_config else None,
         "진짜SOTP자료확보": False if complex_config else None,
         "산업분류출처": company_info.get("산업분류출처", "내부 일반분류"),
         "OpenDART업종코드": company_info.get("OpenDART업종코드", ""),
