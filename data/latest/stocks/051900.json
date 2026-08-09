@@ -2,7 +2,7 @@
   "기업명": "LG생활건강",
   "DART기업코드": "00356370",
   "KIS종목코드": "051900",
-  "산업코드": "materials",
+  "산업코드": "beauty_consumer",
   "기업조회정보": {
     "기업명": "LG생활건강",
     "DART기업코드": "00356370",
@@ -10,10 +10,10 @@
     "최종변경일": "20251128",
     "수집상태": "정상",
     "응답메시지": "",
-    "산업코드": "materials",
-    "가치평가산업코드": "materials",
+    "산업코드": "beauty_consumer",
+    "가치평가산업코드": "beauty_consumer",
     "산업분류출처": "OpenDART 기업개황 업종코드 세분류",
-    "산업분류신뢰도": 72,
+    "산업분류신뢰도": 94,
     "산업프로필버전": "3.0.0",
     "OpenDART기업개황": {
       "수집상태": "정상",
@@ -29,7 +29,7 @@
     "OpenDART업종코드": "20422",
     "데이터출처": "금융감독원 OpenDART"
   },
-  "생성시각": "2026-08-09T11:02:15.465607",
+  "생성시각": "2026-08-09T13:54:45.421262",
   "재무분석": {
     "재무분석모형버전": "financial-quality-v2.0.0",
     "재무지표": {
@@ -548,7 +548,7 @@
         "MA20": 1456.634998,
         "현재값대비MA20": -2.810247,
         "최종관측시각UTC": "2026-08-09T03:30:50+00:00",
-        "데이터지연시간": 7.522,
+        "데이터지연시간": 10.386,
         "데이터개수": 68
       },
       "S&P500": {
@@ -567,7 +567,7 @@
         "MA20": 7525.406958,
         "현재값대비MA20": 3.085988,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 45.536,
+        "데이터지연시간": 48.4,
         "데이터개수": 63
       },
       "나스닥": {
@@ -586,7 +586,7 @@
         "MA20": 25672.52793,
         "현재값대비MA20": 3.965684,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 45.536,
+        "데이터지연시간": 48.4,
         "데이터개수": 63
       },
       "반도체지수": {
@@ -605,7 +605,7 @@
         "MA20": 11864.973926,
         "현재값대비MA20": 4.145109,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 45.536,
+        "데이터지연시간": 48.4,
         "데이터개수": 63
       },
       "VIX": {
@@ -624,7 +624,7 @@
         "MA20": 17.1645,
         "현재값대비MA20": -13.192929,
         "최종관측시각UTC": "2026-08-07T07:00:00+00:00",
-        "데이터지연시간": 52.036,
+        "데이터지연시간": 54.9,
         "데이터개수": 65
       },
       "미국10년물": {
@@ -643,7 +643,7 @@
         "MA20": 4.63245,
         "현재값대비MA20": 0.594715,
         "최종관측시각UTC": "2026-08-07T12:20:00+00:00",
-        "데이터지연시간": 46.703,
+        "데이터지연시간": 49.567,
         "데이터개수": 64
       },
       "미국5년물": {
@@ -662,7 +662,7 @@
         "MA20": 4.36195,
         "현재값대비MA20": 0.001146,
         "최종관측시각UTC": "2026-08-07T12:20:00+00:00",
-        "데이터지연시간": 46.703,
+        "데이터지연시간": 49.567,
         "데이터개수": 64
       },
       "미국13주": {
@@ -681,15 +681,15 @@
         "MA20": 3.7237,
         "현재값대비MA20": -0.367912,
         "최종관측시각UTC": "2026-08-07T12:20:00+00:00",
-        "데이터지연시간": 46.703,
+        "데이터지연시간": 49.567,
         "데이터개수": 64
       }
     },
     "분석": {
       "분석상태": "정상",
-      "단기신호": 38.21,
+      "단기신호": 37.93,
       "단기판정": "긍정",
-      "단기데이터품질": 97.0,
+      "단기데이터품질": 88.0,
       "단기요소별평가": [
         {
           "요소": "원달러",
@@ -703,7 +703,7 @@
           "요소": "S&P500",
           "신호": 35.71,
           "판정": "긍정",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 15.0,
           "설명": "5일 변화 3.58%"
         },
@@ -711,7 +711,7 @@
           "요소": "나스닥",
           "신호": 46.9,
           "판정": "긍정",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 20.0,
           "설명": "5일 변화 5.19%"
         },
@@ -719,7 +719,7 @@
           "요소": "반도체지수",
           "신호": 39.42,
           "판정": "긍정",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 25.0,
           "설명": "5일 변화 9.25%"
         },
@@ -732,9 +732,9 @@
           "설명": "현재 14.90"
         }
       ],
-      "중기신호": 20.84,
+      "중기신호": 21.33,
       "중기판정": "긍정",
-      "중기데이터품질": 100.0,
+      "중기데이터품질": 88.8,
       "중기요소별평가": [
         {
           "요소": "원달러",
@@ -748,7 +748,7 @@
           "요소": "미국10년물",
           "신호": 2.73,
           "판정": "중립",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 25.0,
           "설명": "20일 변화 1.99%"
         },
@@ -756,7 +756,7 @@
           "요소": "미국5년물",
           "신호": 10.4,
           "판정": "중립",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 15.0,
           "설명": "20일 변화 1.25%"
         },
@@ -764,7 +764,7 @@
           "요소": "미국13주",
           "신호": -1.12,
           "판정": "중립",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 10.0,
           "설명": "20일 변화 0.41%"
         },
@@ -772,7 +772,7 @@
           "요소": "나스닥",
           "신호": 46.9,
           "판정": "긍정",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 10.0,
           "설명": "20일 변화 1.56%"
         },
@@ -780,7 +780,7 @@
           "요소": "반도체지수",
           "신호": 39.42,
           "판정": "긍정",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 15.0,
           "설명": "20일 변화 -4.71%"
         }
@@ -788,7 +788,7 @@
       "설명": "국내주식 기준으로 원달러·미국 주가지수·반도체지수·VIX·미국 금리의 방향을 -100~100 신호로 합성했습니다."
     },
     "수집오류": [],
-    "수집시각": "2026-08-09T20:02:10.935685+09:00",
+    "수집시각": "2026-08-09T22:54:00.239640+09:00",
     "데이터출처": "Yahoo Finance Chart API"
   },
   "기업기초데이터": {
@@ -1138,13 +1138,13 @@
       },
       "데이터출처": "금융감독원 OpenDART"
     },
-    "수집시각": "2026-08-09T20:02:15.119776+09:00",
+    "수집시각": "2026-08-09T22:54:44.953276+09:00",
     "데이터출처": "금융감독원 OpenDART"
   },
   "산업분석": {
     "전체수집상태": "미적용",
-    "산업코드": "materials",
-    "산업명": "materials",
+    "산업코드": "beauty_consumer",
+    "산업명": "beauty_consumer",
     "자산": {},
     "분석": {
       "분석상태": "미적용",
@@ -2516,11 +2516,11 @@
       {
         "제목": "실적·수출의 힘…화장품株 웃었다",
         "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBJTlZRUldiSENDOE5MYnFuamZCaXVZZHdQSVp3Uk42bTB0dXNmaEQtYVp1V01xdnB6NmU2alZBMzY5OF82VExKc2RVaGh4M3Y4dVR0aDktRkNLZw?oc=5",
-        "언론사": "파이낸셜뉴스",
+        "언론사": "fnnews.com",
         "발행시각UTC": "2026-08-09T09:16:53+00:00",
-        "경과일": 0.07,
+        "경과일": 0.19,
         "원점수": 16.0,
-        "최종점수": 15.97,
+        "최종점수": 15.93,
         "매칭규칙": [
           "실적"
         ]
@@ -2528,9 +2528,9 @@
       {
         "제목": "[코스피 현미경 분석] LG생활건강, 북미 '닥터그루트' 등 성과로 주가 기지개?",
         "링크": "https://news.google.com/rss/articles/CBMia0FVX3lxTE1yUXRkSGdRWFc0bXExZFg0ZG9HYXkwWnlMaFJ4ajAyZEVUNTZhd2E1cmRZSElxVWJ3UVlHVTAzMEtvZlJCNE9rV3QzeDc4ZXBHQURHN1BWV1RKOHFxbi1RQVZacjYxNm5LNjVF0gFvQVVfeXFMT3ZJenNvc0huREVNOHVEQkZ6YzNWeVRHRVZ4MnVTVDd6Y3BfbHB4VGptUXVBRW5JZndla08tT05lcjJ6WlloV3o4NzhYNGs4clBFdERScmtfc3M2QjREc0hMRWI0N1hrN0xMTjhpUVhv?oc=5",
-        "언론사": "데일리인베스트",
+        "언론사": "dailyinvest.kr",
         "발행시각UTC": "2026-08-04T23:45:00+00:00",
-        "경과일": 4.47,
+        "경과일": 4.59,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2538,11 +2538,11 @@
       {
         "제목": "LG생활건강, 북미가 이끈 실적 반등…브랜드 재편 성과",
         "링크": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE5ablZCeVhjcWVodVM1MGx1d1N0MDhoMHBxQWdYOE1sR2oyWHljTGl5b3FacC1XMGlyc0hzNTczbHVGVGcxQVMxYjBhTFctdHoyTno2R1l0bEs5WkRydVp4VVo4VdIBZ0FVX3lxTFBkRUVhbDFlUVJkNEJLMWtOa0RNRkZVeWV0VzVfdGlRaG5RajEza09RMGFRWFZMTWFwRWVvSTEtSDlEeEVHQVFSaDNia2JDSlNtZHpKREQyY0xDNTFzd1hzazdRZ3hCdEU?oc=5",
-        "언론사": "lkp.news",
+        "언론사": "리버티코리아포스트",
         "발행시각UTC": "2026-08-06T08:02:48+00:00",
-        "경과일": 3.12,
+        "경과일": 3.24,
         "원점수": 16.0,
-        "최종점수": 14.89,
+        "최종점수": 14.85,
         "매칭규칙": [
           "실적"
         ]
@@ -2552,9 +2552,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiRkFVX3lxTE9PU0lZT201dnE1b2tLdTFuUlFJTVBYYkdXWXBVTG5tV05vUlZNbVlPcUM5RjBjS0NkNDU1RUVSY3ExNGlJUkE?oc=5",
         "언론사": "v.daum.net",
         "발행시각UTC": "2026-08-05T09:43:50+00:00",
-        "경과일": 4.05,
+        "경과일": 4.17,
         "원점수": 21.0,
-        "최종점수": 19.11,
+        "최종점수": 19.05,
         "매칭규칙": [
           "실적",
           "매수"
@@ -2563,9 +2563,9 @@
       {
         "제목": "어두운 터널 지나는 LG생활건강…\"1분기는 눈 감아 주세요\"",
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE93NWlHMjVueEtMRzBvdzhnd3FHeXBLV3JGekVKU1E3RnV0azN4UFVnTndjWGdhMWYtWXN0RnB1cG9acEhHZ1hyU3JMa2YwdVVCd1RWSEtBejdka1pMSEg1eGVQSEo4eTVUVnprTG1vbzA?oc=5",
-        "언론사": "연합인포맥스",
+        "언론사": "news.einfomax.co.kr",
         "발행시각UTC": "2026-04-16T07:00:00+00:00",
-        "경과일": 115.17,
+        "경과일": 115.29,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2575,7 +2575,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE5oNGJOSllLOHV3ZXRqSkYyWVZ6eXJFenc3T0ZTY2ZhYVRnTkFUU1laaERKUEFXckp6QzFTNXRUVUVBVk9PbEd2T2tibEJEZDdINncxUkFrUjc1ZGw1?oc=5",
         "언론사": "뉴스핌",
         "발행시각UTC": "2026-08-04T06:01:00+00:00",
-        "경과일": 5.21,
+        "경과일": 5.33,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2585,9 +2585,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiakFVX3lxTE1HX2ZpM2F5NHJZN19qSFprRjFXYVVaVmdHVklMNnhocVVRNmVkalFkWF9wMkZNNDZGbl9uZUhRRENNZHZtWWFRREVtOTY0RmNZWDdIWk12d3lMQnJlT1RjeWRJSUJsVHBVN3c?oc=5",
         "언론사": "뷰티경제",
         "발행시각UTC": "2026-08-06T10:29:13+00:00",
-        "경과일": 3.02,
+        "경과일": 3.14,
         "원점수": 16.0,
-        "최종점수": 14.93,
+        "최종점수": 14.88,
         "매칭규칙": [
           "실적"
         ]
@@ -2597,17 +2597,27 @@
         "링크": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE9yTDdMaEczMmEwT1pVVFhna0hwMVc3SmMxa0swaTJ3b0lwY0xwMjNVNUZoZFhRQnJYU1FuWlF3UVNfbWpnMm1DS09HcUJndzI4QUhRX093?oc=5",
         "언론사": "매일경제",
         "발행시각UTC": "2026-08-07T05:22:39+00:00",
-        "경과일": 2.24,
+        "경과일": 2.36,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
       },
       {
-        "제목": "이선주 체제 LG생활건강, 북미 매출 첫 中 추월…브랜드 재편 성과",
+        "제목": "'어닝 서프라이즈' LG생활건강 주가 급등…증권가 목표가 줄상향",
+        "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE9yZlVVdmNfOVM1dldPb0xXQjktQnMzTUstdzJRMFk0Tk44U1B1VVVMUk5LVHBxaHVPM2pYbFFqZUpfdTIwNVJJUXVqbmlXZW1IVzFiNm9pY2VkQQ?oc=5",
+        "언론사": "한국경제",
+        "발행시각UTC": "2026-07-30T00:24:36+00:00",
+        "경과일": 10.56,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "이선주 체제 LG생활건강, 북미 매출 첫 中 추월…브랜드 재편 성과 - g-enews.com",
         "링크": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxNUG9VdmNqZzFtdUJFRkJoYUZWbWV0TVFGY3N2aklsaGJtN2lRcDE2RC1DNVZIRWRFSzVJc2RoaXF4Q1RKUjZZRHFnOXRiZk5Wd3NUQ1k2MWRaMWswbUc2RjlXelZlMmh3eWJXOVNDX1lKY3FRQVhDSEc3QV9ITVZZbW5aTjMxSDNmZjk0?oc=5",
-        "언론사": "글로벌이코노믹",
+        "언론사": "g-enews.com",
         "발행시각UTC": "2026-08-04T06:17:02+00:00",
-        "경과일": 5.2,
+        "경과일": 5.32,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2617,7 +2627,7 @@
         "링크": "https://news.google.com/rss/articles/CBMickFVX3lxTFB6ei13SVpHZEVSTFYwOUJyTHlyVERWeFFTWUhTcUdFLWYwcnpINGt0RVRxcTMzci1mM3dYenA2ZXlNZmhIbkNlVTNrdDFqX0lEWEdBaENCQkloT2VXS3NfWllVaHhDU3QxZTNlZmlTa1hmQQ?oc=5",
         "언론사": "톱스타뉴스",
         "발행시각UTC": "2026-08-07T07:09:09+00:00",
-        "경과일": 2.16,
+        "경과일": 2.28,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2627,7 +2637,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiakFVX3lxTE9ObE85bnBHby1OT0hQb0x6MlV0QXJ4c2ZYdFFVbWZ0RHFJX3BCTWxNNnZneW4xcGd3WFVjQlJUaGR5cFZtV29OQjFyN0Y1NkltaUpoRkp3ZlA0ZmVJT2xtLWhZakllS1dtUlE?oc=5",
         "언론사": "뉴스포스트",
         "발행시각UTC": "2026-08-06T08:10:26+00:00",
-        "경과일": 3.12,
+        "경과일": 3.24,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2637,7 +2647,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE9YeHNDVW1KRnBSU1dlVzdyREl3T2VGVDNpQzBWeDJQbXlERGpaSUNXZkRiSjNvQ3p6MGNwMDF2ZFh0bFZEVFFPWlFCZGZSbXp4Q3NwTWJDODJ4OTFuUmJn?oc=5",
         "언론사": "데이터뉴스",
         "발행시각UTC": "2026-08-03T23:42:24+00:00",
-        "경과일": 5.47,
+        "경과일": 5.59,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2647,9 +2657,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE5zdFozV2Z5V2dsYTkxV2lFdHJrSDVNOVFTR3NKSVlldmRiY19OUGxIQmUxQnBRYmJpUWlCVF9USmxYd3c3MTNsa190RmotQ1lZRHE5UThzdFFnYzJBUjRpempEbFjSAWhBVV95cUxPT2IxSUg0NVhObXJjQ21XZ2hSUTRsR1ZENnBsTU5oMzNoVHc2bzY4MWRiTVQtUkd6Vmg3ajYxRk9kMWt0dGk3cG9EUHNQLVRCU1R0MjJTLXlveEozVUtHT1BHMDJmTllQRA?oc=5",
         "언론사": "경인방송 뉴스",
         "발행시각UTC": "2026-07-30T07:00:00+00:00",
-        "경과일": 10.17,
+        "경과일": 10.29,
         "원점수": 16.0,
-        "최종점수": 12.38,
+        "최종점수": 12.34,
         "매칭규칙": [
           "실적"
         ]
@@ -2657,11 +2667,11 @@
       {
         "제목": "[특징주] LG생활건강, 북미 실적 기대감 부각…강세",
         "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFBVaWhiMFZqUmREdXZjZEtrbEI3bWY4WkVqcTBlUDFBNDRpTDBhVW5KVEtDN3FDeUktemN6TDN3WVdYbm1oWEVMSDRybkdwZVlXdTRMdkxjdkRuZk0?oc=5",
-        "언론사": "에너지경제신문",
+        "언론사": "ekn.kr",
         "발행시각UTC": "2026-07-30T07:00:00+00:00",
-        "경과일": 10.17,
+        "경과일": 10.29,
         "원점수": 16.0,
-        "최종점수": 12.38,
+        "최종점수": 12.34,
         "매칭규칙": [
           "실적"
         ]
@@ -2669,45 +2679,33 @@
       {
         "제목": "신한證 “LG생활건강, 북미 매출 성장률에 턴어라운드 기대…목표가↑” - 조선비즈",
         "링크": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxOQU9uZkI5UjFucXRKYWJrdXhjRkJzVnoxMTRlSnM1OThRQ1VXQnlQNVFTV0tJWVFGOTdMRExSRnJwRm5iUlgtRG1EOVcxRkRVOTNmaG9ybU5DOE1VRFlxTWtDV09xZEE0cUdVbC1iSk9fZDVJc2pvbmtLb0lKTFducHNXZ0YtYWJH0gGcAUFVX3lxTE1jOHAyNFhDNEQ4NXdrdWFVX3ZEaGxJdXNra0l0UWxDYzJCbkxEY1lwMWxueWN4OEdxeVhXTllEM181aldjY1lzRi12LWxfLUxtWHVobFRlSktLM2ZTajVhQ0JRTXRKdHdVVGtWMzU4MzlteTdfanVsaXVWTVcwaVpjclNrdnFiblIwS3h4ckVqVTFXSHhDWnpiSUNDTw?oc=5",
-        "언론사": "Chosunbiz",
+        "언론사": "biz.chosun.com",
         "발행시각UTC": "2026-07-30T07:00:00+00:00",
-        "경과일": 10.17,
+        "경과일": 10.29,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
-      },
-      {
-        "제목": "[ET특징주] LG생활건강, 2분기 실적 개선 성공에 주가 11%↑",
-        "링크": "https://news.google.com/rss/articles/CBMiTkFVX3lxTE43OEJCZ2ZRcTdPZG83VjFYVHQtWlMxdFgyZE82Q0RiM2pIYUd1aEp1ZW5yYnN6UnhaZndUMGRMdFBwZXNwUXRiVFgyMUN3UQ?oc=5",
-        "언론사": "전자신문",
-        "발행시각UTC": "2026-07-30T02:09:38+00:00",
-        "경과일": 10.37,
-        "원점수": 16.0,
-        "최종점수": 12.31,
-        "매칭규칙": [
-          "실적"
-        ]
       },
       {
         "제목": "목표가 줄줄이 올랐다…LG생활건강, ‘깜짝 실적’에 장중 17%대 급등",
         "링크": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE1hbHM2anpEa2VOY1hNUWVuSWRRSkFlcWZ6U3F5TzZGSVItdUw1Rk9yYVdSVTFxVlBBM0t2U1oyd2dmVnRBWjk3YnIyWWYyZUdSLXc?oc=5",
         "언론사": "매일경제 마켓",
         "발행시각UTC": "2026-07-30T07:00:00+00:00",
-        "경과일": 10.17,
+        "경과일": 10.29,
         "원점수": 16.0,
-        "최종점수": 12.38,
+        "최종점수": 12.34,
         "매칭규칙": [
           "실적"
         ]
       },
       {
-        "제목": "LG생활건강, 2Q 해외 성과 앞세워 '실적 성장'",
-        "링크": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE96aXJxZU1USXFLaHZnS2oxU2xTQThqdW02LVlLeFpDNGF3ZEpvWWVBRHFvOGdjSzI0QjZSR0dta2xWRWk4V21CUGtMWmxTUmQ4ZkR5YXdWY05xTHZLaVJYUmRMMA?oc=5",
-        "언론사": "톱데일리",
-        "발행시각UTC": "2026-07-29T08:08:00+00:00",
-        "경과일": 11.12,
+        "제목": "[ET특징주] LG생활건강, 2분기 실적 개선 성공에 주가 11%↑",
+        "링크": "https://news.google.com/rss/articles/CBMiTkFVX3lxTE43OEJCZ2ZRcTdPZG83VjFYVHQtWlMxdFgyZE82Q0RiM2pIYUd1aEp1ZW5yYnN6UnhaZndUMGRMdFBwZXNwUXRiVFgyMUN3UQ?oc=5",
+        "언론사": "전자신문",
+        "발행시각UTC": "2026-07-30T02:09:38+00:00",
+        "경과일": 10.49,
         "원점수": 16.0,
-        "최종점수": 12.05,
+        "최종점수": 12.27,
         "매칭규칙": [
           "실적"
         ]
@@ -2717,9 +2715,21 @@
         "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1qSElXY1BmM29Qa3dZRjU1YlhRWlYyUklkbnFBNE9pU1l4a3FuYThwTkJ3bElGSjlWTmNkdTNaS0hHRE41R2ItM0RIdm9YdklUVDJWcVdFQUdYd9IBWEFVX3lxTE9vRExmTDFidlpWaGxfbHpmNEMtd2NRNVJpTnZENU1hYi1NV3ZscG9IRDNPYnRmUnc4QlBCOFlQVDZodUVZQkFpTnpoRk52UmdUVXlUNFlfZkQ?oc=5",
         "언론사": "아주경제",
         "발행시각UTC": "2026-07-29T23:06:45+00:00",
-        "경과일": 10.5,
+        "경과일": 10.62,
         "원점수": 16.0,
-        "최종점수": 12.27,
+        "최종점수": 12.23,
+        "매칭규칙": [
+          "실적"
+        ]
+      },
+      {
+        "제목": "LG생활건강, 2Q 해외 성과 앞세워 '실적 성장'",
+        "링크": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE9BaEhyOXgwN3pvMnN6OGFUb0dNeGsyNTQta2JYa21PNjRYOXhQaXQ1NHB6R3UxWnJyejNLY3N3NGlJYnk5cWNzdUVZbW1WakxP?oc=5",
+        "언론사": "톱데일리",
+        "발행시각UTC": "2026-07-29T07:00:00+00:00",
+        "경과일": 11.29,
+        "원점수": 16.0,
+        "최종점수": 11.99,
         "매칭규칙": [
           "실적"
         ]
@@ -2727,9 +2737,9 @@
       {
         "제목": "LG생활건강, 바닥친 주가서 일어설까…북미 닥터그루트에 쏠린 눈",
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5CVWhVaTZqbkp1YU45VVlCeTREUGZIYlN2WWFRMEtUYXluakFhbUxGa0xwN2w4ZkZvNS1QQTJpQ19jZlpJWVRieEg3cDIzMHlvekJmSHNTaHZ1UTliQjhuVGlFYk9IZnNpNGRVSjdGT2U?oc=5",
-        "언론사": "연합인포맥스",
+        "언론사": "news.einfomax.co.kr",
         "발행시각UTC": "2026-07-16T07:00:00+00:00",
-        "경과일": 24.17,
+        "경과일": 24.29,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2739,29 +2749,29 @@
         "링크": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE01XzhEa0hralR0QW9udkxGOXV3T3g2RFhYUjhrTFlnZjFFVDJvODhiazRRaWxDX3pCb3M4NXNxNDFkbk9hTXNwUDdyZHZseERnQ3RQc2xKdFh2RUdacXZ2aw?oc=5",
         "언론사": "theconnectmoney.com",
         "발행시각UTC": "2026-08-08T03:35:00+00:00",
-        "경과일": 1.31,
+        "경과일": 1.43,
         "원점수": 16.0,
-        "최종점수": 15.53,
+        "최종점수": 15.49,
         "매칭규칙": [
           "실적"
         ]
       },
       {
-        "제목": "[EZ 돋보기] '중국 공식' 버린 LG생활건강…글로벌 소비재 기업으로 체질 바꾼다",
-        "링크": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9wZ3RranZrSi00V21mbEVvLWliMkJQcklTMnpzZjB3YkF0RXpHSTE2aU1aWTlfZnRrdG5tUHRrRktIZTFiNWdaSzRYYjAtNTZPRVNkVmloXzJrMVYyZUdDUHRKOW42WnI1TzdBUHZ3?oc=5",
-        "언론사": "이지경제",
-        "발행시각UTC": "2026-08-04T21:52:41+00:00",
-        "경과일": 4.55,
+        "제목": "\"미국에서 대박 났다\"…LG생활건강에 무슨 일이",
+        "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBsa0JrOXAtVm1FNkpVY1lnQ1ZSV24tMVJtcEFDNmh6YzY3blFBa1VTVUhLc1RXdGZIWDVBX0s5emV5VlR5bDhqSXZJa1dvSTNudzdtb1dxamJWQQ?oc=5",
+        "언론사": "한국경제",
+        "발행시각UTC": "2026-07-30T07:00:00+00:00",
+        "경과일": 10.29,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
       },
       {
-        "제목": "\"미국에서 대박 났다\"…LG생활건강에 무슨 일이",
-        "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBsa0JrOXAtVm1FNkpVY1lnQ1ZSV24tMVJtcEFDNmh6YzY3blFBa1VTVUhLc1RXdGZIWDVBX0s5emV5VlR5bDhqSXZJa1dvSTNudzdtb1dxamJWQQ?oc=5",
-        "언론사": "hankyung.com",
-        "발행시각UTC": "2026-07-30T07:00:00+00:00",
-        "경과일": 10.17,
+        "제목": "[EZ 돋보기] '중국 공식' 버린 LG생활건강…글로벌 소비재 기업으로 체질 바꾼다",
+        "링크": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9wZ3RranZrSi00V21mbEVvLWliMkJQcklTMnpzZjB3YkF0RXpHSTE2aU1aWTlfZnRrdG5tUHRrRktIZTFiNWdaSzRYYjAtNTZPRVNkVmloXzJrMVYyZUdDUHRKOW42WnI1TzdBUHZ3?oc=5",
+        "언론사": "ezyeconomy.com",
+        "발행시각UTC": "2026-08-04T21:52:41+00:00",
+        "경과일": 4.67,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2771,31 +2781,9 @@
         "링크": "https://news.google.com/rss/articles/CBMigwFBVV95cUxPbDhLckEtdUhfd0haTmlqTzVqUXJnN0ZXczhLb3owRVNhUVo4Z19OUGdsRDJ3YWwzNU9JelRRVGVDdVFQUU5kbjZlYzJqUjJfUW9aNEk1NEJZeTJ0WmM4SV9RRGk5QTJvVnFnbG02M0RaOWxmOVhYcnNCUzQ0U0ZuMUFvaw?oc=5",
         "언론사": "네이버 프리미엄콘텐츠",
         "발행시각UTC": "2026-08-05T02:18:00+00:00",
-        "경과일": 4.36,
+        "경과일": 4.48,
         "원점수": 16.0,
-        "최종점수": 14.45,
-        "매칭규칙": [
-          "실적"
-        ]
-      },
-      {
-        "제목": "이선주號 LG생활건강, 북미 엔진 달았다",
-        "링크": "https://news.google.com/rss/articles/CBMifEFVX3lxTE5tTXN1aElqY1BIQXprUEtZelA1WThhOXJ6M0sxWXRlQTVHN01oSEhfM3Q1aENMNUt3cHJEU2drRXM4S0xVV19uMU1PN25ZcGdiWXYzendqMXdxd0VWbjdFdmhZMGpCMHY1c1VEbkVKOGljLTI4Rm5Xdm1uNUQ?oc=5",
-        "언론사": "한국금융신문",
-        "발행시각UTC": "2026-08-02T15:00:00+00:00",
-        "경과일": 6.83,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "LG생활건강, 북미가 살렸다…실적 서프라이즈에 목표가 줄상향",
-        "링크": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFBJbWVmckxUNnUwQklyQUpSamw2Y0ptR0w0YkdQU0o1ZTBqd0R1Sk1rb2k2XzkxdERYVXpFMWN5Q21hVkdKZGFkWnluX2M0RG8?oc=5",
-        "언론사": "v.daum.net",
-        "발행시각UTC": "2026-07-31T07:55:29+00:00",
-        "경과일": 9.13,
-        "원점수": 16.0,
-        "최종점수": 12.75,
+        "최종점수": 14.41,
         "매칭규칙": [
           "실적"
         ]
@@ -2805,9 +2793,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9ZMzhTSXJheUdhZlo2SmdNSk56SFpIME5tdTdpTkV0bVpqYTlvSEZFTGE4OWVxVHowZEowNjFDNkFHbzk1cTNSbTVCQWJMSHM?oc=5",
         "언론사": "v.daum.net",
         "발행시각UTC": "2026-07-30T07:00:00+00:00",
-        "경과일": 10.17,
+        "경과일": 10.29,
         "원점수": 16.0,
-        "최종점수": 12.38,
+        "최종점수": 12.34,
         "매칭규칙": [
           "실적"
         ]
@@ -2817,17 +2805,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFB3bG1PZUJrUXg0a3RVbEhQTnZtSTdFeEVYeFR5UWQ2Z29GbGdQbVZ0azhJNDVCUHZkZ2s5NG9zMmlDT2h5RUFENHF6UHhpejA?oc=5",
         "언론사": "v.daum.net",
         "발행시각UTC": "2026-07-29T07:00:00+00:00",
-        "경과일": 11.17,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "[거래소 기관] 삼성전기·LG생활건강 담고 반도체는 정리...수급 변화 뚜렷",
-        "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBSV3JEQVNOQ0lFNkdqQzl1Sk40ZlhxajdWcGJ6ak9XZmJHSHQ4dUppQkZFRmc2UDZhb0o5dDFBdE4tQUI5VGZCcGRBNVBIZU16a2NxTm5SRklrNUprWDA4amVGWXV6RDRxMTM0bXRXLW9QNk3SAXdBVV95cUxOWU56WG9jZmpENHAtZHl2Zmx4bEhLWkxWYUk5bno0bE4zUWwxQ0FSN3VHenpzdHQ3VEp4Yno3NHdjWkl4OFpnNy1BZEJ5UWVmcFFXZzB5eE5nX3JoSTAtUkZsaUtfSHFaTVBBTzBMdzJGRm83OC1TWQ?oc=5",
-        "언론사": "핀포인트뉴스",
-        "발행시각UTC": "2026-08-06T07:01:30+00:00",
-        "경과일": 3.17,
+        "경과일": 11.29,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2837,31 +2815,51 @@
         "링크": "https://news.google.com/rss/articles/CBMiXEFVX3lxTFBzVTBVc1Vzb3AtWXAyN2hSZGZ2NjlrVEIzQV82MWRtd0xZYW02NlBwU004d1RMdTB0UkVyWVpVT0FDWUVDM3NIa0EtM0Q4N19sWmJlUXJOSTFHcEs4?oc=5",
         "언론사": "뉴스핌",
         "발행시각UTC": "2026-07-30T00:14:00+00:00",
-        "경과일": 10.45,
+        "경과일": 10.57,
         "원점수": 16.0,
-        "최종점수": 12.28,
+        "최종점수": 12.24,
         "매칭규칙": [
           "실적"
         ]
+      },
+      {
+        "제목": "[거래소 기관] 삼성전기·LG생활건강 담고 반도체는 정리...수급 변화 뚜렷",
+        "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTFBSV3JEQVNOQ0lFNkdqQzl1Sk40ZlhxajdWcGJ6ak9XZmJHSHQ4dUppQkZFRmc2UDZhb0o5dDFBdE4tQUI5VGZCcGRBNVBIZU16a2NxTm5SRklrNUprWDA4amVGWXV6RDRxMTM0bXRXLW9QNk3SAXdBVV95cUxOWU56WG9jZmpENHAtZHl2Zmx4bEhLWkxWYUk5bno0bE4zUWwxQ0FSN3VHenpzdHQ3VEp4Yno3NHdjWkl4OFpnNy1BZEJ5UWVmcFFXZzB5eE5nX3JoSTAtUkZsaUtfSHFaTVBBTzBMdzJGRm83OC1TWQ?oc=5",
+        "언론사": "핀포인트뉴스",
+        "발행시각UTC": "2026-08-06T07:01:30+00:00",
+        "경과일": 3.29,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "이선주號 LG생활건강, 북미 엔진 달았다",
+        "링크": "https://news.google.com/rss/articles/CBMifEFVX3lxTE5tTXN1aElqY1BIQXprUEtZelA1WThhOXJ6M0sxWXRlQTVHN01oSEhfM3Q1aENMNUt3cHJEU2drRXM4S0xVV19uMU1PN25ZcGdiWXYzendqMXdxd0VWbjdFdmhZMGpCMHY1c1VEbkVKOGljLTI4Rm5Xdm1uNUQ?oc=5",
+        "언론사": "한국금융신문",
+        "발행시각UTC": "2026-08-02T15:00:00+00:00",
+        "경과일": 6.95,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
       }
     ],
     "분석": {
       "분석상태": "정상",
-      "신호": 77.27,
+      "신호": 72.26,
       "데이터품질": 88.0,
       "판정": "매우 긍정",
-      "긍정뉴스개수": 15,
+      "긍정뉴스개수": 14,
       "부정뉴스개수": 0,
-      "중립뉴스개수": 15,
+      "중립뉴스개수": 16,
       "긍정뉴스": [
         {
           "제목": "실적·수출의 힘…화장품株 웃었다",
           "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBJTlZRUldiSENDOE5MYnFuamZCaXVZZHdQSVp3Uk42bTB0dXNmaEQtYVp1V01xdnB6NmU2alZBMzY5OF82VExKc2RVaGh4M3Y4dVR0aDktRkNLZw?oc=5",
-          "언론사": "파이낸셜뉴스",
+          "언론사": "fnnews.com",
           "발행시각UTC": "2026-08-09T09:16:53+00:00",
-          "경과일": 0.07,
+          "경과일": 0.19,
           "원점수": 16.0,
-          "최종점수": 15.97,
+          "최종점수": 15.93,
           "매칭규칙": [
             "실적"
           ]
@@ -2869,11 +2867,11 @@
         {
           "제목": "LG생활건강, 북미가 이끈 실적 반등…브랜드 재편 성과",
           "링크": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE5ablZCeVhjcWVodVM1MGx1d1N0MDhoMHBxQWdYOE1sR2oyWHljTGl5b3FacC1XMGlyc0hzNTczbHVGVGcxQVMxYjBhTFctdHoyTno2R1l0bEs5WkRydVp4VVo4VdIBZ0FVX3lxTFBkRUVhbDFlUVJkNEJLMWtOa0RNRkZVeWV0VzVfdGlRaG5RajEza09RMGFRWFZMTWFwRWVvSTEtSDlEeEVHQVFSaDNia2JDSlNtZHpKREQyY0xDNTFzd1hzazdRZ3hCdEU?oc=5",
-          "언론사": "lkp.news",
+          "언론사": "리버티코리아포스트",
           "발행시각UTC": "2026-08-06T08:02:48+00:00",
-          "경과일": 3.12,
+          "경과일": 3.24,
           "원점수": 16.0,
-          "최종점수": 14.89,
+          "최종점수": 14.85,
           "매칭규칙": [
             "실적"
           ]
@@ -2883,9 +2881,9 @@
           "링크": "https://news.google.com/rss/articles/CBMiRkFVX3lxTE9PU0lZT201dnE1b2tLdTFuUlFJTVBYYkdXWXBVTG5tV05vUlZNbVlPcUM5RjBjS0NkNDU1RUVSY3ExNGlJUkE?oc=5",
           "언론사": "v.daum.net",
           "발행시각UTC": "2026-08-05T09:43:50+00:00",
-          "경과일": 4.05,
+          "경과일": 4.17,
           "원점수": 21.0,
-          "최종점수": 19.11,
+          "최종점수": 19.05,
           "매칭규칙": [
             "실적",
             "매수"
@@ -2896,9 +2894,9 @@
           "링크": "https://news.google.com/rss/articles/CBMiakFVX3lxTE1HX2ZpM2F5NHJZN19qSFprRjFXYVVaVmdHVklMNnhocVVRNmVkalFkWF9wMkZNNDZGbl9uZUhRRENNZHZtWWFRREVtOTY0RmNZWDdIWk12d3lMQnJlT1RjeWRJSUJsVHBVN3c?oc=5",
           "언론사": "뷰티경제",
           "발행시각UTC": "2026-08-06T10:29:13+00:00",
-          "경과일": 3.02,
+          "경과일": 3.14,
           "원점수": 16.0,
-          "최종점수": 14.93,
+          "최종점수": 14.88,
           "매칭규칙": [
             "실적"
           ]
@@ -2908,9 +2906,9 @@
           "링크": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE5zdFozV2Z5V2dsYTkxV2lFdHJrSDVNOVFTR3NKSVlldmRiY19OUGxIQmUxQnBRYmJpUWlCVF9USmxYd3c3MTNsa190RmotQ1lZRHE5UThzdFFnYzJBUjRpempEbFjSAWhBVV95cUxPT2IxSUg0NVhObXJjQ21XZ2hSUTRsR1ZENnBsTU5oMzNoVHc2bzY4MWRiTVQtUkd6Vmg3ajYxRk9kMWt0dGk3cG9EUHNQLVRCU1R0MjJTLXlveEozVUtHT1BHMDJmTllQRA?oc=5",
           "언론사": "경인방송 뉴스",
           "발행시각UTC": "2026-07-30T07:00:00+00:00",
-          "경과일": 10.17,
+          "경과일": 10.29,
           "원점수": 16.0,
-          "최종점수": 12.38,
+          "최종점수": 12.34,
           "매칭규칙": [
             "실적"
           ]
@@ -2920,7 +2918,7 @@
       "설명": "최근 뉴스 제목의 실적·수주·투자·증자·소송 등 규칙과 시간가중치를 합성합니다."
     },
     "데이터출처": "Google News RSS",
-    "수집시각UTC": "2026-08-09T11:02:11.197808+00:00"
+    "수집시각UTC": "2026-08-09T13:54:00.542421+00:00"
   },
   "가치평가": {
     "가치평가계약버전": "4.0",
@@ -2941,7 +2939,7 @@
     "데이터자격검사": {
       "버전": "1.1.0",
       "통과": true,
-      "상태": "주의통과",
+      "상태": "통과",
       "핵심검사": {
         "정식재무최신성": true,
         "연속TTM": true,
@@ -2953,9 +2951,7 @@
         "정식보고서대체평가가능": true
       },
       "중단사유": [],
-      "주의사유": [
-        "현재가와 기준 적정가가 약 3배 이상 괴리"
-      ],
+      "주의사유": [],
       "정식재무기준분기키": 8105,
       "기대정식재무분기키": 8105,
       "잠정실적분기키": 8106,
@@ -2965,12 +2961,12 @@
       "잠정실적미정량화": false,
       "정식보고서대체평가": false,
       "평가기준": "잠정실적 반영",
-      "산업분류신뢰도": 72,
+      "산업분류신뢰도": 94,
       "산업프로필버전": "3.0.0",
-      "극단적괴리": true
+      "극단적괴리": false
     },
     "산업프로필버전": "3.0.0",
-    "산업분류신뢰도": 72,
+    "산업분류신뢰도": 94,
     "정식재무기준분기키": 8105,
     "유효재무기준분기키": 8106,
     "잠정실적": {
@@ -3014,12 +3010,12 @@
     "TTMEPS": 0.0,
     "정상화EPS": 1205.33,
     "분기런레이트EPS": 17617.52,
-    "FY1예상EPS": 6686.41,
-    "FY2예상EPS": 7180.45,
+    "FY1예상EPS": 11119.03,
+    "FY2예상EPS": 11940.59,
     "FY3예상EPS": 0.0,
     "FY4예상EPS": 0.0,
-    "평가EPS": 5626.48,
-    "선행EPS": 6686.41,
+    "평가EPS": 9206.62,
+    "선행EPS": 11119.03,
     "FY1성장률": 13.43,
     "FY2성장률": 7.39,
     "FY3성장률": 0.0,
@@ -3028,23 +3024,22 @@
     "TTM데이터품질": 86,
     "TTM잠정실적반영": true,
     "TTM현금흐름기준": "최근 정식보고서 TTM 유지",
-    "목표PER": 8.7,
-    "목표PBR": 0.5,
-    "암시PER": 9.04,
-    "암시PBR": 0.15,
-    "PER기준적정가": 48925.22,
-    "PBR기준적정가": 169472.19,
-    "그레이엄가치": 166542.46,
-    "정상화회복가치": 9432.92,
+    "목표PER": 17.2,
+    "목표PBR": 1.35,
+    "암시PER": 30.0,
+    "암시PBR": 0.81,
+    "PER기준적정가": 158312.72,
+    "PBR기준적정가": 457574.92,
+    "그레이엄가치": 206768.15,
+    "정상화회복가치": 18653.74,
     "잔여이익가치": 0.0,
-    "FCF가치": 196474.55,
-    "실적전환보정가": 54543.12,
+    "FCF가치": 334962.78,
+    "실적전환보정가": 165461.74,
     "미래성장가치": 0.0,
     "미래성장모형": {
       "버전": "1.0.0",
       "사용가능": false,
       "차단사유": [
-        "미래성장모형 비대상 업종",
         "양(+)의 TTM·FY1·FY2 EPS 미확보",
         "영업·순이익률 성장모형 최소기준 미달"
       ],
@@ -3058,14 +3053,59 @@
     },
     "복합기업대용가치합산": 0.0,
     "순현금주당가치": 69690.26,
-    "재무적정가": 50891.49,
-    "기본적정가": 50891.49,
-    "보수적적정가": 50329.7,
-    "성장적정가": 69212.42,
-    "현재가대비": -84.74,
-    "판단": "강한 고평가",
-    "가치평가산업코드": "materials",
-    "가치평가산업프로필": "화학·철강·소재 사이클",
+    "기존V4재무적정가": 253988.42,
+    "현재재무기초가치": 276183.01,
+    "미래증분가치": 0.0,
+    "펀더멘털적정가": 276183.01,
+    "적응형가치적용": true,
+    "적응형가치모형": {
+      "버전": "adaptive-fundamental-v1.0.0",
+      "현재가미사용": true,
+      "적용가능": true,
+      "현재재무기초가치": 276183.00841849943,
+      "미래총가치": 0.0,
+      "미래증분가치": 0.0,
+      "펀더멘털적정가": 276183.00841849943,
+      "현재기준PER": 14.777544317676453,
+      "현재EPS앵커": 1205.3348899347138,
+      "이익급회복괴리": true,
+      "분기런레이트대정상화배수": 14.616290262538682,
+      "현재모형분산배수": 25.68929677633817,
+      "품질": 69,
+      "근거": [
+        "최근 분기 이익 급회복과 과거 정상화이익의 큰 괴리를 감지"
+      ],
+      "현재가치모형": [
+        {
+          "모형": "현재·정상화 이익가치",
+          "값": 17811.89,
+          "가중치": 0.12
+        },
+        {
+          "모형": "순자산 기반가치",
+          "값": 457574.92,
+          "가중치": 0.32
+        },
+        {
+          "모형": "정상화 FCF 가치",
+          "값": 294231.03,
+          "가중치": 0.3
+        },
+        {
+          "모형": "현재 그레이엄 결합가치",
+          "값": 95875.88,
+          "가중치": 0.18
+        }
+      ]
+    },
+    "재무적정가": 276183.01,
+    "기본적정가": 276183.01,
+    "보수적적정가": 207137.26,
+    "성장적정가": 327147.25,
+    "현재가대비": -17.19,
+    "판단": "고평가",
+    "가치평가산업코드": "beauty_consumer",
+    "가치평가산업프로필": "화장품·생활용품 브랜드 소비재",
     "복합기업대용모형": false,
     "진짜SOTP자료확보": null,
     "산업분류출처": "OpenDART 기업개황 업종코드 세분류",
@@ -3076,68 +3116,65 @@
     "실적전환방향": "실적 급상승 전환",
     "실적전환강도": 81.16,
     "구조적실적가속": false,
-    "가치평가국면": "일반 가치평가",
+    "가치평가국면": "현재재무+미래증분 적응형",
     "이익저점보정": false,
-    "자산대비이익가치배수": 3.464,
-    "그레이엄대비이익가치배수": 3.404,
+    "자산대비이익가치배수": 2.89,
+    "그레이엄대비이익가치배수": 1.306,
     "분기매출성장률": 3.27,
     "분기영업이익성장률": 80.43,
     "분기순이익성장률": 91.37,
     "데이터신뢰도": 91,
-    "모형신뢰도": 82,
-    "가치신뢰도": 84,
+    "모형신뢰도": 65,
+    "가치신뢰도": 80,
     "가치신뢰도등급": "B",
     "가치신뢰도정의": "자료완전성과 모형합의도이며 실제 적중률이 아님",
-    "모형분산배수": 1.115,
-    "전체모형분산배수": 20.829,
+    "모형분산배수": 2.89,
+    "전체모형분산배수": 24.53,
     "모형상세": [
       {
         "모형": "선행·정상화 이익가치",
-        "값": 48925.22,
+        "값": 158312.72,
         "기본가중치": 0.34,
         "역할": "기준",
         "기준가반영": true
       },
       {
         "모형": "PBR 자산가치",
-        "값": 169472.19,
-        "기본가중치": 0.27,
+        "값": 457574.92,
+        "기본가중치": 0.26,
         "역할": "기준",
-        "기준가반영": false
+        "기준가반영": true
       },
       {
         "모형": "실적전환 가치",
-        "값": 54543.12,
-        "기본가중치": 0.17,
+        "값": 165461.74,
+        "기본가중치": 0.22,
         "역할": "기준",
         "기준가반영": true
       },
       {
         "모형": "FCF 가치",
-        "값": 196474.55,
+        "값": 334962.78,
         "기본가중치": 0.1,
         "역할": "기준",
-        "기준가반영": false
+        "기준가반영": true
       },
       {
         "모형": "그레이엄 결합가치",
-        "값": 166542.46,
+        "값": 206768.15,
         "기본가중치": 0.08,
         "역할": "보조",
-        "기준가반영": false
+        "기준가반영": true
       },
       {
         "모형": "정상화 회복가치",
-        "값": 9432.92,
+        "값": 18653.74,
         "기본가중치": 0.08,
         "역할": "보조",
         "기준가반영": false
       }
     ],
     "제외모형": [
-      "PBR 자산가치",
-      "FCF 가치",
-      "그레이엄 결합가치",
       "정상화 회복가치"
     ],
     "이상치검사": {
@@ -3150,10 +3187,117 @@
       "DART 누적 분기자료를 단독 분기로 변환한 뒤 최근 4개 분기 TTM을 산출했습니다.",
       "KIS EPS·BPS·PER·PBR은 적정가 산식과 주식수 추정에서 제외하고 시장 진단에만 사용했습니다.",
       "현재가는 적정가 산식에 넣지 않고 계산 완료 후 괴리 검증에만 사용했습니다.",
-      "화학·철강·소재 사이클 업종 프로필을 적용했습니다.",
+      "화장품·생활용품 브랜드 소비재 업종 프로필을 적용했습니다.",
       "기업 유형에 부적합하거나 독립 가치앵커에서 과도하게 벗어난 모형은 기준가에서 제외했습니다.",
+      "현재 재무기초가치와 미래 총가치를 분리한 뒤 미래 총가치가 현재 재무기초가치를 초과하는 부분만 미래 증분가치로 더해 이중계산을 방지했습니다.",
       "정식 보고서보다 최신인 OpenDART 잠정실적을 매출·영업이익·순이익 TTM에 반영했으며 현금흐름은 최근 정식보고서를 유지했습니다."
     ]
+  },
+  "전략미래가치": {
+    "엔진버전": "0.3.0-strategic-forward-consensus-low-load",
+    "모드": "shadow",
+    "현재가미사용": true,
+    "시가총액미사용": true,
+    "시장PER_PBR미사용": true,
+    "기초가치": 276183.01,
+    "기초가치출처": "적응형 현재재무기초가치",
+    "SOTP": {
+      "사용가능": false,
+      "주당SOTP기초가치": 0.0,
+      "근거": [
+        "감사 가능한 사업부별 가치자료 없음"
+      ]
+    },
+    "기존미래총가치": 0.0,
+    "원시미래총가치": 0.0,
+    "컨센서스미래가치보정": {
+      "적용": false,
+      "배수": 1.0
+    },
+    "원시미래증분가치": 0.0,
+    "미래가치인정률": 12.0,
+    "거시조정배수": 1.0,
+    "미래증분가치": 0.0,
+    "전략펀더멘털적정가": 276183.01,
+    "미래성장가치표시": "미래성장가치 반영 낮음",
+    "미래성장가치표시문구": "미래성장가치 반영 낮음",
+    "근거신뢰도": 62.0,
+    "근거축": {
+      "기업실적가속": {
+        "점수": 43.95,
+        "품질": 86.35,
+        "사용가능": true,
+        "근거": [
+          "최근 분기 영업이익 고성장",
+          "FY1 이익 성장방향 강함"
+        ],
+        "입력": {
+          "분기매출YoY": 3.27,
+          "분기영업이익YoY": 80.43,
+          "분기순이익YoY": 91.37,
+          "FY1성장률": 13.43,
+          "구조적실적가속": false,
+          "실적전환강도": 81.16,
+          "향후이익대용신호": -3.04
+        }
+      },
+      "산업현재미래": {
+        "점수": 0.0,
+        "품질": 0.0,
+        "사용가능": false,
+        "근거": [
+          "검증 가능한 산업 선행/사이클 자료 없음"
+        ]
+      },
+      "시장기대_애널리스트": {
+        "점수": 0.0,
+        "품질": 0.0,
+        "사용가능": false,
+        "근거": [
+          "애널리스트 실적 컨센서스 자료 없음"
+        ],
+        "주의": "목표주가/현재주가를 임의 대용하지 않음",
+        "방식": "none"
+      },
+      "글로벌거시": {
+        "점수": 0.0,
+        "품질": 0.0,
+        "사용가능": false,
+        "조정배수": 1.0,
+        "근거": [
+          "글로벌 거시 엔진 통합판정 없음"
+        ]
+      }
+    },
+    "근거": [
+      "최근 분기 영업이익 고성장",
+      "FY1 이익 성장방향 강함",
+      "검증 가능한 산업 선행/사이클 자료 없음",
+      "애널리스트 실적 컨센서스 자료 없음",
+      "글로벌 거시 엔진 통합판정 없음",
+      "산업·시장기대 근거 동시 부족 → 미래가치 최대 12% 인정"
+    ],
+    "정책": {
+      "시장기대없음": "애널리스트 실적자료가 없으면 임의 목표주가/시장가로 대체하지 않음",
+      "시장기대있음": "외부 FY1 EPS/추정기관수/투자의견은 미래가치 근거로 사용하되 목표주가는 적정가에 직접 합산하지 않음",
+      "산업자료없음": "산업 선행자료가 없으면 산업 프리미엄 0점",
+      "산업시장기대모두부족": "미래증분가치 최대 12% 인정",
+      "산업만확인": "컨센서스 없으면 미래증분가치 최대 45% 인정",
+      "거시환경": "품질게이트 통과시에만 0.80~1.10 범위의 실현확률 조정; 새 가치를 만들지 않음",
+      "SOTP": "감사 가능한 2개 이상 사업부와 희석주식수 있을 때만 진짜 SOTP 사용"
+    }
+  },
+  "애널리스트컨센서스": {
+    "사용가능": false,
+    "수집상태": "미호출",
+    "출처": "not_needed"
+  },
+  "전략거시원천": {
+    "수집상태": "미호출",
+    "출처": "not_needed",
+    "캐시": "",
+    "캐시나이초": "",
+    "오류": ""
   },
   "주가예측": {
     "엔진버전": "6.8.0-valuation-contract-v4",
@@ -3162,7 +3306,7 @@
       "점수": 63,
       "상승확률": 54,
       "판정": "상승 우위",
-      "신뢰도": 42,
+      "신뢰도": 40,
       "신뢰도등급": "낮음",
       "요소별평가": [
         {
@@ -3198,22 +3342,22 @@
         {
           "요소": "환율·글로벌",
           "가중치": 15,
-          "신호": 38.21,
+          "신호": 37.93,
           "신호판정": "긍정",
-          "데이터품질": 97.0,
-          "점수기여": 5.73,
+          "데이터품질": 88.0,
+          "점수기여": 5.69,
           "출처": "Yahoo 글로벌시장 분석",
-          "설명": "분석상태 정상, 신호 38.21"
+          "설명": "분석상태 정상, 신호 37.93"
         },
         {
           "요소": "뉴스·공시",
           "가중치": 10,
-          "신호": 49.0,
+          "신호": 46.26,
           "신호판정": "긍정",
           "데이터품질": 72.6,
-          "점수기여": 4.9,
+          "점수기여": 4.63,
           "출처": "OpenDART 최근 공시 + Google News RSS",
-          "설명": "분석상태 정상, 신호 49.00"
+          "설명": "분석상태 정상, 신호 46.26"
         }
       ],
       "미수집요소": [
@@ -3229,10 +3373,10 @@
     },
     "중기1~8주": {
       "기간": "1~8주",
-      "점수": 54,
-      "상승확률": 52,
+      "점수": 53,
+      "상승확률": 51,
       "판정": "중립",
-      "신뢰도": 55,
+      "신뢰도": 53,
       "신뢰도등급": "낮음",
       "요소별평가": [
         {
@@ -3268,12 +3412,12 @@
         {
           "요소": "환율·금리·거시",
           "가중치": 15,
-          "신호": 20.84,
+          "신호": 21.33,
           "신호판정": "긍정",
-          "데이터품질": 100.0,
-          "점수기여": 3.13,
+          "데이터품질": 88.8,
+          "점수기여": 3.2,
           "출처": "Yahoo 환율·미국금리·글로벌시장",
-          "설명": "분석상태 정상, 신호 20.84"
+          "설명": "분석상태 정상, 신호 21.33"
         },
         {
           "요소": "가격추세",
@@ -3288,12 +3432,12 @@
         {
           "요소": "뉴스·공시",
           "가중치": 10,
-          "신호": 49.0,
+          "신호": 46.26,
           "신호판정": "긍정",
           "데이터품질": 72.6,
-          "점수기여": 4.9,
+          "점수기여": 4.63,
           "출처": "OpenDART 최근 공시 + Google News RSS",
-          "설명": "분석상태 정상, 신호 49.00"
+          "설명": "분석상태 정상, 신호 46.26"
         }
       ],
       "미수집요소": [
@@ -3310,9 +3454,9 @@
     },
     "장기6~18개월": {
       "기간": "6~18개월",
-      "점수": 42,
-      "상승확률": 46,
-      "판정": "하락 우위",
+      "점수": 48,
+      "상승확률": 49,
+      "판정": "중립",
       "신뢰도": 62,
       "신뢰도등급": "보통",
       "요소별평가": [
@@ -3339,12 +3483,12 @@
         {
           "요소": "가치평가·안전마진",
           "가중치": 20,
-          "신호": -100.0,
-          "신호판정": "매우 부정",
+          "신호": -42.98,
+          "신호판정": "부정",
           "데이터품질": 100.0,
-          "점수기여": -20.0,
+          "점수기여": -8.6,
           "출처": "내부 가치평가",
-          "설명": "현재가 대비 -84.74%, 판단 강한 고평가"
+          "설명": "현재가 대비 -17.19%, 판단 고평가"
         },
         {
           "요소": "경쟁력·시장점유율",
@@ -3421,7 +3565,7 @@
     "스키마버전": "2.0",
     "엔진버전": "6.8.0-valuation-contract-v4",
     "종목코드": "051900",
-    "생성시각": "2026-08-09T11:02:15.465607",
+    "생성시각": "2026-08-09T13:54:45.421262",
     "연결상태": "부분",
     "기술분석": {
       "수집상태": "정상",
@@ -3731,8 +3875,8 @@
         "점수": 63,
         "상승확률": 54,
         "판정": "상승 우위",
-        "자료신뢰도": 42,
-        "신뢰도": 42,
+        "자료신뢰도": 40,
+        "신뢰도": 40,
         "자료신뢰도등급": "낮음",
         "신뢰도등급": "낮음",
         "요소별평가": [
@@ -3779,27 +3923,27 @@
             "요소": "환율·글로벌",
             "사용가능": true,
             "가중치": 15.0,
-            "신호": 38.21,
+            "신호": 37.93,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
-            "데이터품질": 97.0,
-            "점수기여": 5.73,
+            "데이터품질": 88.0,
+            "점수기여": 5.69,
             "출처": "Yahoo 글로벌시장 분석",
-            "설명": "분석상태 정상, 신호 38.21"
+            "설명": "분석상태 정상, 신호 37.93"
           },
           {
             "요소": "뉴스·공시",
             "사용가능": true,
             "가중치": 10.0,
-            "신호": 49.0,
+            "신호": 46.26,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
             "데이터품질": 72.6,
-            "점수기여": 4.9,
+            "점수기여": 4.63,
             "출처": "OpenDART 최근 공시 + Google News RSS",
-            "설명": "분석상태 정상, 신호 49.00"
+            "설명": "분석상태 정상, 신호 46.26"
           }
         ],
         "미수집요소": [
@@ -3809,11 +3953,11 @@
       },
       "중기": {
         "기간": "1~8주",
-        "점수": 54,
-        "상승확률": 52,
+        "점수": 53,
+        "상승확률": 51,
         "판정": "중립",
-        "자료신뢰도": 55,
-        "신뢰도": 55,
+        "자료신뢰도": 53,
+        "신뢰도": 53,
         "자료신뢰도등급": "낮음",
         "신뢰도등급": "낮음",
         "요소별평가": [
@@ -3860,14 +4004,14 @@
             "요소": "환율·금리·거시",
             "사용가능": true,
             "가중치": 15.0,
-            "신호": 20.84,
+            "신호": 21.33,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
-            "데이터품질": 100.0,
-            "점수기여": 3.13,
+            "데이터품질": 88.8,
+            "점수기여": 3.2,
             "출처": "Yahoo 환율·미국금리·글로벌시장",
-            "설명": "분석상태 정상, 신호 20.84"
+            "설명": "분석상태 정상, 신호 21.33"
           },
           {
             "요소": "가격추세",
@@ -3886,14 +4030,14 @@
             "요소": "뉴스·공시",
             "사용가능": true,
             "가중치": 10.0,
-            "신호": 49.0,
+            "신호": 46.26,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
             "데이터품질": 72.6,
-            "점수기여": 4.9,
+            "점수기여": 4.63,
             "출처": "OpenDART 최근 공시 + Google News RSS",
-            "설명": "분석상태 정상, 신호 49.00"
+            "설명": "분석상태 정상, 신호 46.26"
           }
         ],
         "미수집요소": [
@@ -3903,9 +4047,9 @@
       },
       "장기": {
         "기간": "6~18개월",
-        "점수": 42,
-        "상승확률": 46,
-        "판정": "하락 우위",
+        "점수": 48,
+        "상승확률": 49,
+        "판정": "중립",
         "자료신뢰도": 62,
         "신뢰도": 62,
         "자료신뢰도등급": "보통",
@@ -3941,14 +4085,14 @@
             "요소": "가치평가·안전마진",
             "사용가능": true,
             "가중치": 20.0,
-            "신호": -100.0,
-            "판정": "매우 부정",
-            "신호판정": "매우 부정",
+            "신호": -42.98,
+            "판정": "부정",
+            "신호판정": "부정",
             "데이터상태": "정상",
             "데이터품질": 100.0,
-            "점수기여": -20.0,
+            "점수기여": -8.6,
             "출처": "내부 가치평가",
-            "설명": "현재가 대비 -84.74%, 판단 강한 고평가"
+            "설명": "현재가 대비 -17.19%, 판단 고평가"
           },
           {
             "요소": "경쟁력·시장점유율",
@@ -3998,8 +4142,8 @@
     "요소상태": {
       "거시환경": {
         "사용가능": true,
-        "점수": 20.84,
-        "데이터품질": 100.0,
+        "점수": 21.33,
+        "데이터품질": 88.8,
         "판정": "긍정",
         "출처": "Yahoo Finance Chart API"
       },
@@ -4019,7 +4163,7 @@
       },
       "뉴스": {
         "사용가능": true,
-        "점수": 77.27,
+        "점수": 72.26,
         "데이터품질": 88.0,
         "판정": "매우 긍정",
         "출처": "Google News RSS"
