@@ -74,6 +74,22 @@ jobs:
           restore-keys: |
             dart-corp-codes-${{ runner.os }}-
 
+      - name: Build strategic macro cache slot
+        id: macro-cache-slot
+        shell: bash
+        run: |
+          hour=$(date -u +%H)
+          slot=$((10#$hour / 6))
+          echo "slot=$(date -u +%Y%m%d)-${slot}" >> "$GITHUB_OUTPUT"
+
+      - name: Cache strategic macro bundle
+        uses: actions/cache@v5
+        with:
+          path: .cache/strategic_macro_context.json
+          key: strategic-macro-${{ runner.os }}-${{ steps.macro-cache-slot.outputs.slot }}
+          restore-keys: |
+            strategic-macro-${{ runner.os }}-
+
       - name: Install
         run: |
           python -m pip install --upgrade pip
