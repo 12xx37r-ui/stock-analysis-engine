@@ -125,7 +125,7 @@ jobs:
           if not isinstance(strategic, dict):
               raise SystemExit("Strategic Forward field missing: repository root is likely still old code")
           version = str(strategic.get("엔진버전") or "")
-          if version != "0.3.0-strategic-forward-consensus-low-load":
+          if version != "0.3.1-strategic-forward-doublecount-sotp-guard":
               raise SystemExit(f"Strategic Forward version mismatch: {version or 'missing'}")
           print("GENERAL COMPANY OUTPUT: PASS")
           print("- Strategic Forward 0.3.0 contract present")
