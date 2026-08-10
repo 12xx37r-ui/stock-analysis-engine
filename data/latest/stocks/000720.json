@@ -29,7 +29,7 @@
     "OpenDART업종코드": "41221",
     "데이터출처": "금융감독원 OpenDART"
   },
-  "생성시각": "2026-08-10T10:51:39.733689",
+  "생성시각": "2026-08-10T12:07:59.405444",
   "재무분석": {
     "재무분석모형버전": "financial-quality-v2.0.0",
     "재무지표": {
@@ -844,15 +844,15 @@
         "단위": "KRW/USD",
         "수집상태": "정상",
         "응답메시지": "",
-        "현재값": 1417.23999,
+        "현재값": 1417.780029,
         "전일값": 1422.300049,
-        "1일변화율": -0.355766,
-        "5일변화율": -1.285781,
-        "20일변화율": -5.421493,
-        "MA5": 1423.526025,
-        "MA20": 1456.712,
-        "현재값대비MA20": -2.709665,
-        "최종관측시각UTC": "2026-08-10T10:50:53+00:00",
+        "1일변화율": -0.317796,
+        "5일변화율": -1.248166,
+        "20일변화율": -5.385454,
+        "MA5": 1423.634033,
+        "MA20": 1456.739001,
+        "현재값대비MA20": -2.674396,
+        "최종관측시각UTC": "2026-08-10T12:07:12+00:00",
         "데이터지연시간": 0.001,
         "데이터개수": 66
       },
@@ -872,7 +872,7 @@
         "MA20": 7525.406958,
         "현재값대비MA20": 3.085988,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 69.35,
+        "데이터지연시간": 70.621,
         "데이터개수": 63
       },
       "나스닥": {
@@ -891,7 +891,7 @@
         "MA20": 25672.52793,
         "현재값대비MA20": 3.965684,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 69.35,
+        "데이터지연시간": 70.621,
         "데이터개수": 63
       },
       "반도체지수": {
@@ -910,7 +910,7 @@
         "MA20": 11864.973926,
         "현재값대비MA20": 4.145109,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 69.35,
+        "데이터지연시간": 70.621,
         "데이터개수": 63
       },
       "VIX": {
@@ -929,7 +929,7 @@
         "MA20": 17.079,
         "현재값대비MA20": -9.538029,
         "최종관측시각UTC": "2026-08-10T07:00:00+00:00",
-        "데이터지연시간": 3.85,
+        "데이터지연시간": 5.121,
         "데이터개수": 64
       },
       "미국10년물": {
@@ -948,7 +948,7 @@
         "MA20": 4.63245,
         "현재값대비MA20": 0.594715,
         "최종관측시각UTC": "2026-08-07T12:20:00+00:00",
-        "데이터지연시간": 70.516,
+        "데이터지연시간": 71.788,
         "데이터개수": 64
       },
       "미국5년물": {
@@ -967,7 +967,7 @@
         "MA20": 4.36195,
         "현재값대비MA20": 0.001146,
         "최종관측시각UTC": "2026-08-07T12:20:00+00:00",
-        "데이터지연시간": 70.516,
+        "데이터지연시간": 71.788,
         "데이터개수": 64
       },
       "미국13주": {
@@ -986,23 +986,23 @@
         "MA20": 3.7237,
         "현재값대비MA20": -0.367912,
         "최종관측시각UTC": "2026-08-07T12:20:00+00:00",
-        "데이터지연시간": 70.516,
+        "데이터지연시간": 71.788,
         "데이터개수": 64
       }
     },
     "분석": {
       "분석상태": "정상",
-      "단기신호": 36.08,
+      "단기신호": 35.96,
       "단기판정": "긍정",
       "단기데이터품질": 91.0,
       "단기요소별평가": [
         {
           "요소": "원달러",
-          "신호": 30.79,
+          "신호": 30.22,
           "판정": "긍정",
           "데이터품질": 100.0,
           "가중치": 20.0,
-          "설명": "5일 변화 -1.29%"
+          "설명": "5일 변화 -1.25%"
         },
         {
           "요소": "S&P500",
@@ -1037,17 +1037,17 @@
           "설명": "현재 15.45"
         }
       ],
-      "중기신호": 20.87,
+      "중기신호": 20.71,
       "중기판정": "긍정",
       "중기데이터품질": 88.8,
       "중기요소별평가": [
         {
           "요소": "원달러",
-          "신호": 30.79,
+          "신호": 30.22,
           "판정": "긍정",
           "데이터품질": 100.0,
           "가중치": 25.0,
-          "설명": "20일 변화 -5.42%"
+          "설명": "20일 변화 -5.39%"
         },
         {
           "요소": "미국10년물",
@@ -1093,7 +1093,7 @@
       "설명": "국내주식 기준으로 원달러·미국 주가지수·반도체지수·VIX·미국 금리의 방향을 -100~100 신호로 합성했습니다."
     },
     "수집오류": [],
-    "수집시각": "2026-08-10T19:50:58.394503+09:00",
+    "수집시각": "2026-08-10T21:07:17.045134+09:00",
     "데이터출처": "Yahoo Finance Chart API"
   },
   "기업기초데이터": {
@@ -1445,7 +1445,7 @@
       },
       "데이터출처": "금융감독원 OpenDART"
     },
-    "수집시각": "2026-08-10T19:51:39.253550+09:00",
+    "수집시각": "2026-08-10T21:07:58.928139+09:00",
     "데이터출처": "금융감독원 OpenDART"
   },
   "산업분석": {
@@ -1469,7 +1469,7 @@
         "MA20": 57.01,
         "현재값대비MA20": 2.94685,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 69.35,
+        "데이터지연시간": 70.621,
         "데이터개수": 251,
         "산업구간": "인프라ETF",
         "중기가중치": 20.0,
@@ -1500,7 +1500,7 @@
         "MA20": 61.425,
         "현재값대비MA20": -0.480258,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 69.35,
+        "데이터지연시간": 70.621,
         "데이터개수": 251,
         "산업구간": "인프라ETF",
         "중기가중치": 15.0,
@@ -1531,7 +1531,7 @@
         "MA20": 181.355,
         "현재값대비MA20": 2.109119,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 69.35,
+        "데이터지연시간": 70.621,
         "데이터개수": 251,
         "산업구간": "산업재",
         "중기가중치": 15.0,
@@ -1562,7 +1562,7 @@
         "MA20": 868.05,
         "현재값대비MA20": -2.979091,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 69.35,
+        "데이터지연시간": 70.621,
         "데이터개수": 251,
         "산업구간": "건설장비",
         "중기가중치": 15.0,
@@ -1593,7 +1593,7 @@
         "MA20": 1091.692499,
         "현재값대비MA20": 6.517171,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 69.35,
+        "데이터지연시간": 70.621,
         "데이터개수": 251,
         "산업구간": "장비임대",
         "중기가중치": 10.0,
@@ -1624,7 +1624,7 @@
         "MA20": 99875.0,
         "현재값대비MA20": 10.738423,
         "최종관측시각UTC": "2026-08-10T00:00:00+00:00",
-        "데이터지연시간": 10.85,
+        "데이터지연시간": 12.122,
         "데이터개수": 242,
         "산업구간": "종합건설",
         "중기가중치": 15.0,
@@ -1655,7 +1655,7 @@
         "MA20": 44232.5,
         "현재값대비MA20": 10.326118,
         "최종관측시각UTC": "2026-08-10T00:00:00+00:00",
-        "데이터지연시간": 10.85,
+        "데이터지연시간": 12.122,
         "데이터개수": 242,
         "산업구간": "플랜트·EPC",
         "중기가중치": 10.0,
@@ -1861,7 +1861,7 @@
       "설명": "인프라 ETF·산업재·중장비·건설장비와 한국 대표 건설·플랜트 기업의 추세를 합성합니다."
     },
     "수집오류": [],
-    "수집시각": "2026-08-10T19:50:58.835355+09:00",
+    "수집시각": "2026-08-10T21:07:17.495009+09:00",
     "데이터출처": "Yahoo Finance Chart API"
   },
   "기술분석": {
@@ -1955,8 +1955,8 @@
             "요약": "일반 상승 · 2개 거래봉 전 · 초기 신호 · 신뢰도 32/100",
             "발생봉전": 2,
             "거래봉설명": "2개 거래봉 전",
-            "경과설명": "3일 4시간",
-            "실제경과설명": "3일 4시간",
+            "경과설명": "3일 5시간",
+            "실제경과설명": "3일 5시간",
             "다이버전스탐지시각UTC": "2026-08-07T06:30:00Z",
             "피벗확정시각UTC": "2026-08-07T06:30:00Z",
             "신호확정시각UTC": "",
@@ -2017,8 +2017,8 @@
             "요약": "일반 상승 · 2개 거래봉 전 · 초기 신호 · 신뢰도 32/100",
             "발생봉전": 2,
             "거래봉설명": "2개 거래봉 전",
-            "경과설명": "3일 4시간",
-            "실제경과설명": "3일 4시간",
+            "경과설명": "3일 5시간",
+            "실제경과설명": "3일 5시간",
             "다이버전스탐지시각UTC": "2026-08-07T06:30:00Z",
             "피벗확정시각UTC": "2026-08-07T06:30:00Z",
             "신호확정시각UTC": "",
@@ -2087,8 +2087,8 @@
               "요약": "일반 상승 · 2개 거래봉 전 · 초기 신호 · 신뢰도 32/100",
               "발생봉전": 2,
               "거래봉설명": "2개 거래봉 전",
-              "경과설명": "3일 4시간",
-              "실제경과설명": "3일 4시간",
+              "경과설명": "3일 5시간",
+              "실제경과설명": "3일 5시간",
               "다이버전스탐지시각UTC": "2026-08-07T06:30:00Z",
               "피벗확정시각UTC": "2026-08-07T06:30:00Z",
               "신호확정시각UTC": "",
@@ -2151,8 +2151,8 @@
               "요약": "일반 상승 · 2개 거래봉 전 · 초기 신호 · 신뢰도 낮음",
               "발생봉전": 2,
               "거래봉설명": "2개 거래봉 전",
-              "경과설명": "3일 4시간",
-              "실제경과설명": "3일 4시간",
+              "경과설명": "3일 5시간",
+              "실제경과설명": "3일 5시간",
               "다이버전스탐지시각UTC": "2026-08-07T06:30:00Z",
               "피벗확정시각UTC": "2026-08-07T06:30:00Z",
               "신호확정시각UTC": "",
@@ -2213,8 +2213,8 @@
               "요약": "히든 하락 · 4개 거래봉 전 · 초기 신호 · 신뢰도 낮음",
               "발생봉전": 4,
               "거래봉설명": "4개 거래봉 전",
-              "경과설명": "4일 4시간",
-              "실제경과설명": "4일 4시간",
+              "경과설명": "4일 5시간",
+              "실제경과설명": "4일 5시간",
               "다이버전스탐지시각UTC": "2026-08-06T06:30:00Z",
               "피벗확정시각UTC": "2026-08-06T06:30:00Z",
               "신호확정시각UTC": "",
@@ -2275,8 +2275,8 @@
               "요약": "히든 하락 · 4개 거래봉 전 · 초기 신호 · 신뢰도 낮음",
               "발생봉전": 4,
               "거래봉설명": "4개 거래봉 전",
-              "경과설명": "4일 4시간",
-              "실제경과설명": "4일 4시간",
+              "경과설명": "4일 5시간",
+              "실제경과설명": "4일 5시간",
               "다이버전스탐지시각UTC": "2026-08-06T06:30:00Z",
               "피벗확정시각UTC": "2026-08-06T06:30:00Z",
               "신호확정시각UTC": "",
@@ -2361,8 +2361,8 @@
             "요약": "히든 하락 · 1개 거래봉 전 · 초기 신호 · 신뢰도 33/100",
             "발생봉전": 1,
             "거래봉설명": "1개 거래봉 전",
-            "경과설명": "3일 10시간",
-            "실제경과설명": "3일 10시간",
+            "경과설명": "3일 12시간",
+            "실제경과설명": "3일 12시간",
             "다이버전스탐지시각UTC": "2026-08-07T00:00:00+00:00",
             "피벗확정시각UTC": "2026-08-07T00:00:00+00:00",
             "신호확정시각UTC": "",
@@ -2430,8 +2430,8 @@
             "요약": "히든 하락 · 1개 거래봉 전 · 초기 신호 · 신뢰도 33/100",
             "발생봉전": 1,
             "거래봉설명": "1개 거래봉 전",
-            "경과설명": "3일 10시간",
-            "실제경과설명": "3일 10시간",
+            "경과설명": "3일 12시간",
+            "실제경과설명": "3일 12시간",
             "다이버전스탐지시각UTC": "2026-08-07T00:00:00+00:00",
             "피벗확정시각UTC": "2026-08-07T00:00:00+00:00",
             "신호확정시각UTC": "",
@@ -2493,8 +2493,8 @@
               "요약": "히든 하락 · 1개 거래봉 전 · 초기 신호 · 신뢰도 33/100",
               "발생봉전": 1,
               "거래봉설명": "1개 거래봉 전",
-              "경과설명": "3일 10시간",
-              "실제경과설명": "3일 10시간",
+              "경과설명": "3일 12시간",
+              "실제경과설명": "3일 12시간",
               "다이버전스탐지시각UTC": "2026-08-07T00:00:00+00:00",
               "피벗확정시각UTC": "2026-08-07T00:00:00+00:00",
               "신호확정시각UTC": "",
@@ -2557,8 +2557,8 @@
               "요약": "히든 하락 · 1개 거래봉 전 · 초기 신호 · 신뢰도 낮음",
               "발생봉전": 1,
               "거래봉설명": "1개 거래봉 전",
-              "경과설명": "3일 10시간",
-              "실제경과설명": "3일 10시간",
+              "경과설명": "3일 12시간",
+              "실제경과설명": "3일 12시간",
               "다이버전스탐지시각UTC": "2026-08-07T00:00:00+00:00",
               "피벗확정시각UTC": "2026-08-07T00:00:00+00:00",
               "신호확정시각UTC": "",
@@ -2619,8 +2619,8 @@
               "요약": "히든 하락 · 1개 거래봉 전 · 초기 신호 · 신뢰도 낮음",
               "발생봉전": 1,
               "거래봉설명": "1개 거래봉 전",
-              "경과설명": "3일 10시간",
-              "실제경과설명": "3일 10시간",
+              "경과설명": "3일 12시간",
+              "실제경과설명": "3일 12시간",
               "다이버전스탐지시각UTC": "2026-08-07T00:00:00+00:00",
               "피벗확정시각UTC": "2026-08-07T00:00:00+00:00",
               "신호확정시각UTC": "",
@@ -2681,8 +2681,8 @@
               "요약": "히든 하락 · 1개 거래봉 전 · 초기 신호 · 신뢰도 낮음",
               "발생봉전": 1,
               "거래봉설명": "1개 거래봉 전",
-              "경과설명": "3일 10시간",
-              "실제경과설명": "3일 10시간",
+              "경과설명": "3일 12시간",
+              "실제경과설명": "3일 12시간",
               "다이버전스탐지시각UTC": "2026-08-07T00:00:00+00:00",
               "피벗확정시각UTC": "2026-08-07T00:00:00+00:00",
               "신호확정시각UTC": "",
@@ -2743,8 +2743,8 @@
               "요약": "히든 하락 · 1개 거래봉 전 · 초기 신호 · 신뢰도 낮음",
               "발생봉전": 1,
               "거래봉설명": "1개 거래봉 전",
-              "경과설명": "3일 10시간",
-              "실제경과설명": "3일 10시간",
+              "경과설명": "3일 12시간",
+              "실제경과설명": "3일 12시간",
               "다이버전스탐지시각UTC": "2026-08-07T00:00:00+00:00",
               "피벗확정시각UTC": "2026-08-07T00:00:00+00:00",
               "신호확정시각UTC": "",
@@ -2805,8 +2805,8 @@
               "요약": "일반 상승 · 7개 거래봉 전 · 강한 확인 신호 · 신뢰도 매우 높음",
               "발생봉전": 7,
               "거래봉설명": "7개 거래봉 전",
-              "경과설명": "11일 10시간",
-              "실제경과설명": "11일 10시간",
+              "경과설명": "11일 12시간",
+              "실제경과설명": "11일 12시간",
               "다이버전스탐지시각UTC": "2026-07-30T00:00:00+00:00",
               "피벗확정시각UTC": "2026-07-30T00:00:00+00:00",
               "신호확정시각UTC": "2026-08-06T00:00:00+00:00",
@@ -2891,8 +2891,8 @@
             "요약": "히든 상승 · 0개 거래봉 전 · 초기 신호 · 신뢰도 36/100",
             "발생봉전": 0,
             "거래봉설명": "0개 거래봉 전",
-            "경과설명": "3일 10시간",
-            "실제경과설명": "3일 10시간",
+            "경과설명": "3일 12시간",
+            "실제경과설명": "3일 12시간",
             "다이버전스탐지시각UTC": "2026-08-07T00:00:00Z",
             "피벗확정시각UTC": "2026-08-07T00:00:00Z",
             "신호확정시각UTC": "",
@@ -2953,8 +2953,8 @@
             "요약": "히든 상승 · 0개 거래봉 전 · 초기 신호 · 신뢰도 36/100",
             "발생봉전": 0,
             "거래봉설명": "0개 거래봉 전",
-            "경과설명": "3일 10시간",
-            "실제경과설명": "3일 10시간",
+            "경과설명": "3일 12시간",
+            "실제경과설명": "3일 12시간",
             "다이버전스탐지시각UTC": "2026-08-07T00:00:00Z",
             "피벗확정시각UTC": "2026-08-07T00:00:00Z",
             "신호확정시각UTC": "",
@@ -3023,8 +3023,8 @@
               "요약": "히든 상승 · 0개 거래봉 전 · 초기 신호 · 신뢰도 36/100",
               "발생봉전": 0,
               "거래봉설명": "0개 거래봉 전",
-              "경과설명": "3일 10시간",
-              "실제경과설명": "3일 10시간",
+              "경과설명": "3일 12시간",
+              "실제경과설명": "3일 12시간",
               "다이버전스탐지시각UTC": "2026-08-07T00:00:00Z",
               "피벗확정시각UTC": "2026-08-07T00:00:00Z",
               "신호확정시각UTC": "",
@@ -3087,8 +3087,8 @@
               "요약": "히든 상승 · 0개 거래봉 전 · 초기 신호 · 신뢰도 낮음",
               "발생봉전": 0,
               "거래봉설명": "0개 거래봉 전",
-              "경과설명": "3일 10시간",
-              "실제경과설명": "3일 10시간",
+              "경과설명": "3일 12시간",
+              "실제경과설명": "3일 12시간",
               "다이버전스탐지시각UTC": "2026-08-07T00:00:00Z",
               "피벗확정시각UTC": "2026-08-07T00:00:00Z",
               "신호확정시각UTC": "",
@@ -3149,8 +3149,8 @@
               "요약": "히든 상승 · 0개 거래봉 전 · 초기 신호 · 신뢰도 낮음",
               "발생봉전": 0,
               "거래봉설명": "0개 거래봉 전",
-              "경과설명": "3일 10시간",
-              "실제경과설명": "3일 10시간",
+              "경과설명": "3일 12시간",
+              "실제경과설명": "3일 12시간",
               "다이버전스탐지시각UTC": "2026-08-07T00:00:00Z",
               "피벗확정시각UTC": "2026-08-07T00:00:00Z",
               "신호확정시각UTC": "",
@@ -3211,8 +3211,8 @@
               "요약": "일반 하락 · 6개 거래봉 전 · 구조 확인 신호 · 신뢰도 높음",
               "발생봉전": 6,
               "거래봉설명": "6개 거래봉 전",
-              "경과설명": "45일 10시간",
-              "실제경과설명": "45일 10시간",
+              "경과설명": "45일 12시간",
+              "실제경과설명": "45일 12시간",
               "다이버전스탐지시각UTC": "2026-06-26T00:00:00Z",
               "피벗확정시각UTC": "2026-06-26T00:00:00Z",
               "신호확정시각UTC": "2026-06-26T00:00:00Z",
@@ -3273,8 +3273,8 @@
               "요약": "일반 하락 · 6개 거래봉 전 · 구조 확인 신호 · 신뢰도 높음",
               "발생봉전": 6,
               "거래봉설명": "6개 거래봉 전",
-              "경과설명": "45일 10시간",
-              "실제경과설명": "45일 10시간",
+              "경과설명": "45일 12시간",
+              "실제경과설명": "45일 12시간",
               "다이버전스탐지시각UTC": "2026-06-26T00:00:00Z",
               "피벗확정시각UTC": "2026-06-26T00:00:00Z",
               "신호확정시각UTC": "2026-06-26T00:00:00Z",
@@ -3335,8 +3335,8 @@
               "요약": "일반 하락 · 6개 거래봉 전 · 구조 확인 신호 · 신뢰도 높음",
               "발생봉전": 6,
               "거래봉설명": "6개 거래봉 전",
-              "경과설명": "45일 10시간",
-              "실제경과설명": "45일 10시간",
+              "경과설명": "45일 12시간",
+              "실제경과설명": "45일 12시간",
               "다이버전스탐지시각UTC": "2026-06-26T00:00:00Z",
               "피벗확정시각UTC": "2026-06-26T00:00:00Z",
               "신호확정시각UTC": "2026-06-26T00:00:00Z",
@@ -3421,8 +3421,8 @@
             "요약": "일반 하락 · 2개 거래봉 전 · 초기 신호 · 신뢰도 34/100",
             "발생봉전": 2,
             "거래봉설명": "2개 거래봉 전",
-            "경과설명": "73일 10시간",
-            "실제경과설명": "73일 10시간",
+            "경과설명": "73일 12시간",
+            "실제경과설명": "73일 12시간",
             "다이버전스탐지시각UTC": "2026-05-29T00:00:00Z",
             "피벗확정시각UTC": "2026-05-29T00:00:00Z",
             "신호확정시각UTC": "",
@@ -3490,8 +3490,8 @@
             "요약": "일반 하락 · 2개 거래봉 전 · 초기 신호 · 신뢰도 34/100",
             "발생봉전": 2,
             "거래봉설명": "2개 거래봉 전",
-            "경과설명": "73일 10시간",
-            "실제경과설명": "73일 10시간",
+            "경과설명": "73일 12시간",
+            "실제경과설명": "73일 12시간",
             "다이버전스탐지시각UTC": "2026-05-29T00:00:00Z",
             "피벗확정시각UTC": "2026-05-29T00:00:00Z",
             "신호확정시각UTC": "",
@@ -3553,8 +3553,8 @@
               "요약": "일반 하락 · 2개 거래봉 전 · 초기 신호 · 신뢰도 34/100",
               "발생봉전": 2,
               "거래봉설명": "2개 거래봉 전",
-              "경과설명": "73일 10시간",
-              "실제경과설명": "73일 10시간",
+              "경과설명": "73일 12시간",
+              "실제경과설명": "73일 12시간",
               "다이버전스탐지시각UTC": "2026-05-29T00:00:00Z",
               "피벗확정시각UTC": "2026-05-29T00:00:00Z",
               "신호확정시각UTC": "",
@@ -3617,8 +3617,8 @@
               "요약": "일반 하락 · 2개 거래봉 전 · 초기 신호 · 신뢰도 낮음",
               "발생봉전": 2,
               "거래봉설명": "2개 거래봉 전",
-              "경과설명": "73일 10시간",
-              "실제경과설명": "73일 10시간",
+              "경과설명": "73일 12시간",
+              "실제경과설명": "73일 12시간",
               "다이버전스탐지시각UTC": "2026-05-29T00:00:00Z",
               "피벗확정시각UTC": "2026-05-29T00:00:00Z",
               "신호확정시각UTC": "",
@@ -3698,8 +3698,8 @@
           "요약": "히든 상승 · 0개 거래봉 전 · 초기 신호 · 신뢰도 36/100",
           "발생봉전": 0,
           "거래봉설명": "0개 거래봉 전",
-          "경과설명": "3일 10시간",
-          "실제경과설명": "3일 10시간",
+          "경과설명": "3일 12시간",
+          "실제경과설명": "3일 12시간",
           "다이버전스탐지시각UTC": "2026-08-07T00:00:00Z",
           "피벗확정시각UTC": "2026-08-07T00:00:00Z",
           "신호확정시각UTC": "",
@@ -3760,8 +3760,8 @@
           "요약": "히든 하락 · 1개 거래봉 전 · 초기 신호 · 신뢰도 33/100",
           "발생봉전": 1,
           "거래봉설명": "1개 거래봉 전",
-          "경과설명": "3일 10시간",
-          "실제경과설명": "3일 10시간",
+          "경과설명": "3일 12시간",
+          "실제경과설명": "3일 12시간",
           "다이버전스탐지시각UTC": "2026-08-07T00:00:00+00:00",
           "피벗확정시각UTC": "2026-08-07T00:00:00+00:00",
           "신호확정시각UTC": "",
@@ -3822,8 +3822,8 @@
           "요약": "일반 하락 · 2개 거래봉 전 · 초기 신호 · 신뢰도 34/100",
           "발생봉전": 2,
           "거래봉설명": "2개 거래봉 전",
-          "경과설명": "73일 10시간",
-          "실제경과설명": "73일 10시간",
+          "경과설명": "73일 12시간",
+          "실제경과설명": "73일 12시간",
           "다이버전스탐지시각UTC": "2026-05-29T00:00:00Z",
           "피벗확정시각UTC": "2026-05-29T00:00:00Z",
           "신호확정시각UTC": "",
@@ -3884,8 +3884,8 @@
           "요약": "일반 상승 · 2개 거래봉 전 · 초기 신호 · 신뢰도 32/100",
           "발생봉전": 2,
           "거래봉설명": "2개 거래봉 전",
-          "경과설명": "3일 4시간",
-          "실제경과설명": "3일 4시간",
+          "경과설명": "3일 5시간",
+          "실제경과설명": "3일 5시간",
           "다이버전스탐지시각UTC": "2026-08-07T06:30:00Z",
           "피벗확정시각UTC": "2026-08-07T06:30:00Z",
           "신호확정시각UTC": "",
@@ -5035,9 +5035,9 @@
         "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTFAwSkRENWpCVG1sVHg3c2lLb3c1SXFWMFNVWnRMbl9FXzE0U1lHNGJQMGxPVURtckt4V3EwLXVDZG1ueVZuTmkwMW1fbXhCdlZ6UjR6UjFOeGs1TmJPaGQzbktwUHVYZy12UUxBSVViSmtIQXc?oc=5",
         "언론사": "비즈니스포스트",
         "발행시각UTC": "2026-08-10T07:32:35+00:00",
-        "경과일": 0.14,
+        "경과일": 0.19,
         "원점수": 16.0,
-        "최종점수": 15.95,
+        "최종점수": 15.93,
         "매칭규칙": [
           "실적"
         ]
@@ -5047,7 +5047,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE16b0NEeXJvQ0hfQ3dPVWFzTmhKTUozRnVUNDNiM1R6ODF6S1drV2s1UkJWNG10a3kyQXV6ZDdHT05YN29Ha2FGSjNxb1Q5b0RfVkpCYThVTVVMZzVxcVV3RktaVQ?oc=5",
         "언론사": "더구루",
         "발행시각UTC": "2026-08-10T06:54:23+00:00",
-        "경과일": 0.16,
+        "경과일": 0.22,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -5055,19 +5055,9 @@
       {
         "제목": "현대건설, 주택 수익성은 ‘날개’…플랜트·뉴에너지는 원가율 ‘빨간불’",
         "링크": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9IVkMxTTBaZU5paGltSWtvNFFmbFVOTmdiRUdIX290OHFnanV5Q0k3WnRSU3FUOVRFMjBLZWZfdGZBVGRTNVNjWjJVdm9jcjlhSFZiVEthb3pBU045OHZ4Nk1fWEk0Y1lqRDlwa2F3?oc=5",
-        "언론사": "asiatoday.co.kr",
+        "언론사": "아시아투데이",
         "발행시각UTC": "2026-08-10T06:41:12+00:00",
-        "경과일": 0.17,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "[이슈] 현대건설, 목동10단지 재건축 ‘수의계약’ 유력...1차 입찰 단독 참여",
-        "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE9ualNiLVRqMlp1cUstdkVVN2R2VFBfai1kel9oRzFwT0VfWTEtUVNoQzNEY2tHdGlhMjIwZ2s0cjBSMjczcEw0dGc0Mkwwb243VGQ1UEdGelhvd3Zjb2Z3Z0ExcVZEUXc?oc=5",
-        "언론사": "팍스경제TV",
-        "발행시각UTC": "2026-08-10T07:15:35+00:00",
-        "경과일": 0.15,
+        "경과일": 0.23,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -5077,29 +5067,17 @@
         "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE5KWEZjWktzUDBHR2hCV1VReW00RjNxZE5hTnVsWjhtZmZvUGFvU0Q4LTZiQUQzUG9RenluWTBNcC1SQlh2UDF1ZnNfSlp2VU1yWkhlVExkZTRkTDYtdENHcDJwSFZvR0ZlV0tUMGFKYkVhU28?oc=5",
         "언론사": "디지털투데이",
         "발행시각UTC": "2026-08-10T09:32:01+00:00",
-        "경과일": 0.05,
+        "경과일": 0.11,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
       },
       {
-        "제목": "현대건설, 목동 10단지 재건축 수주 '유력'",
-        "링크": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE5pY1ZiNnVERVlJQXZCZVYxM01uNm9PRXZzZ214bGR2M3dIeGVpcGRTeTE4aWpCZ2VuTFBJczNZWGVkeVZpazBXQVhwd3VjdHlmbmVwNFMzMTBDM3ZRc2c?oc=5",
-        "언론사": "아시아타임즈",
-        "발행시각UTC": "2026-08-10T06:02:00+00:00",
+        "제목": "[이슈] 현대건설, 목동10단지 재건축 ‘수의계약’ 유력...1차 입찰 단독 참여",
+        "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE9ualNiLVRqMlp1cUstdkVVN2R2VFBfai1kel9oRzFwT0VfWTEtUVNoQzNEY2tHdGlhMjIwZ2s0cjBSMjczcEw0dGc0Mkwwb243VGQ1UEdGelhvd3Zjb2Z3Z0ExcVZEUXc?oc=5",
+        "언론사": "팍스경제TV",
+        "발행시각UTC": "2026-08-10T07:15:35+00:00",
         "경과일": 0.2,
-        "원점수": 12.0,
-        "최종점수": 11.95,
-        "매칭규칙": [
-          "수주"
-        ]
-      },
-      {
-        "제목": "현대건설, 2조원대 목동 교두보 마련 가시화",
-        "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE13Zjd4VjFKemtNMDVGTmlJT0wwZDA0UGs3SkVWbEpQeVU0NlJjMG9kRTAyazhBaGRJZ19rel9fVDZWMEhvM3FOZkQ3YVRNQmFqMGZfaFFkeDMxSkxzNnZTOXp1ekpESE9DdGtyUThlWGg?oc=5",
-        "언론사": "위키리크스한국",
-        "발행시각UTC": "2026-08-10T06:19:57+00:00",
-        "경과일": 0.19,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -5107,21 +5085,43 @@
       {
         "제목": "현대건설, 업계 최초 수주잔고 100조 돌파…하반기 ‘원전’ 수주 드라이브",
         "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE1FTkFTWHBDaV9vT3VITklCbkFRUTlMcnFCX0FGUGh2RmZERTZvTEp6N0p3bXhrLVlqeWYyM2JGV1BlTnp2aDFseFloMGNyZ01pX3BONWRiTGFDeU9JbTE3U3dfcGxjVGcz?oc=5",
-        "언론사": "CEO스코어데일리",
+        "언론사": "ceoscoredaily.com",
         "발행시각UTC": "2026-08-07T08:30:00+00:00",
-        "경과일": 3.1,
+        "경과일": 3.15,
         "원점수": 12.0,
-        "최종점수": 11.17,
+        "최종점수": 11.16,
         "매칭규칙": [
           "수주"
         ]
+      },
+      {
+        "제목": "현대건설, 목동 10단지 재건축 수주 '유력'",
+        "링크": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE5pY1ZiNnVERVlJQXZCZVYxM01uNm9PRXZzZ214bGR2M3dIeGVpcGRTeTE4aWpCZ2VuTFBJczNZWGVkeVZpazBXQVhwd3VjdHlmbmVwNFMzMTBDM3ZRc2c?oc=5",
+        "언론사": "아시아타임즈",
+        "발행시각UTC": "2026-08-10T06:02:00+00:00",
+        "경과일": 0.25,
+        "원점수": 12.0,
+        "최종점수": 11.93,
+        "매칭규칙": [
+          "수주"
+        ]
+      },
+      {
+        "제목": "현대건설, 2조원대 목동 교두보 마련 가시화 - wikileaks-kr.org",
+        "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE13Zjd4VjFKemtNMDVGTmlJT0wwZDA0UGs3SkVWbEpQeVU0NlJjMG9kRTAyazhBaGRJZ19rel9fVDZWMEhvM3FOZkQ3YVRNQmFqMGZfaFFkeDMxSkxzNnZTOXp1ekpESE9DdGtyUThlWGg?oc=5",
+        "언론사": "wikileaks-kr.org",
+        "발행시각UTC": "2026-08-10T06:19:57+00:00",
+        "경과일": 0.24,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
       },
       {
         "제목": "현대건설, 국내 1위 건설사 넘본다...삼성물산 맹추격",
         "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5XRTc4MzlyaHI1ZjlDeWFoQzJFZzZzQnRfMldTMndEZDdhVHZtTkZ2RDNnV1kyWTVDVDJRNUFkTWFpelR1THdYQndncnlOXzBaOFhfeElHWWY3LTZyYTBIOVdfNDBYZjZHRk8tSw?oc=5",
         "언론사": "ESG경제",
         "발행시각UTC": "2026-08-07T06:20:31+00:00",
-        "경과일": 3.19,
+        "경과일": 3.24,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -5129,9 +5129,9 @@
       {
         "제목": "현대건설, 투자주의종목 지정",
         "링크": "https://news.google.com/rss/articles/CBMickFVX3lxTE4tRlRBeld2bmJ6Qk9MQ21uZDdHeF9mOEVtYVA0VThjcnFwcDVHRmNiaEljTGU1MWhIdC04bjdyY3lCY0gtODBXUUhmVjVhbUFXQmlVbnpNejhyVUJDbU9ueDBaUU00WlFvM0pTejMzUFh3QQ?oc=5",
-        "언론사": "topstarnews.net",
+        "언론사": "톱스타뉴스",
         "발행시각UTC": "2026-08-06T11:36:05+00:00",
-        "경과일": 3.97,
+        "경과일": 4.02,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -5141,9 +5141,9 @@
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTFAtUGl3emp0WU9pcXZsQ0lQQ1NQS3RHWllTY0p4VkR0Y09WOHhqcmlKM1JKdU03aVBiOWRCWS1iN2p0RmhyRkZ5NkVqRFk1TzdncTlEcjRTVXp0bmMyZ3F5Z0x6SFA2ZXk2R0VCdXZSc0o?oc=5",
         "언론사": "연합인포맥스",
         "발행시각UTC": "2026-07-24T07:00:00+00:00",
-        "경과일": 17.16,
+        "경과일": 17.21,
         "원점수": 16.0,
-        "최종점수": 9.9,
+        "최종점수": 9.88,
         "매칭규칙": [
           "실적"
         ]
@@ -5153,9 +5153,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE55bFU4eWRRNTltM1Rmc3B3UDRLX3R4NVFsMlBzWS00c0NyWjY4bW1hUUFfN21EcVk4bkY3RGRFM0w2NXBlaXExOF9yb3EwVms?oc=5",
         "언론사": "딜사이트",
         "발행시각UTC": "2026-08-06T00:00:00+00:00",
-        "경과일": 4.45,
+        "경과일": 4.51,
         "원점수": 16.0,
-        "최종점수": 14.42,
+        "최종점수": 14.4,
         "매칭규칙": [
           "실적"
         ]
@@ -5165,9 +5165,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9ZdFpDN2dGRzdQbEQweU9jRzNSX3Y0NXBoMGtBaS10RHJQekg5YjZhYmtEaXRUQUtpOEY5LTlCcnVLWTZyQXEwT2NmTUNNcTA?oc=5",
         "언론사": "v.daum.net",
         "발행시각UTC": "2026-08-04T08:54:38+00:00",
-        "경과일": 6.08,
+        "경과일": 6.13,
         "원점수": 17.0,
-        "최종점수": 14.7,
+        "최종점수": 14.68,
         "매칭규칙": [
           "수주",
           "매수"
@@ -5176,22 +5176,22 @@
       {
         "제목": "iM증권, 현대건설 목표주가 하향 …\"원전 수주 지연\"",
         "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE9BTHFUVlN1ZmdmR3JDb2VCV1NXN2MwcWRLRnFaTTFFQW1tY1NMRXRVRlMtY0h2aTJqY0dZdEk5dzl5WFRSVk1OUzdNSGtnTTZMRUlQbjhDbUlfUDDSAWBBVV95cUxOUUFUSHppOUlzdmFEUXBZVXdZNW83Ykh4WHJ1MjRQZWV1Tm1mWlRGd2tJZW5TaFg2UW5tT3h6ZGZJMERRUE5ZNmtQTGVELXMzeDM3VkRKc2U1dlViZXNQWWE?oc=5",
-        "언론사": "연합뉴스",
+        "언론사": "yna.co.kr",
         "발행시각UTC": "2026-08-02T23:25:33+00:00",
-        "경과일": 7.48,
+        "경과일": 7.53,
         "원점수": 4.0,
-        "최종점수": 3.34,
+        "최종점수": 3.33,
         "매칭규칙": [
           "수주",
           "하향"
         ]
       },
       {
-        "제목": "현대건설, 세계 최대 운용사 블랙록서 지분 확대… ‘AI 데이터센터’ 수혜 기대감 덕?",
+        "제목": "현대건설, 세계 최대 운용사 블랙록서 지분 확대… ‘AI 데이터센터’ 수혜 기대감 덕? - wikileaks-kr.org",
         "링크": "https://news.google.com/rss/articles/CBMib0FVX3lxTE5hUGM0czhqUEUyUXdhbG55WGphbUl2TmlvSkhQSVZaUldoaXVZbTU1VzhNQ1hRZWpvWmR1UWV6QXpHTFZaa2E5ZXNIY0JxTWRzRmJaNFRyaGcySjl3RUZ2YXhUbWVMbjg3TFVJeWhSOA?oc=5",
-        "언론사": "위키리크스한국",
+        "언론사": "wikileaks-kr.org",
         "발행시각UTC": "2026-08-07T06:25:00+00:00",
-        "경과일": 3.18,
+        "경과일": 3.24,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -5201,7 +5201,17 @@
         "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE5od245WEZhZG02UWJhRFVralM5Q2loZzBITXp1UmZPaHpvVGE3eW13cy11S3hkTFQySEp4c1RkdmYzRC1fcjN4WE5ZRXo2NFl1ZHFHRTNlTWJmZi01cElkZFNaMXQ2V1hJdFlvYWFYVjRqRjQ?oc=5",
         "언론사": "디지털투데이",
         "발행시각UTC": "2026-08-06T04:23:00+00:00",
-        "경과일": 4.27,
+        "경과일": 4.32,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "“본업 살아나는데 원전은 언제쯤”…현대건설 목표가 5만원 깎였다 [오늘 나온 보고서]",
+        "링크": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE9YLVpvNldJaTFJbm55Tm9aM2lER3FPMS1qSkZUdFVQS2w3VzNNWV9FYXY1cWJjZkl3WTBZalUxamVDT3ozTFBzTllKbndzTkhIa1E?oc=5",
+        "언론사": "매일경제 마켓",
+        "발행시각UTC": "2026-07-20T07:00:00+00:00",
+        "경과일": 21.21,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -5211,55 +5221,23 @@
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE52VEp2VnhZTmU1VVM2RlVjMXFuY1laMWxFRWRtUWNja0NFLXUzZDRnR3lvOTVKZjNTZXVvRHpLbjF4aDhwdHdHaldPTTVlNF8wcEJycG1FdjkzU0JwWXNBR2pVR2pIbERuYmV6MjlKNFg?oc=5",
         "언론사": "연합인포맥스",
         "발행시각UTC": "2026-08-05T05:01:03+00:00",
-        "경과일": 5.24,
+        "경과일": 5.3,
         "원점수": 12.0,
-        "최종점수": 10.6,
+        "최종점수": 10.59,
         "매칭규칙": [
           "수주"
         ]
-      },
-      {
-        "제목": "“본업 살아나는데 원전은 언제쯤”…현대건설 목표가 5만원 깎였다 [오늘 나온 보고서]",
-        "링크": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE9YLVpvNldJaTFJbm55Tm9aM2lER3FPMS1qSkZUdFVQS2w3VzNNWV9FYXY1cWJjZkl3WTBZalUxamVDT3ozTFBzTllKbndzTkhIa1E?oc=5",
-        "언론사": "매일경제 마켓",
-        "발행시각UTC": "2026-07-20T07:00:00+00:00",
-        "경과일": 21.16,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
       },
       {
         "제목": "[마켓+] 현대건설, 실적 바닥 통과했나…주택 원가율 개선에 원전 수주 기대",
         "링크": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE9PNDdiMW1kR0NUN0Q5ZEdQUnBKLUU1NFkzaVlTVGFtVkNkNEtKdnJVZ2JhcWJNdG9QVmhqajVBUGtlb1JVZVBURTQ0T1RkMzFoeTNCbEJnMUxyMGFRZmo5UG4waGnSAWhBVV95cUxNVFlIRUt6c2tYQVB6TEhmdnpfYnNISGNhNTdScW5EQlRCTkJqMHNxNk1pS19uOEg3Q1JWcVdFYzd0ZzJkZnV6T1pudks1eC1OWC1VRHR4bUJRVmhraWJfWkxvdTJERXFqbg?oc=5",
         "언론사": "경인방송 뉴스",
         "발행시각UTC": "2026-08-03T06:14:48+00:00",
-        "경과일": 7.19,
+        "경과일": 7.24,
         "원점수": 28.0,
-        "최종점수": 23.53,
+        "최종점수": 23.49,
         "매칭규칙": [
           "실적",
-          "수주"
-        ]
-      },
-      {
-        "제목": "[특징주] 현대건설, 연이은 계약 정정 공시 속 장중 하락세 지속 : 기업주식정보",
-        "링크": "https://news.google.com/rss/articles/CBMiSkFVX3lxTFBhblhXZkpaSWNGM1Q5X0hHTS1jX25sWGdoQUVEaGVMdjRBcUpuMnhQMTNxQmJUcjZldWYyUVJxY2ROUEczRkd0WUR3?oc=5",
-        "언론사": "재경일보",
-        "발행시각UTC": "2026-08-10T01:56:00+00:00",
-        "경과일": 0.37,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "현대건설, 목동 10단지 재건축 수주 출사표",
-        "링크": "https://news.google.com/rss/articles/CBMia0FVX3lxTE1nSXNYd3JjdE9CdmxWS3RDcndjM09qNS1hcFVwYUhvaV9EaF9LWWpEMDItSlcxRDFmdXVFVV9wODFCT0ZnRFVNZzZDUXV2N2k4RG16SENzcTRSc2RzRmxYbVNPbzlqZ19OanBR?oc=5",
-        "언론사": "BBS불교방송",
-        "발행시각UTC": "2026-08-05T06:37:13+00:00",
-        "경과일": 5.18,
-        "원점수": 12.0,
-        "최종점수": 10.62,
-        "매칭규칙": [
           "수주"
         ]
       },
@@ -5268,7 +5246,29 @@
         "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE1zMTllLWNfM19nOFdSSzBGUl9RSmtBVWhMR3FRQ2FsWXJ5R05mRzZGVk01VVdVNFF6aEYzbk91RThXREkweGJiOURCSVUzblpNMXZwUVhaTm9FaEdteDBmbEZjMERiNnpiWjhZWldBRkJNS00?oc=5",
         "언론사": "주달",
         "발행시각UTC": "2026-08-06T11:55:21+00:00",
-        "경과일": 3.96,
+        "경과일": 4.01,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "현대건설, 목동 10단지 재건축 수주 출사표",
+        "링크": "https://news.google.com/rss/articles/CBMia0FVX3lxTE1nSXNYd3JjdE9CdmxWS3RDcndjM09qNS1hcFVwYUhvaV9EaF9LWWpEMDItSlcxRDFmdXVFVV9wODFCT0ZnRFVNZzZDUXV2N2k4RG16SENzcTRSc2RzRmxYbVNPbzlqZ19OanBR?oc=5",
+        "언론사": "news.bbsi.co.kr",
+        "발행시각UTC": "2026-08-05T06:37:13+00:00",
+        "경과일": 5.23,
+        "원점수": 12.0,
+        "최종점수": 10.61,
+        "매칭규칙": [
+          "수주"
+        ]
+      },
+      {
+        "제목": "[특징주] 현대건설, 연이은 계약 정정 공시 속 장중 하락세 지속 : 기업주식정보",
+        "링크": "https://news.google.com/rss/articles/CBMiSkFVX3lxTFBhblhXZkpaSWNGM1Q5X0hHTS1jX25sWGdoQUVEaGVMdjRBcUpuMnhQMTNxQmJUcjZldWYyUVJxY2ROUEczRkd0WUR3?oc=5",
+        "언론사": "재경일보",
+        "발행시각UTC": "2026-08-10T01:56:00+00:00",
+        "경과일": 0.42,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -5278,9 +5278,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBOMkE3Q0lzeHprOFJQWC1XTmFMczZXamFMOGdFLWFfT3Z4UXNnZ1FfVDVubGR4LVBLcVVZTTk3bDMwWnZYZ0k3WHNjQmxfTk1WRVpmYmdiSmhoVkNiSDNHQmVhU0VINFNRcUHSAW9BVV95cUxQSjRnSUJVSVVFbU1JSkpsOFBiOEZHNkhlMDI2RmtBeGJocGRPbzluTXdEMmlVUzFLbVlrQ1RzZEJ4RmlSZDYzaGVuMTZ0U25wUThISjA0YlBqbzFZZkN4UXE0ZktoY1JkNzVNaWxQaEk?oc=5",
         "언론사": "머니투데이",
         "발행시각UTC": "2026-08-05T02:01:01+00:00",
-        "경과일": 5.37,
+        "경과일": 5.42,
         "원점수": 12.0,
-        "최종점수": 10.57,
+        "최종점수": 10.55,
         "매칭규칙": [
           "수주"
         ]
@@ -5290,9 +5290,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE9UdXVpZWRWdVRLMGJOUWJ4akY5b1NMdDlGR3kybTJmLTlvTXk0dDRfbU40bnpZSVBjOWkyZkozbG1ERV84ZGQzNTNmOEFuUXhGLUI3X09NVUJnN3JyMmRWRlJ5NFNZenc?oc=5",
         "언론사": "국토교통신문",
         "발행시각UTC": "2026-08-02T10:15:08+00:00",
-        "경과일": 8.02,
+        "경과일": 8.08,
         "원점수": 12.0,
-        "최종점수": 9.86,
+        "최종점수": 9.85,
         "매칭규칙": [
           "수주"
         ]
@@ -5302,33 +5302,9 @@
         "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE9raFhnZDVnVDNfT3FFQW1tNm1qdUZDcE1wSVNIRExaWUJhQlRSdENYSWcwQVBTRGxJenhFNzlfUUJzSGZxQnFXWnhRTmIySzB4NGpJdkY0cnR5dHlzcnFJeHR6Mi1wQUhudEZBRnFCaURzYjA?oc=5",
         "언론사": "비즈니스포스트",
         "발행시각UTC": "2026-08-06T07:13:15+00:00",
-        "경과일": 4.15,
+        "경과일": 4.2,
         "원점수": 12.0,
-        "최종점수": 10.89,
-        "매칭규칙": [
-          "수주"
-        ]
-      },
-      {
-        "제목": "현대건설, 목동10단지 수주 출사표…“목동 내 랜드마크 구현할 것”",
-        "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTFA2M3dLUkhuTEVldkRMU0I3N3hKNDlFVzRHMTl6MGxTaDBibG9SVGMwb0JWNW9SR1ZNeWFIbHdnU1pxNWRnNDVFUWo0OXJpaVJvcm5Gd1liQ05NbzRvNWlsSFZLZmhqS28?oc=5",
-        "언론사": "팍스경제TV",
-        "발행시각UTC": "2026-08-05T05:20:28+00:00",
-        "경과일": 5.23,
-        "원점수": 12.0,
-        "최종점수": 10.61,
-        "매칭규칙": [
-          "수주"
-        ]
-      },
-      {
-        "제목": "현대건설, 목동 재건축 수주 출사표",
-        "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE9uVDF2LWgxRFVveml6c0xmQV9kMkRBd1V4bDZKNFE3anJzRlBvLVpxVVM3azk3OFc0Vkx0Mm1LY2JQOC10UnFpNUU5b0RYdnRHeWlEbzRyc01ZSHhBTFFna05KV2xvMjU5?oc=5",
-        "언론사": "arunews.com",
-        "발행시각UTC": "2026-08-05T04:12:14+00:00",
-        "경과일": 5.28,
-        "원점수": 12.0,
-        "최종점수": 10.59,
+        "최종점수": 10.88,
         "매칭규칙": [
           "수주"
         ]
@@ -5338,19 +5314,43 @@
         "링크": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE9WazR2OTMxOFVhRHlld0lNNXZ0Ylh5UWR2U3E5YmREZnlaWkdpRkh2LXlLaTFKSFFMVzAtcVk2RU96cWJ3T1Q3RFJseE9Qb0JDUmc?oc=5",
         "언론사": "매일경제 마켓",
         "발행시각UTC": "2026-07-22T07:00:00+00:00",
-        "경과일": 19.16,
+        "경과일": 19.21,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
+      },
+      {
+        "제목": "현대건설, 목동10단지 수주 출사표…“목동 내 랜드마크 구현할 것”",
+        "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTFA2M3dLUkhuTEVldkRMU0I3N3hKNDlFVzRHMTl6MGxTaDBibG9SVGMwb0JWNW9SR1ZNeWFIbHdnU1pxNWRnNDVFUWo0OXJpaVJvcm5Gd1liQ05NbzRvNWlsSFZLZmhqS28?oc=5",
+        "언론사": "팍스경제TV",
+        "발행시각UTC": "2026-08-05T05:20:28+00:00",
+        "경과일": 5.28,
+        "원점수": 12.0,
+        "최종점수": 10.59,
+        "매칭규칙": [
+          "수주"
+        ]
+      },
+      {
+        "제목": "현대건설, 목동 재건축 수주 출사표",
+        "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE9uVDF2LWgxRFVveml6c0xmQV9kMkRBd1V4bDZKNFE3anJzRlBvLVpxVVM3azk3OFc0Vkx0Mm1LY2JQOC10UnFpNUU5b0RYdnRHeWlEbzRyc01ZSHhBTFFna05KV2xvMjU5?oc=5",
+        "언론사": "arunews.com",
+        "발행시각UTC": "2026-08-05T04:12:14+00:00",
+        "경과일": 5.33,
+        "원점수": 12.0,
+        "최종점수": 10.58,
+        "매칭규칙": [
+          "수주"
+        ]
       },
       {
         "제목": "현대건설 2.6조 규모 목동 10단지 수주 추진, 해외 설계사와 현장 점검",
         "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE1STGdCZkt3TldFYnRzUTNMazBHREFfWUtjRHE3MlFfcW1HMUxtT2RrWEgzTDU2OXBFWlJ0amY5UUROYmVUMHhGUm9yTzA5MnV0a0Z1OHVpa1U1WWdmQUZ2SjI4YVJTeDdOeXVoXy0zTy1ETWs?oc=5",
         "언론사": "비즈니스포스트",
         "발행시각UTC": "2026-08-05T07:13:45+00:00",
-        "경과일": 5.15,
+        "경과일": 5.2,
         "원점수": 12.0,
-        "최종점수": 10.63,
+        "최종점수": 10.61,
         "매칭규칙": [
           "수주"
         ]
@@ -5360,9 +5360,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5fNXhJU3BIRk1wVUlMT0FrYzR6a0x6R1ZCNEYzaWp0enh5b0Y3SlZlZmZGVzk5aEhQTE15QlFXWFdKM0VjXzlIalpwN1RENHVSbmw5bTlIWExrWnRxVm0yMQ?oc=5",
         "언론사": "뉴스토마토",
         "발행시각UTC": "2026-07-31T05:23:35+00:00",
-        "경과일": 10.23,
+        "경과일": 10.28,
         "원점수": 12.0,
-        "최종점수": 9.27,
+        "최종점수": 9.26,
         "매칭규칙": [
           "수주"
         ]
@@ -5370,7 +5370,7 @@
     ],
     "분석": {
       "분석상태": "정상",
-      "신호": 74.48,
+      "신호": 74.37,
       "데이터품질": 88.0,
       "판정": "매우 긍정",
       "긍정뉴스개수": 17,
@@ -5382,11 +5382,23 @@
           "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTFAwSkRENWpCVG1sVHg3c2lLb3c1SXFWMFNVWnRMbl9FXzE0U1lHNGJQMGxPVURtckt4V3EwLXVDZG1ueVZuTmkwMW1fbXhCdlZ6UjR6UjFOeGs1TmJPaGQzbktwUHVYZy12UUxBSVViSmtIQXc?oc=5",
           "언론사": "비즈니스포스트",
           "발행시각UTC": "2026-08-10T07:32:35+00:00",
-          "경과일": 0.14,
+          "경과일": 0.19,
           "원점수": 16.0,
-          "최종점수": 15.95,
+          "최종점수": 15.93,
           "매칭규칙": [
             "실적"
+          ]
+        },
+        {
+          "제목": "현대건설, 업계 최초 수주잔고 100조 돌파…하반기 ‘원전’ 수주 드라이브",
+          "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE1FTkFTWHBDaV9vT3VITklCbkFRUTlMcnFCX0FGUGh2RmZERTZvTEp6N0p3bXhrLVlqeWYyM2JGV1BlTnp2aDFseFloMGNyZ01pX3BONWRiTGFDeU9JbTE3U3dfcGxjVGcz?oc=5",
+          "언론사": "ceoscoredaily.com",
+          "발행시각UTC": "2026-08-07T08:30:00+00:00",
+          "경과일": 3.15,
+          "원점수": 12.0,
+          "최종점수": 11.16,
+          "매칭규칙": [
+            "수주"
           ]
         },
         {
@@ -5394,21 +5406,9 @@
           "링크": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE5pY1ZiNnVERVlJQXZCZVYxM01uNm9PRXZzZ214bGR2M3dIeGVpcGRTeTE4aWpCZ2VuTFBJczNZWGVkeVZpazBXQVhwd3VjdHlmbmVwNFMzMTBDM3ZRc2c?oc=5",
           "언론사": "아시아타임즈",
           "발행시각UTC": "2026-08-10T06:02:00+00:00",
-          "경과일": 0.2,
+          "경과일": 0.25,
           "원점수": 12.0,
-          "최종점수": 11.95,
-          "매칭규칙": [
-            "수주"
-          ]
-        },
-        {
-          "제목": "현대건설, 업계 최초 수주잔고 100조 돌파…하반기 ‘원전’ 수주 드라이브",
-          "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE1FTkFTWHBDaV9vT3VITklCbkFRUTlMcnFCX0FGUGh2RmZERTZvTEp6N0p3bXhrLVlqeWYyM2JGV1BlTnp2aDFseFloMGNyZ01pX3BONWRiTGFDeU9JbTE3U3dfcGxjVGcz?oc=5",
-          "언론사": "CEO스코어데일리",
-          "발행시각UTC": "2026-08-07T08:30:00+00:00",
-          "경과일": 3.1,
-          "원점수": 12.0,
-          "최종점수": 11.17,
+          "최종점수": 11.93,
           "매칭규칙": [
             "수주"
           ]
@@ -5418,9 +5418,9 @@
           "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTFAtUGl3emp0WU9pcXZsQ0lQQ1NQS3RHWllTY0p4VkR0Y09WOHhqcmlKM1JKdU03aVBiOWRCWS1iN2p0RmhyRkZ5NkVqRFk1TzdncTlEcjRTVXp0bmMyZ3F5Z0x6SFA2ZXk2R0VCdXZSc0o?oc=5",
           "언론사": "연합인포맥스",
           "발행시각UTC": "2026-07-24T07:00:00+00:00",
-          "경과일": 17.16,
+          "경과일": 17.21,
           "원점수": 16.0,
-          "최종점수": 9.9,
+          "최종점수": 9.88,
           "매칭규칙": [
             "실적"
           ]
@@ -5430,9 +5430,9 @@
           "링크": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE55bFU4eWRRNTltM1Rmc3B3UDRLX3R4NVFsMlBzWS00c0NyWjY4bW1hUUFfN21EcVk4bkY3RGRFM0w2NXBlaXExOF9yb3EwVms?oc=5",
           "언론사": "딜사이트",
           "발행시각UTC": "2026-08-06T00:00:00+00:00",
-          "경과일": 4.45,
+          "경과일": 4.51,
           "원점수": 16.0,
-          "최종점수": 14.42,
+          "최종점수": 14.4,
           "매칭규칙": [
             "실적"
           ]
@@ -5442,7 +5442,7 @@
       "설명": "최근 뉴스 제목의 실적·수주·투자·증자·소송 등 규칙과 시간가중치를 합성합니다."
     },
     "데이터출처": "Google News RSS",
-    "수집시각UTC": "2026-08-10T10:50:58.672028+00:00"
+    "수집시각UTC": "2026-08-10T12:07:17.322885+00:00"
   },
   "가치평가": {
     "가치평가계약버전": "4.0",
@@ -5457,6 +5457,8 @@
       "주식수원칙": "현재가·시가총액 미사용, OpenDART 유통주식수 우선"
     },
     "미래성장모형버전": "1.0.0",
+    "자산사이클보정버전": "1.0.0",
+    "자산사이클보정적용": true,
     "산출상태": "정상",
     "최종값사용가능": true,
     "최종값출처": "Python 가치평가 계약 v4",
@@ -5476,9 +5478,7 @@
       },
       "중단사유": [],
       "주의사유": [
-        "최신 잠정실적 미정량화: 최신 정식보고서 기준 평가",
-        "현재가와 기준 적정가가 약 3배 이상 괴리",
-        "극단적 괴리와 최신 잠정실적 미반영이 동시에 발생하여 보수적 해석 필요"
+        "최신 잠정실적 미정량화: 최신 정식보고서 기준 평가"
       ],
       "정식재무기준분기키": 8105,
       "기대정식재무분기키": 8105,
@@ -5491,7 +5491,7 @@
       "평가기준": "최신 정식보고서 기준·잠정실적 미반영",
       "산업분류신뢰도": 100,
       "산업프로필버전": "3.0.0",
-      "극단적괴리": true
+      "극단적괴리": false
     },
     "산업프로필버전": "3.0.0",
     "산업분류신뢰도": 100,
@@ -5556,8 +5556,8 @@
     "TTM현금흐름기준": "정식보고서 TTM",
     "목표PER": 4.5,
     "목표PBR": 0.63,
-    "암시PER": 4.6,
-    "암시PBR": 0.17,
+    "암시PER": 14.62,
+    "암시PBR": 0.54,
     "PER기준적정가": 16392.42,
     "PBR기준적정가": 61595.36,
     "그레이엄가치": 71263.42,
@@ -5589,11 +5589,11 @@
     "현재재무기초가치": 53267.43,
     "미래증분가치": 0.0,
     "펀더멘털적정가": 53267.43,
-    "적응형가치적용": false,
+    "적응형가치적용": true,
     "적응형가치모형": {
       "버전": "adaptive-fundamental-v1.0.0",
       "현재가미사용": true,
-      "적용가능": false,
+      "적용가능": true,
       "현재재무기초가치": 53267.42600665984,
       "미래총가치": 0.0,
       "미래증분가치": 0.0,
@@ -5603,8 +5603,15 @@
       "이익급회복괴리": false,
       "분기런레이트대정상화배수": 11.144787446182406,
       "현재모형분산배수": 4.3585890760071955,
+      "자산사이클보정버전": "1.0.0",
+      "자산사이클보정후보": true,
+      "자산사이클보정적용조건충족": true,
+      "자산앵커": 86229.05,
+      "자산앵커개수": 3,
+      "자산앵커대현재이익가치배수": 3.831,
       "품질": 73,
       "근거": [
+        "자산집약 업종에서 순자산·잔여이익 등 독립 가치앵커가 현재 이익가치보다 유의하게 높음",
         "장기 산업사이클 우호"
       ],
       "현재가치모형": [
@@ -5630,11 +5637,11 @@
         }
       ]
     },
-    "재무적정가": 16774.26,
-    "기본적정가": 16774.26,
-    "보수적적정가": 16676.22,
-    "성장적정가": 21303.32,
-    "현재가대비": -84.83,
+    "재무적정가": 53267.43,
+    "기본적정가": 53267.43,
+    "보수적적정가": 39950.57,
+    "성장적정가": 53267.43,
+    "현재가대비": -51.84,
     "판단": "강한 고평가",
     "가치평가산업코드": "construction",
     "가치평가산업프로필": "건설·플랜트 수주형",
@@ -5649,7 +5656,7 @@
     "실적전환방향": "실적 급하락 전환",
     "실적전환강도": 18.68,
     "구조적실적가속": false,
-    "가치평가국면": "일반 가치평가",
+    "가치평가국면": "자산·사이클 현재가치 적응형",
     "이익저점보정": false,
     "자산대비이익가치배수": 3.758,
     "그레이엄대비이익가치배수": 4.347,
@@ -5657,7 +5664,7 @@
     "분기영업이익성장률": -15.35,
     "분기순이익성장률": 24.0,
     "데이터신뢰도": 72,
-    "모형신뢰도": 82,
+    "모형신뢰도": 79,
     "가치신뢰도": 72,
     "가치신뢰도등급": "B",
     "가치신뢰도정의": "자료완전성과 모형합의도이며 실제 적중률이 아님",
@@ -5725,6 +5732,8 @@
       "현재가는 적정가 산식에 넣지 않고 계산 완료 후 괴리 검증에만 사용했습니다.",
       "건설·플랜트 수주형 업종 프로필을 적용했습니다.",
       "기업 유형에 부적합하거나 독립 가치앵커에서 과도하게 벗어난 모형은 기준가에서 제외했습니다.",
+      "현재 재무기초가치와 미래 총가치를 분리한 뒤 미래 총가치가 현재 재무기초가치를 초과하는 부분만 미래 증분가치로 더해 이중계산을 방지했습니다.",
+      "자산집약·사이클 업종의 일시적 이익 훼손으로 PER 계열 가치가 독립 자산가치보다 과도하게 낮아지는 경우, 현재가를 사용하지 않고 순자산·잔여이익·그레이엄·FCF 가치의 합의도를 이용해 현재재무기초가치를 승격했습니다.",
       "최신 잠정실적 공시는 감지했지만 핵심 계정을 신뢰성 있게 정량화하지 못해, 최신 법정 정식보고서의 연속 TTM만으로 적정가를 산출하고 신뢰도 상한을 낮췄습니다."
     ]
   },
@@ -5734,7 +5743,7 @@
     "현재가미사용": true,
     "시가총액미사용": true,
     "시장PER_PBR미사용": true,
-    "기초가치": 16774.26,
+    "기초가치": 53267.43,
     "기초가치출처": "기존 라이브 재무적정가",
     "미래이중계산차단": true,
     "미래증분추가허용": false,
@@ -5763,7 +5772,7 @@
     "미래가치인정률": 10.0,
     "거시조정배수": 1.0,
     "미래증분가치": 0.0,
-    "전략펀더멘털적정가": 16774.26,
+    "전략펀더멘털적정가": 53267.43,
     "미래성장가치표시": "미래성장가치 반영 낮음",
     "미래성장가치표시문구": "미래성장가치 반영 낮음",
     "근거신뢰도": 72.0,
@@ -5896,22 +5905,22 @@
         {
           "요소": "환율·글로벌",
           "가중치": 15,
-          "신호": 36.08,
+          "신호": 35.96,
           "신호판정": "긍정",
           "데이터품질": 91.0,
-          "점수기여": 5.41,
+          "점수기여": 5.39,
           "출처": "Yahoo 글로벌시장 분석",
-          "설명": "분석상태 정상, 신호 36.08"
+          "설명": "분석상태 정상, 신호 35.96"
         },
         {
           "요소": "뉴스·공시",
           "가중치": 10,
-          "신호": 54.32,
+          "신호": 54.27,
           "신호판정": "긍정",
           "데이터품질": 78.1,
           "점수기여": 5.43,
           "출처": "OpenDART 최근 공시 + Google News RSS",
-          "설명": "분석상태 정상, 신호 54.32"
+          "설명": "분석상태 정상, 신호 54.27"
         }
       ],
       "미수집요소": [
@@ -5950,7 +5959,7 @@
           "신호판정": "중립",
           "데이터품질": 88.8,
           "점수기여": 4.45,
-          "출처": "반도체 산업 대표자산 합성",
+          "출처": "건설·인프라 대표자산 합성",
           "설명": "산업국면 회복 초기"
         },
         {
@@ -5966,12 +5975,12 @@
         {
           "요소": "환율·금리·거시",
           "가중치": 15,
-          "신호": 20.87,
+          "신호": 20.71,
           "신호판정": "긍정",
           "데이터품질": 88.8,
-          "점수기여": 3.13,
+          "점수기여": 3.11,
           "출처": "Yahoo 환율·미국금리·글로벌시장",
-          "설명": "분석상태 정상, 신호 20.87"
+          "설명": "분석상태 정상, 신호 20.71"
         },
         {
           "요소": "가격추세",
@@ -5986,12 +5995,12 @@
         {
           "요소": "뉴스·공시",
           "가중치": 10,
-          "신호": 54.32,
+          "신호": 54.27,
           "신호판정": "긍정",
           "데이터품질": 78.1,
           "점수기여": 5.43,
           "출처": "OpenDART 최근 공시 + Google News RSS",
-          "설명": "분석상태 정상, 신호 54.32"
+          "설명": "분석상태 정상, 신호 54.27"
         }
       ],
       "미수집요소": [
@@ -6030,7 +6039,7 @@
           "신호판정": "긍정",
           "데이터품질": 88.8,
           "점수기여": 5.09,
-          "출처": "반도체 산업 대표자산 1년 추세",
+          "출처": "건설·인프라 대표자산 1년 추세",
           "설명": "산업국면 회복 초기"
         },
         {
@@ -6041,7 +6050,7 @@
           "데이터품질": 100.0,
           "점수기여": -20.0,
           "출처": "내부 가치평가",
-          "설명": "현재가 대비 -84.83%, 판단 강한 고평가"
+          "설명": "현재가 대비 -51.84%, 판단 강한 고평가"
         },
         {
           "요소": "경쟁력·시장점유율",
@@ -6081,7 +6090,7 @@
       ],
       "근거": [
         "최신 실적과 현금창출력 기반 이익 방향이 약함",
-        "반도체 산업 장기 사이클이 우호적",
+        "건설·인프라 산업 장기 사이클이 우호적",
         "현재 가격의 고평가 부담이 큼",
         "기업 경쟁력 대용지표가 약함",
         "현금흐름 또는 재무안전성이 취약",
@@ -6119,7 +6128,7 @@
     "스키마버전": "2.0",
     "엔진버전": "6.8.0-valuation-contract-v4",
     "종목코드": "000720",
-    "생성시각": "2026-08-10T10:51:39.733689",
+    "생성시각": "2026-08-10T12:07:59.405444",
     "연결상태": "부분",
     "기술분석": {
       "수집상태": "정상",
@@ -6250,8 +6259,8 @@
               "요약": "일반 상승 · 2개 거래봉 전 · 초기 신호 · 신뢰도 32/100",
               "발생봉전": 2,
               "거래봉설명": "2개 거래봉 전",
-              "경과설명": "3일 4시간",
-              "실제경과설명": "3일 4시간",
+              "경과설명": "3일 5시간",
+              "실제경과설명": "3일 5시간",
               "다이버전스탐지시각UTC": "2026-08-07T06:30:00Z",
               "피벗확정시각UTC": "2026-08-07T06:30:00Z",
               "신호확정시각UTC": "",
@@ -6312,8 +6321,8 @@
               "요약": "일반 상승 · 2개 거래봉 전 · 초기 신호 · 신뢰도 32/100",
               "발생봉전": 2,
               "거래봉설명": "2개 거래봉 전",
-              "경과설명": "3일 4시간",
-              "실제경과설명": "3일 4시간",
+              "경과설명": "3일 5시간",
+              "실제경과설명": "3일 5시간",
               "다이버전스탐지시각UTC": "2026-08-07T06:30:00Z",
               "피벗확정시각UTC": "2026-08-07T06:30:00Z",
               "신호확정시각UTC": "",
@@ -6382,8 +6391,8 @@
                 "요약": "일반 상승 · 2개 거래봉 전 · 초기 신호 · 신뢰도 32/100",
                 "발생봉전": 2,
                 "거래봉설명": "2개 거래봉 전",
-                "경과설명": "3일 4시간",
-                "실제경과설명": "3일 4시간",
+                "경과설명": "3일 5시간",
+                "실제경과설명": "3일 5시간",
                 "다이버전스탐지시각UTC": "2026-08-07T06:30:00Z",
                 "피벗확정시각UTC": "2026-08-07T06:30:00Z",
                 "신호확정시각UTC": "",
@@ -6446,8 +6455,8 @@
                 "요약": "일반 상승 · 2개 거래봉 전 · 초기 신호 · 신뢰도 낮음",
                 "발생봉전": 2,
                 "거래봉설명": "2개 거래봉 전",
-                "경과설명": "3일 4시간",
-                "실제경과설명": "3일 4시간",
+                "경과설명": "3일 5시간",
+                "실제경과설명": "3일 5시간",
                 "다이버전스탐지시각UTC": "2026-08-07T06:30:00Z",
                 "피벗확정시각UTC": "2026-08-07T06:30:00Z",
                 "신호확정시각UTC": "",
@@ -6508,8 +6517,8 @@
                 "요약": "히든 하락 · 4개 거래봉 전 · 초기 신호 · 신뢰도 낮음",
                 "발생봉전": 4,
                 "거래봉설명": "4개 거래봉 전",
-                "경과설명": "4일 4시간",
-                "실제경과설명": "4일 4시간",
+                "경과설명": "4일 5시간",
+                "실제경과설명": "4일 5시간",
                 "다이버전스탐지시각UTC": "2026-08-06T06:30:00Z",
                 "피벗확정시각UTC": "2026-08-06T06:30:00Z",
                 "신호확정시각UTC": "",
@@ -6570,8 +6579,8 @@
                 "요약": "히든 하락 · 4개 거래봉 전 · 초기 신호 · 신뢰도 낮음",
                 "발생봉전": 4,
                 "거래봉설명": "4개 거래봉 전",
-                "경과설명": "4일 4시간",
-                "실제경과설명": "4일 4시간",
+                "경과설명": "4일 5시간",
+                "실제경과설명": "4일 5시간",
                 "다이버전스탐지시각UTC": "2026-08-06T06:30:00Z",
                 "피벗확정시각UTC": "2026-08-06T06:30:00Z",
                 "신호확정시각UTC": "",
@@ -6656,8 +6665,8 @@
               "요약": "히든 하락 · 1개 거래봉 전 · 초기 신호 · 신뢰도 33/100",
               "발생봉전": 1,
               "거래봉설명": "1개 거래봉 전",
-              "경과설명": "3일 10시간",
-              "실제경과설명": "3일 10시간",
+              "경과설명": "3일 12시간",
+              "실제경과설명": "3일 12시간",
               "다이버전스탐지시각UTC": "2026-08-07T00:00:00+00:00",
               "피벗확정시각UTC": "2026-08-07T00:00:00+00:00",
               "신호확정시각UTC": "",
@@ -6725,8 +6734,8 @@
               "요약": "히든 하락 · 1개 거래봉 전 · 초기 신호 · 신뢰도 33/100",
               "발생봉전": 1,
               "거래봉설명": "1개 거래봉 전",
-              "경과설명": "3일 10시간",
-              "실제경과설명": "3일 10시간",
+              "경과설명": "3일 12시간",
+              "실제경과설명": "3일 12시간",
               "다이버전스탐지시각UTC": "2026-08-07T00:00:00+00:00",
               "피벗확정시각UTC": "2026-08-07T00:00:00+00:00",
               "신호확정시각UTC": "",
@@ -6788,8 +6797,8 @@
                 "요약": "히든 하락 · 1개 거래봉 전 · 초기 신호 · 신뢰도 33/100",
                 "발생봉전": 1,
                 "거래봉설명": "1개 거래봉 전",
-                "경과설명": "3일 10시간",
-                "실제경과설명": "3일 10시간",
+                "경과설명": "3일 12시간",
+                "실제경과설명": "3일 12시간",
                 "다이버전스탐지시각UTC": "2026-08-07T00:00:00+00:00",
                 "피벗확정시각UTC": "2026-08-07T00:00:00+00:00",
                 "신호확정시각UTC": "",
@@ -6852,8 +6861,8 @@
                 "요약": "히든 하락 · 1개 거래봉 전 · 초기 신호 · 신뢰도 낮음",
                 "발생봉전": 1,
                 "거래봉설명": "1개 거래봉 전",
-                "경과설명": "3일 10시간",
-                "실제경과설명": "3일 10시간",
+                "경과설명": "3일 12시간",
+                "실제경과설명": "3일 12시간",
                 "다이버전스탐지시각UTC": "2026-08-07T00:00:00+00:00",
                 "피벗확정시각UTC": "2026-08-07T00:00:00+00:00",
                 "신호확정시각UTC": "",
@@ -6914,8 +6923,8 @@
                 "요약": "히든 하락 · 1개 거래봉 전 · 초기 신호 · 신뢰도 낮음",
                 "발생봉전": 1,
                 "거래봉설명": "1개 거래봉 전",
-                "경과설명": "3일 10시간",
-                "실제경과설명": "3일 10시간",
+                "경과설명": "3일 12시간",
+                "실제경과설명": "3일 12시간",
                 "다이버전스탐지시각UTC": "2026-08-07T00:00:00+00:00",
                 "피벗확정시각UTC": "2026-08-07T00:00:00+00:00",
                 "신호확정시각UTC": "",
@@ -6976,8 +6985,8 @@
                 "요약": "히든 하락 · 1개 거래봉 전 · 초기 신호 · 신뢰도 낮음",
                 "발생봉전": 1,
                 "거래봉설명": "1개 거래봉 전",
-                "경과설명": "3일 10시간",
-                "실제경과설명": "3일 10시간",
+                "경과설명": "3일 12시간",
+                "실제경과설명": "3일 12시간",
                 "다이버전스탐지시각UTC": "2026-08-07T00:00:00+00:00",
                 "피벗확정시각UTC": "2026-08-07T00:00:00+00:00",
                 "신호확정시각UTC": "",
@@ -7038,8 +7047,8 @@
                 "요약": "히든 하락 · 1개 거래봉 전 · 초기 신호 · 신뢰도 낮음",
                 "발생봉전": 1,
                 "거래봉설명": "1개 거래봉 전",
-                "경과설명": "3일 10시간",
-                "실제경과설명": "3일 10시간",
+                "경과설명": "3일 12시간",
+                "실제경과설명": "3일 12시간",
                 "다이버전스탐지시각UTC": "2026-08-07T00:00:00+00:00",
                 "피벗확정시각UTC": "2026-08-07T00:00:00+00:00",
                 "신호확정시각UTC": "",
@@ -7100,8 +7109,8 @@
                 "요약": "일반 상승 · 7개 거래봉 전 · 강한 확인 신호 · 신뢰도 매우 높음",
                 "발생봉전": 7,
                 "거래봉설명": "7개 거래봉 전",
-                "경과설명": "11일 10시간",
-                "실제경과설명": "11일 10시간",
+                "경과설명": "11일 12시간",
+                "실제경과설명": "11일 12시간",
                 "다이버전스탐지시각UTC": "2026-07-30T00:00:00+00:00",
                 "피벗확정시각UTC": "2026-07-30T00:00:00+00:00",
                 "신호확정시각UTC": "2026-08-06T00:00:00+00:00",
@@ -7186,8 +7195,8 @@
               "요약": "히든 상승 · 0개 거래봉 전 · 초기 신호 · 신뢰도 36/100",
               "발생봉전": 0,
               "거래봉설명": "0개 거래봉 전",
-              "경과설명": "3일 10시간",
-              "실제경과설명": "3일 10시간",
+              "경과설명": "3일 12시간",
+              "실제경과설명": "3일 12시간",
               "다이버전스탐지시각UTC": "2026-08-07T00:00:00Z",
               "피벗확정시각UTC": "2026-08-07T00:00:00Z",
               "신호확정시각UTC": "",
@@ -7248,8 +7257,8 @@
               "요약": "히든 상승 · 0개 거래봉 전 · 초기 신호 · 신뢰도 36/100",
               "발생봉전": 0,
               "거래봉설명": "0개 거래봉 전",
-              "경과설명": "3일 10시간",
-              "실제경과설명": "3일 10시간",
+              "경과설명": "3일 12시간",
+              "실제경과설명": "3일 12시간",
               "다이버전스탐지시각UTC": "2026-08-07T00:00:00Z",
               "피벗확정시각UTC": "2026-08-07T00:00:00Z",
               "신호확정시각UTC": "",
@@ -7318,8 +7327,8 @@
                 "요약": "히든 상승 · 0개 거래봉 전 · 초기 신호 · 신뢰도 36/100",
                 "발생봉전": 0,
                 "거래봉설명": "0개 거래봉 전",
-                "경과설명": "3일 10시간",
-                "실제경과설명": "3일 10시간",
+                "경과설명": "3일 12시간",
+                "실제경과설명": "3일 12시간",
                 "다이버전스탐지시각UTC": "2026-08-07T00:00:00Z",
                 "피벗확정시각UTC": "2026-08-07T00:00:00Z",
                 "신호확정시각UTC": "",
@@ -7382,8 +7391,8 @@
                 "요약": "히든 상승 · 0개 거래봉 전 · 초기 신호 · 신뢰도 낮음",
                 "발생봉전": 0,
                 "거래봉설명": "0개 거래봉 전",
-                "경과설명": "3일 10시간",
-                "실제경과설명": "3일 10시간",
+                "경과설명": "3일 12시간",
+                "실제경과설명": "3일 12시간",
                 "다이버전스탐지시각UTC": "2026-08-07T00:00:00Z",
                 "피벗확정시각UTC": "2026-08-07T00:00:00Z",
                 "신호확정시각UTC": "",
@@ -7444,8 +7453,8 @@
                 "요약": "히든 상승 · 0개 거래봉 전 · 초기 신호 · 신뢰도 낮음",
                 "발생봉전": 0,
                 "거래봉설명": "0개 거래봉 전",
-                "경과설명": "3일 10시간",
-                "실제경과설명": "3일 10시간",
+                "경과설명": "3일 12시간",
+                "실제경과설명": "3일 12시간",
                 "다이버전스탐지시각UTC": "2026-08-07T00:00:00Z",
                 "피벗확정시각UTC": "2026-08-07T00:00:00Z",
                 "신호확정시각UTC": "",
@@ -7506,8 +7515,8 @@
                 "요약": "일반 하락 · 6개 거래봉 전 · 구조 확인 신호 · 신뢰도 높음",
                 "발생봉전": 6,
                 "거래봉설명": "6개 거래봉 전",
-                "경과설명": "45일 10시간",
-                "실제경과설명": "45일 10시간",
+                "경과설명": "45일 12시간",
+                "실제경과설명": "45일 12시간",
                 "다이버전스탐지시각UTC": "2026-06-26T00:00:00Z",
                 "피벗확정시각UTC": "2026-06-26T00:00:00Z",
                 "신호확정시각UTC": "2026-06-26T00:00:00Z",
@@ -7568,8 +7577,8 @@
                 "요약": "일반 하락 · 6개 거래봉 전 · 구조 확인 신호 · 신뢰도 높음",
                 "발생봉전": 6,
                 "거래봉설명": "6개 거래봉 전",
-                "경과설명": "45일 10시간",
-                "실제경과설명": "45일 10시간",
+                "경과설명": "45일 12시간",
+                "실제경과설명": "45일 12시간",
                 "다이버전스탐지시각UTC": "2026-06-26T00:00:00Z",
                 "피벗확정시각UTC": "2026-06-26T00:00:00Z",
                 "신호확정시각UTC": "2026-06-26T00:00:00Z",
@@ -7630,8 +7639,8 @@
                 "요약": "일반 하락 · 6개 거래봉 전 · 구조 확인 신호 · 신뢰도 높음",
                 "발생봉전": 6,
                 "거래봉설명": "6개 거래봉 전",
-                "경과설명": "45일 10시간",
-                "실제경과설명": "45일 10시간",
+                "경과설명": "45일 12시간",
+                "실제경과설명": "45일 12시간",
                 "다이버전스탐지시각UTC": "2026-06-26T00:00:00Z",
                 "피벗확정시각UTC": "2026-06-26T00:00:00Z",
                 "신호확정시각UTC": "2026-06-26T00:00:00Z",
@@ -7716,8 +7725,8 @@
               "요약": "일반 하락 · 2개 거래봉 전 · 초기 신호 · 신뢰도 34/100",
               "발생봉전": 2,
               "거래봉설명": "2개 거래봉 전",
-              "경과설명": "73일 10시간",
-              "실제경과설명": "73일 10시간",
+              "경과설명": "73일 12시간",
+              "실제경과설명": "73일 12시간",
               "다이버전스탐지시각UTC": "2026-05-29T00:00:00Z",
               "피벗확정시각UTC": "2026-05-29T00:00:00Z",
               "신호확정시각UTC": "",
@@ -7785,8 +7794,8 @@
               "요약": "일반 하락 · 2개 거래봉 전 · 초기 신호 · 신뢰도 34/100",
               "발생봉전": 2,
               "거래봉설명": "2개 거래봉 전",
-              "경과설명": "73일 10시간",
-              "실제경과설명": "73일 10시간",
+              "경과설명": "73일 12시간",
+              "실제경과설명": "73일 12시간",
               "다이버전스탐지시각UTC": "2026-05-29T00:00:00Z",
               "피벗확정시각UTC": "2026-05-29T00:00:00Z",
               "신호확정시각UTC": "",
@@ -7848,8 +7857,8 @@
                 "요약": "일반 하락 · 2개 거래봉 전 · 초기 신호 · 신뢰도 34/100",
                 "발생봉전": 2,
                 "거래봉설명": "2개 거래봉 전",
-                "경과설명": "73일 10시간",
-                "실제경과설명": "73일 10시간",
+                "경과설명": "73일 12시간",
+                "실제경과설명": "73일 12시간",
                 "다이버전스탐지시각UTC": "2026-05-29T00:00:00Z",
                 "피벗확정시각UTC": "2026-05-29T00:00:00Z",
                 "신호확정시각UTC": "",
@@ -7912,8 +7921,8 @@
                 "요약": "일반 하락 · 2개 거래봉 전 · 초기 신호 · 신뢰도 낮음",
                 "발생봉전": 2,
                 "거래봉설명": "2개 거래봉 전",
-                "경과설명": "73일 10시간",
-                "실제경과설명": "73일 10시간",
+                "경과설명": "73일 12시간",
+                "실제경과설명": "73일 12시간",
                 "다이버전스탐지시각UTC": "2026-05-29T00:00:00Z",
                 "피벗확정시각UTC": "2026-05-29T00:00:00Z",
                 "신호확정시각UTC": "",
@@ -7993,8 +8002,8 @@
             "요약": "히든 상승 · 0개 거래봉 전 · 초기 신호 · 신뢰도 36/100",
             "발생봉전": 0,
             "거래봉설명": "0개 거래봉 전",
-            "경과설명": "3일 10시간",
-            "실제경과설명": "3일 10시간",
+            "경과설명": "3일 12시간",
+            "실제경과설명": "3일 12시간",
             "다이버전스탐지시각UTC": "2026-08-07T00:00:00Z",
             "피벗확정시각UTC": "2026-08-07T00:00:00Z",
             "신호확정시각UTC": "",
@@ -8055,8 +8064,8 @@
             "요약": "히든 하락 · 1개 거래봉 전 · 초기 신호 · 신뢰도 33/100",
             "발생봉전": 1,
             "거래봉설명": "1개 거래봉 전",
-            "경과설명": "3일 10시간",
-            "실제경과설명": "3일 10시간",
+            "경과설명": "3일 12시간",
+            "실제경과설명": "3일 12시간",
             "다이버전스탐지시각UTC": "2026-08-07T00:00:00+00:00",
             "피벗확정시각UTC": "2026-08-07T00:00:00+00:00",
             "신호확정시각UTC": "",
@@ -8117,8 +8126,8 @@
             "요약": "일반 하락 · 2개 거래봉 전 · 초기 신호 · 신뢰도 34/100",
             "발생봉전": 2,
             "거래봉설명": "2개 거래봉 전",
-            "경과설명": "73일 10시간",
-            "실제경과설명": "73일 10시간",
+            "경과설명": "73일 12시간",
+            "실제경과설명": "73일 12시간",
             "다이버전스탐지시각UTC": "2026-05-29T00:00:00Z",
             "피벗확정시각UTC": "2026-05-29T00:00:00Z",
             "신호확정시각UTC": "",
@@ -8179,8 +8188,8 @@
             "요약": "일반 상승 · 2개 거래봉 전 · 초기 신호 · 신뢰도 32/100",
             "발생봉전": 2,
             "거래봉설명": "2개 거래봉 전",
-            "경과설명": "3일 4시간",
-            "실제경과설명": "3일 4시간",
+            "경과설명": "3일 5시간",
+            "실제경과설명": "3일 5시간",
             "다이버전스탐지시각UTC": "2026-08-07T06:30:00Z",
             "피벗확정시각UTC": "2026-08-07T06:30:00Z",
             "신호확정시각UTC": "",
@@ -8286,27 +8295,27 @@
             "요소": "환율·글로벌",
             "사용가능": true,
             "가중치": 15.0,
-            "신호": 36.08,
+            "신호": 35.96,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
             "데이터품질": 91.0,
-            "점수기여": 5.41,
+            "점수기여": 5.39,
             "출처": "Yahoo 글로벌시장 분석",
-            "설명": "분석상태 정상, 신호 36.08"
+            "설명": "분석상태 정상, 신호 35.96"
           },
           {
             "요소": "뉴스·공시",
             "사용가능": true,
             "가중치": 10.0,
-            "신호": 54.32,
+            "신호": 54.27,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
             "데이터품질": 78.1,
             "점수기여": 5.43,
             "출처": "OpenDART 최근 공시 + Google News RSS",
-            "설명": "분석상태 정상, 신호 54.32"
+            "설명": "분석상태 정상, 신호 54.27"
           }
         ],
         "미수집요소": [
@@ -8347,7 +8356,7 @@
             "데이터상태": "정상",
             "데이터품질": 88.8,
             "점수기여": 4.45,
-            "출처": "반도체 산업 대표자산 합성",
+            "출처": "건설·인프라 대표자산 합성",
             "설명": "산업국면 회복 초기"
           },
           {
@@ -8367,14 +8376,14 @@
             "요소": "환율·금리·거시",
             "사용가능": true,
             "가중치": 15.0,
-            "신호": 20.87,
+            "신호": 20.71,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
             "데이터품질": 88.8,
-            "점수기여": 3.13,
+            "점수기여": 3.11,
             "출처": "Yahoo 환율·미국금리·글로벌시장",
-            "설명": "분석상태 정상, 신호 20.87"
+            "설명": "분석상태 정상, 신호 20.71"
           },
           {
             "요소": "가격추세",
@@ -8393,14 +8402,14 @@
             "요소": "뉴스·공시",
             "사용가능": true,
             "가중치": 10.0,
-            "신호": 54.32,
+            "신호": 54.27,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
             "데이터품질": 78.1,
             "점수기여": 5.43,
             "출처": "OpenDART 최근 공시 + Google News RSS",
-            "설명": "분석상태 정상, 신호 54.32"
+            "설명": "분석상태 정상, 신호 54.27"
           }
         ],
         "미수집요소": [
@@ -8440,7 +8449,7 @@
             "데이터상태": "정상",
             "데이터품질": 88.8,
             "점수기여": 5.09,
-            "출처": "반도체 산업 대표자산 1년 추세",
+            "출처": "건설·인프라 대표자산 1년 추세",
             "설명": "산업국면 회복 초기"
           },
           {
@@ -8454,7 +8463,7 @@
             "데이터품질": 100.0,
             "점수기여": -20.0,
             "출처": "내부 가치평가",
-            "설명": "현재가 대비 -84.83%, 판단 강한 고평가"
+            "설명": "현재가 대비 -51.84%, 판단 강한 고평가"
           },
           {
             "요소": "경쟁력·시장점유율",
@@ -8502,7 +8511,7 @@
     "요소상태": {
       "거시환경": {
         "사용가능": true,
-        "점수": 20.87,
+        "점수": 20.71,
         "데이터품질": 88.8,
         "판정": "긍정",
         "출처": "Yahoo Finance Chart API"
@@ -8523,7 +8532,7 @@
       },
       "뉴스": {
         "사용가능": true,
-        "점수": 74.48,
+        "점수": 74.37,
         "데이터품질": 88.0,
         "판정": "매우 긍정",
         "출처": "Google News RSS"
