@@ -991,6 +991,11 @@ def calculate_mid_term(
     news_analysis=None,
 ):
     reasons = []
+    industry_name = (
+        str(industry_analysis.get("산업명") or "해당 산업").strip()
+        if isinstance(industry_analysis, dict)
+        else "해당 산업"
+    )
 
     legacy_earnings = earnings_signal(
         financial
@@ -1053,17 +1058,17 @@ def calculate_mid_term(
     if industry["signal"] >= 60:
         add_reason(
             reasons,
-            "반도체 산업 선행 흐름이 매우 강함",
+            f"{industry_name} 산업 선행 흐름이 매우 강함",
         )
     elif industry["signal"] >= 20:
         add_reason(
             reasons,
-            "반도체 산업 선행 흐름이 우호적",
+            f"{industry_name} 산업 선행 흐름이 우호적",
         )
     elif industry["signal"] <= -20:
         add_reason(
             reasons,
-            "반도체 산업 선행 흐름이 비우호적",
+            f"{industry_name} 산업 선행 흐름이 비우호적",
         )
 
     if accumulated["signal"] >= 20:
@@ -1128,7 +1133,7 @@ def calculate_mid_term(
             MID_WEIGHTS["산업선행지표"],
             signal=industry["signal"],
             quality=industry["quality"],
-            source="반도체 산업 대표자산 합성",
+            source=f"{industry_name} 대표자산 합성",
             note=(
                 f"산업국면 "
                 f"{industry_analysis.get('산업국면', '')}"
@@ -1208,6 +1213,11 @@ def calculate_long_term(
     industry_analysis=None,
 ):
     reasons = []
+    industry_name = (
+        str(industry_analysis.get("산업명") or "해당 산업").strip()
+        if isinstance(industry_analysis, dict)
+        else "해당 산업"
+    )
 
     legacy_earnings = earnings_signal(
         financial
@@ -1294,17 +1304,17 @@ def calculate_long_term(
     if industry_cycle["signal"] >= 60:
         add_reason(
             reasons,
-            "반도체 산업 장기 사이클이 매우 우호적",
+            f"{industry_name} 산업 장기 사이클이 매우 우호적",
         )
     elif industry_cycle["signal"] >= 20:
         add_reason(
             reasons,
-            "반도체 산업 장기 사이클이 우호적",
+            f"{industry_name} 산업 장기 사이클이 우호적",
         )
     elif industry_cycle["signal"] <= -20:
         add_reason(
             reasons,
-            "반도체 산업 장기 사이클이 비우호적",
+            f"{industry_name} 산업 장기 사이클이 비우호적",
         )
 
     if value["signal"] >= 40:
@@ -1369,7 +1379,7 @@ def calculate_long_term(
             LONG_WEIGHTS["산업사이클"],
             signal=industry_cycle["signal"],
             quality=industry_cycle["quality"],
-            source="반도체 산업 대표자산 1년 추세",
+            source=f"{industry_name} 대표자산 1년 추세",
             note=(
                 f"산업국면 "
                 f"{industry_analysis.get('산업국면', '')}"
