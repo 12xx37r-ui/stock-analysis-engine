@@ -2,7 +2,7 @@
   "기업명": "아모레퍼시픽",
   "DART기업코드": "00583424",
   "KIS종목코드": "090430",
-  "산업코드": "materials",
+  "산업코드": "beauty_consumer",
   "기업조회정보": {
     "기업명": "아모레퍼시픽",
     "DART기업코드": "00583424",
@@ -10,10 +10,10 @@
     "최종변경일": "20240102",
     "수집상태": "정상",
     "응답메시지": "",
-    "산업코드": "materials",
-    "가치평가산업코드": "materials",
+    "산업코드": "beauty_consumer",
+    "가치평가산업코드": "beauty_consumer",
     "산업분류출처": "OpenDART 기업개황 업종코드 세분류",
-    "산업분류신뢰도": 72,
+    "산업분류신뢰도": 94,
     "산업프로필버전": "3.0.0",
     "OpenDART기업개황": {
       "수집상태": "정상",
@@ -29,7 +29,7 @@
     "OpenDART업종코드": "20423",
     "데이터출처": "금융감독원 OpenDART"
   },
-  "생성시각": "2026-08-08T08:11:12.724093",
+  "생성시각": "2026-08-10T01:58:19.375189",
   "재무분석": {
     "재무분석모형버전": "financial-quality-v2.0.0",
     "재무지표": {
@@ -92,13 +92,13 @@
     }
   },
   "시장정보": {
-    "현재가": 141800.0,
-    "전일대비": 4000.0,
-    "등락률": 2.9027576197387517,
-    "거래량": 435171,
-    "시가": 135900.0,
-    "고가": 142000.0,
-    "저가": 135200.0,
+    "현재가": 133800.0,
+    "전일대비": -8000.0,
+    "등락률": -5.6417489421720735,
+    "거래량": 155601,
+    "시가": 139900.0,
+    "고가": 140000.0,
+    "저가": 131200.0,
     "PER": 0.0,
     "PBR": 0.0,
     "EPS": 0.0,
@@ -117,20 +117,20 @@
     "Yahoo거래소": "KSC",
     "과거데이터": {
       "가격추세": {
-        "종가": 141800.0,
-        "MA5": 134520.0,
-        "MA20": 125080.0,
-        "MA60": 116981.67,
-        "종가대비MA20": 13.36744483530541,
-        "종가대비MA60": 21.21557163613752,
-        "5일수익률": 9.076923076923071,
-        "20일수익률": 21.926053310404136,
-        "60일수익률": 15.0974025974026,
-        "RSI14": 73.97,
+        "종가": 133800.0,
+        "MA5": 135320.0,
+        "MA20": 125615.0,
+        "MA60": 117203.33,
+        "종가대비MA20": 6.5159415674879595,
+        "종가대비MA60": 14.160578884576069,
+        "5일수익률": 3.081664098613257,
+        "20일수익률": 8.692120227457355,
+        "60일수익률": 11.037344398340254,
+        "RSI14": 62.43,
         "20일일간변동성": 0.0,
-        "5일평균거래량": 410144.2,
-        "20일평균거래량": 377494.45,
-        "거래량비율5대20": 1.0864906755582764
+        "5일평균거래량": 375979.8,
+        "20일평균거래량": 364968.5,
+        "거래량비율5대20": 1.0301705489651847
       },
       "누적수급": {
         "외국인5일": 0.0,
@@ -155,13 +155,13 @@
         "가격응답메시지": "KIS 일봉 미확보 · Yahoo 5년 일봉으로 가격추세 정상 보완",
         "가격데이터개수": 1219,
         "가격데이터출처": "Yahoo Finance Chart API 5년 일봉 + Yahoo 6개월 1시간봉→KRX 09:00 기준 장중 4시간봉",
-        "가격최초일": "2021-08-09T00:00:00+00:00",
-        "가격최종일": "2026-08-07T00:00:00+00:00",
+        "가격최초일": "2021-08-10T00:00:00+00:00",
+        "가격최종일": "2026-08-10T00:00:00+00:00",
         "누적수급데이터상태": "실패",
         "누적수급응답상태": "KIS_DISABLED",
         "누적수급응답메시지": "GitHub KIS 호출 비활성화 · GAS 중앙 토큰 사용",
         "누적수급데이터개수": 0,
-        "누적수급조회기준일": "20260807",
+        "누적수급조회기준일": "20260810",
         "누적수급최초일": "",
         "누적수급최종일": "",
         "프로그램데이터상태": "실패",
@@ -193,8 +193,8 @@
     "수집상태": "정상",
     "응답코드": "000",
     "응답메시지": "정상",
-    "조회시작일": "20260410",
-    "조회종료일": "20260808",
+    "조회시작일": "20260412",
+    "조회종료일": "20260810",
     "공시개수": 23,
     "최근공시": [
       {
@@ -612,17 +612,17 @@
         "단위": "KRW/USD",
         "수집상태": "정상",
         "응답메시지": "",
-        "현재값": 1407.449951,
+        "현재값": 1416.280029,
         "전일값": 1422.300049,
-        "1일변화율": -1.04409,
-        "5일변화율": -1.967681,
-        "20일변화율": -6.074825,
-        "MA5": 1421.568018,
-        "MA20": 1456.222498,
-        "현재값대비MA20": -3.349251,
-        "최종관측시각UTC": "2026-08-07T21:20:17+00:00",
-        "데이터지연시간": 10.837,
-        "데이터개수": 68
+        "1일변화율": -0.423259,
+        "5일변화율": -1.352645,
+        "20일변화율": -5.485556,
+        "MA5": 1423.334033,
+        "MA20": 1456.664001,
+        "현재값대비MA20": -2.77236,
+        "최종관측시각UTC": "2026-08-10T01:57:23+00:00",
+        "데이터지연시간": 0.001,
+        "데이터개수": 66
       },
       "S&P500": {
         "자산명": "S&P500",
@@ -640,7 +640,7 @@
         "MA20": 7525.406958,
         "현재값대비MA20": 3.085988,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 18.675,
+        "데이터지연시간": 60.457,
         "데이터개수": 63
       },
       "나스닥": {
@@ -659,7 +659,7 @@
         "MA20": 25672.52793,
         "현재값대비MA20": 3.965684,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 18.675,
+        "데이터지연시간": 60.457,
         "데이터개수": 63
       },
       "반도체지수": {
@@ -678,7 +678,7 @@
         "MA20": 11864.973926,
         "현재값대비MA20": 4.145109,
         "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 18.675,
+        "데이터지연시간": 60.457,
         "데이터개수": 63
       },
       "VIX": {
@@ -697,7 +697,7 @@
         "MA20": 17.1645,
         "현재값대비MA20": -13.192929,
         "최종관측시각UTC": "2026-08-07T07:00:00+00:00",
-        "데이터지연시간": 25.175,
+        "데이터지연시간": 66.957,
         "데이터개수": 65
       },
       "미국10년물": {
@@ -716,7 +716,7 @@
         "MA20": 4.63245,
         "현재값대비MA20": 0.594715,
         "최종관측시각UTC": "2026-08-07T12:20:00+00:00",
-        "데이터지연시간": 19.842,
+        "데이터지연시간": 61.624,
         "데이터개수": 64
       },
       "미국5년물": {
@@ -735,7 +735,7 @@
         "MA20": 4.36195,
         "현재값대비MA20": 0.001146,
         "최종관측시각UTC": "2026-08-07T12:20:00+00:00",
-        "데이터지연시간": 19.842,
+        "데이터지연시간": 61.624,
         "데이터개수": 64
       },
       "미국13주": {
@@ -754,29 +754,29 @@
         "MA20": 3.7237,
         "현재값대비MA20": -0.367912,
         "최종관측시각UTC": "2026-08-07T12:20:00+00:00",
-        "데이터지연시간": 19.842,
+        "데이터지연시간": 61.624,
         "데이터개수": 64
       }
     },
     "분석": {
       "분석상태": "정상",
-      "단기신호": 39.87,
+      "단기신호": 37.79,
       "단기판정": "긍정",
-      "단기데이터품질": 100.0,
+      "단기데이터품질": 88.0,
       "단기요소별평가": [
         {
           "요소": "원달러",
-          "신호": 41.15,
+          "신호": 31.81,
           "판정": "긍정",
           "데이터품질": 100.0,
           "가중치": 20.0,
-          "설명": "5일 변화 -1.97%"
+          "설명": "5일 변화 -1.35%"
         },
         {
           "요소": "S&P500",
           "신호": 35.71,
           "판정": "긍정",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 15.0,
           "설명": "5일 변화 3.58%"
         },
@@ -784,7 +784,7 @@
           "요소": "나스닥",
           "신호": 46.9,
           "판정": "긍정",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 20.0,
           "설명": "5일 변화 5.19%"
         },
@@ -792,7 +792,7 @@
           "요소": "반도체지수",
           "신호": 39.42,
           "판정": "긍정",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 25.0,
           "설명": "5일 변화 9.25%"
         },
@@ -800,28 +800,28 @@
           "요소": "VIX",
           "신호": 35.23,
           "판정": "긍정",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 20.0,
           "설명": "현재 14.90"
         }
       ],
-      "중기신호": 23.02,
+      "중기신호": 21.16,
       "중기판정": "긍정",
-      "중기데이터품질": 100.0,
+      "중기데이터품질": 88.8,
       "중기요소별평가": [
         {
           "요소": "원달러",
-          "신호": 41.15,
+          "신호": 31.81,
           "판정": "긍정",
           "데이터품질": 100.0,
           "가중치": 25.0,
-          "설명": "20일 변화 -6.07%"
+          "설명": "20일 변화 -5.49%"
         },
         {
           "요소": "미국10년물",
           "신호": 2.73,
           "판정": "중립",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 25.0,
           "설명": "20일 변화 1.99%"
         },
@@ -829,7 +829,7 @@
           "요소": "미국5년물",
           "신호": 10.4,
           "판정": "중립",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 15.0,
           "설명": "20일 변화 1.25%"
         },
@@ -837,7 +837,7 @@
           "요소": "미국13주",
           "신호": -1.12,
           "판정": "중립",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 10.0,
           "설명": "20일 변화 0.41%"
         },
@@ -845,7 +845,7 @@
           "요소": "나스닥",
           "신호": 46.9,
           "판정": "긍정",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 10.0,
           "설명": "20일 변화 1.56%"
         },
@@ -853,7 +853,7 @@
           "요소": "반도체지수",
           "신호": 39.42,
           "판정": "긍정",
-          "데이터품질": 100.0,
+          "데이터품질": 85.0,
           "가중치": 15.0,
           "설명": "20일 변화 -4.71%"
         }
@@ -861,7 +861,7 @@
       "설명": "국내주식 기준으로 원달러·미국 주가지수·반도체지수·VIX·미국 금리의 방향을 -100~100 신호로 합성했습니다."
     },
     "수집오류": [],
-    "수집시각": "2026-08-08T17:10:31.505190+09:00",
+    "수집시각": "2026-08-10T10:57:24.942299+09:00",
     "데이터출처": "Yahoo Finance Chart API"
   },
   "기업기초데이터": {
@@ -1211,13 +1211,13 @@
       },
       "데이터출처": "금융감독원 OpenDART"
     },
-    "수집시각": "2026-08-08T17:11:12.292432+09:00",
+    "수집시각": "2026-08-10T10:58:16.927751+09:00",
     "데이터출처": "금융감독원 OpenDART"
   },
   "산업분석": {
     "전체수집상태": "미적용",
-    "산업코드": "materials",
-    "산업명": "materials",
+    "산업코드": "beauty_consumer",
+    "산업명": "beauty_consumer",
     "자산": {},
     "분석": {
       "분석상태": "미적용",
@@ -1236,59 +1236,59 @@
     "응답메시지": "",
     "4시간봉": {
       "available": true,
-      "score": 87.13,
+      "score": 86.46,
       "trend": "강한 상승",
-      "rsi14": 85.03,
-      "maFast": 137340.0,
-      "maMedium": 129105.0,
-      "maLong": 121695.0,
-      "momentumFast": 0.070997,
-      "momentumMedium": 0.195616,
-      "observations": 240,
+      "rsi14": 84.83,
+      "maFast": 137260.0,
+      "maMedium": 129085.0,
+      "maLong": 121688.33,
+      "momentumFast": 0.067976,
+      "momentumMedium": 0.192243,
+      "observations": 238,
       "confidence": 95.0,
-      "latestClose": 141800.0
+      "latestClose": 141400.0
     },
     "일봉": {
       "available": true,
-      "score": 96.89,
+      "score": 63.52,
       "trend": "강한 상승",
-      "rsi14": 73.97,
-      "maFast": 134520.0,
-      "maMedium": 125080.0,
-      "maLong": 116981.67,
-      "momentumFast": 0.090769,
-      "momentumMedium": 0.219261,
+      "rsi14": 62.43,
+      "maFast": 135320.0,
+      "maMedium": 125615.0,
+      "maLong": 117203.33,
+      "momentumFast": 0.030817,
+      "momentumMedium": 0.086921,
       "observations": 1219,
       "confidence": 95.0,
-      "latestClose": 141800.0
+      "latestClose": 133800.0
     },
     "주봉": {
       "available": true,
-      "score": 85.62,
+      "score": 73.77,
       "trend": "강한 상승",
-      "rsi14": 53.1,
-      "maFast": 128550.0,
-      "maMedium": 118207.69,
-      "maLong": 129134.62,
-      "momentumFast": 0.151909,
-      "momentumMedium": 0.095827,
-      "observations": 261,
+      "rsi14": 52.06,
+      "maFast": 130900.0,
+      "maMedium": 119115.38,
+      "maLong": 128088.46,
+      "momentumFast": 0.075563,
+      "momentumMedium": 0.096721,
+      "observations": 262,
       "confidence": 95.0,
-      "latestClose": 141800.0
+      "latestClose": 133800.0
     },
     "월봉": {
       "available": true,
-      "score": 80.08,
+      "score": 74.1,
       "trend": "강한 상승",
-      "rsi14": 51.8,
-      "maFast": 125833.33,
-      "maMedium": 128525.0,
-      "maLong": 125570.83,
-      "momentumFast": 0.231972,
-      "momentumMedium": 0.17872,
+      "rsi14": 48.92,
+      "maFast": 123166.67,
+      "maMedium": 127858.33,
+      "maLong": 125237.5,
+      "momentumFast": 0.162467,
+      "momentumMedium": 0.112219,
       "observations": 61,
       "confidence": 95.0,
-      "latestClose": 141800.0
+      "latestClose": 133800.0
     },
     "다이버전스": {
       "분석상태": "정상",
@@ -1341,7 +1341,8 @@
             "기존거래량급증배수": 1.5,
             "뚜렷한거래량배수": 2.0,
             "강한거래량확증배수": 4.0,
-            "거래량확인창봉": 4
+            "거래량확인창봉": 4,
+            "거래량비교방식": "같은 세션 슬롯 20봉 평균 대비"
           }
         },
         "일봉": {
@@ -1387,7 +1388,8 @@
             "기존거래량급증배수": 1.5,
             "뚜렷한거래량배수": 2.0,
             "강한거래량확증배수": 4.0,
-            "거래량확인창봉": 4
+            "거래량확인창봉": 4,
+            "거래량비교방식": "최근 20일 평균 대비"
           }
         },
         "주봉": {
@@ -1433,7 +1435,8 @@
             "기존거래량급증배수": 1.5,
             "뚜렷한거래량배수": 2.0,
             "강한거래량확증배수": 4.0,
-            "거래량확인창봉": 3
+            "거래량확인창봉": 3,
+            "거래량비교방식": "최근 20주 일평균 거래량 대비"
           }
         },
         "월봉": {
@@ -1479,7 +1482,8 @@
             "기존거래량급증배수": 1.5,
             "뚜렷한거래량배수": 2.0,
             "강한거래량확증배수": 4.0,
-            "거래량확인창봉": 2
+            "거래량확인창봉": 2,
+            "거래량비교방식": "최근 20개월 일평균 거래량 대비"
           }
         }
       },
@@ -1487,22 +1491,13 @@
       "활성신호수": 0,
       "대표신호원칙": "각 시간봉에서 4종 전체 중 가장 최근 확정 1개만 활성"
     },
-    "4시간봉데이터개수": 240,
+    "4시간봉데이터개수": 238,
     "일봉데이터개수": 1219,
-    "주봉데이터개수": 261,
+    "주봉데이터개수": 262,
     "월봉데이터개수": 61,
-    "최초일": "2021-08-09T00:00:00+00:00",
-    "최종일": "2026-08-07T00:00:00+00:00",
+    "최초일": "2021-08-10T00:00:00+00:00",
+    "최종일": "2026-08-10T00:00:00+00:00",
     "최근일봉": [
-      {
-        "timestamp": 1770681600,
-        "시각UTC": "2026-02-10T00:00:00+00:00",
-        "시가": 163100.0,
-        "고가": 166000.0,
-        "저가": 160200.0,
-        "종가": 164200.0,
-        "거래량": 521508.0
-      },
       {
         "timestamp": 1770768000,
         "시각UTC": "2026-02-11T00:00:00+00:00",
@@ -2573,6 +2568,15 @@
         "저가": 135200.0,
         "종가": 141800.0,
         "거래량": 435171.0
+      },
+      {
+        "timestamp": 1786320000,
+        "시각UTC": "2026-08-10T00:00:00+00:00",
+        "시가": 139900.0,
+        "고가": 140000.0,
+        "저가": 131200.0,
+        "종가": 133800.0,
+        "거래량": 155601.0
       }
     ],
     "수집오류": []
@@ -2583,65 +2587,23 @@
     "뉴스개수": 30,
     "뉴스목록": [
       {
-        "제목": "화장품 기업의 주가는 왜 실적만으로 설명되지 않을까 [박지은의 브랜드는 말한다]",
-        "링크": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE01XzhEa0hralR0QW9udkxGOXV3T3g2RFhYUjhrTFlnZjFFVDJvODhiazRRaWxDX3pCb3M4NXNxNDFkbk9hTXNwUDdyZHZseERnQ3RQc2xKdFh2RUdacXZ2aw?oc=5",
-        "언론사": "theconnectmoney.com",
-        "발행시각UTC": "2026-08-08T03:35:00+00:00",
-        "경과일": 0.19,
-        "원점수": 16.0,
-        "최종점수": 15.93,
+        "제목": "[투데이리포트]아모레퍼시픽, \"균형감 있는 성장 …\" 매수-신한투자증권",
+        "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE14eGctWGZUd20xS3FwZ2RnWVRyemxDZkRJMVVyQS1IOVdqajcwb0tiRVE2ZkFtYVd6WDg1M2ZydXNWeUpsUlNNVm92TlVONEphTWRpRDZUd0tMMlVoY2JVTS1waGlULTgx?oc=5",
+        "언론사": "씽크풀 AI",
+        "발행시각UTC": "2026-08-09T07:33:03+00:00",
+        "경과일": 0.77,
+        "원점수": 5.0,
+        "최종점수": 4.91,
         "매칭규칙": [
-          "실적"
+          "매수"
         ]
       },
       {
-        "제목": "K-뷰티 ‘6펜스’, 카카오벤처스·아모레퍼시픽 등으로부터 20억 시드 투자 유치",
-        "링크": "https://news.google.com/rss/articles/CBMiSEFVX3lxTE1oZXpVaXNrck9UZjI1aUllVUJHNWRqZ3B2QTduQ2JQYjN0RnBJeHc1RGRRcWVPZFZBUC1WUU92RFJBazV1RFJiSg?oc=5",
-        "언론사": "플래텀(Platum)",
-        "발행시각UTC": "2026-08-06T05:33:51+00:00",
-        "경과일": 2.11,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "K뷰티 원조 챔피언 아모레퍼시픽이 돌아온다",
-        "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTFBxY1FpdXdQdlRvTFo5X2pCWEZOVjhYWFhTem1KUVF2bEhCbmNxT29sMm85NGlIRnZycklwZEtudzRDVkN1S0ktbW94TENwRzFIcWY1aFlGbW9TejM5REc1SGpPY3l3OUE1d2llVg?oc=5",
-        "언론사": "한경매거진&북",
-        "발행시각UTC": "2026-08-06T22:00:00+00:00",
-        "경과일": 1.42,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "아모레퍼시픽 투자분석 2026. 08. 04",
-        "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE9UbjhNQzk3T1Bvd1hqWEZ3c2VBUjZlV1N6VklQcmZnLXJXTC1tTlRnc0h3N2QwY3RzRVRpQ0hFTmVpdHNZQmFRVmlMVy1VRklmVEdfaUJxQ0NKQXlaa3d0VTVkZzR6Y3lFbHI4cDFiWFhLclk?oc=5",
-        "언론사": "주달",
-        "발행시각UTC": "2026-08-04T11:08:07+00:00",
-        "경과일": 3.88,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "아모레퍼시픽 그룹, 2026년 1분기 경영실적 발표",
-        "링크": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE5GZUw2SnN5Yk50TDVsNGpZZjNabkxIalBTY2p1eDB6RW1mVUVCWkxTN2FMOGt5cEZiZVRWU0o3NFlELVNCWVJUSVh3Z21rd092R1JNY3k3RjBCRXNucHRDcFlqWQ?oc=5",
-        "언론사": "apgroup.com",
-        "발행시각UTC": "2026-04-29T07:00:00+00:00",
-        "경과일": 101.05,
-        "원점수": 16.0,
-        "최종점수": 5.6,
-        "매칭규칙": [
-          "실적"
-        ]
-      },
-      {
-        "제목": "[클릭 e종목]아모레퍼시픽, 완벽한 턴어라운드…목표가↑",
-        "링크": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE4yZENRdzJ0dXkxaFV6eVZXS0U4VGRrWWU1NnJrZ0x1YWk4VGQ3dFFCdzBjODU3MFR3SUN5WDhTb2I1VGtDeWlQQWQyZTA4cnNvSU5CZnFZQ0ZZWXdlOWJEeQ?oc=5",
-        "언론사": "아시아경제",
-        "발행시각UTC": "2026-08-03T22:10:00+00:00",
-        "경과일": 4.42,
+        "제목": "화장품 넘어 의료기기로…아모레퍼시픽의 ‘메디컬 뷰티’ 실험",
+        "링크": "https://news.google.com/rss/articles/CBMifEFVX3lxTE5QalJGRjlvTUhOcHJTMGV4LXo2a3k3ZlVZdEZ0cnlFckM3SGZTU1gtSVEtSnlKTUI0WGxiRDBEc2d6Q0kwN3JjLTExYndXUWotZmRNZ09vZWRDZUVMMERNMTFHZWhVaVhHTi1XUVpnOGJfWEphMk5qRkl2dUk?oc=5",
+        "언론사": "한국금융신문",
+        "발행시각UTC": "2026-08-09T15:00:00+00:00",
+        "경과일": 0.46,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2651,39 +2613,59 @@
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE0tcEdHN2NnUnhUVzVfZGd1dUhWZ2RkSEJQNWRxdTdRZno1UmF0dG1rUHRDV0tjUEhRcUtGMXJ2b3FYNmYxVnl2Q2ZLdWh3aUZncDNVVGMzTFRxN05MSU9mb1dqYTRZRlZTdk5YcEw0NEw?oc=5",
         "언론사": "연합인포맥스",
         "발행시각UTC": "2026-07-24T07:00:00+00:00",
-        "경과일": 15.05,
+        "경과일": 16.79,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
       },
       {
-        "제목": "유진투자證 “아모레퍼시픽, 북미·유럽 성장에 목표가 상향”",
-        "링크": "https://news.google.com/rss/articles/CBMifkFVX3lxTE01UGZNN0J1aG9ZcEdKZmg1SGd2Q0d4QWRFX3RTN0JOZ2Z1V21kcFM4Q2NDYm5DMVdDalNReFdtSVJTMWg1OWlpTVByTU94ODZfcFJoUzVlY3c1WkEzZ3VCTUkzVmJCSGlYZ1c5YTVabDJCXzVFdlc4WFhFUFNLZw?oc=5",
-        "언론사": "thepowernews.co.kr",
-        "발행시각UTC": "2026-08-03T01:26:40+00:00",
-        "경과일": 5.28,
-        "원점수": 10.0,
-        "최종점수": 8.83,
+        "제목": "K-뷰티 ‘6펜스’, 카카오벤처스·아모레퍼시픽 등으로부터 20억 시드 투자 유치",
+        "링크": "https://news.google.com/rss/articles/CBMiSEFVX3lxTE1oZXpVaXNrck9UZjI1aUllVUJHNWRqZ3B2QTduQ2JQYjN0RnBJeHc1RGRRcWVPZFZBUC1WUU92RFJBazV1RFJiSg?oc=5",
+        "언론사": "플래텀(Platum)",
+        "발행시각UTC": "2026-08-06T05:33:51+00:00",
+        "경과일": 3.85,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "K뷰티 원조 챔피언 아모레퍼시픽이 돌아온다",
+        "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTFBxY1FpdXdQdlRvTFo5X2pCWEZOVjhYWFhTem1KUVF2bEhCbmNxT29sMm85NGlIRnZycklwZEtudzRDVkN1S0ktbW94TENwRzFIcWY1aFlGbW9TejM5REc1SGpPY3l3OUE1d2llVg?oc=5",
+        "언론사": "한경매거진&북",
+        "발행시각UTC": "2026-08-06T22:00:00+00:00",
+        "경과일": 3.16,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "아모레퍼시픽 그룹, 2026년 1분기 경영실적 발표",
+        "링크": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE5GZUw2SnN5Yk50TDVsNGpZZjNabkxIalBTY2p1eDB6RW1mVUVCWkxTN2FMOGt5cEZiZVRWU0o3NFlELVNCWVJUSVh3Z21rd092R1JNY3k3RjBCRXNucHRDcFlqWQ?oc=5",
+        "언론사": "apgroup.com",
+        "발행시각UTC": "2026-04-29T07:00:00+00:00",
+        "경과일": 102.79,
+        "원점수": 16.0,
+        "최종점수": 5.6,
         "매칭규칙": [
-          "목표가 상향"
+          "실적"
         ]
       },
       {
-        "제목": "[리포트 브리핑]아모레퍼시픽, '2Q26 Review: 완벽한 턴어라운드' 목표가 170,000원 - 유진투자증권",
-        "링크": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE9TcVZTVDRNTF9UdWdvZTdCcXJuSWtGRjViNmdTWG9nMW9XbEFZUHNkMVJXeXQtbjFHWGtrMVg0RGJLWlFrSGw5Q0tjMG1qZlE5RHo1YklpVXFFUW1S?oc=5",
-        "언론사": "뉴스핌",
-        "발행시각UTC": "2026-08-03T04:31:00+00:00",
-        "경과일": 5.15,
+        "제목": "아모레퍼시픽홀딩스 투자분석 2026. 08. 06",
+        "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE1DQ2RPczAxZDhGOHZTUEwxUzV4QUMyMGFqYnBFM0N0bUdqNkw4TDdvekN6MFB5MzNNOWVDMzNMZHNROU14Z3BzRFhfWlNxUndNYkRGekpUcFFpTGZBYklUZThHWU9Iazl0TWFVR2dlLUJYZTA?oc=5",
+        "언론사": "주달",
+        "발행시각UTC": "2026-08-06T13:21:43+00:00",
+        "경과일": 3.52,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
       },
       {
-        "제목": "K-뷰티 스타트업 6펜스, 카카오벤처스 · 아모레퍼시픽서 20억 시드 투자 유치",
-        "링크": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE93NzVvWWdTNlNmZWFhNDY4TlcwelpsRXh4US1aT0pHSjZzVlhUY0lTUDZSQlhoeE5IYW9TYTJmbGJnNXNMOXh3ekdBVi1NcVFG?oc=5",
-        "언론사": "패션비즈",
-        "발행시각UTC": "2026-08-06T00:42:36+00:00",
-        "경과일": 2.31,
+        "제목": "[클릭 e종목]아모레퍼시픽, 완벽한 턴어라운드…목표가↑",
+        "링크": "https://news.google.com/rss/articles/CBMiRkFVX3lxTE5lLVJDV0VwcXJSLWJSckRwOVNFbXhJN2JxZklvX2VJUTRYZWs3U3p4ZGVrZEt0czVMMVFoS3FNc3VZTlJrNGc?oc=5",
+        "언론사": "v.daum.net",
+        "발행시각UTC": "2026-08-03T22:11:50+00:00",
+        "경과일": 6.16,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2691,29 +2673,41 @@
       {
         "제목": "반년째 표류 중인 아모레퍼시픽 지방 사옥 매각…세빌스 단독 주관 종료 - 조선비즈",
         "링크": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxOUzFicC1mNkI4c1N2blluWXdhSmF1QWJJWWJ2RVVHS0oxTXhmclYwcEd0Vk5qNVZ1NmRlZWd6VHhacE11dm0wZkVUMUUwU2htZ0pKN0xZWXY3bUluNFFaOG9OOENvN1B3d1BqaXNUaDlvbFMtSmRfWXJHdnl0WFFUcXBGS2V1NkJn0gGcAUFVX3lxTE9TcldLZ3JYeTlKdnlRNk9ob05yZTdERWZESUxVaHpVdDc5T2FUb1I0QnFxMEt2Ulc0aTIxYl9ScXo3UjE2VmZMQThuZkdjMC1LdnZYN3JCQXNMMF9YRXhQaVp6am1kSDByaFZrbHRqQ2tLSF96VmxJYm9XdUh0ZzFhYkNXcGFNdHNhNGZtVnhiclc3ZGtSQ0VkU3lEZA?oc=5",
-        "언론사": "biz.chosun.com",
-        "발행시각UTC": "2026-07-31T01:00:00+00:00",
-        "경과일": 8.3,
+        "언론사": "Chosunbiz",
+        "발행시각UTC": "2026-07-31T07:00:00+00:00",
+        "경과일": 9.79,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
+      },
+      {
+        "제목": "화장품 기업의 주가는 왜 실적만으로 설명되지 않을까 [박지은의 브랜드는 말한다]",
+        "링크": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE01XzhEa0hralR0QW9udkxGOXV3T3g2RFhYUjhrTFlnZjFFVDJvODhiazRRaWxDX3pCb3M4NXNxNDFkbk9hTXNwUDdyZHZseERnQ3RQc2xKdFh2RUdacXZ2aw?oc=5",
+        "언론사": "theconnectmoney.com",
+        "발행시각UTC": "2026-08-08T03:35:00+00:00",
+        "경과일": 1.93,
+        "원점수": 16.0,
+        "최종점수": 15.31,
+        "매칭규칙": [
+          "실적"
+        ]
       },
       {
         "제목": "아모레퍼시픽, 비올메디컬 투자…최종인수 노린 '빅픽처'",
         "링크": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFBxNHNWM1lxZE5YV3l3RGxXVklrdy1SeHdPcnoyMjhLVHkyU2RxWVB4aTd4RHNMWEZUbWN5bWx1MHBSUmxLU3NrT3owVU9FR1E?oc=5",
-        "언론사": "딜사이트",
+        "언론사": "dealsite.co.kr",
         "발행시각UTC": "2026-06-17T07:00:00+00:00",
-        "경과일": 52.05,
+        "경과일": 53.79,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
       },
       {
-        "제목": "화장품 양강, 성장 동력…아모레는 '다변화', LG생건은 '북미 단일축'",
-        "링크": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE5oNGJOSllLOHV3ZXRqSkYyWVZ6eXJFenc3T0ZTY2ZhYVRnTkFUU1laaERKUEFXckp6QzFTNXRUVUVBVk9PbEd2T2tibEJEZDdINncxUkFrUjc1ZGw1?oc=5",
-        "언론사": "뉴스핌",
-        "발행시각UTC": "2026-08-04T06:01:00+00:00",
-        "경과일": 4.09,
+        "제목": "아모레퍼시픽 투자분석 2026. 08. 04",
+        "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE9UbjhNQzk3T1Bvd1hqWEZ3c2VBUjZlV1N6VklQcmZnLXJXTC1tTlRnc0h3N2QwY3RzRVRpQ0hFTmVpdHNZQmFRVmlMVy1VRklmVEdfaUJxQ0NKQXlaa3d0VTVkZzR6Y3lFbHI4cDFiWFhLclk?oc=5",
+        "언론사": "주달",
+        "발행시각UTC": "2026-08-04T11:08:07+00:00",
+        "경과일": 5.62,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2723,7 +2717,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE1WX2xQMHk2eGhiZ0JCSjY0SW44SUx6UWRDdmNBdnh5UUJKeERQOGdmSDRnajRkcTQwQ2xMQVNuREVlcjBhcm91UmJycjdUTkJVWExXQlFERXpCazVseUd0bGl3VQ?oc=5",
         "언론사": "apgroup.com",
         "발행시각UTC": "2026-02-06T08:00:00+00:00",
-        "경과일": 183.01,
+        "경과일": 184.75,
         "원점수": 16.0,
         "최종점수": 5.6,
         "매칭규칙": [
@@ -2731,89 +2725,55 @@
         ]
       },
       {
+        "제목": "아모레퍼시픽우 투자분석 2026. 08. 07",
+        "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE5LYmw5bVVuNkVGN0V4M2tLUklWcmZoZ19QeVc2d3R1YWczVDFtMUlzY3AzT1NiM2lZNWZqUEV1U01pWk5aRHozYklSSjEyVl9WZ3JNcTNtTTZmcHZrYWxkRFFPdUJkNFFrTFY3RXAycTY3bTQ?oc=5",
+        "언론사": "주달",
+        "발행시각UTC": "2026-08-07T08:13:16+00:00",
+        "경과일": 2.74,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
         "제목": "아모레퍼시픽, HIGHER 코퍼레이션과 투자 계약 체결",
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE8wTlJ2RDItMzB3bHkyVlBhSGdqLUQ3b0YzdjZGZkJmWlB6YUhwQjZDZ2pHY2w4SGRvZ1NzWExEcHp5cl94WHZ3NmJYVzhXb2NzQXktdFJacnZRSUJCS0h2SktzSW4xMFFGekJNdmJ0WkQ?oc=5",
         "언론사": "Investing.com 한국어",
         "발행시각UTC": "2026-07-31T02:37:00+00:00",
-        "경과일": 8.23,
+        "경과일": 9.97,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
       },
       {
-        "제목": "아모레·LG생건, 2분기 ‘깜짝 실적’…탈중국 효과 가시화",
-        "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFAtc080SWZ1VGtkTkplLVkxV2VlU3NaZUpoc3VFQWxCdzRYQmUwZ3U0Ym80dGJoT01kcTFkeGJ3bXNCSElOdW1zWTA2WXpFTmZlSmNURTVSRkM3Wjg?oc=5",
-        "언론사": "에너지경제신문",
-        "발행시각UTC": "2026-08-02T02:30:00+00:00",
-        "경과일": 6.24,
-        "원점수": 16.0,
-        "최종점수": 13.78,
-        "매칭규칙": [
-          "실적"
-        ]
-      },
-      {
-        "제목": "아모레퍼시픽홀딩스3우C 투자분석 2026. 08. 03",
-        "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE53VV9haVJDNjJjTkJLd2NfVmh2bWlpbmZqMU5GMGZHNGFzdlgzYTNROWlDNlJKcldnaThqdzZtak9sRzRWZTNEZEhfWkk1T2ZMZVJvVmhRdE9LUHA0OWlnZTY0LU9IcFJUaGhvSkdHY2llTXc?oc=5",
-        "언론사": "주달",
-        "발행시각UTC": "2026-08-03T08:03:45+00:00",
-        "경과일": 5.0,
+        "제목": "화장품 양강, 성장 동력…아모레는 '다변화', LG생건은 '북미 단일축'",
+        "링크": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE5oNGJOSllLOHV3ZXRqSkYyWVZ6eXJFenc3T0ZTY2ZhYVRnTkFUU1laaERKUEFXckp6QzFTNXRUVUVBVk9PbEd2T2tibEJEZDdINncxUkFrUjc1ZGw1?oc=5",
+        "언론사": "뉴스핌",
+        "발행시각UTC": "2026-08-04T06:01:00+00:00",
+        "경과일": 5.83,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
-      },
-      {
-        "제목": "LG생활건강·아모레퍼시픽, 호실적에 기관·외국인 러브콜",
-        "링크": "https://news.google.com/rss/articles/CBMiakFVX3lxTE1HX2ZpM2F5NHJZN19qSFprRjFXYVVaVmdHVklMNnhocVVRNmVkalFkWF9wMkZNNDZGbl9uZUhRRENNZHZtWWFRREVtOTY0RmNZWDdIWk12d3lMQnJlT1RjeWRJSUJsVHBVN3c?oc=5",
-        "언론사": "뷰티경제",
-        "발행시각UTC": "2026-08-06T10:29:13+00:00",
-        "경과일": 1.9,
-        "원점수": 16.0,
-        "최종점수": 15.32,
-        "매칭규칙": [
-          "실적"
-        ]
       },
       {
         "제목": "한투증권 \"아모레퍼시픽 2분기 호실적…목표주가↑\"",
         "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFBCa181NmM0VFZPaDhILU00ZVA2MXZXMkM4SzJFSWk4OFQwR1QyV3Q3ZmdldFB1VXVSblNGX3BYZ1pRTnUtOTFRZVVjc1dsOFJZeWN2bmxRdnBNam_SAWBBVV95cUxPVm1kMmZVcGNZTHlMX3o4dlBCSm9lNG5SX0dvb1hDVHlSbDJpNWJwdjZLMUR5blJXbS1SOVl0WVNpdm1oYWRqRlZYZGloUFhMWHJSc1pvM04yTjY1V3JZbjA?oc=5",
         "언론사": "연합뉴스",
-        "발행시각UTC": "2026-07-30T23:33:03+00:00",
-        "경과일": 8.36,
+        "발행시각UTC": "2026-07-31T07:00:00+00:00",
+        "경과일": 9.79,
         "원점수": 16.0,
-        "최종점수": 13.03,
+        "최종점수": 12.52,
         "매칭규칙": [
           "실적"
         ]
       },
       {
-        "제목": "아모레퍼시픽홀딩스, 자기주식 1149주 직원 3명에게 처분",
-        "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE9hZm5QVWItV3N4WUJQbGE4Ui1yanRqRGRJMzNYU211YXpreEZ6YXhmVFk4YkM4YjRCdFduRk1Sb2hVRURWTEdKZlNEMk9VcUNWcmFFdUdQYUd2MG1abE9uNTVPTHd2eE9DZkItTFF2U1c2c0E?oc=5",
-        "언론사": "디지털투데이",
-        "발행시각UTC": "2026-08-03T05:53:03+00:00",
-        "경과일": 5.1,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "아모레퍼시픽, 2026 레드닷 어워드 본상 2개 수상",
-        "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE81WFFCbFlNLXdjY3MzZGxuN2U5Ykc4VkF4N3NPSjNCZnljRnBoSDZOTDRzanFtU0xjZ0t0Tk1VcGhOQ3hBSGdNdVBkdTROaWd1eEtNd0xpSjU2eXNrVWo0YWthdXFmODA?oc=5",
-        "언론사": "청년일보",
-        "발행시각UTC": "2026-08-05T06:51:41+00:00",
-        "경과일": 3.05,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
         "제목": "[7월 5주 화장품 주가] 코스피, 1천 포인트 급등락... 아모레퍼시픽, 실적 호조로 5% 상승",
         "링크": "https://news.google.com/rss/articles/CBMiYEFVX3lxTFBGZFJTd2RrRGFYV1BNdERhQVZzSERfU1RiQlRaTHhPYzJFajVJeHZuSW16cjNGd2N1bDRnNFBYdHhuVU9ESjNhR2ZjSzgxYjN4TVBYUUtTQndNSV8tci1LUg?oc=5",
-        "언론사": "cosinkorea.com",
+        "언론사": "코스인코리아닷컴",
         "발행시각UTC": "2026-08-01T00:22:26+00:00",
-        "경과일": 7.33,
+        "경과일": 9.07,
         "원점수": 16.0,
-        "최종점수": 13.4,
+        "최종점수": 12.78,
         "매칭규칙": [
           "실적"
         ]
@@ -2823,9 +2783,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBvOFdVWmw2cTZUMlE2U2p0RW12dXV6VXM5OWViLXp0WEdNSE1vekVoWTNsb013RklzeVB5Y0htY0poZFhvVGQyMVM4bWxDWGJCTGQzOURaTHR1QQ?oc=5",
         "언론사": "한국경제",
         "발행시각UTC": "2026-07-30T07:00:00+00:00",
-        "경과일": 9.05,
+        "경과일": 10.79,
         "원점수": 16.0,
-        "최종점수": 12.78,
+        "최종점수": 12.16,
         "매칭규칙": [
           "실적"
         ]
@@ -2835,7 +2795,17 @@
         "링크": "https://news.google.com/rss/articles/CBMickFVX3lxTE81RmVqS3BUYWg3N1lnRU10UUdSbDdzUzl6eU1GcDh2Z3c1bmdZREhrTDUydDM3eVU0eHhDQm43bWJma0VkMHMydmFNU0N3U1RNd1k1SFlnWXhjNTlnRUVKOHJ3T0hrVDBiUEtHREVuZElRUQ?oc=5",
         "언론사": "KB Think",
         "발행시각UTC": "2026-07-30T05:42:14+00:00",
-        "경과일": 9.1,
+        "경과일": 10.84,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한투증권 \"아모레퍼시픽, 증시 수급 쏠림 완화 시 주가 회복\"",
+        "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE43M1RwQ25IS05CR3U3ZUFQVUxvMXI4ZFd1OV9EWE50OWRVZVp4S3ljZDJrVkdQcW1jZnJPN3ZmeXotc3V1TEJjVm1rZ0VWbU9LLUNOejUyczc2YWvSAWBBVV95cUxQbkRpMjBJSk5JM2J3eWNSR2U4ZkpkendpTGR3cW8xQzJ2bVlJNTBINm9GYnR1TEY2S25tSEJHWkJablhURmJlRXJXaW1OUmhXOC03YjkwYngwYm5jMVhHaHE?oc=5",
+        "언론사": "연합뉴스",
+        "발행시각UTC": "2026-04-30T07:00:00+00:00",
+        "경과일": 101.79,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2845,39 +2815,53 @@
         "링크": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE1wR0hKU0ZySGR4LXR3YjZoeE1UV3FmT19zR1NkakV1eDNOR1pMeU03cXV4M3VPaVF0QzF3U3M2WEZmS09OeGtVR3g1NGttWkNkeG1Lb0otVGRUTGZBcnhyYi0zSVFQd9IBa0FVX3lxTE1JZVZvSUhpaDFTUnlNanBWM0dBdVRLYVhvUGE0SDAycmN5NWFyR0wtMEM4RTRUZ2dXRnpVcTNybzJ0TjI2TUtIRjhkWDNmQTRib3pfQ1JkQXpDc1hIM2M2dTlnc2FURFl0cGJF?oc=5",
         "언론사": "한국관세신문",
         "발행시각UTC": "2026-07-31T06:51:00+00:00",
-        "경과일": 8.06,
+        "경과일": 9.8,
         "원점수": 16.0,
-        "최종점수": 13.14,
+        "최종점수": 12.52,
         "매칭규칙": [
           "실적"
         ]
       },
       {
-        "제목": "한투증권 \"아모레퍼시픽, 증시 수급 쏠림 완화 시 주가 회복\"",
-        "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE43M1RwQ25IS05CR3U3ZUFQVUxvMXI4ZFd1OV9EWE50OWRVZVp4S3ljZDJrVkdQcW1jZnJPN3ZmeXotc3V1TEJjVm1rZ0VWbU9LLUNOejUyczc2YWvSAWBBVV95cUxQbkRpMjBJSk5JM2J3eWNSR2U4ZkpkendpTGR3cW8xQzJ2bVlJNTBINm9GYnR1TEY2S25tSEJHWkJablhURmJlRXJXaW1OUmhXOC03YjkwYngwYm5jMVhHaHE?oc=5",
-        "언론사": "연합뉴스",
-        "발행시각UTC": "2026-04-30T07:00:00+00:00",
-        "경과일": 100.05,
+        "제목": "LG생활건강·아모레퍼시픽, 호실적에 기관·외국인 러브콜",
+        "링크": "https://news.google.com/rss/articles/CBMiakFVX3lxTE1HX2ZpM2F5NHJZN19qSFprRjFXYVVaVmdHVklMNnhocVVRNmVkalFkWF9wMkZNNDZGbl9uZUhRRENNZHZtWWFRREVtOTY0RmNZWDdIWk12d3lMQnJlT1RjeWRJSUJsVHBVN3c?oc=5",
+        "언론사": "thebk.co.kr",
+        "발행시각UTC": "2026-08-06T10:29:13+00:00",
+        "경과일": 3.64,
+        "원점수": 16.0,
+        "최종점수": 14.7,
+        "매칭규칙": [
+          "실적"
+        ]
+      },
+      {
+        "제목": "[리포트 브리핑]아모레퍼시픽, '2Q26 Review: 완벽한 턴어라운드' 목표가 170,000원 - 유진투자증권",
+        "링크": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE9TcVZTVDRNTF9UdWdvZTdCcXJuSWtGRjViNmdTWG9nMW9XbEFZUHNkMVJXeXQtbjFHWGtrMVg0RGJLWlFrSGw5Q0tjMG1qZlE5RHo1YklpVXFFUW1S?oc=5",
+        "언론사": "뉴스핌",
+        "발행시각UTC": "2026-08-03T04:31:00+00:00",
+        "경과일": 6.89,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
+      },
+      {
+        "제목": "유진투자證 “아모레퍼시픽, 북미·유럽 성장에 목표가 상향”",
+        "링크": "https://news.google.com/rss/articles/CBMifkFVX3lxTE01UGZNN0J1aG9ZcEdKZmg1SGd2Q0d4QWRFX3RTN0JOZ2Z1V21kcFM4Q2NDYm5DMVdDalNReFdtSVJTMWg1OWlpTVByTU94ODZfcFJoUzVlY3c1WkEzZ3VCTUkzVmJCSGlYZ1c5YTVabDJCXzVFdlc4WFhFUFNLZw?oc=5",
+        "언론사": "thepowernews.co.kr",
+        "발행시각UTC": "2026-08-03T01:26:40+00:00",
+        "경과일": 7.02,
+        "원점수": 10.0,
+        "최종점수": 8.44,
+        "매칭규칙": [
+          "목표가 상향"
+        ]
       },
       {
         "제목": "아모레퍼시픽그룹, 2분기 영업익 53.3% 증가…해외 핵심 시장 성장",
         "링크": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE11WUJNblhZT29HZkRydTFHLURoU0dCVGJQNXAtT0h5NWdqaFE3ZzhETEJjUEkyaDFRUGxQODVtR2FhRXB3YVo5aG81dllNZ0tsY05OM0V2M3VldzJXUmh3UHRxems?oc=5",
         "언론사": "서울경제TV",
         "발행시각UTC": "2026-07-30T05:31:27+00:00",
-        "경과일": 9.11,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "아모레퍼시픽 에스트라, 유로모니터 '韓 1위 더마 스킨케어 브랜드' 선정",
-        "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE90S2lpLUcxWnU0cFp1U3FuN2dqWVBXR19xQ3lzYU51N3ItV1dTU0RNRHE0R0JNdlpaZno2aG9PdmxvMTZ0REtEclJsUzFhNUc5a1VhaFI5UHpyOFR1bGxxZUVhRkZvMmM?oc=5",
-        "언론사": "청년일보",
-        "발행시각UTC": "2026-08-06T01:19:03+00:00",
-        "경과일": 2.29,
+        "경과일": 10.85,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2887,7 +2871,29 @@
         "링크": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE9LdDlQNW01WldXN3B5TXlEZzdJWXI2dTRURDNuVUZWWXhseHFEQXRKcDh1THFscVozejR4UXduMXlTUndSNlZ3QTMtWkFiV0YzUGgxY0JuaWE4ejNmaXI0ODd3TWQ?oc=5",
         "언론사": "서울경제TV",
         "발행시각UTC": "2026-07-31T08:37:10+00:00",
-        "경과일": 7.98,
+        "경과일": 9.72,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "\"아모레퍼시픽, 실적안정에도 수급쏠림 걸림돌…목표가↓\"-NH - 머니투데이",
+        "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE1uemtMQUtKdm9OcnFmVzdKRDhuLUkyNWdQejlhbWVVM2o1ZVNLV0I3NUx4UEQzSGtqcDdTUXNIVFRmZUpVUTEwQW5Sdk1wV05EZkVsZUNhRGdJYmZhbXRuM181aU9uOVJ60gFuQVVfeXFMTUtJZTZpaEdFc0VLY2pQUFN5VklYTUZ3NFd6VHZUNVVFTXhiNDV1UzRDR3h6eml5TmtST2JidFBaa2h5emZ4NkpTVUo1V0FpYjhON1dUYUxPVGFOaE1BSWRpV0J6ODloX0t0eEU3c3c?oc=5",
+        "언론사": "머니투데이",
+        "발행시각UTC": "2026-06-23T07:00:00+00:00",
+        "경과일": 47.79,
+        "원점수": 16.0,
+        "최종점수": 5.6,
+        "매칭규칙": [
+          "실적"
+        ]
+      },
+      {
+        "제목": "아모레퍼시픽, 2026 레드닷 어워드 본상 2개 수상",
+        "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE81WFFCbFlNLXdjY3MzZGxuN2U5Ykc4VkF4N3NPSjNCZnljRnBoSDZOTDRzanFtU0xjZ0t0Tk1VcGhOQ3hBSGdNdVBkdTROaWd1eEtNd0xpSjU2eXNrVWo0YWthdXFmODA?oc=5",
+        "언론사": "청년일보",
+        "발행시각UTC": "2026-08-05T06:51:41+00:00",
+        "경과일": 4.8,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2897,7 +2903,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiakFVX3lxTE5GYmY4dlpleVpYZ080RUZTQ3BIb1dON3h6NmlSOTlFWld2aGxIbzh6RzlycTllYTROQ3JsdEtfRWQyYUtVMTc1R09VUkYtSlQwaWZ6b0F4eU5uSWVZMURaRjFqTGdTa1M3a1E?oc=5",
         "언론사": "THE K BEAUTY SCIENCE",
         "발행시각UTC": "2026-07-27T05:47:01+00:00",
-        "경과일": 12.1,
+        "경과일": 13.84,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -2905,23 +2911,23 @@
     ],
     "분석": {
       "분석상태": "정상",
-      "신호": 44.03,
+      "신호": 41.3,
       "데이터품질": 88.0,
       "판정": "긍정",
-      "긍정뉴스개수": 10,
+      "긍정뉴스개수": 11,
       "부정뉴스개수": 0,
-      "중립뉴스개수": 20,
+      "중립뉴스개수": 19,
       "긍정뉴스": [
         {
-          "제목": "화장품 기업의 주가는 왜 실적만으로 설명되지 않을까 [박지은의 브랜드는 말한다]",
-          "링크": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE01XzhEa0hralR0QW9udkxGOXV3T3g2RFhYUjhrTFlnZjFFVDJvODhiazRRaWxDX3pCb3M4NXNxNDFkbk9hTXNwUDdyZHZseERnQ3RQc2xKdFh2RUdacXZ2aw?oc=5",
-          "언론사": "theconnectmoney.com",
-          "발행시각UTC": "2026-08-08T03:35:00+00:00",
-          "경과일": 0.19,
-          "원점수": 16.0,
-          "최종점수": 15.93,
+          "제목": "[투데이리포트]아모레퍼시픽, \"균형감 있는 성장 …\" 매수-신한투자증권",
+          "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE14eGctWGZUd20xS3FwZ2RnWVRyemxDZkRJMVVyQS1IOVdqajcwb0tiRVE2ZkFtYVd6WDg1M2ZydXNWeUpsUlNNVm92TlVONEphTWRpRDZUd0tMMlVoY2JVTS1waGlULTgx?oc=5",
+          "언론사": "씽크풀 AI",
+          "발행시각UTC": "2026-08-09T07:33:03+00:00",
+          "경과일": 0.77,
+          "원점수": 5.0,
+          "최종점수": 4.91,
           "매칭규칙": [
-            "실적"
+            "매수"
           ]
         },
         {
@@ -2929,7 +2935,7 @@
           "링크": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE5GZUw2SnN5Yk50TDVsNGpZZjNabkxIalBTY2p1eDB6RW1mVUVCWkxTN2FMOGt5cEZiZVRWU0o3NFlELVNCWVJUSVh3Z21rd092R1JNY3k3RjBCRXNucHRDcFlqWQ?oc=5",
           "언론사": "apgroup.com",
           "발행시각UTC": "2026-04-29T07:00:00+00:00",
-          "경과일": 101.05,
+          "경과일": 102.79,
           "원점수": 16.0,
           "최종점수": 5.6,
           "매칭규칙": [
@@ -2937,15 +2943,15 @@
           ]
         },
         {
-          "제목": "유진투자證 “아모레퍼시픽, 북미·유럽 성장에 목표가 상향”",
-          "링크": "https://news.google.com/rss/articles/CBMifkFVX3lxTE01UGZNN0J1aG9ZcEdKZmg1SGd2Q0d4QWRFX3RTN0JOZ2Z1V21kcFM4Q2NDYm5DMVdDalNReFdtSVJTMWg1OWlpTVByTU94ODZfcFJoUzVlY3c1WkEzZ3VCTUkzVmJCSGlYZ1c5YTVabDJCXzVFdlc4WFhFUFNLZw?oc=5",
-          "언론사": "thepowernews.co.kr",
-          "발행시각UTC": "2026-08-03T01:26:40+00:00",
-          "경과일": 5.28,
-          "원점수": 10.0,
-          "최종점수": 8.83,
+          "제목": "화장품 기업의 주가는 왜 실적만으로 설명되지 않을까 [박지은의 브랜드는 말한다]",
+          "링크": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE01XzhEa0hralR0QW9udkxGOXV3T3g2RFhYUjhrTFlnZjFFVDJvODhiazRRaWxDX3pCb3M4NXNxNDFkbk9hTXNwUDdyZHZseERnQ3RQc2xKdFh2RUdacXZ2aw?oc=5",
+          "언론사": "theconnectmoney.com",
+          "발행시각UTC": "2026-08-08T03:35:00+00:00",
+          "경과일": 1.93,
+          "원점수": 16.0,
+          "최종점수": 15.31,
           "매칭규칙": [
-            "목표가 상향"
+            "실적"
           ]
         },
         {
@@ -2953,7 +2959,7 @@
           "링크": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE1WX2xQMHk2eGhiZ0JCSjY0SW44SUx6UWRDdmNBdnh5UUJKeERQOGdmSDRnajRkcTQwQ2xMQVNuREVlcjBhcm91UmJycjdUTkJVWExXQlFERXpCazVseUd0bGl3VQ?oc=5",
           "언론사": "apgroup.com",
           "발행시각UTC": "2026-02-06T08:00:00+00:00",
-          "경과일": 183.01,
+          "경과일": 184.75,
           "원점수": 16.0,
           "최종점수": 5.6,
           "매칭규칙": [
@@ -2961,13 +2967,13 @@
           ]
         },
         {
-          "제목": "아모레·LG생건, 2분기 ‘깜짝 실적’…탈중국 효과 가시화",
-          "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFAtc080SWZ1VGtkTkplLVkxV2VlU3NaZUpoc3VFQWxCdzRYQmUwZ3U0Ym80dGJoT01kcTFkeGJ3bXNCSElOdW1zWTA2WXpFTmZlSmNURTVSRkM3Wjg?oc=5",
-          "언론사": "에너지경제신문",
-          "발행시각UTC": "2026-08-02T02:30:00+00:00",
-          "경과일": 6.24,
+          "제목": "한투증권 \"아모레퍼시픽 2분기 호실적…목표주가↑\"",
+          "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFBCa181NmM0VFZPaDhILU00ZVA2MXZXMkM4SzJFSWk4OFQwR1QyV3Q3ZmdldFB1VXVSblNGX3BYZ1pRTnUtOTFRZVVjc1dsOFJZeWN2bmxRdnBNam_SAWBBVV95cUxPVm1kMmZVcGNZTHlMX3o4dlBCSm9lNG5SX0dvb1hDVHlSbDJpNWJwdjZLMUR5blJXbS1SOVl0WVNpdm1oYWRqRlZYZGloUFhMWHJSc1pvM04yTjY1V3JZbjA?oc=5",
+          "언론사": "연합뉴스",
+          "발행시각UTC": "2026-07-31T07:00:00+00:00",
+          "경과일": 9.79,
           "원점수": 16.0,
-          "최종점수": 13.78,
+          "최종점수": 12.52,
           "매칭규칙": [
             "실적"
           ]
@@ -2977,7 +2983,7 @@
       "설명": "최근 뉴스 제목의 실적·수주·투자·증자·소송 등 규칙과 시간가중치를 합성합니다."
     },
     "데이터출처": "Google News RSS",
-    "수집시각UTC": "2026-08-08T08:10:31.541779+00:00"
+    "수집시각UTC": "2026-08-10T01:57:25.245419+00:00"
   },
   "가치평가": {
     "가치평가계약버전": "4.0",
@@ -3020,12 +3026,12 @@
       "잠정실적미정량화": false,
       "정식보고서대체평가": false,
       "평가기준": "잠정실적 반영",
-      "산업분류신뢰도": 72,
+      "산업분류신뢰도": 94,
       "산업프로필버전": "3.0.0",
       "극단적괴리": false
     },
     "산업프로필버전": "3.0.0",
-    "산업분류신뢰도": 72,
+    "산업분류신뢰도": 94,
     "정식재무기준분기키": 8105,
     "유효재무기준분기키": 8106,
     "잠정실적": {
@@ -3051,9 +3057,9 @@
       "데이터출처": "금융감독원 OpenDART 공시서류원본",
       "주의": "감사 전 잠정실적이며 정식 분기보고서 제출 시 자동 대체"
     },
-    "현재가": 141800.0,
-    "실제PER": 33.45986848313706,
-    "실제PBR": 1.768622651590302,
+    "현재가": 133800.0,
+    "실제PER": 31.57214670693751,
+    "실제PBR": 1.6688414018531905,
     "EPS": 4237.912652629333,
     "BPS": 80175.38386297208,
     "발행주식수추정": 68915652,
@@ -3069,58 +3075,121 @@
     "TTMEPS": 4237.91,
     "정상화EPS": 5469.69,
     "분기런레이트EPS": 5126.73,
-    "FY1예상EPS": 5430.84,
-    "FY2예상EPS": 5943.91,
-    "FY3예상EPS": 0.0,
-    "FY4예상EPS": 0.0,
-    "평가EPS": 5197.56,
-    "선행EPS": 5430.84,
+    "FY1예상EPS": 5483.65,
+    "FY2예상EPS": 6001.71,
+    "FY3예상EPS": 7082.01,
+    "FY4예상EPS": 7931.86,
+    "평가EPS": 5231.88,
+    "선행EPS": 5483.65,
     "FY1성장률": 17.18,
     "FY2성장률": 9.45,
-    "FY3성장률": 0.0,
-    "FY4성장률": 0.0,
+    "FY3성장률": 18.0,
+    "FY4성장률": 12.0,
     "TTM기준기간": "2025Q3~2026Q2",
     "TTM데이터품질": 86,
     "TTM잠정실적반영": true,
     "TTM현금흐름기준": "최근 정식보고서 TTM 유지",
-    "목표PER": 12.39,
-    "목표PBR": 0.68,
-    "암시PER": 12.87,
-    "암시PBR": 0.83,
-    "PER기준적정가": 64410.57,
-    "PBR기준적정가": 54347.78,
-    "그레이엄가치": 97964.43,
-    "정상화회복가치": 61004.66,
+    "목표PER": 20.89,
+    "목표PBR": 1.53,
+    "암시PER": 24.89,
+    "암시PBR": 1.62,
+    "PER기준적정가": 109306.9,
+    "PBR기준적정가": 122496.85,
+    "그레이엄가치": 98138.08,
+    "정상화회복가치": 102847.81,
     "잔여이익가치": 80175.38,
-    "FCF가치": 59695.96,
-    "실적전환보정가": 69033.27,
-    "미래성장가치": 0.0,
+    "FCF가치": 98123.72,
+    "실적전환보정가": 112844.69,
+    "미래성장가치": 130230.1,
     "미래성장모형": {
       "버전": "1.0.0",
-      "사용가능": false,
-      "차단사유": [
-        "미래성장모형 비대상 업종"
-      ],
+      "사용가능": true,
+      "차단사유": [],
       "선정근거": [
         "매출·영업이익·순이익 동반 구조적 가속",
         "최근 분기 영업이익 고성장",
         "향후이익 방향 대용지표 강세"
       ],
-      "가치": 0.0,
-      "가중치": 0.0,
-      "품질": 0
+      "FY3성장률": 18.0,
+      "FY4성장률": 12.0,
+      "FY3EPS": 7082.014842510697,
+      "FY4EPS": 7931.856623611981,
+      "출구PER": 22.032462884483525,
+      "할인율": 10.3,
+      "할인기간연수": 3.0,
+      "원시가치": 130230.0973363482,
+      "가치상한": 185821.7360793126,
+      "상한적용": false,
+      "가치": 130230.0973363482,
+      "가중치": 0.1548,
+      "품질": 86,
+      "현재가미사용": true
     },
     "복합기업대용가치합산": 0.0,
     "순현금주당가치": 5647.26,
-    "재무적정가": 66894.53,
-    "기본적정가": 66894.53,
-    "보수적적정가": 60350.31,
-    "성장적정가": 80572.67,
-    "현재가대비": -52.82,
-    "판단": "강한 고평가",
-    "가치평가산업코드": "materials",
-    "가치평가산업프로필": "화학·철강·소재 사이클",
+    "기존V4재무적정가": 108776.81,
+    "현재재무기초가치": 91684.0,
+    "미래증분가치": 38546.1,
+    "펀더멘털적정가": 130230.1,
+    "적응형가치적용": true,
+    "적응형가치모형": {
+      "버전": "adaptive-fundamental-v1.0.0",
+      "현재가미사용": true,
+      "적용가능": true,
+      "현재재무기초가치": 91683.99541238307,
+      "미래총가치": 130230.0973363482,
+      "미래증분가치": 38546.101923965136,
+      "펀더멘털적정가": 130230.0973363482,
+      "현재기준PER": 16.96187014966272,
+      "현재EPS앵커": 4632.082113306759,
+      "이익급회복괴리": false,
+      "분기런레이트대정상화배수": 0.9372978695360794,
+      "현재모형분산배수": 1.5591034938234003,
+      "품질": 90,
+      "근거": [
+        "매출·영업이익·순이익 동반 가속",
+        "매출·영업이익·순이익 동반 구조적 가속",
+        "최근 분기 영업이익 고성장",
+        "향후이익 방향 대용지표 강세"
+      ],
+      "현재가치모형": [
+        {
+          "모형": "현재·정상화 이익가치",
+          "값": 78568.78,
+          "가중치": 0.3
+        },
+        {
+          "모형": "순자산 기반가치",
+          "값": 122496.85,
+          "가중치": 0.24
+        },
+        {
+          "모형": "잔여이익 현재가치",
+          "값": 80175.38,
+          "가중치": 0.1
+        },
+        {
+          "모형": "정상화 FCF 가치",
+          "값": 80353.86,
+          "가중치": 0.2
+        },
+        {
+          "모형": "현재 그레이엄 결합가치",
+          "값": 91411.3,
+          "가중치": 0.16
+        }
+      ]
+    },
+    "재무적정가": 130230.1,
+    "기본적정가": 130230.1,
+    "보수적적정가": 98134.49,
+    "성장적정가": 140648.51,
+    "현재가대비": -2.67,
+    "판단": "적정",
+    "가치평가산업코드": "beauty_consumer",
+    "가치평가산업프로필": "화장품·생활용품 브랜드 소비재",
     "복합기업대용모형": false,
+    "복합기업대용모형최종반영": null,
     "진짜SOTP자료확보": null,
     "산업분류출처": "OpenDART 기업개황 업종코드 세분류",
     "OpenDART업종코드": "20423",
@@ -3130,68 +3199,75 @@
     "실적전환방향": "실적 급상승 전환",
     "실적전환강도": 117.49,
     "구조적실적가속": true,
-    "가치평가국면": "일반 가치평가",
+    "가치평가국면": "현재재무+미래증분 적응형",
     "이익저점보정": false,
-    "자산대비이익가치배수": 0.844,
-    "그레이엄대비이익가치배수": 1.521,
+    "자산대비이익가치배수": 1.121,
+    "그레이엄대비이익가치배수": 0.898,
     "분기매출성장률": 17.0,
     "분기영업이익성장률": 62.77,
     "분기순이익성장률": 134.72,
     "데이터신뢰도": 91,
-    "모형신뢰도": 75,
+    "모형신뢰도": 81,
     "가치신뢰도": 84,
     "가치신뢰도등급": "B",
     "가치신뢰도정의": "자료완전성과 모형합의도이며 실제 적중률이 아님",
-    "모형분산배수": 1.803,
-    "전체모형분산배수": 1.803,
+    "모형분산배수": 1.624,
+    "전체모형분산배수": 1.624,
     "모형상세": [
       {
         "모형": "선행·정상화 이익가치",
-        "값": 64410.57,
+        "값": 109306.9,
         "기본가중치": 0.34,
         "역할": "기준",
         "기준가반영": true
       },
       {
         "모형": "PBR 자산가치",
-        "값": 54347.78,
-        "기본가중치": 0.27,
+        "값": 122496.85,
+        "기본가중치": 0.26,
         "역할": "기준",
         "기준가반영": true
       },
       {
         "모형": "잔여이익가치",
         "값": 80175.38,
-        "기본가중치": 0.22,
+        "기본가중치": 0.18,
         "역할": "기준",
         "기준가반영": true
       },
       {
         "모형": "실적전환 가치",
-        "값": 69033.27,
-        "기본가중치": 0.17,
+        "값": 112844.69,
+        "기본가중치": 0.22,
         "역할": "기준",
         "기준가반영": true
       },
       {
         "모형": "FCF 가치",
-        "값": 59695.96,
+        "값": 98123.72,
         "기본가중치": 0.1,
         "역할": "기준",
         "기준가반영": true
       },
       {
         "모형": "그레이엄 결합가치",
-        "값": 97964.43,
+        "값": 98138.08,
         "기본가중치": 0.08,
         "역할": "보조",
         "기준가반영": true
       },
       {
         "모형": "정상화 회복가치",
-        "값": 61004.66,
+        "값": 102847.81,
         "기본가중치": 0.08,
         "역할": "보조",
+        "기준가반영": true
+      },
+      {
+        "모형": "미래 성장가치",
+        "값": 130230.1,
+        "기본가중치": 0.1548,
+        "역할": "성장",
         "기준가반영": true
       }
     ],
@@ -3206,18 +3282,170 @@
       "DART 누적 분기자료를 단독 분기로 변환한 뒤 최근 4개 분기 TTM을 산출했습니다.",
       "KIS EPS·BPS·PER·PBR은 적정가 산식과 주식수 추정에서 제외하고 시장 진단에만 사용했습니다.",
       "현재가는 적정가 산식에 넣지 않고 계산 완료 후 괴리 검증에만 사용했습니다.",
-      "화학·철강·소재 사이클 업종 프로필을 적용했습니다.",
+      "화장품·생활용품 브랜드 소비재 업종 프로필을 적용했습니다.",
+      "구조적 성장 증거가 확인된 경우에만 FY3·FY4 성장률을 감쇠 적용하고 업종별 EPS·가치 상한 및 할인율을 거친 미래 성장가치를 일부 반영했습니다.",
+      "현재 재무기초가치와 미래 총가치를 분리한 뒤 미래 총가치가 현재 재무기초가치를 초과하는 부분만 미래 증분가치로 더해 이중계산을 방지했습니다.",
       "정식 보고서보다 최신인 OpenDART 잠정실적을 매출·영업이익·순이익 TTM에 반영했으며 현금흐름은 최근 정식보고서를 유지했습니다."
     ]
+  },
+  "전략미래가치": {
+    "엔진버전": "0.3.1-strategic-forward-doublecount-sotp-guard",
+    "모드": "shadow",
+    "현재가미사용": true,
+    "시가총액미사용": true,
+    "시장PER_PBR미사용": true,
+    "기초가치": 91684.0,
+    "기초가치출처": "현재재무기초가치",
+    "미래이중계산차단": true,
+    "미래증분추가허용": true,
+    "SOTP": {
+      "사용가능": false,
+      "검증상태": "차단",
+      "주당SOTP기초가치": 0.0,
+      "차단사유": [
+        "SOTP 감사상태 미검증",
+        "SOTP 기준일 없음",
+        "SOTP 통화 기준 없음",
+        "희석주식수 미확보",
+        "유효 사업부 2개 미만"
+      ],
+      "근거": [
+        "감사 가능한 2개 이상 사업부 원천자료가 없어 SOTP 비적용"
+      ]
+    },
+    "기존미래총가치": 130230.1,
+    "원시미래총가치": 128621.83,
+    "컨센서스미래가치보정": {
+      "적용": true,
+      "외부대내부FY1EPS배수": 0.9846,
+      "상하한적용배수": 0.9846,
+      "품질전달률": 0.8,
+      "최종미래가치보정배수": 0.9877,
+      "목표주가미사용": true
+    },
+    "원시미래증분가치": 36937.83,
+    "미래가치인정률": 40.0,
+    "거시조정배수": 1.0,
+    "미래증분가치": 14775.13,
+    "전략펀더멘털적정가": 106459.13,
+    "미래성장가치표시": "미래성장가치 반영 보통",
+    "미래성장가치표시문구": "미래성장가치 반영 보통 · +14,775원",
+    "근거신뢰도": 62.0,
+    "근거축": {
+      "기업실적가속": {
+        "점수": 76.38,
+        "품질": 86.35,
+        "사용가능": true,
+        "근거": [
+          "매출·영업이익·순이익의 구조적 가속 감지",
+          "최근 분기 영업이익 고성장",
+          "최근 분기 매출 성장 동반",
+          "FY1 이익 성장방향 강함",
+          "DART 기반 향후이익 대용지표 긍정"
+        ],
+        "입력": {
+          "분기매출YoY": 17.0,
+          "분기영업이익YoY": 62.77,
+          "분기순이익YoY": 134.72,
+          "FY1성장률": 17.18,
+          "구조적실적가속": true,
+          "실적전환강도": 117.49,
+          "향후이익대용신호": 40.29
+        }
+      },
+      "산업현재미래": {
+        "점수": 0.0,
+        "품질": 0.0,
+        "사용가능": false,
+        "근거": [
+          "검증 가능한 산업 선행/사이클 자료 없음"
+        ]
+      },
+      "시장기대_애널리스트": {
+        "점수": 32.8,
+        "품질": 100.0,
+        "사용가능": true,
+        "근거": [
+          "다수 추정기관의 실적 컨센서스 확보",
+          "애널리스트 투자의견 기대 강함"
+        ],
+        "방식": "current_consensus_anchor",
+        "입력": {
+          "애널리스트수": 17,
+          "투자의견": 3.9,
+          "외부FY1EPS": 5399.0,
+          "내부FY1EPS": 5483.65,
+          "EPS전망격차율": -1.54,
+          "목표암시PER_진단전용": 32.83,
+          "목표주가직접가치미사용": true
+        }
+      },
+      "글로벌거시": {
+        "점수": 5.6,
+        "품질": 75.0,
+        "사용가능": false,
+        "조정배수": 1.0,
+        "근거": [
+          "거시 통합판정 품질게이트 미통과 → 가치조정 미적용"
+        ],
+        "국면": "혼합·중립",
+        "미래국면": "중립적 투자환경"
+      }
+    },
+    "근거": [
+      "TTM·정상화·자산·FCF 기반 현재가치와 미래증분을 분리",
+      "매출·영업이익·순이익의 구조적 가속 감지",
+      "최근 분기 영업이익 고성장",
+      "최근 분기 매출 성장 동반",
+      "FY1 이익 성장방향 강함",
+      "DART 기반 향후이익 대용지표 긍정",
+      "검증 가능한 산업 선행/사이클 자료 없음",
+      "다수 추정기관의 실적 컨센서스 확보",
+      "애널리스트 투자의견 기대 강함",
+      "거시 통합판정 품질게이트 미통과 → 가치조정 미적용",
+      "컨센서스는 있으나 산업근거 부족 → 미래가치 최대 40% 인정"
+    ],
+    "정책": {
+      "시장기대없음": "애널리스트 실적자료가 없으면 임의 목표주가/시장가로 대체하지 않음",
+      "시장기대있음": "외부 FY1 EPS/추정기관수/투자의견은 미래가치 근거로 사용하되 목표주가는 적정가에 직접 합산하지 않음",
+      "산업자료없음": "산업 선행자료가 없으면 산업 프리미엄 0점",
+      "산업시장기대모두부족": "미래증분가치 최대 12% 인정",
+      "산업만확인": "컨센서스 없으면 미래증분가치 최대 45% 인정",
+      "거시환경": "품질게이트 통과시에만 0.80~1.10 범위의 실현확률 조정; 새 가치를 만들지 않음",
+      "SOTP": "verified/audited 원천·기준일·통화·2개 이상 사업부 EV·희석주식수·순부채 원천이 모두 확인될 때만 진짜 SOTP 사용",
+      "미래이중계산": "현재-only 기초가치가 없으면 기존 혼합 재무적정가에 미래증분을 추가하지 않음"
+    }
+  },
+  "애널리스트컨센서스": {
+    "사용가능": true,
+    "투자의견": 3.9,
+    "목표주가": 177235.0,
+    "FY1_EPS": 5399.0,
+    "PER": 26.3,
+    "추정기관수": 17,
+    "데이터품질": 100.0,
+    "파싱상태": "정상",
+    "수집상태": "정상",
+    "출처": "FnGuide 공개 Snapshot",
+    "종목코드": "090430",
+    "현재가미사용": true,
+    "목표주가직접가치미사용": true
+  },
+  "전략거시원천": {
+    "수집상태": "정상",
+    "출처": "https://raw.githubusercontent.com/12xx37r-ui/global-macro-data-collector/main/public/data/cards_8_12_bundle.json",
+    "캐시": "network_refresh",
+    "캐시나이초": "",
+    "오류": ""
   },
   "주가예측": {
     "엔진버전": "6.8.0-valuation-contract-v4",
     "단기1~5일": {
       "기간": "1~5일",
-      "점수": 62,
-      "상승확률": 54,
+      "점수": 59,
+      "상승확률": 53,
       "판정": "상승 우위",
-      "신뢰도": 42,
+      "신뢰도": 40,
       "신뢰도등급": "낮음",
       "요소별평가": [
         {
@@ -3243,32 +3471,32 @@
         {
           "요소": "기술·거래량",
           "가중치": 20,
-          "신호": 76.57,
-          "신호판정": "매우 긍정",
+          "신호": 52.46,
+          "신호판정": "긍정",
           "데이터품질": 100.0,
-          "점수기여": 15.31,
+          "점수기여": 10.49,
           "출처": "KIS 일봉+현재가",
-          "설명": "5일수익률 9.08%, RSI14 73.97"
+          "설명": "5일수익률 3.08%, RSI14 62.43"
         },
         {
           "요소": "환율·글로벌",
           "가중치": 15,
-          "신호": 39.87,
+          "신호": 37.79,
           "신호판정": "긍정",
-          "데이터품질": 100.0,
-          "점수기여": 5.98,
+          "데이터품질": 88.0,
+          "점수기여": 5.67,
           "출처": "Yahoo 글로벌시장 분석",
-          "설명": "분석상태 정상, 신호 39.87"
+          "설명": "분석상태 정상, 신호 37.79"
         },
         {
           "요소": "뉴스·공시",
           "가중치": 10,
-          "신호": 29.37,
+          "신호": 27.82,
           "신호판정": "긍정",
           "데이터품질": 69.9,
-          "점수기여": 2.94,
+          "점수기여": 2.78,
           "출처": "OpenDART 최근 공시 + Google News RSS",
-          "설명": "분석상태 정상, 신호 29.37"
+          "설명": "분석상태 정상, 신호 27.82"
         }
       ],
       "미수집요소": [
@@ -3279,17 +3507,17 @@
         "뉴스·공시"
       ],
       "근거": [
-        "일봉·당일 가격 모멘텀이 매우 강함",
+        "일봉·당일 가격 흐름이 상승",
         "환율·미국시장·반도체·VIX 환경이 우호적",
         "최근 공시 이벤트가 긍정적"
       ]
     },
     "중기1~8주": {
       "기간": "1~8주",
-      "점수": 60,
+      "점수": 59,
       "상승확률": 54,
       "판정": "상승 우위",
-      "신뢰도": 54,
+      "신뢰도": 53,
       "신뢰도등급": "낮음",
       "요소별평가": [
         {
@@ -3325,32 +3553,32 @@
         {
           "요소": "환율·금리·거시",
           "가중치": 15,
-          "신호": 23.02,
+          "신호": 21.16,
           "신호판정": "긍정",
-          "데이터품질": 100.0,
-          "점수기여": 3.45,
+          "데이터품질": 88.8,
+          "점수기여": 3.17,
           "출처": "Yahoo 환율·미국금리·글로벌시장",
-          "설명": "분석상태 정상, 신호 23.02"
+          "설명": "분석상태 정상, 신호 21.16"
         },
         {
           "요소": "가격추세",
           "가중치": 10,
-          "신호": 93.15,
+          "신호": 79.86,
           "신호판정": "매우 긍정",
           "데이터품질": 100.0,
-          "점수기여": 9.32,
+          "점수기여": 7.99,
           "출처": "KIS 일봉",
-          "설명": "20일수익률 21.93%, 60일수익률 15.10%"
+          "설명": "20일수익률 8.69%, 60일수익률 11.04%"
         },
         {
           "요소": "뉴스·공시",
           "가중치": 10,
-          "신호": 29.37,
+          "신호": 27.82,
           "신호판정": "긍정",
           "데이터품질": 69.9,
-          "점수기여": 2.94,
+          "점수기여": 2.78,
           "출처": "OpenDART 최근 공시 + Google News RSS",
-          "설명": "분석상태 정상, 신호 29.37"
+          "설명": "분석상태 정상, 신호 27.82"
         }
       ],
       "미수집요소": [
@@ -3368,9 +3596,9 @@
     },
     "장기6~18개월": {
       "기간": "6~18개월",
-      "점수": 52,
-      "상승확률": 51,
-      "판정": "중립",
+      "점수": 61,
+      "상승확률": 56,
+      "판정": "상승 우위",
       "신뢰도": 63,
       "신뢰도등급": "보통",
       "요소별평가": [
@@ -3397,12 +3625,12 @@
         {
           "요소": "가치평가·안전마진",
           "가중치": 20,
-          "신호": -100.0,
-          "신호판정": "매우 부정",
+          "신호": -6.68,
+          "신호판정": "중립",
           "데이터품질": 100.0,
-          "점수기여": -20.0,
+          "점수기여": -1.33,
           "출처": "내부 가치평가",
-          "설명": "현재가 대비 -52.82%, 판단 강한 고평가"
+          "설명": "현재가 대비 -2.67%, 판단 적정"
         },
         {
           "요소": "경쟁력·시장점유율",
@@ -3442,7 +3670,6 @@
         "주주환원·지배구조"
       ],
       "근거": [
-        "현재 가격의 고평가 부담이 큼",
         "현금흐름과 재무안전성이 우수",
         "배당·자기주식 기준 주주환원이 우호적"
       ]
@@ -3478,7 +3705,7 @@
     "스키마버전": "2.0",
     "엔진버전": "6.8.0-valuation-contract-v4",
     "종목코드": "090430",
-    "생성시각": "2026-08-08T08:11:12.724093",
+    "생성시각": "2026-08-10T01:58:19.375189",
     "연결상태": "부분",
     "기술분석": {
       "수집상태": "정상",
@@ -3486,46 +3713,46 @@
       "4시간봉": {
         "사용가능": true,
         "available": true,
-        "점수": 87.13,
-        "score": 87.13,
+        "점수": 86.46,
+        "score": 86.46,
         "판정": "강한 상승",
         "trend": "강한 상승",
-        "RSI14": 85.03,
-        "rsi14": 85.03,
-        "빠른이동평균": 137340.0,
-        "maFast": 137340.0,
-        "중간이동평균": 129105.0,
-        "maMedium": 129105.0,
-        "장기이동평균": 121695.0,
-        "maLong": 121695.0,
-        "단기모멘텀": 0.070997,
-        "momentumFast": 0.070997,
-        "중기모멘텀": 0.195616,
-        "momentumMedium": 0.195616,
-        "관측수": 240,
-        "observations": 240,
+        "RSI14": 84.83,
+        "rsi14": 84.83,
+        "빠른이동평균": 137260.0,
+        "maFast": 137260.0,
+        "중간이동평균": 129085.0,
+        "maMedium": 129085.0,
+        "장기이동평균": 121688.33,
+        "maLong": 121688.33,
+        "단기모멘텀": 0.067976,
+        "momentumFast": 0.067976,
+        "중기모멘텀": 0.192243,
+        "momentumMedium": 0.192243,
+        "관측수": 238,
+        "observations": 238,
         "자료신뢰도": 95.0,
         "confidence": 95.0
       },
       "일봉": {
         "사용가능": true,
         "available": true,
-        "점수": 96.89,
-        "score": 96.89,
+        "점수": 63.52,
+        "score": 63.52,
         "판정": "강한 상승",
         "trend": "강한 상승",
-        "RSI14": 73.97,
-        "rsi14": 73.97,
-        "빠른이동평균": 134520.0,
-        "maFast": 134520.0,
-        "중간이동평균": 125080.0,
-        "maMedium": 125080.0,
-        "장기이동평균": 116981.67,
-        "maLong": 116981.67,
-        "단기모멘텀": 0.090769,
-        "momentumFast": 0.090769,
-        "중기모멘텀": 0.219261,
-        "momentumMedium": 0.219261,
+        "RSI14": 62.43,
+        "rsi14": 62.43,
+        "빠른이동평균": 135320.0,
+        "maFast": 135320.0,
+        "중간이동평균": 125615.0,
+        "maMedium": 125615.0,
+        "장기이동평균": 117203.33,
+        "maLong": 117203.33,
+        "단기모멘텀": 0.030817,
+        "momentumFast": 0.030817,
+        "중기모멘텀": 0.086921,
+        "momentumMedium": 0.086921,
         "관측수": 1219,
         "observations": 1219,
         "자료신뢰도": 95.0,
@@ -3534,46 +3761,46 @@
       "주봉": {
         "사용가능": true,
         "available": true,
-        "점수": 85.62,
-        "score": 85.62,
+        "점수": 73.77,
+        "score": 73.77,
         "판정": "강한 상승",
         "trend": "강한 상승",
-        "RSI14": 53.1,
-        "rsi14": 53.1,
-        "빠른이동평균": 128550.0,
-        "maFast": 128550.0,
-        "중간이동평균": 118207.69,
-        "maMedium": 118207.69,
-        "장기이동평균": 129134.62,
-        "maLong": 129134.62,
-        "단기모멘텀": 0.151909,
-        "momentumFast": 0.151909,
-        "중기모멘텀": 0.095827,
-        "momentumMedium": 0.095827,
-        "관측수": 261,
-        "observations": 261,
+        "RSI14": 52.06,
+        "rsi14": 52.06,
+        "빠른이동평균": 130900.0,
+        "maFast": 130900.0,
+        "중간이동평균": 119115.38,
+        "maMedium": 119115.38,
+        "장기이동평균": 128088.46,
+        "maLong": 128088.46,
+        "단기모멘텀": 0.075563,
+        "momentumFast": 0.075563,
+        "중기모멘텀": 0.096721,
+        "momentumMedium": 0.096721,
+        "관측수": 262,
+        "observations": 262,
         "자료신뢰도": 95.0,
         "confidence": 95.0
       },
       "월봉": {
         "사용가능": true,
         "available": true,
-        "점수": 80.08,
-        "score": 80.08,
+        "점수": 74.1,
+        "score": 74.1,
         "판정": "강한 상승",
         "trend": "강한 상승",
-        "RSI14": 51.8,
-        "rsi14": 51.8,
-        "빠른이동평균": 125833.33,
-        "maFast": 125833.33,
-        "중간이동평균": 128525.0,
-        "maMedium": 128525.0,
-        "장기이동평균": 125570.83,
-        "maLong": 125570.83,
-        "단기모멘텀": 0.231972,
-        "momentumFast": 0.231972,
-        "중기모멘텀": 0.17872,
-        "momentumMedium": 0.17872,
+        "RSI14": 48.92,
+        "rsi14": 48.92,
+        "빠른이동평균": 123166.67,
+        "maFast": 123166.67,
+        "중간이동평균": 127858.33,
+        "maMedium": 127858.33,
+        "장기이동평균": 125237.5,
+        "maLong": 125237.5,
+        "단기모멘텀": 0.162467,
+        "momentumFast": 0.162467,
+        "중기모멘텀": 0.112219,
+        "momentumMedium": 0.112219,
         "관측수": 61,
         "observations": 61,
         "자료신뢰도": 95.0,
@@ -3630,7 +3857,8 @@
               "기존거래량급증배수": 1.5,
               "뚜렷한거래량배수": 2.0,
               "강한거래량확증배수": 4.0,
-              "거래량확인창봉": 4
+              "거래량확인창봉": 4,
+              "거래량비교방식": "같은 세션 슬롯 20봉 평균 대비"
             }
           },
           "일봉": {
@@ -3676,7 +3904,8 @@
               "기존거래량급증배수": 1.5,
               "뚜렷한거래량배수": 2.0,
               "강한거래량확증배수": 4.0,
-              "거래량확인창봉": 4
+              "거래량확인창봉": 4,
+              "거래량비교방식": "최근 20일 평균 대비"
             }
           },
           "주봉": {
@@ -3722,7 +3951,8 @@
               "기존거래량급증배수": 1.5,
               "뚜렷한거래량배수": 2.0,
               "강한거래량확증배수": 4.0,
-              "거래량확인창봉": 3
+              "거래량확인창봉": 3,
+              "거래량비교방식": "최근 20주 일평균 거래량 대비"
             }
           },
           "월봉": {
@@ -3768,7 +3998,8 @@
               "기존거래량급증배수": 1.5,
               "뚜렷한거래량배수": 2.0,
               "강한거래량확증배수": 4.0,
-              "거래량확인창봉": 2
+              "거래량확인창봉": 2,
+              "거래량비교방식": "최근 20개월 일평균 거래량 대비"
             }
           }
         },
@@ -3781,11 +4012,11 @@
     "예측": {
       "단기": {
         "기간": "1~5일",
-        "점수": 62,
-        "상승확률": 54,
+        "점수": 59,
+        "상승확률": 53,
         "판정": "상승 우위",
-        "자료신뢰도": 42,
-        "신뢰도": 42,
+        "자료신뢰도": 40,
+        "신뢰도": 40,
         "자료신뢰도등급": "낮음",
         "신뢰도등급": "낮음",
         "요소별평가": [
@@ -3819,40 +4050,40 @@
             "요소": "기술·거래량",
             "사용가능": true,
             "가중치": 20.0,
-            "신호": 76.57,
-            "판정": "매우 긍정",
-            "신호판정": "매우 긍정",
+            "신호": 52.46,
+            "판정": "긍정",
+            "신호판정": "긍정",
             "데이터상태": "정상",
             "데이터품질": 100.0,
-            "점수기여": 15.31,
+            "점수기여": 10.49,
             "출처": "KIS 일봉+현재가",
-            "설명": "5일수익률 9.08%, RSI14 73.97"
+            "설명": "5일수익률 3.08%, RSI14 62.43"
           },
           {
             "요소": "환율·글로벌",
             "사용가능": true,
             "가중치": 15.0,
-            "신호": 39.87,
+            "신호": 37.79,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
-            "데이터품질": 100.0,
-            "점수기여": 5.98,
+            "데이터품질": 88.0,
+            "점수기여": 5.67,
             "출처": "Yahoo 글로벌시장 분석",
-            "설명": "분석상태 정상, 신호 39.87"
+            "설명": "분석상태 정상, 신호 37.79"
           },
           {
             "요소": "뉴스·공시",
             "사용가능": true,
             "가중치": 10.0,
-            "신호": 29.37,
+            "신호": 27.82,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
             "데이터품질": 69.9,
-            "점수기여": 2.94,
+            "점수기여": 2.78,
             "출처": "OpenDART 최근 공시 + Google News RSS",
-            "설명": "분석상태 정상, 신호 29.37"
+            "설명": "분석상태 정상, 신호 27.82"
           }
         ],
         "미수집요소": [
@@ -3862,11 +4093,11 @@
       },
       "중기": {
         "기간": "1~8주",
-        "점수": 60,
+        "점수": 59,
         "상승확률": 54,
         "판정": "상승 우위",
-        "자료신뢰도": 54,
-        "신뢰도": 54,
+        "자료신뢰도": 53,
+        "신뢰도": 53,
         "자료신뢰도등급": "낮음",
         "신뢰도등급": "낮음",
         "요소별평가": [
@@ -3913,40 +4144,40 @@
             "요소": "환율·금리·거시",
             "사용가능": true,
             "가중치": 15.0,
-            "신호": 23.02,
+            "신호": 21.16,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
-            "데이터품질": 100.0,
-            "점수기여": 3.45,
+            "데이터품질": 88.8,
+            "점수기여": 3.17,
             "출처": "Yahoo 환율·미국금리·글로벌시장",
-            "설명": "분석상태 정상, 신호 23.02"
+            "설명": "분석상태 정상, 신호 21.16"
           },
           {
             "요소": "가격추세",
             "사용가능": true,
             "가중치": 10.0,
-            "신호": 93.15,
+            "신호": 79.86,
             "판정": "매우 긍정",
             "신호판정": "매우 긍정",
             "데이터상태": "정상",
             "데이터품질": 100.0,
-            "점수기여": 9.32,
+            "점수기여": 7.99,
             "출처": "KIS 일봉",
-            "설명": "20일수익률 21.93%, 60일수익률 15.10%"
+            "설명": "20일수익률 8.69%, 60일수익률 11.04%"
           },
           {
             "요소": "뉴스·공시",
             "사용가능": true,
             "가중치": 10.0,
-            "신호": 29.37,
+            "신호": 27.82,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
             "데이터품질": 69.9,
-            "점수기여": 2.94,
+            "점수기여": 2.78,
             "출처": "OpenDART 최근 공시 + Google News RSS",
-            "설명": "분석상태 정상, 신호 29.37"
+            "설명": "분석상태 정상, 신호 27.82"
           }
         ],
         "미수집요소": [
@@ -3956,9 +4187,9 @@
       },
       "장기": {
         "기간": "6~18개월",
-        "점수": 52,
-        "상승확률": 51,
-        "판정": "중립",
+        "점수": 61,
+        "상승확률": 56,
+        "판정": "상승 우위",
         "자료신뢰도": 63,
         "신뢰도": 63,
         "자료신뢰도등급": "보통",
@@ -3994,14 +4225,14 @@
             "요소": "가치평가·안전마진",
             "사용가능": true,
             "가중치": 20.0,
-            "신호": -100.0,
-            "판정": "매우 부정",
-            "신호판정": "매우 부정",
+            "신호": -6.68,
+            "판정": "중립",
+            "신호판정": "중립",
             "데이터상태": "정상",
             "데이터품질": 100.0,
-            "점수기여": -20.0,
+            "점수기여": -1.33,
             "출처": "내부 가치평가",
-            "설명": "현재가 대비 -52.82%, 판단 강한 고평가"
+            "설명": "현재가 대비 -2.67%, 판단 적정"
           },
           {
             "요소": "경쟁력·시장점유율",
@@ -4051,8 +4282,8 @@
     "요소상태": {
       "거시환경": {
         "사용가능": true,
-        "점수": 23.02,
-        "데이터품질": 100.0,
+        "점수": 21.16,
+        "데이터품질": 88.8,
         "판정": "긍정",
         "출처": "Yahoo Finance Chart API"
       },
@@ -4072,7 +4303,7 @@
       },
       "뉴스": {
         "사용가능": true,
-        "점수": 44.03,
+        "점수": 41.3,
         "데이터품질": 88.0,
         "판정": "긍정",
         "출처": "Google News RSS"
