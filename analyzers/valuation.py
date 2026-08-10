@@ -376,6 +376,22 @@ INDUSTRY_PROFILE_VERSION = "3.0.0"
 DATA_QUALIFICATION_VERSION = "1.1.0"
 VALUATION_MODEL_REVISION = "future-growth-v1.1.0-price-independent"
 FUTURE_GROWTH_MODEL_VERSION = "1.0.0"
+ASSET_CYCLE_ANCHOR_VERSION = "1.0.0"
+
+# 장부가치·잔여이익이 의미 있는 자산집약 업종에서 일시적인 이익 훼손이
+# PER 계열 가치만 과도하게 낮출 때 사용하는 가격독립 보정 대상.
+# 종목명이나 현재가를 기준으로 예외처리하지 않는다.
+ASSET_CYCLE_PROFILES = {
+    "construction",
+    "automotive",
+    "materials",
+    "industrial",
+    "transportation",
+    "energy",
+    "utilities",
+    "real_estate",
+    "holding_company",
+}
 
 # 현재가를 사용하지 않는 FY3~FY4 미래이익 현재가치 모형.
 # 업종별 상한과 감쇠율을 두어 한 분기 급증을 장기간 직선 외삽하지 않는다.
@@ -1107,10 +1123,48 @@ def build_fundamental_value_decomposition(
     future_increment = max(0.0, future_total - current_base) if current_base > 0 else 0.0
     fundamental_value = current_base + future_increment if current_base > 0 else 0.0
 
+    values = [safe_float(row.get("value")) for row in current_models if safe_float(row.get("value")) > 0]
+    current_dispersion = (
+        max(values) / min(values)
+        if len(values) >= 2 and min(values) > 0
+        else 0.0
+    )
+
+    # 자산집약·사이클 업종은 한 시점의 낮은 이익가치가 순자산·잔여이익·
+    # 그레이엄 가치와 크게 어긋날 수 있다. 이때 현재가에 맞추지 않고, 이미
+    # 수집된 DART 기반 독립 가치앵커가 충분히 합의할 때만 현재재무기초가치를
+    # 승격한다. 손실기업처럼 자산가치 하나만 남은 경우와 모형분산이 지나치게
+    # 큰 경우는 자동 차단한다.
+    asset_anchor_values = [
+        value
+        for value in (pbr_value, residual_value, current_graham_value, current_fcf_value)
+        if safe_float(value) > 0
+    ]
+    asset_anchor = median(asset_anchor_values) or 0.0
+    asset_to_earnings = (
+        asset_anchor / current_earnings_value
+        if asset_anchor > 0 and current_earnings_value > 0
+        else 0.0
+    )
+    asset_cycle_candidate = bool(
+        profile_code in ASSET_CYCLE_PROFILES
+        and ttm_eps > 0
+        and bps > 0
+        and len(current_models) >= 3
+        and len(asset_anchor_values) >= 2
+        and current_earnings_value > 0
+    )
+    asset_cycle_dislocation = bool(
+        asset_cycle_candidate
+        and asset_to_earnings >= 2.40
+        and 0.0 < current_dispersion <= 6.0
+    )
+
     adaptive_eligible = bool(
         current_base > 0
         and (
             profile_code == "beauty_consumer"
+            or asset_cycle_dislocation
             or (
                 profile_code in {"electronic_components"}
                 and profile.get("growth") is True
@@ -1121,13 +1175,9 @@ def build_fundamental_value_decomposition(
         )
     )
 
-    values = [safe_float(row.get("value")) for row in current_models if safe_float(row.get("value")) > 0]
-    current_dispersion = (
-        max(values) / min(values)
-        if len(values) >= 2 and min(values) > 0
-        else 0.0
-    )
     evidence = []
+    if asset_cycle_dislocation:
+        evidence.append("자산집약 업종에서 순자산·잔여이익 등 독립 가치앵커가 현재 이익가치보다 유의하게 높음")
     if earnings_dislocation:
         evidence.append("최근 분기 이익 급회복과 과거 정상화이익의 큰 괴리를 감지")
     if structural_acceleration:
@@ -1162,6 +1212,12 @@ def build_fundamental_value_decomposition(
         "이익급회복괴리": earnings_dislocation,
         "분기런레이트대정상화배수": run_rate_ratio,
         "현재모형분산배수": current_dispersion,
+        "자산사이클보정버전": ASSET_CYCLE_ANCHOR_VERSION,
+        "자산사이클보정후보": asset_cycle_candidate,
+        "자산사이클보정적용조건충족": asset_cycle_dislocation,
+        "자산앵커": round(asset_anchor, 2) if asset_anchor > 0 else 0.0,
+        "자산앵커개수": len(asset_anchor_values),
+        "자산앵커대현재이익가치배수": round(asset_to_earnings, 3) if asset_to_earnings > 0 else 0.0,
         "품질": quality,
         "근거": list(dict.fromkeys(evidence)),
         "현재가치모형": [
@@ -1951,10 +2007,18 @@ def calculate_value(
         future_growth_model=future_growth_model,
         cost_of_equity=cost_of_equity,
     )
+    asset_cycle_gate = bool(
+        adaptive_value.get("자산사이클보정적용조건충족") is True
+    )
     adaptive_applied = bool(
         adaptive_value.get("적용가능") is True
         and safe_float(adaptive_value.get("펀더멘털적정가")) > 0
         and safe_float(adaptive_value.get("품질")) >= 60
+        and (
+            not asset_cycle_gate
+            or safe_float(adaptive_value.get("현재재무기초가치"))
+            >= legacy_basic * 1.15
+        )
     )
     if adaptive_applied:
         basic = safe_float(adaptive_value.get("펀더멘털적정가"))
@@ -2134,6 +2198,8 @@ def calculate_value(
         notes.append("구조적 성장 증거가 확인된 경우에만 FY3·FY4 성장률을 감쇠 적용하고 업종별 EPS·가치 상한 및 할인율을 거친 미래 성장가치를 일부 반영했습니다.")
     if adaptive_applied:
         notes.append("현재 재무기초가치와 미래 총가치를 분리한 뒤 미래 총가치가 현재 재무기초가치를 초과하는 부분만 미래 증분가치로 더해 이중계산을 방지했습니다.")
+    if adaptive_applied and adaptive_value.get("자산사이클보정적용조건충족") is True:
+        notes.append("자산집약·사이클 업종의 일시적 이익 훼손으로 PER 계열 가치가 독립 자산가치보다 과도하게 낮아지는 경우, 현재가를 사용하지 않고 순자산·잔여이익·그레이엄·FCF 가치의 합의도를 이용해 현재재무기초가치를 승격했습니다.")
     if ttm.get("잠정실적반영"):
         notes.append("정식 보고서보다 최신인 OpenDART 잠정실적을 매출·영업이익·순이익 TTM에 반영했으며 현금흐름은 최근 정식보고서를 유지했습니다.")
     if data_qualification.get("정식보고서대체평가") is True:
@@ -2154,6 +2220,8 @@ def calculate_value(
             "주식수원칙": share_info.get("결정원칙", "현재가·시가총액 미사용"),
         },
         "미래성장모형버전": FUTURE_GROWTH_MODEL_VERSION,
+        "자산사이클보정버전": ASSET_CYCLE_ANCHOR_VERSION,
+        "자산사이클보정적용": bool(adaptive_applied and adaptive_value.get("자산사이클보정적용조건충족") is True),
         "산출상태": calculation_status,
         "최종값사용가능": final_available,
         "최종값출처": "Python 가치평가 계약 v4",
@@ -2231,7 +2299,8 @@ def calculate_value(
         "실적전환강도": round(transition_strength, 2),
         "구조적실적가속": structural_acceleration,
         "가치평가국면": (
-            "현재재무+미래증분 적응형" if adaptive_applied
+            "자산·사이클 현재가치 적응형" if adaptive_applied and adaptive_value.get("자산사이클보정적용조건충족") is True
+            else "현재재무+미래증분 적응형" if adaptive_applied
             else "이익저점·회복가치 혼합" if earnings_trough
             else "구조적 성장·미래이익 혼합" if future_growth_model.get("사용가능") is True
             else "일반 가치평가"
