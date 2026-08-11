@@ -241,7 +241,7 @@ VALUATION_PROFILES: Dict[str, Dict[str, Any]] = {
         "cyclical": True, "growth": False,
     },
     "media_entertainment": {
-        "label": "미디어·콘텐츠 성장형",
+        "label": "미디어·엔터테인먼트·콘텐츠 성장형",
         "base_per": 18.0, "per_min": 9.0, "per_max": 38.0,
         "base_pbr": 1.45, "pbr_min": 0.65, "pbr_max": 5.00,
         "weights": {"per": 0.40, "pbr": 0.20, "residual": 0.12, "transition": 0.28},
@@ -372,7 +372,7 @@ PROFILE_ALIASES = {
 
 VALUATION_CONTRACT_VERSION = "4.0"
 VALUATION_ENGINE_VERSION = "6.8.0-valuation-contract-v4"
-INDUSTRY_PROFILE_VERSION = "3.0.0"
+INDUSTRY_PROFILE_VERSION = "3.0.1"
 DATA_QUALIFICATION_VERSION = "1.1.0"
 VALUATION_MODEL_REVISION = "future-growth-v1.1.0-price-independent"
 FUTURE_GROWTH_MODEL_VERSION = "1.0.0"
