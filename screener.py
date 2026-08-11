@@ -9,7 +9,8 @@
 기능:
 - 여러 종목을 한 번의 실행에서 분석
 - 글로벌시장 데이터는 실행당 1회만 수집
-- 산업 데이터는 산업코드별 1회만 수집
+- 산업환경 bridge는 프로세스/디스크 캐시로 실행당 최대 1회 조회
+- bridge 사용불가 시에만 기존 산업 데이터는 산업코드별 1회 fallback 수집
 - 종목별 출력 JSON 생성
 - 종합순위·버핏순위 생성
 - 실제 저평가 종목만 저평가순위에 포함
@@ -40,6 +41,11 @@ from collectors.fundamentals import get_fundamentals_bundle
 from collectors.global_market import get_global_market_bundle
 from collectors.history import get_history_bundle
 from collectors.industry import get_industry_bundle
+from collectors.industry_environment import (
+    build_environment_replacement,
+    can_use_bridge_hint,
+    get_industry_environment,
+)
 from collectors.market import finalize_market_data, get_market_data
 from collectors.news import get_company_news
 from collectors.technical import get_stock_technical_bundle
@@ -587,10 +593,19 @@ def assign_ranks(
 
 def empty_industry_result(
     industry_code: str,
+    environment: Dict[str, Any] | None = None,
 ) -> Tuple[
     Dict[str, Any],
     Dict[str, Any],
+    Dict[str, Any],
 ]:
+    environment = environment if isinstance(environment, dict) else {
+        "수집상태": "미적용",
+        "사용가능": False,
+        "요청산업코드": industry_code,
+        "오류": "산업환경 미적용",
+        "HTTP호출수": 0,
+    }
     return (
         {
             "전체수집상태": "미적용",
@@ -598,13 +613,16 @@ def empty_industry_result(
             "산업명": "미분류",
             "자산": {},
             "수집오류": [],
+            "데이터출처": "",
         },
         {
             "분석상태": "미적용",
+            "산업명": "미분류",
             "중기산업선행": {},
             "장기산업사이클": {},
             "산업국면": "미분류",
         },
+        environment,
     )
 
 
@@ -617,6 +635,7 @@ def analyze_one_stock(
     industry_cache: Dict[
         str,
         Tuple[
+            Dict[str, Any],
             Dict[str, Any],
             Dict[str, Any],
         ],
@@ -789,19 +808,42 @@ def analyze_one_stock(
     )
 
     if industry_code not in industry_cache:
-        if industry_code not in LIVE_INDUSTRY_CODES:
-            industry_cache[
-                industry_code
-            ] = empty_industry_result(
-                industry_code
+        if can_use_bridge_hint(industry_code):
+            industry_environment = safe_execute(
+                "INDUSTRY ENVIRONMENT BRIDGE",
+                lambda: get_industry_environment(industry_code),
+                {
+                    "수집상태": "실패",
+                    "사용가능": False,
+                    "요청산업코드": industry_code,
+                    "오류": "산업환경 브리지 수집 중 예외",
+                    "HTTP호출수": 0,
+                },
+            )
+        else:
+            industry_environment = {
+                "수집상태": "미적용",
+                "사용가능": False,
+                "요청산업코드": industry_code,
+                "오류": "안전하게 매핑할 수 없는 산업프로필",
+                "HTTP호출수": 0,
+            }
+
+        if safe_dict(industry_environment).get("사용가능") is True:
+            industry_bundle, industry_analysis = build_environment_replacement(
+                industry_code,
+                industry_environment,
+            )
+            industry_cache[industry_code] = (
+                industry_bundle,
+                industry_analysis,
+                industry_environment,
             )
 
-        else:
+        elif industry_code in LIVE_INDUSTRY_CODES:
             industry_bundle = safe_execute(
-                "INDUSTRY",
-                lambda: get_industry_bundle(
-                    industry_code
-                ),
+                "INDUSTRY LEGACY FALLBACK",
+                lambda: get_industry_bundle(industry_code),
                 {
                     "전체수집상태": "실패",
                     "산업코드": industry_code,
@@ -810,9 +852,8 @@ def analyze_one_stock(
                     "수집오류": [],
                 },
             )
-
             industry_analysis = safe_execute(
-                "INDUSTRY ANALYSIS",
+                "INDUSTRY ANALYSIS LEGACY FALLBACK",
                 lambda: analyze_industry(
                     industry_bundle,
                     global_bundle,
@@ -824,17 +865,22 @@ def analyze_one_stock(
                     "산업국면": "판정불가",
                 },
             )
-
-            industry_cache[
-                industry_code
-            ] = (
+            industry_cache[industry_code] = (
                 industry_bundle,
                 industry_analysis,
+                industry_environment,
+            )
+
+        else:
+            industry_cache[industry_code] = empty_industry_result(
+                industry_code,
+                industry_environment,
             )
 
     (
         industry_bundle,
         industry_analysis,
+        industry_environment,
     ) = industry_cache[
         industry_code
     ]
@@ -864,6 +910,9 @@ def analyze_one_stock(
         ),
         industry_analysis=(
             industry_analysis
+        ),
+        industry_environment=(
+            industry_environment
         ),
         news_analysis=(
             news_bundle.get("분석", {})
@@ -914,6 +963,7 @@ def analyze_one_stock(
                 industry_analysis,
             )
         ),
+        "산업환경브리지": industry_environment,
         "기술분석": technical_bundle,
         "뉴스분석": news_bundle,
         "가치평가": valuation,
@@ -1301,6 +1351,7 @@ def main() -> int:
     industry_cache: Dict[
         str,
         Tuple[
+            Dict[str, Any],
             Dict[str, Any],
             Dict[str, Any],
         ],

@@ -988,6 +988,7 @@ def calculate_mid_term(
     global_analysis=None,
     fundamentals_analysis=None,
     industry_analysis=None,
+    industry_environment=None,
     news_analysis=None,
 ):
     reasons = []
@@ -1015,10 +1016,37 @@ def calculate_mid_term(
         "DART 3년 성장률 대용",
     )
 
-    industry = nested_analysis_signal(
-        industry_analysis,
-        "중기산업선행",
+    environment_available = (
+        isinstance(industry_environment, dict)
+        and industry_environment.get("사용가능") is True
+        and industry_environment.get("보조사용허용") is True
     )
+
+    if environment_available:
+        # The new 3M industry engine is explicitly auxiliary-only before its
+        # prospective OOS gate passes. Do not feed it into the legacy 25-point
+        # primary factor. The bounded overlay is applied after base scoring.
+        industry = {
+            "signal": 0.0,
+            "quality": 0.0,
+            "status": "보조전용",
+            "section": {},
+        }
+        industry_reference_signal = normalize_signal(
+            (safe_float(industry_environment.get("3개월점수"), 50.0) - 50.0) * 2.0
+        )
+        industry_reference_quality = clamp(
+            safe_float(industry_environment.get("품질점수")) / 100.0,
+            0.0,
+            1.0,
+        )
+    else:
+        industry = nested_analysis_signal(
+            industry_analysis,
+            "중기산업선행",
+        )
+        industry_reference_signal = industry["signal"]
+        industry_reference_quality = industry["quality"]
 
     accumulated = accumulated_supply_signal(
         market
@@ -1133,15 +1161,20 @@ def calculate_mid_term(
             MID_WEIGHTS["산업선행지표"],
             signal=industry["signal"],
             quality=industry["quality"],
-            source=f"{industry_name} 대표자산 합성",
+            source=(
+                "Korea Industry Environment Engine (보조전용)"
+                if environment_available
+                else f"{industry_name} 대표자산 합성"
+            ),
             note=(
-                f"산업국면 "
-                f"{industry_analysis.get('산업국면', '')}"
-                if isinstance(
-                    industry_analysis,
-                    dict,
+                "3개월 산업환경은 OOS 통과 전 25점 주신호에서 제외하고 "
+                "bounded 보조오버레이만 별도 적용"
+                if environment_available
+                else (
+                    f"산업국면 {industry_analysis.get('산업국면', '')}"
+                    if isinstance(industry_analysis, dict)
+                    else "산업 데이터 미수집"
                 )
-                else "산업 데이터 미수집"
             ),
         ),
         build_factor(
@@ -1198,11 +1231,30 @@ def calculate_mid_term(
         ),
     ]
 
-    return finalize_prediction(
+    result = finalize_prediction(
         "1~8주",
         factors,
         reasons,
     )
+
+    if environment_available:
+        # Keep the fixed 25-point factor structurally present for backward
+        # compatibility, but mark it as auxiliary-only and expose the real
+        # reference signal without counting it as a primary contribution.
+        for factor in result.get("요소별평가", []):
+            if factor.get("요소") == "산업선행지표":
+                factor["보조전용"] = True
+                factor["참고신호"] = round(industry_reference_signal, 2)
+                factor["참고데이터품질"] = round(industry_reference_quality * 100.0, 1)
+                break
+
+        result["미수집요소"] = [
+            name for name in result.get("미수집요소", [])
+            if name != "산업선행지표"
+        ]
+        result["보조전용요소"] = ["산업선행지표"]
+
+    return result
 
 
 
@@ -1241,6 +1293,24 @@ def calculate_long_term(
         nested_analysis_signal(
             industry_analysis,
             "장기산업사이클",
+        )
+    )
+    industry_aux_only = (
+        isinstance(industry_analysis, dict)
+        and industry_analysis.get("산업환경브리지모드") == "보조전용"
+    )
+    industry_cycle_source = (
+        "미수집 · 3개월 산업환경은 장기 외삽하지 않음"
+        if industry_aux_only
+        else f"{industry_name} 대표자산 1년 추세"
+    )
+    industry_cycle_note = (
+        "산업환경 브리지는 3개월 보조신호이므로 6~18개월 산업사이클에는 미적용"
+        if industry_aux_only
+        else (
+            f"산업국면 {industry_analysis.get('산업국면', '')}"
+            if isinstance(industry_analysis, dict)
+            else "산업 데이터 미수집"
         )
     )
 
@@ -1379,16 +1449,8 @@ def calculate_long_term(
             LONG_WEIGHTS["산업사이클"],
             signal=industry_cycle["signal"],
             quality=industry_cycle["quality"],
-            source=f"{industry_name} 대표자산 1년 추세",
-            note=(
-                f"산업국면 "
-                f"{industry_analysis.get('산업국면', '')}"
-                if isinstance(
-                    industry_analysis,
-                    dict,
-                )
-                else "산업 데이터 미수집"
-            ),
+            source=industry_cycle_source,
+            note=industry_cycle_note,
         ),
         build_factor(
             "가치평가·안전마진",
@@ -1449,6 +1511,75 @@ def calculate_long_term(
 
 
 
+def apply_industry_environment_overlay(prediction, industry_environment):
+    """Apply only the upstream-bounded 3M industry adjustment to mid-term score."""
+    if not isinstance(prediction, dict):
+        return prediction
+
+    environment = industry_environment if isinstance(industry_environment, dict) else {}
+    usable = (
+        environment.get("사용가능") is True
+        and environment.get("보조사용허용") is True
+    )
+
+    overlay = {
+        "적용": False,
+        "보조전용": True,
+        "주신호사용허용": environment.get("주신호사용허용") is True,
+        "산업코드": environment.get("매핑산업코드", ""),
+        "산업명": environment.get("산업명", ""),
+        "현재점수": environment.get("현재점수"),
+        "3개월점수": environment.get("3개월점수"),
+        "변화점수": environment.get("변화점수"),
+        "방향": environment.get("방향", ""),
+        "품질점수": environment.get("품질점수"),
+        "요청보정점수": environment.get("개별종목방향보정점수"),
+        "적용보정점수": 0.0,
+        "최대절대값": environment.get("보정최대절대값"),
+        "출처": environment.get("출처", ""),
+    }
+
+    if not usable:
+        overlay["사유"] = environment.get("오류", "산업환경 보조오버레이 사용불가")
+        prediction["산업환경보조오버레이"] = overlay
+        return prediction
+
+    requested = safe_float(environment.get("개별종목방향보정점수"), 0.0)
+    maximum = abs(safe_float(environment.get("보정최대절대값"), 0.0))
+    if maximum <= 0.0 and abs(requested) > 1e-12:
+        overlay["사유"] = "보정 최대절대값 미확보"
+        prediction["산업환경보조오버레이"] = overlay
+        return prediction
+
+    adjustment = 0.0 if abs(requested) <= 1e-12 else clamp(requested, -maximum, maximum)
+    base_score = safe_float(prediction.get("점수"), 50.0)
+    adjusted_raw = clamp(base_score + adjustment, 15.0, 85.0)
+    confidence = safe_float(prediction.get("신뢰도"), 0.0)
+
+    overlay.update({
+        "적용": True,
+        "적용보정점수": round(adjustment, 4),
+        "보정전점수": round(base_score, 2),
+        "보정후원시점수": round(adjusted_raw, 2),
+        "사유": "upstream bounded_direction_adjustment_points만 적용",
+    })
+
+    prediction["점수"] = round_int(adjusted_raw)
+    prediction["상승확률"] = probability_from_score(adjusted_raw, confidence)
+    prediction["판정"] = score_label(adjusted_raw)
+    prediction["산업환경보조오버레이"] = overlay
+
+    if abs(adjustment) >= 0.5:
+        direction_text = "우호" if adjustment > 0 else "비우호"
+        add_reason(
+            prediction.setdefault("근거", []),
+            f"3개월 산업환경 보조오버레이 {direction_text} {adjustment:+.2f}점",
+        )
+
+    return prediction
+
+
+
 def predict_stock(
     market,
     financial,
@@ -1457,6 +1588,7 @@ def predict_stock(
     global_analysis=None,
     fundamentals_analysis=None,
     industry_analysis=None,
+    industry_environment=None,
     news_analysis=None,
     technical_analysis=None,
 ):
@@ -1488,9 +1620,17 @@ def predict_stock(
         industry_analysis=(
             industry_analysis
         ),
+        industry_environment=(
+            industry_environment
+        ),
         news_analysis=(
             news_analysis
         ),
+    )
+
+    mid_term = apply_industry_environment_overlay(
+        mid_term,
+        industry_environment,
     )
 
     long_term = calculate_long_term(
@@ -1660,12 +1800,24 @@ def predict_stock(
             "기업뉴스": news_ok,
             "글로벌시장": global_ok,
             "산업선행지표": (
-                industry_ok
-                and nested_analysis_signal(
-                    industry_analysis,
-                    "중기산업선행",
-                )["quality"]
-                > 0
+                (
+                    industry_ok
+                    and nested_analysis_signal(
+                        industry_analysis,
+                        "중기산업선행",
+                    )["quality"]
+                    > 0
+                )
+                or (
+                    isinstance(industry_environment, dict)
+                    and industry_environment.get("사용가능") is True
+                    and industry_environment.get("보조사용허용") is True
+                )
+            ),
+            "산업환경3개월보조": (
+                isinstance(industry_environment, dict)
+                and industry_environment.get("사용가능") is True
+                and industry_environment.get("보조사용허용") is True
             ),
             "산업사이클": (
                 industry_ok
@@ -1687,6 +1839,9 @@ def predict_stock(
             "뉴스와 공시 신호는 제목 기반 규칙형 분석이다. "
             "향후이익 방향은 최신 실적과 현금창출력 기반 대용지표이며 "
             "애널리스트 컨센서스는 아직 반영되지 않았다. "
+            "산업환경 3개월 전망은 prospective OOS 통과 전 주신호로 승격하지 않고 "
+            "upstream bounded 보정점수만 중기에 보조 적용한다. "
+            "3개월 전망을 6~18개월 산업사이클로 외삽하지 않는다. "
             "상승확률은 데이터 커버리지에 따라 "
             "50% 방향으로 축소된 모델 확률이다."
         ),

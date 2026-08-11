@@ -107,12 +107,14 @@ def nearly_equal(left, right, tolerance=0.02):
     return abs(left - right) <= tolerance
 
 
-def expected_score(factors):
+def expected_score(factors, overlay_adjustment=0.0):
     contribution = sum(
         safe_float(item.get("점수기여"))
         for item in factors
     )
-    return int(round(clamp(50.0 + contribution / 2.0, 15.0, 85.0)))
+    base_score = int(round(clamp(50.0 + contribution / 2.0, 15.0, 85.0)))
+    adjusted = clamp(base_score + safe_float(overlay_adjustment), 15.0, 85.0)
+    return int(round(adjusted))
 
 
 def expected_probability(score, confidence):
@@ -233,7 +235,7 @@ def validate_horizon(
                 f"재계산 {recalculated:.2f}"
             )
 
-        if quality == 0:
+        if quality == 0 and factor.get("보조전용") is not True:
             result.warning(
                 f"{name}/{factor_name}: 데이터 미수집"
             )
@@ -280,7 +282,30 @@ def validate_horizon(
         result,
     )
 
-    recalculated_score = expected_score(factors)
+    overlay = safe_dict(prediction.get("산업환경보조오버레이"))
+    overlay_adjustment = 0.0
+    if overlay:
+        applied = overlay.get("적용") is True
+        requested = safe_float(overlay.get("요청보정점수"))
+        applied_value = safe_float(overlay.get("적용보정점수"))
+        maximum = abs(safe_float(overlay.get("최대절대값")))
+        if applied:
+            if maximum <= 0 and abs(applied_value) > 1e-12:
+                result.error(f"{name}: 산업환경 보조오버레이 최대절대값 누락")
+            if abs(applied_value) > maximum + 1e-9:
+                result.error(
+                    f"{name}: 산업환경 보조오버레이 범위초과 "
+                    f"{applied_value} > {maximum}"
+                )
+            if overlay.get("보조전용") is not True:
+                result.error(f"{name}: 산업환경 오버레이 보조전용 플래그 누락")
+            overlay_adjustment = applied_value
+            result.info(
+                f"{name}: 산업환경 보조오버레이 {applied_value:+.2f}점 "
+                f"(요청 {requested:+.2f}, 최대 ±{maximum:.2f})"
+            )
+
+    recalculated_score = expected_score(factors, overlay_adjustment)
 
     if not nearly_equal(
         score,
@@ -312,6 +337,48 @@ def validate_horizon(
         f"상승확률 {int(probability)}%, "
         f"신뢰도 {int(confidence)}%, "
         f"판정 {prediction.get('판정', '')}"
+    )
+
+
+
+def validate_industry_environment_bridge(data, result):
+    bridge = safe_dict(data.get("산업환경브리지"))
+    if not bridge:
+        result.warning("산업환경브리지 누락")
+        return
+
+    if bridge.get("사용가능") is not True:
+        result.warning(
+            "산업환경브리지 미사용: "
+            + str(bridge.get("오류") or bridge.get("수집상태") or "사유 미상")
+        )
+        return
+
+    for key in ("현재점수", "3개월점수", "품질점수"):
+        validate_range(
+            bridge.get(key),
+            0.0,
+            100.0,
+            f"산업환경브리지/{key}",
+            result,
+        )
+
+    if bridge.get("보조사용허용") is not True:
+        result.error("산업환경브리지 사용가능인데 보조사용허용 false")
+
+    adjustment = safe_float(bridge.get("개별종목방향보정점수"))
+    maximum = abs(safe_float(bridge.get("보정최대절대값")))
+    if maximum <= 0 and abs(adjustment) > 1e-12:
+        result.error("산업환경브리지 보정최대절대값 누락")
+    elif abs(adjustment) > maximum + 1e-9:
+        result.error("산업환경브리지 bounded 보정값 범위초과")
+
+    result.info(
+        "산업환경브리지: "
+        f"{bridge.get('매핑산업코드', '')} "
+        f"현재 {safe_float(bridge.get('현재점수')):.1f} / "
+        f"3개월 {safe_float(bridge.get('3개월점수')):.1f} / "
+        f"보정 {adjustment:+.2f}"
     )
 
 
@@ -479,6 +546,7 @@ def validate_output(
         f"과거데이터 {history_status or '미확인'}"
     )
 
+    validate_industry_environment_bridge(data, result)
     validate_valuation_contract(data, result)
 
     program = safe_dict(history.get("프로그램매매"))

@@ -23,6 +23,11 @@ from collectors.fundamentals import get_fundamentals_bundle
 from collectors.global_market import get_global_market_bundle
 from collectors.history import get_history_bundle
 from collectors.industry import get_industry_bundle
+from collectors.industry_environment import (
+    build_environment_replacement,
+    can_use_bridge_hint,
+    get_industry_environment,
+)
 from collectors.market import finalize_market_data, get_market_data
 from collectors.news import get_company_news
 from collectors.provisional import get_latest_provisional_earnings
@@ -1038,11 +1043,13 @@ def build_screen_bridge(
     news_bundle,
     disclosure_summary,
     market,
+    industry_environment=None,
 ):
     technical_bundle = safe_dict(technical_bundle)
     prediction = safe_dict(prediction)
     global_summary = safe_dict(global_summary)
     industry_summary = safe_dict(industry_summary)
+    industry_environment = safe_dict(industry_environment)
     news_bundle = safe_dict(news_bundle)
     disclosure_summary = safe_dict(disclosure_summary)
     market = safe_dict(market)
@@ -1069,6 +1076,15 @@ def build_screen_bridge(
 
     global_analysis = safe_dict(global_summary.get("분석"))
     industry_analysis = safe_dict(industry_summary.get("분석"))
+    industry_environment_ok = (
+        industry_environment.get("사용가능") is True
+        and industry_environment.get("보조사용허용") is True
+    )
+    industry_environment_signal = (
+        (_bridge_number(industry_environment.get("3개월점수"), 50.0) - 50.0) * 2.0
+        if industry_environment_ok
+        else 0.0
+    )
     news_analysis = safe_dict(news_bundle.get("분석"))
     disclosure_analysis = safe_dict(disclosure_summary.get("분석"))
     history = safe_dict(market.get("과거데이터"))
@@ -1083,11 +1099,41 @@ def build_screen_bridge(
             "출처": global_summary.get("데이터출처", ""),
         },
         "산업선행지표": {
-            "사용가능": _bridge_number(safe_dict(industry_analysis.get("중기산업선행")).get("데이터품질")) > 0,
-            "점수": _bridge_number(safe_dict(industry_analysis.get("중기산업선행")).get("신호")),
-            "데이터품질": _bridge_number(safe_dict(industry_analysis.get("중기산업선행")).get("데이터품질")),
-            "판정": safe_dict(industry_analysis.get("중기산업선행")).get("판정", "중립"),
-            "출처": industry_summary.get("데이터출처", ""),
+            "사용가능": (
+                industry_environment_ok
+                or _bridge_number(safe_dict(industry_analysis.get("중기산업선행")).get("데이터품질")) > 0
+            ),
+            "점수": (
+                round(industry_environment_signal, 2)
+                if industry_environment_ok
+                else _bridge_number(safe_dict(industry_analysis.get("중기산업선행")).get("신호"))
+            ),
+            "환경점수": (
+                _bridge_number(industry_environment.get("3개월점수"))
+                if industry_environment_ok
+                else None
+            ),
+            "현재환경점수": (
+                _bridge_number(industry_environment.get("현재점수"))
+                if industry_environment_ok
+                else None
+            ),
+            "데이터품질": (
+                _bridge_number(industry_environment.get("품질점수"))
+                if industry_environment_ok
+                else _bridge_number(safe_dict(industry_analysis.get("중기산업선행")).get("데이터품질"))
+            ),
+            "판정": (
+                f"{industry_environment.get('3개월구간', '')} · {industry_environment.get('방향', '')}".strip(" ·")
+                if industry_environment_ok
+                else safe_dict(industry_analysis.get("중기산업선행")).get("판정", "중립")
+            ),
+            "출처": (
+                "Korea Industry Environment Engine / stock_prediction_bridge.json"
+                if industry_environment_ok
+                else industry_summary.get("데이터출처", "")
+            ),
+            "보조전용": industry_environment_ok,
         },
         "산업사이클": {
             "사용가능": _bridge_number(safe_dict(industry_analysis.get("장기산업사이클")).get("데이터품질")) > 0,
@@ -1126,11 +1172,33 @@ def build_screen_bridge(
         },
     }
 
+    if industry_environment_ok:
+        elements["산업환경현재"] = {
+            "사용가능": True,
+            "점수": round((_bridge_number(industry_environment.get("현재점수"), 50.0) - 50.0) * 2.0, 2),
+            "환경점수": _bridge_number(industry_environment.get("현재점수")),
+            "데이터품질": _bridge_number(industry_environment.get("품질점수")),
+            "판정": industry_environment.get("현재구간", ""),
+            "출처": "Korea Industry Environment Engine",
+        }
+        elements["산업환경3개월"] = {
+            "사용가능": True,
+            "점수": round(industry_environment_signal, 2),
+            "환경점수": _bridge_number(industry_environment.get("3개월점수")),
+            "변화점수": _bridge_number(industry_environment.get("변화점수")),
+            "데이터품질": _bridge_number(industry_environment.get("품질점수")),
+            "판정": f"{industry_environment.get('3개월구간', '')} · {industry_environment.get('방향', '')}".strip(" ·"),
+            "출처": "Korea Industry Environment Engine",
+            "보조전용": True,
+        }
+
     errors = []
     if not technical["사용가능"]:
         errors.append("일봉·주봉·월봉 기술분석이 모두 미연결")
     for name, item in elements.items():
         if not item.get("사용가능"):
+            if industry_environment_ok and name == "산업사이클":
+                continue
             errors.append(name + " 미연결")
 
     return {
@@ -1142,6 +1210,7 @@ def build_screen_bridge(
         "기술분석": technical,
         "예측": horizons,
         "요소상태": elements,
+        "산업환경브리지": industry_environment,
         "검증오류": errors,
     }
 
@@ -1274,18 +1343,18 @@ def main():
             },
         )
 
-        industry_future = None
-        if industry_code in LIVE_INDUSTRY_CODES:
-            industry_future = executor.submit(
+        industry_environment_future = None
+        if can_use_bridge_hint(industry_code):
+            industry_environment_future = executor.submit(
                 timed_safe_execute,
-                "INDUSTRY",
-                lambda: get_industry_bundle(industry_code),
+                "INDUSTRY ENVIRONMENT BRIDGE",
+                lambda: get_industry_environment(industry_code),
                 {
-                    "전체수집상태": "실패",
-                    "산업코드": industry_code,
-                    "산업명": industry_code,
-                    "자산": {},
-                    "수집오류": [],
+                    "수집상태": "실패",
+                    "사용가능": False,
+                    "요청산업코드": industry_code,
+                    "오류": "산업환경 브리지 수집 중 예외",
+                    "HTTP호출수": 0,
                 },
             )
 
@@ -1322,10 +1391,16 @@ def main():
         global_bundle = global_future.result()
         fundamentals_bundle = fundamentals_future.result()
         technical_bundle = technical_future.result()
-        industry_bundle_preloaded = (
-            industry_future.result()
-            if industry_future is not None
-            else None
+        industry_environment = (
+            industry_environment_future.result()
+            if industry_environment_future is not None
+            else {
+                "수집상태": "미적용",
+                "사용가능": False,
+                "요청산업코드": industry_code,
+                "오류": "안전하게 매핑할 수 없는 산업프로필",
+                "HTTP호출수": 0,
+            }
         )
 
     market["과거데이터"] = build_history_summary(history_bundle)
@@ -1393,38 +1468,40 @@ def main():
         },
     )
 
-    if industry_code not in LIVE_INDUSTRY_CODES:
+    if safe_dict(industry_environment).get("사용가능") is True:
         print(
-            "INDUSTRY SKIPPED:",
+            "INDUSTRY ENVIRONMENT BRIDGE:",
             stock_code,
+            industry_environment.get("매핑산업코드", ""),
+            "CACHE",
+            industry_environment.get("캐시모드", ""),
+            "HTTP",
+            industry_environment.get("HTTP호출수", 0),
+        )
+        industry_bundle, industry_analysis = build_environment_replacement(
+            industry_code,
+            industry_environment,
         )
 
-        industry_bundle = {
-            "전체수집상태": "미적용",
-            "산업코드": industry_code,
-            "산업명": industry_code if industry_code != "none" else "미분류",
-            "자산": {},
-            "수집오류": [],
-        }
-
-        industry_analysis = {
-            "분석상태": "미적용",
-            "중기산업선행": {},
-            "장기산업사이클": {},
-            "산업국면": "미분류",
-        }
-
-    else:
-        industry_bundle = industry_bundle_preloaded or {
-            "전체수집상태": "실패",
-            "산업코드": industry_code,
-            "산업명": industry_code,
-            "자산": {},
-            "수집오류": [],
-        }
-
+    elif industry_code in LIVE_INDUSTRY_CODES:
+        print(
+            "INDUSTRY ENVIRONMENT FALLBACK TO LEGACY:",
+            stock_code,
+            industry_environment.get("오류", ""),
+        )
+        industry_bundle = timed_safe_execute(
+            "INDUSTRY LEGACY FALLBACK",
+            lambda: get_industry_bundle(industry_code),
+            {
+                "전체수집상태": "실패",
+                "산업코드": industry_code,
+                "산업명": industry_code,
+                "자산": {},
+                "수집오류": [],
+            },
+        )
         industry_analysis = safe_execute(
-            "INDUSTRY ANALYSIS",
+            "INDUSTRY ANALYSIS LEGACY FALLBACK",
             lambda: analyze_industry(
                 industry_bundle,
                 global_bundle,
@@ -1436,6 +1513,28 @@ def main():
                 "산업국면": "판정불가",
             },
         )
+
+    else:
+        print(
+            "INDUSTRY SKIPPED:",
+            stock_code,
+            industry_environment.get("오류", ""),
+        )
+        industry_bundle = {
+            "전체수집상태": "미적용",
+            "산업코드": industry_code,
+            "산업명": industry_code if industry_code != "none" else "미분류",
+            "자산": {},
+            "수집오류": [],
+            "데이터출처": "",
+        }
+        industry_analysis = {
+            "분석상태": "미적용",
+            "산업명": industry_bundle["산업명"],
+            "중기산업선행": {},
+            "장기산업사이클": {},
+            "산업국면": "미분류",
+        }
 
     valuation = calculate_value(
         financial,
@@ -1559,6 +1658,9 @@ def main():
         industry_analysis=(
             industry_analysis
         ),
+        industry_environment=(
+            industry_environment
+        ),
         news_analysis=(
             news_bundle.get("분석", {})
             if isinstance(news_bundle, dict)
@@ -1596,6 +1698,7 @@ def main():
         news_bundle=news_bundle,
         disclosure_summary=disclosure_summary,
         market=market,
+        industry_environment=industry_environment,
     )
 
     result = {
@@ -1613,6 +1716,7 @@ def main():
         "글로벌시장": global_summary,
         "기업기초데이터": fundamentals_summary,
         "산업분석": industry_summary,
+        "산업환경브리지": industry_environment,
         "기술분석": technical_bundle,
         "뉴스분석": news_bundle,
         "가치평가": valuation,
