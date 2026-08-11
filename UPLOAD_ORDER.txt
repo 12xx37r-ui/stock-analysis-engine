@@ -1,0 +1,45 @@
+v17.12.35 업로드 순서
+======================
+
+이 ZIP에는 변경된 파일만 들어 있습니다. 새 workflow / 새 Action은 만들 필요가 없습니다.
+
+1) stock-analysis-engine 저장소
+아래 파일을 같은 경로에 덮어씁니다.
+
+[실행/분류/현재가 파이프라인]
+- collectors/company.py
+- collectors/market.py
+- analyzers/valuation.py
+- data/industry_map.json
+- main.py
+- screener.py
+- feed_contract.py
+- validate_latest_index.py
+- refresh_published_stocks.py
+
+[검증/회귀시험 정합성]
+- validate_industry_profiles.py
+- validate_valuation_profiles.py
+- validate_output.py
+- test_price_pipeline.py
+- validate_cache_coherence.py
+- validate_future_growth_model.py
+- validate_insurance_financials.py
+- validate_sdi_trough.py
+- validate_valuation_contract.py
+- validate_valuation_pipeline_v4.py
+
+2) Google Apps Script
+- GAS/Code.gs 내용을 기존 Code.gs에 덮어쓰기
+- GAS/Index.html 내용을 기존 Index.html에 덮어쓰기
+- 새 버전으로 배포
+
+3) YG PLUS(037270) 산업분류 즉시 확인
+- 새 workflow를 만들 필요는 없습니다.
+- 조회하면 기존 on-demand-stock-analysis 경로가 필요한 종목 JSON을 갱신하도록 유지했습니다.
+- 즉시 강제 확인이 필요할 때만 기존 on-demand-stock-analysis Action을 037270으로 한 번 실행하면 됩니다.
+
+주의
+- 인증키/토큰/Secrets는 변경하지 않습니다.
+- 기존 한국시장/글로벌시장 엔진은 변경하지 않습니다.
+- 대량 종목 일괄 재생성은 필요하지 않습니다. 구형 게시 JSON은 읽을 수 있게 유지하고 조회/갱신 시 점진적으로 새 계약으로 교체합니다.
