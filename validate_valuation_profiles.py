@@ -79,8 +79,15 @@ def validate_profiles():
         "661": "finance",
         "107": "consumer_staples",
         "471": "retail",
-        "582": "media_entertainment",
+        "581": "media_entertainment",
+        "582": "software_platform",
+        "58221": "software_platform",
+        "58222": "software_platform",
         "620": "software_platform",
+        "63120": "software_platform",
+        "64992": "holding_company",
+        "271": "medical_devices",
+        "311": "shipbuilding",
         "612": "telecom",
         "351": "utilities",
         "201": "materials",
@@ -104,13 +111,29 @@ def validate_profiles():
     if yg.get("산업코드") != "media_entertainment" or yg.get("분류신뢰도", 0) < 95:
         errors.append(f"YG PLUS 산업분류 오류: {yg}")
 
-    ambiguous_631 = classify_dart_industry_detail("631", "가상정보서비스", "999998")
-    if ambiguous_631.get("산업코드") == "software_platform":
-        errors.append(f"KSIC 631을 소프트웨어로 과잉분류: {ambiguous_631}")
+    generic_631 = classify_dart_industry_detail("631", "가상정보서비스", "999998")
+    if generic_631.get("산업코드") != "software_platform":
+        errors.append(f"KSIC 631 플랫폼·정보매개 분류 오류: {generic_631}")
 
     explicit_platform = classify_dart_industry_detail("631", "클라우드플랫폼", "999997")
     if explicit_platform.get("산업코드") != "software_platform":
         errors.append(f"명시적 플랫폼 기업 분류 오류: {explicit_platform}")
+
+    hd_ksoe = classify_dart_industry_detail("64992", "HD한국조선해양", "009540")
+    if hd_ksoe.get("산업코드") != "shipbuilding":
+        errors.append(f"HD한국조선해양 산업분류 오류: {hd_ksoe}")
+
+    generic_holding = classify_dart_industry_detail("64992", "가상비금융지주", "999996")
+    if generic_holding.get("산업코드") != "holding_company":
+        errors.append(f"KSIC 64992 비금융 지주 분류 오류: {generic_holding}")
+
+    smcc = classify_dart_industry_detail("", "SM C&C", "048550")
+    if smcc.get("산업코드") != "media_entertainment":
+        errors.append(f"SM C&C DART 실패 fallback 산업분류 오류: {smcc}")
+
+    lg_life_science = classify_dart_industry_detail("21212", "LG생명과학", "999995")
+    if lg_life_science.get("산업코드") == "insurance":
+        errors.append(f"생명과학→보험 오분류 오류: {lg_life_science}")
 
     synthetic_financial = {
         "재무지표": {
@@ -140,7 +163,7 @@ def validate_profiles():
             company_info={
                 "가치평가산업코드": code,
                 "산업분류신뢰도": 95,
-                "산업프로필버전": "3.0.1",
+                "산업프로필버전": "3.1.0",
             },
         )
         low = result["보수적적정가"]

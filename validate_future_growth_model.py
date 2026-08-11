@@ -116,7 +116,7 @@ def calculate(price: float):
         "OpenDART업종코드": "2622",
         "산업분류출처": "수동 종목매핑",
         "산업분류신뢰도": 100,
-        "산업프로필버전": "3.0.1",
+        "산업프로필버전": "3.1.0",
     }
     return calculate_value(
         financial,

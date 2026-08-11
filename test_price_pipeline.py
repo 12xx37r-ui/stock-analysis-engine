@@ -348,7 +348,7 @@ class PricePipelineTests(unittest.TestCase):
             "가치평가": {
                 "가치평가엔진버전": "6.8.0-valuation-contract-v4",
                 "가치평가계약버전": "4.0",
-                "산업프로필버전": "3.0.1",
+                "산업프로필버전": "3.1.0",
                 "가치평가모형개정버전": "future-growth-v1.1.0-price-independent",
                 "미래성장모형": {"사용가능": False, "차단사유": ["자료 부족"]},
                 "데이터자격검사": {"통과": False, "중단사유": ["자료 부족"]},

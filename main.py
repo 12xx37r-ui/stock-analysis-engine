@@ -56,6 +56,7 @@ VALUATION_INDUSTRY_CODES = {
     "biotechnology",
     "pharmaceutical",
     "construction",
+    "shipbuilding",
     "finance",
     "insurance",
     "consumer_staples",
@@ -71,6 +72,7 @@ VALUATION_INDUSTRY_CODES = {
     "transportation",
     "real_estate",
     "healthcare",
+    "medical_devices",
     "energy",
     "holding_company",
     "services",
@@ -770,7 +772,7 @@ def parse_arguments():
         ),
         help=(
             "auto, semiconductor, electronic_components, automotive, battery, "
-            "biotechnology, beauty_consumer, construction, finance, none"
+            "biotechnology, medical_devices, beauty_consumer, construction, shipbuilding, finance, none"
         ),
     )
 
