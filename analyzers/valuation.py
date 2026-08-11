@@ -170,6 +170,18 @@ VALUATION_PROFILES: Dict[str, Dict[str, Any]] = {
         "model_floor": 0.30, "model_ceiling": 3.20,
         "cyclical": False, "growth": True,
     },
+    "shipbuilding": {
+        # 산업재와 동일한 보수적 배수/가중치를 사용하되 산업 식별만 분리한다.
+        # 별도 OOS 검증 전까지 조선업에 임의 프리미엄을 주지 않는다.
+        "label": "조선·해양·선박 수주사이클",
+        "base_per": 11.0, "per_min": 6.5, "per_max": 24.0,
+        "base_pbr": 1.05, "pbr_min": 0.50, "pbr_max": 3.20,
+        "weights": {"per": 0.37, "pbr": 0.23, "residual": 0.22, "transition": 0.18},
+        "eps_floor": 0.74, "eps_cap": 1.55,
+        "downside": 0.68, "upside": 1.35,
+        "model_floor": 0.38, "model_ceiling": 2.60,
+        "cyclical": True, "growth": False,
+    },
     "construction": {
         "label": "건설·플랜트 수주형",
         "base_per": 7.5, "per_min": 4.5, "per_max": 15.0,
@@ -320,6 +332,17 @@ VALUATION_PROFILES: Dict[str, Dict[str, Any]] = {
         "model_floor": 0.48, "model_ceiling": 2.05,
         "cyclical": True, "growth": False,
     },
+    "medical_devices": {
+        # 의료기기/헬스테크는 성장성은 반영하되 바이오 임상가치 프리미엄을 직접 적용하지 않는다.
+        "label": "의료기기·헬스테크 성장형",
+        "base_per": 15.0, "per_min": 9.0, "per_max": 30.0,
+        "base_pbr": 1.35, "pbr_min": 0.70, "pbr_max": 4.00,
+        "weights": {"per": 0.38, "pbr": 0.22, "residual": 0.22, "transition": 0.18},
+        "eps_floor": 0.78, "eps_cap": 1.60,
+        "downside": 0.72, "upside": 1.38,
+        "model_floor": 0.38, "model_ceiling": 2.70,
+        "cyclical": False, "growth": True,
+    },
     "healthcare": {
         "label": "의료서비스",
         "base_per": 15.0, "per_min": 9.0, "per_max": 30.0,
@@ -372,7 +395,7 @@ PROFILE_ALIASES = {
 
 VALUATION_CONTRACT_VERSION = "4.0"
 VALUATION_ENGINE_VERSION = "6.8.0-valuation-contract-v4"
-INDUSTRY_PROFILE_VERSION = "3.0.1"
+INDUSTRY_PROFILE_VERSION = "3.1.0"
 DATA_QUALIFICATION_VERSION = "1.1.0"
 VALUATION_MODEL_REVISION = "future-growth-v1.1.0-price-independent"
 FUTURE_GROWTH_MODEL_VERSION = "1.0.0"
@@ -383,6 +406,7 @@ ASSET_CYCLE_ANCHOR_VERSION = "1.0.0"
 # 종목명이나 현재가를 기준으로 예외처리하지 않는다.
 ASSET_CYCLE_PROFILES = {
     "construction",
+    "shipbuilding",
     "automotive",
     "materials",
     "industrial",
@@ -400,6 +424,7 @@ FUTURE_GROWTH_CONFIG: Dict[str, Dict[str, float]] = {
     "electronic_components": {"weight": 0.22, "fy3_cap": 0.24, "fy4_cap": 0.16, "exit_premium": 2.0, "eps_cap": 2.00, "value_cap": 1.65, "min_growth": 0.05},
     "battery": {"weight": 0.20, "fy3_cap": 0.24, "fy4_cap": 0.16, "exit_premium": 2.0, "eps_cap": 2.10, "value_cap": 1.70, "min_growth": 0.04},
     "biotechnology": {"weight": 0.18, "fy3_cap": 0.26, "fy4_cap": 0.18, "exit_premium": 2.5, "eps_cap": 2.30, "value_cap": 1.85, "min_growth": 0.05},
+    "medical_devices": {"weight": 0.16, "fy3_cap": 0.22, "fy4_cap": 0.14, "exit_premium": 1.8, "eps_cap": 1.95, "value_cap": 1.60, "min_growth": 0.04},
     "pharmaceutical": {"weight": 0.16, "fy3_cap": 0.20, "fy4_cap": 0.14, "exit_premium": 1.8, "eps_cap": 1.90, "value_cap": 1.60, "min_growth": 0.04},
     "media_entertainment": {"weight": 0.18, "fy3_cap": 0.24, "fy4_cap": 0.16, "exit_premium": 2.2, "eps_cap": 2.10, "value_cap": 1.75, "min_growth": 0.05},
     "software_platform": {"weight": 0.20, "fy3_cap": 0.28, "fy4_cap": 0.18, "exit_premium": 2.8, "eps_cap": 2.40, "value_cap": 1.95, "min_growth": 0.06},
