@@ -65,7 +65,7 @@ DEFAULT_INDUSTRY_MAP = {
     "089030": "semiconductor",
 }
 
-INDUSTRY_PROFILE_VERSION = "3.0.0"
+INDUSTRY_PROFILE_VERSION = "3.0.1"
 
 ELECTRONIC_COMPONENT_KEYWORDS = (
     "삼성전기", "mlcc", "적층세라믹", "카메라모듈", "전자부품",
@@ -73,6 +73,13 @@ ELECTRONIC_COMPONENT_KEYWORDS = (
 )
 SEMICONDUCTOR_KEYWORDS = (
     "하이닉스", "반도체", "세미콘", "파운드리", "메모리", "hbm",
+)
+MEDIA_ENTERTAINMENT_KEYWORDS = (
+    "엔터테인먼트", "엔터", "스튜디오", "콘텐츠", "뮤직",
+    "음악", "음원", "음반", "아티스트", "미디어",
+)
+SOFTWARE_PLATFORM_KEYWORDS = (
+    "소프트웨어", "플랫폼", "클라우드", "인터넷", "솔루션", "게임",
 )
 
 
@@ -142,10 +149,10 @@ def classify_dart_industry_detail(
         return {"산업코드": "biotechnology", "분류출처": "기업명 키워드", "분류신뢰도": 86, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
     if any(keyword in name for keyword in ("제약", "약품", "파마")):
         return {"산업코드": "pharmaceutical", "분류출처": "기업명 키워드", "분류신뢰도": 86, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
-    if any(keyword in name for keyword in ("엔터", "엔터테인먼트", "스튜디오", "콘텐츠")):
-        return {"산업코드": "media_entertainment", "분류출처": "기업명 키워드", "분류신뢰도": 82, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
-    if any(keyword in name for keyword in ("소프트", "플랫폼", "클라우드")):
-        return {"산업코드": "software_platform", "분류출처": "기업명 키워드", "분류신뢰도": 82, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
+    if any(keyword in name for keyword in MEDIA_ENTERTAINMENT_KEYWORDS):
+        return {"산업코드": "media_entertainment", "분류출처": "미디어·엔터테인먼트 기업명 키워드", "분류신뢰도": 88, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
+    if any(keyword in name for keyword in SOFTWARE_PLATFORM_KEYWORDS):
+        return {"산업코드": "software_platform", "분류출처": "소프트웨어·플랫폼 기업명 키워드", "분류신뢰도": 86, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
     if any(keyword in name for keyword in ("보험", "생명", "화재", "손해보험", "재보험")):
         return {"산업코드": "insurance", "분류출처": "보험업 기업명 키워드", "분류신뢰도": 94, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
 
@@ -180,8 +187,15 @@ def classify_dart_industry_detail(
         result = "retail"
     elif major in {58, 59, 60}:
         result = "media_entertainment"
-    elif major in {61, 62, 63}:
-        result = "software_platform" if major in {62, 63} else "telecom"
+    elif major == 61:
+        result = "telecom"
+    elif major == 62:
+        result = "software_platform"
+    elif major == 63:
+        # KSIC 63(정보서비스)는 포털·호스팅뿐 아니라 실제 투자산업이
+        # 미디어/IP/서비스인 복합기업도 섞여 있다. 종목매핑·기업명 근거가
+        # 없으면 소프트웨어로 단정하지 않고 일반 서비스로 낮은 신뢰도로 둔다.
+        result = "services"
     elif major in {35, 36, 37, 38, 39}:
         result = "utilities"
     elif major in {19, 20, 22, 23, 24, 25}:
@@ -208,6 +222,7 @@ def classify_dart_industry_detail(
         "분류신뢰도": (
             94 if exact_consumer
             else 92 if prefix3 in {"261", "262", "263", "264", "265", "266"}
+            else 58 if major == 63 and result == "services"
             else 72 if result != "general"
             else 48
         ),

@@ -20,6 +20,19 @@ from collectors.kis import (
     get_investor_trade,
     get_stock_price,
 )
+from collectors.price import (
+    apply_price_to_market,
+    candidate as build_price_candidate,
+    choose_candidate,
+    latest_allowed_trade_date,
+    market_status as price_market_status,
+    normalize_yahoo_market,
+    normalized_market_code,
+    now_kst,
+    read_price_cache,
+    suffix_market,
+    write_price_cache,
+)
 
 
 YAHOO_CHART_URL = (
@@ -463,634 +476,452 @@ def request_yahoo_chart(
     return data
 
 
+def _format_trade_date(value: Any, fallback: str = "") -> str:
+    text = str(value or "").strip()
+    if len(text) == 8 and text.isdigit():
+        return f"{text[:4]}-{text[4:6]}-{text[6:8]}"
+    if len(text) >= 10 and text[4:5] == "-" and text[7:8] == "-":
+        return text[:10]
+    return fallback
+
+
+def _format_trade_time(value: Any, fallback: str = "") -> str:
+    digits = "".join(ch for ch in str(value or "") if ch.isdigit())
+    if len(digits) >= 6:
+        return f"{digits[:2]}:{digits[2:4]}:{digits[4:6]}"
+    if len(digits) == 4:
+        return f"{digits[:2]}:{digits[2:4]}:00"
+    return fallback
+
+
+def _market_from_kis(output: Dict[str, Any], market_code: str) -> str:
+    label = str(
+        output.get("rprs_mrkt_kor_name")
+        or output.get("mrkt_kor_name")
+        or output.get("bstp_kor_isnm")
+        or ""
+    ).strip().upper()
+    if "KOSDAQ" in label or "코스닥" in label:
+        return "KOSDAQ"
+    if "KOSPI" in label or "코스피" in label or "유가증권" in label:
+        return "KOSPI"
+    return normalized_market_code(market_code)
+
+
+def _kis_candidate(
+    stock_code: str,
+    market_code: str,
+    output: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Convert a KIS quote response to the common price-candidate schema.
+
+    The function performs no network I/O.  It only normalizes the already
+    collected KIS response so the shared price validator can compare it with
+    DART shares and the independently collected technical close.
+    """
+    output = safe_dict(output)
+    price = safe_float(output.get("stck_prpr"))
+    volume = safe_int(output.get("acml_vol"))
+    if price <= 0 or volume <= 0:
+        return {}
+
+    collected_at = now_kst()
+    current_status = price_market_status(collected_at)
+    fallback_date = latest_allowed_trade_date(collected_at).isoformat()
+    trade_date = _format_trade_date(
+        output.get("stck_bsop_date")
+        or output.get("bsop_date"),
+        fallback_date,
+    )
+    trade_time = _format_trade_time(
+        output.get("stck_cntg_hour")
+        or output.get("cntg_hour"),
+        collected_at.strftime("%H:%M:%S") if current_status == "장중" else "15:30:00",
+    )
+
+    previous_close = safe_float(
+        output.get("stck_prdy_clpr")
+        or output.get("prdy_clpr")
+    )
+    if previous_close <= 0:
+        previous_close = price - safe_float(output.get("prdy_vrss"))
+
+    source_shares = safe_int(
+        output.get("lstn_stcn")
+        or output.get("stck_lstn_stcn")
+        or output.get("listing_shares")
+    )
+
+    market_name = _market_from_kis(output, market_code)
+    price_type = "KRX 실시간가" if current_status == "장중" and trade_date == collected_at.date().isoformat() else "KRX 종가"
+
+    return build_price_candidate(
+        stock_code,
+        market=market_name or market_code,
+        trading_market="KRX",
+        price=price,
+        price_date=trade_date,
+        price_time=trade_time,
+        collected_at=collected_at,
+        source="한국투자증권 KIS",
+        price_type=price_type,
+        adjusted=False,
+        volume=volume,
+        market_cap=safe_float(output.get("hts_avls")),
+        source_share_count=source_shares,
+        exchange=market_name,
+        status=current_status,
+        open_price=safe_float(output.get("stck_oprc")),
+        high_price=safe_float(output.get("stck_hgpr")),
+        low_price=safe_float(output.get("stck_lwpr")),
+        previous_close=previous_close,
+    )
+
+
 def parse_yahoo_market(
     symbol: str,
     data: Dict[str, Any],
+    stock_code: str = "",
 ) -> Dict[str, Any]:
-    chart = safe_dict(
-        data.get(
-            "chart"
-        )
-    )
+    """Parse Yahoo quote.close into the common unadjusted-price candidate.
 
-    if chart.get(
-        "error"
-    ):
+    regularMarketPrice is used only when it is fresh and coherent with the
+    timestamp-aligned quote.close.  This prevents stale/meta split artefacts
+    from being published as the current price.
+    """
+    chart = safe_dict(data.get("chart"))
+    if chart.get("error"):
         return {}
 
-    results = safe_list(
-        chart.get(
-            "result"
-        )
-    )
-
+    results = safe_list(chart.get("result"))
     if not results:
         return {}
 
-    result = safe_dict(
-        results[0]
-    )
-    meta = safe_dict(
-        result.get(
-            "meta"
-        )
-    )
-
-    if not yahoo_symbol_metadata_valid(
-        symbol,
-        meta,
-    ):
+    result = safe_dict(results[0])
+    meta = safe_dict(result.get("meta"))
+    # Symbol/exchange mismatches are intentionally not discarded here.
+    # They must reach the shared validator so diagnostics can record exactly
+    # why a .KS/.KQ candidate was rejected.  Currency is still constrained.
+    currency = str(meta.get("currency", "")).strip().upper()
+    if currency and currency != "KRW":
         return {}
 
-    indicators = safe_dict(
-        result.get(
-            "indicators"
-        )
-    )
-    quotes = safe_list(
-        indicators.get(
-            "quote"
-        )
-    )
-    quote = (
-        safe_dict(
-            quotes[0]
-        )
-        if quotes
-        else {}
-    )
-
+    indicators = safe_dict(result.get("indicators"))
+    quotes = safe_list(indicators.get("quote"))
+    quote = safe_dict(quotes[0]) if quotes else {}
     rows = quote_rows(
-        result.get(
-            "timestamp"
-        ),
-        quote.get(
-            "open"
-        ),
-        quote.get(
-            "high"
-        ),
-        quote.get(
-            "low"
-        ),
-        quote.get(
-            "close"
-        ),
-        quote.get(
-            "volume"
-        ),
+        result.get("timestamp"),
+        quote.get("open"),
+        quote.get("high"),
+        quote.get("low"),
+        quote.get("close"),
+        quote.get("volume"),
     )
-
     if not rows:
         return {}
 
     latest = rows[-1]
-
-    if not timestamp_is_fresh(
-        latest.get(
-            "timestamp"
-        )
-    ):
+    latest_ts = safe_int(latest.get("timestamp"))
+    if not timestamp_is_fresh(latest_ts):
         return {}
 
-    latest_close = safe_float(
-        latest.get(
-            "close"
-        )
-    )
-    regular_price = safe_float(
-        meta.get(
-            "regularMarketPrice"
-        )
-    )
-    regular_time = unix_time(
-        meta.get(
-            "regularMarketTime"
-        )
-    )
-
-    use_regular_price = (
-        regular_price > 0
-        and timestamp_is_fresh(
-            regular_time
-        )
-    )
-
-    if (
-        use_regular_price
-        and latest_close > 0
-    ):
-        price_gap_ratio = abs(
-            regular_price
-            / latest_close
-            - 1.0
-        )
-
-        if (
-            price_gap_ratio
-            > YAHOO_MAX_META_CLOSE_GAP_RATIO
-        ):
-            use_regular_price = False
-
-        if (
-            regular_time
-            < safe_int(
-                latest.get(
-                    "timestamp"
-                )
-            ) - 18 * 60 * 60
-        ):
-            use_regular_price = False
-
-    current_price = (
-        regular_price
-        if use_regular_price
-        else latest_close
-    )
-
-    if current_price <= 0:
+    latest_close = safe_float(latest.get("close"))
+    # The timestamp-aligned quote.close is the canonical Yahoo price.
+    # regularMarketPrice is metadata and has produced stale pre-split/pre-event
+    # values even when its timestamp looks recent, so it is diagnostic-only.
+    regular_price = safe_float(meta.get("regularMarketPrice"))
+    regular_time = unix_time(meta.get("regularMarketTime"))
+    selected_ts = latest_ts
+    current_price = latest_close
+    if current_price <= 0 or selected_ts <= 0:
         return {}
 
-    volume = (
-        safe_int(
-            meta.get(
-                "regularMarketVolume"
-            )
-        )
-        if use_regular_price
-        else 0
-    )
-
-    if volume <= 0:
-        volume = safe_int(
-            latest.get(
-                "volume"
-            )
-        )
-
+    observed = datetime.fromtimestamp(selected_ts, tz=timezone.utc).astimezone(now_kst().tzinfo)
+    volume = safe_int(latest.get("volume"))
     if volume <= 0:
         return {}
 
-    open_price = (
-        safe_float(
-            meta.get(
-                "regularMarketOpen"
-            )
-        )
-        if use_regular_price
-        else 0.0
-    )
-    high_price = (
-        safe_float(
-            meta.get(
-                "regularMarketDayHigh"
-            )
-        )
-        if use_regular_price
-        else 0.0
-    )
-    low_price = (
-        safe_float(
-            meta.get(
-                "regularMarketDayLow"
-            )
-        )
-        if use_regular_price
-        else 0.0
-    )
-
+    open_price = safe_float(latest.get("open"))
+    high_price = safe_float(latest.get("high"))
+    low_price = safe_float(latest.get("low"))
     if open_price <= 0:
-        open_price = safe_float(
-            latest.get(
-                "open"
-            ),
-            current_price,
-        )
+        open_price = safe_float(latest.get("open"), current_price)
     if high_price <= 0:
-        high_price = safe_float(
-            latest.get(
-                "high"
-            ),
-            current_price,
-        )
+        high_price = safe_float(latest.get("high"), current_price)
     if low_price <= 0:
-        low_price = safe_float(
-            latest.get(
-                "low"
-            ),
-            current_price,
-        )
+        low_price = safe_float(latest.get("low"), current_price)
 
-    previous_close = (
-        safe_float(
-            rows[-2].get(
-                "close"
-            )
-        )
-        if len(rows) >= 2
-        else 0.0
+    previous_close = safe_float(rows[-2].get("close")) if len(rows) >= 2 else 0.0
+    if previous_close <= 0:
+        previous_close = safe_float(meta.get("chartPreviousClose") or meta.get("previousClose"))
+
+    code = str(stock_code or symbol.split(".", 1)[0]).strip().zfill(6)
+    exchange = str(meta.get("exchangeName", ""))
+    market_name = normalize_yahoo_market(exchange) or suffix_market(symbol)
+    collected_at = now_kst()
+    price_type = "KRX 종가"
+
+    return build_price_candidate(
+        code,
+        market=market_name,
+        trading_market="KRX",
+        price=current_price,
+        price_date=observed.date().isoformat(),
+        price_time=observed.strftime("%H:%M:%S"),
+        collected_at=collected_at,
+        source="Yahoo Finance Chart API",
+        price_type=price_type,
+        adjusted=False,
+        volume=volume,
+        market_cap=safe_float(meta.get("marketCap")),
+        source_share_count=safe_int(meta.get("sharesOutstanding")),
+        symbol=symbol,
+        exchange=exchange,
+        status=price_market_status(collected_at),
+        open_price=open_price,
+        high_price=high_price,
+        low_price=low_price,
+        previous_close=previous_close,
     )
 
-    if (
-        previous_close <= 0
-        and use_regular_price
-    ):
-        previous_close = safe_float(
-            meta.get(
-                "chartPreviousClose"
-            )
-            or meta.get(
-                "previousClose"
-            )
-        )
 
-    change = (
-        current_price
-        - previous_close
-        if previous_close > 0
-        else 0.0
-    )
-    change_rate = (
-        change
-        / previous_close
-        * 100.0
-        if previous_close > 0
-        else 0.0
-    )
+def get_yahoo_market_candidates(
+    stock_code: str,
+    market_code: str = "",
+) -> List[Dict[str, Any]]:
+    """Collect the minimum Yahoo candidates needed for a market fallback.
 
-    market_cap = safe_float(
-        meta.get(
-            "marketCap"
-        )
-    )
+    When KOSPI/KOSDAQ is known, the preferred suffix is tried first and a
+    coherent result stops the loop.  The alternate suffix is only queried when
+    the preferred response is unusable, preventing the old unconditional
+    duplicate Yahoo calls.
+    """
+    candidates: List[Dict[str, Any]] = []
+    expected = normalized_market_code(market_code)
 
-    return {
-        "현재가": current_price,
-        "전일대비": change,
-        "등락률": change_rate,
-        "거래량": volume,
-        "시가": open_price,
-        "고가": high_price,
-        "저가": low_price,
-        "시가총액": market_cap,
-        "Yahoo심볼": symbol,
-        "Yahoo통화": str(
-            meta.get(
-                "currency",
-                "",
+    for symbol in yahoo_symbols(stock_code, market_code=market_code):
+        try:
+            parsed = parse_yahoo_market(
+                symbol,
+                request_yahoo_chart(symbol),
+                stock_code,
             )
-        ),
-        "Yahoo거래소": str(
-            meta.get(
-                "exchangeName",
-                "",
+        except Exception as error:
+            print(
+                "MARKET YAHOO CANDIDATE ERROR:",
+                symbol,
+                type(error).__name__,
+                error,
             )
-        ),
-    }
+            continue
+
+        if not parsed:
+            continue
+
+        candidates.append(parsed)
+        actual = normalized_market_code(parsed.get("시장구분"))
+        if expected and actual == expected:
+            break
+
+    return candidates
+
 
 def get_yahoo_market_fallback(
     stock_code: str,
     market_code: str = "",
 ) -> Dict[str, Any]:
-    errors = []
-    candidates: List[Dict[str, Any]] = []
-    normalized_market = normalize_yahoo_market_code(
-        market_code
-    )
+    """Backward-compatible view of the first collected Yahoo candidate."""
+    candidates = get_yahoo_market_candidates(stock_code, market_code)
+    if not candidates:
+        return {"응답메시지": "Yahoo 검증 후보 없음"}
 
-    for symbol in yahoo_symbols(
-        stock_code,
-        market_code=market_code,
-    ):
-        try:
-            data = request_yahoo_chart(
-                symbol
-            )
-
-            parsed = parse_yahoo_market(
-                symbol,
-                data,
-            )
-
-            if parsed:
-                candidates.append(
-                    parsed
-                )
-
-                if normalized_market:
-                    break
-
-                continue
-
-            errors.append(
-                f"{symbol}: 유효가격 없음"
-            )
-
-        except Exception as error:
-            errors.append(
-                (
-                    f"{symbol}: "
-                    f"{type(error).__name__}: "
-                    f"{error}"
-                )
-            )
-
-    if len(candidates) == 1:
-        parsed = candidates[0]
-        print(
-            "MARKET YAHOO FALLBACK OK:",
-            parsed.get(
-                "Yahoo심볼"
-            ),
-            parsed.get(
-                "현재가"
-            ),
-            parsed.get(
-                "거래량"
-            ),
-        )
-        parsed[
-            "응답메시지"
-        ] = ""
-        return parsed
-
-    if len(candidates) > 1:
-        errors.append(
-            "시장구분 미확정 상태에서 .KS와 .KQ가 모두 응답하여 오채택 방지를 위해 거부"
-        )
-
-    print(
-        "MARKET YAHOO FALLBACK FAILED:",
-        " / ".join(
-            errors
-        ),
-    )
-
+    row = candidates[0]
+    price = safe_float(row.get("가격"))
+    previous = safe_float(row.get("전일종가"))
     return {
-        "응답메시지": (
-            " / ".join(
-                errors
-            )
-        ),
+        "현재가": price,
+        "전일대비": price - previous if previous > 0 else 0.0,
+        "등락률": ((price / previous - 1.0) * 100.0) if previous > 0 else 0.0,
+        "거래량": safe_int(row.get("거래량")),
+        "시가": safe_float(row.get("시가")),
+        "고가": safe_float(row.get("고가")),
+        "저가": safe_float(row.get("저가")),
+        "시가총액": safe_float(row.get("시가총액")),
+        "Yahoo심볼": str(row.get("심볼", "")),
+        "Yahoo통화": "KRW",
+        "Yahoo거래소": str(row.get("거래소", "")),
+        "응답메시지": "",
     }
+
+
+def _fundamental_share_count(fundamentals_bundle: Dict[str, Any]) -> int:
+    bundle = safe_dict(fundamentals_bundle)
+    share_blocks = [
+        safe_dict(bundle.get("주식총수")),
+        safe_dict(bundle.get("주식수")),
+        safe_dict(bundle.get("shares")),
+        bundle,
+    ]
+    keys = (
+        "가치평가주식수",
+        "발행주식수",
+        "유통주식수",
+        "sharesOutstanding",
+        "상장주식수",
+    )
+    for block in share_blocks:
+        for key in keys:
+            value = safe_int(block.get(key))
+            if value > 0:
+                return value
+    return 0
+
+
+def finalize_market_data(
+    market: Dict[str, Any],
+    stock_code: str,
+    market_code: str = "",
+    fundamentals_bundle: Dict[str, Any] | None = None,
+    technical_bundle: Dict[str, Any] | None = None,
+) -> Dict[str, Any]:
+    """Validate already-collected price candidates without new network calls."""
+    target = dict(market or {})
+    share_count = _fundamental_share_count(fundamentals_bundle or {})
+    candidates = [
+        dict(item)
+        for item in safe_list(target.get("_가격후보"))
+        if isinstance(item, dict) and item
+    ]
+
+    expected_market = normalized_market_code(market_code)
+    if not expected_market and candidates:
+        expected_market = normalized_market_code(candidates[0].get("시장구분"))
+
+    selected, checked = choose_candidate(
+        candidates,
+        stock_code=stock_code,
+        expected_market=expected_market,
+        share_count=share_count,
+        technical_bundle=technical_bundle or {},
+    )
+
+    if selected is None and target.get("_Yahoo재시도허용") is True:
+        # KIS 후보가 재무주식수/기술종가 교차검증에서만 탈락한 경우에 한해
+        # Yahoo를 한 번 보조 조회한다. 정상 KIS 또는 이미 Yahoo를 사용한 경로에서는
+        # 이 호출이 발생하지 않아 평상시 외부 호출량을 늘리지 않는다.
+        yahoo_candidates = get_yahoo_market_candidates(stock_code, market_code)
+        if yahoo_candidates:
+            retry_selected, retry_checked = choose_candidate(
+                yahoo_candidates,
+                stock_code=stock_code,
+                expected_market=expected_market,
+                share_count=share_count,
+                technical_bundle=technical_bundle or {},
+            )
+            checked.extend(retry_checked)
+            if retry_selected is not None:
+                selected = retry_selected
+
+    if selected is None:
+        cache_markets = [expected_market] if expected_market else ["KOSPI", "KOSDAQ"]
+        for cache_market in cache_markets:
+            cached = read_price_cache(
+                stock_code,
+                cache_market,
+                trading_market="KRX",
+                share_count=share_count,
+            )
+            if not cached:
+                continue
+            cached_selected, cached_checked = choose_candidate(
+                [cached],
+                stock_code=stock_code,
+                expected_market=cache_market,
+                share_count=share_count,
+                technical_bundle=technical_bundle or {},
+            )
+            checked.extend(cached_checked)
+            if cached_selected is not None:
+                selected = cached_selected
+                break
+
+    target = apply_price_to_market(target, selected, checked)
+    target.pop("_가격후보", None)
+    target.pop("_Yahoo재시도허용", None)
+
+    if selected is not None:
+        write_price_cache(selected, share_count)
+
+    return target
 
 
 def get_market_data(
     stock_code: str,
     market_code: str = "",
 ) -> Dict[str, Any]:
-    price = safe_dict(
-        get_stock_price(
-            stock_code
-        )
-    )
+    """Collect current quote candidates once; validation is finalized later.
 
-    investor = safe_dict(
-        get_investor_trade(
-            stock_code
-        )
-    )
+    KIS is tried first. Yahoo is contacted only when the KIS quote does not
+    provide a usable positive price+volume candidate. Investor flow stays KIS
+    only and is never estimated.
+    """
+    price = safe_dict(get_stock_price(stock_code))
+    investor = safe_dict(get_investor_trade(stock_code))
+
+    candidates: List[Dict[str, Any]] = []
+    kis_candidate = _kis_candidate(stock_code, market_code, price)
+    if kis_candidate:
+        candidates.append(kis_candidate)
+    else:
+        candidates.extend(get_yahoo_market_candidates(stock_code, market_code))
+
+    provisional = candidates[0] if candidates else {}
+    provisional_price = safe_float(provisional.get("가격"))
+    previous_close = safe_float(provisional.get("전일종가"))
 
     market = {
-        "현재가": safe_float(
-            price.get(
-                "stck_prpr"
-            )
-        ),
-        "전일대비": safe_float(
-            price.get(
-                "prdy_vrss"
-            )
-        ),
-        "등락률": safe_float(
-            price.get(
-                "prdy_ctrt"
-            )
-        ),
-        "거래량": safe_int(
-            price.get(
-                "acml_vol"
-            )
-        ),
-        "시가": safe_float(
-            price.get(
-                "stck_oprc"
-            )
-        ),
-        "고가": safe_float(
-            price.get(
-                "stck_hgpr"
-            )
-        ),
-        "저가": safe_float(
-            price.get(
-                "stck_lwpr"
-            )
-        ),
-        "PER": safe_float(
-            price.get(
-                "per"
-            )
-        ),
-        "PBR": safe_float(
-            price.get(
-                "pbr"
-            )
-        ),
-        "EPS": safe_float(
-            price.get(
-                "eps"
-            )
-        ),
-        "BPS": safe_float(
-            price.get(
-                "bps"
-            )
-        ),
-        "시가총액": safe_float(
-            price.get(
-                "hts_avls"
-            )
-        ),
+        "종목코드": str(stock_code).zfill(6),
+        "현재가": provisional_price,
+        "전일대비": provisional_price - previous_close if previous_close > 0 else safe_float(price.get("prdy_vrss")),
+        "등락률": ((provisional_price / previous_close - 1.0) * 100.0) if previous_close > 0 else safe_float(price.get("prdy_ctrt")),
+        "거래량": safe_int(provisional.get("거래량")),
+        "시가": safe_float(provisional.get("시가")),
+        "고가": safe_float(provisional.get("고가")),
+        "저가": safe_float(provisional.get("저가")),
+        "PER": safe_float(price.get("per")),
+        "PBR": safe_float(price.get("pbr")),
+        "EPS": safe_float(price.get("eps")),
+        "BPS": safe_float(price.get("bps")),
+        "시가총액": safe_float(provisional.get("시가총액")) or safe_float(price.get("hts_avls")),
         "수급": {
-            "외국인순매수": (
-                investor.get(
-                    "외국인순매수",
-                    0,
-                )
-            ),
-            "기관순매수": (
-                investor.get(
-                    "기관순매수",
-                    0,
-                )
-            ),
-            "개인순매수": (
-                investor.get(
-                    "개인순매수",
-                    0,
-                )
-            ),
+            "외국인순매수": investor.get("외국인순매수", 0),
+            "기관순매수": investor.get("기관순매수", 0),
+            "개인순매수": investor.get("개인순매수", 0),
         },
-        "현재가수집상태": (
-            "정상"
-            if (
-                safe_float(
-                    price.get(
-                        "stck_prpr"
-                    )
-                ) > 0
-                and safe_int(
-                    price.get(
-                        "acml_vol"
-                    )
-                ) > 0
-            )
-            else "실패"
+        "현재가수집상태": "검증대기",
+        "현재가응답메시지": (
+            "가격 후보 수집 완료 · 재무/기술 교차검증 대기"
+            if candidates
+            else "검증 가능한 최신 가격 후보 미수집"
         ),
-        "현재가응답메시지": "",
         "데이터출처": (
-            "한국투자증권 KIS"
+            str(provisional.get("가격출처", "")) + " · 검증대기"
+            if candidates
+            else "현재가 후보 없음"
         ),
+        "_가격후보": candidates,
+        "_Yahoo재시도허용": bool(kis_candidate),
     }
 
-    if (
-        market[
-            "현재가"
-        ] <= 0
-        or market[
-            "거래량"
-        ] <= 0
-    ):
-        print(
-            "MARKET KIS INVALID:",
-            stock_code,
-            market[
-                "현재가"
-            ],
-            market[
-                "거래량"
-            ],
-        )
-
-        yahoo = (
-            get_yahoo_market_fallback(
-                stock_code,
-                market_code=market_code,
-            )
-        )
-
-        if (
-            safe_float(
-                yahoo.get(
-                    "현재가"
-                )
-            ) > 0
-            and safe_int(
-                yahoo.get(
-                    "거래량"
-                )
-            ) > 0
-        ):
-            for key in (
-                "현재가",
-                "전일대비",
-                "등락률",
-                "거래량",
-                "시가",
-                "고가",
-                "저가",
-            ):
-                market[
-                    key
-                ] = yahoo[
-                    key
-                ]
-
-            if (
-                market[
-                    "시가총액"
-                ] <= 0
-                and safe_float(
-                    yahoo.get(
-                        "시가총액"
-                    )
-                ) > 0
-            ):
-                market[
-                    "시가총액"
-                ] = yahoo[
-                    "시가총액"
-                ]
-
-            market[
-                "Yahoo심볼"
-            ] = yahoo.get(
-                "Yahoo심볼",
-                "",
-            )
-
-            market[
-                "Yahoo통화"
-            ] = yahoo.get(
-                "Yahoo통화",
-                "",
-            )
-
-            market[
-                "Yahoo거래소"
-            ] = yahoo.get(
-                "Yahoo거래소",
-                "",
-            )
-
-            market[
-                "현재가수집상태"
-            ] = "보완성공"
-
-            market[
-                "현재가응답메시지"
-            ] = (
-                "KIS 현재가·거래량이 비어 "
-                "Yahoo Chart API로 보완"
-            )
-
-            market[
-                "데이터출처"
-            ] = (
-                "한국투자증권 KIS "
-                "+ Yahoo Finance 보완"
-            )
-
-        else:
-            market[
-                "현재가응답메시지"
-            ] = (
-                "KIS 현재가·거래량 실패 / "
-                "Yahoo 보완도 실패: "
-                + str(
-                    yahoo.get(
-                        "응답메시지",
-                        "",
-                    )
-                )
-            )
+    if provisional.get("심볼"):
+        market["Yahoo심볼"] = str(provisional.get("심볼"))
+        market["Yahoo통화"] = "KRW"
+        market["Yahoo거래소"] = str(provisional.get("거래소", ""))
 
     print(
-        "MARKET RESULT:",
+        "MARKET CANDIDATES:",
         stock_code,
-        market[
-            "현재가수집상태"
-        ],
-        market[
-            "현재가"
-        ],
-        market[
-            "거래량"
-        ],
-        market[
-            "데이터출처"
-        ],
+        len(candidates),
+        market["데이터출처"],
     )
-
     return market
