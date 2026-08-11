@@ -220,7 +220,7 @@ class PricePipelineTests(unittest.TestCase):
         self.assertEqual(disabled["rt_cd"], "KIS_DISABLED")
 
     def test_valid_central_token_is_reused_without_issuance(self):
-        valid_until = FIXED_NOW.astimezone(price_module.UTC) + timedelta(hours=6)
+        valid_until = datetime.now(price_module.UTC) + timedelta(hours=6)
         with mock.patch.object(kis_collector, "KIS_DISABLED", False), \
              mock.patch.object(kis_collector, "ACCESS_TOKEN", "central-reused-token"), \
              mock.patch.object(kis_collector, "ACCESS_TOKEN_EXPIRES_AT", valid_until), \
@@ -230,7 +230,7 @@ class PricePipelineTests(unittest.TestCase):
         self.assertEqual(tokens, ["central-reused-token"] * 5)
 
     def test_parallel_collectors_reuse_same_valid_central_token(self):
-        valid_until = FIXED_NOW.astimezone(price_module.UTC) + timedelta(hours=6)
+        valid_until = datetime.now(price_module.UTC) + timedelta(hours=6)
         with mock.patch.object(kis_collector, "KIS_DISABLED", False), \
              mock.patch.object(kis_collector, "ACCESS_TOKEN", "central-reused-token"), \
              mock.patch.object(kis_collector, "ACCESS_TOKEN_EXPIRES_AT", valid_until), \
@@ -348,7 +348,7 @@ class PricePipelineTests(unittest.TestCase):
             "가치평가": {
                 "가치평가엔진버전": "6.8.0-valuation-contract-v4",
                 "가치평가계약버전": "4.0",
-                "산업프로필버전": "3.0.0",
+                "산업프로필버전": "3.0.1",
                 "가치평가모형개정버전": "future-growth-v1.1.0-price-independent",
                 "미래성장모형": {"사용가능": False, "차단사유": ["자료 부족"]},
                 "데이터자격검사": {"통과": False, "중단사유": ["자료 부족"]},
@@ -368,9 +368,10 @@ class PricePipelineTests(unittest.TestCase):
                     source="test", price_type="KRX 종가", adjusted=False, volume=100,
                 )
                 row["최종채택"] = True
-                price_module.write_price_cache(row, 1000000)
-                hit = price_module.read_price_cache("000001", "K", share_count=1000000)
-                miss = price_module.read_price_cache("000001", "K", share_count=2000000)
+                with mock.patch.object(price_module, "now_kst", return_value=FIXED_NOW):
+                    price_module.write_price_cache(row, 1000000)
+                    hit = price_module.read_price_cache("000001", "K", share_count=1000000)
+                    miss = price_module.read_price_cache("000001", "K", share_count=2000000)
                 self.assertIsNotNone(hit)
                 self.assertTrue(hit["캐시사용여부"])
                 self.assertIsNone(miss)

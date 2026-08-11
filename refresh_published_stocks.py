@@ -1,8 +1,8 @@
 """Refresh already-published stock files with current engine/contract versions.
 
-Incompatible files are refreshed first.  They remain on disk when a rebuild
-fails so the next run can retry, but publish_on_demand excludes them from the
-active index until they pass the current publication contract.
+Incompatible files are refreshed first.  They remain readable/published when a
+rebuild fails so normal company lookup is not interrupted; strict compatibility
+marks refresh priority and validates newly generated files.
 """
 from __future__ import annotations
 
@@ -132,7 +132,7 @@ def main() -> int:
             "--stock-code",
             code,
         ]) != 0:
-            print("REFRESH SKIPPED: invalid new output; stale file remains excluded:", code, flush=True)
+            print("REFRESH SKIPPED: invalid new output; previous readable cache preserved:", code, flush=True)
             skipped.append(code)
             continue
 
@@ -198,7 +198,7 @@ def main() -> int:
     print("- refreshed:", len(refreshed), refreshed, flush=True)
     print("- skipped-invalid:", len(skipped), skipped, flush=True)
     print("- failed-runtime:", len(failed), failed, flush=True)
-    print("- remaining incompatible files will stay excluded from active index", flush=True)
+    print("- remaining incompatible files stay readable and are prioritized on the next refresh", flush=True)
 
     # Best-effort batch. Invalid/stale files are not active in the index.
     return 0

@@ -23,7 +23,7 @@ from collectors.fundamentals import get_fundamentals_bundle
 from collectors.global_market import get_global_market_bundle
 from collectors.history import get_history_bundle
 from collectors.industry import get_industry_bundle
-from collectors.market import get_market_data
+from collectors.market import finalize_market_data, get_market_data
 from collectors.news import get_company_news
 from collectors.provisional import get_latest_provisional_earnings
 from collectors.technical import get_stock_technical_bundle
@@ -1327,6 +1327,13 @@ def main():
         )
 
     market["과거데이터"] = build_history_summary(history_bundle)
+    market = finalize_market_data(
+        market,
+        stock_code,
+        market_code=market_code,
+        fundamentals_bundle=fundamentals_bundle,
+        technical_bundle=technical_bundle,
+    )
     market = apply_technical_price_fallback(
         market,
         technical_bundle,

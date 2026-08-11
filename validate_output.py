@@ -623,7 +623,8 @@ def main():
         default="",
         help=(
             "검증할 JSON 파일. "
-            "생략하면 output/<stock-code>.json"
+            "생략하면 data/latest/stocks/<stock-code>.json을 우선 검증하고 "
+            "없을 때 output/<stock-code>.json을 사용"
         ),
     )
 
@@ -642,19 +643,24 @@ def main():
         or "005930"
     ).strip().zfill(6)
 
-    file_name = (
-        args.file
-        or f"output/{stock_code}.json"
-    )
-
-    path = Path(
-        file_name
-    )
+    if args.file:
+        path = Path(args.file)
+        attempted = [path]
+    else:
+        attempted = [
+            Path("data") / "latest" / "stocks" / f"{stock_code}.json",
+            Path("output") / f"{stock_code}.json",
+        ]
+        if stock_code == "005930":
+            attempted.append(Path("output") / "samsung.json")
+        path = next((item for item in attempted if item.exists()), attempted[0])
 
     if not path.exists():
         print("ENGINE OUTPUT VALIDATION")
         print("RESULT: FAIL")
-        print("- 파일 없음:", path)
+        print("- 파일 없음. 확인 경로:")
+        for item in attempted:
+            print("  ·", item)
         return 1
 
     try:

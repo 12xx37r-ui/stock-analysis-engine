@@ -3,8 +3,9 @@
 The valuation engine and the published cache are separate concerns.  A stock
 file is eligible for the active latest index only when it was produced by the
 current engine/contract/profile and contains a coherent qualification result.
-Older files may remain on disk so the refresh workflow can discover and rebuild
-them, but they must not be ranked or advertised as active data.
+Older files may remain published during gradual migration so normal company lookup
+does not disappear.  This strict check is used to validate newly generated files and
+to prioritize incompatible cache files for background refresh.
 """
 from __future__ import annotations
 
@@ -12,9 +13,10 @@ from typing import Any, Dict, List, Tuple
 
 EXPECTED_ENGINE_VERSION = "6.8.0-valuation-contract-v4"
 EXPECTED_VALUATION_CONTRACT = "4.0"
-EXPECTED_INDUSTRY_PROFILE = "3.0.0"
+EXPECTED_INDUSTRY_PROFILE = "3.0.1"
 EXPECTED_BRIDGE_SCHEMA = "2.0"
 EXPECTED_VALUATION_MODEL_REVISION = "future-growth-v1.1.0-price-independent"
+EXPECTED_PRICE_SCHEMA = "3.0.0"
 
 
 def safe_dict(value: Any) -> Dict[str, Any]:
@@ -39,10 +41,26 @@ def inspect_published_stock(stock: Dict[str, Any], expected_code: str = "") -> T
     if expected_code and code != str(expected_code).zfill(6):
         reasons.append("종목코드 불일치")
 
+    market = safe_dict(stock.get("시장정보"))
+    price_diagnostic = safe_dict(market.get("가격진단"))
     prediction = safe_dict(stock.get("주가예측"))
     valuation = safe_dict(stock.get("가치평가"))
     qualification = safe_dict(valuation.get("데이터자격검사"))
     bridge = safe_dict(stock.get("화면브리지"))
+
+    if str(price_diagnostic.get("가격스키마버전", "")) != EXPECTED_PRICE_SCHEMA:
+        reasons.append("현재가 검증 스키마 불일치")
+    else:
+        accepted = price_diagnostic.get("최종채택") is True
+        current_price = 0.0
+        try:
+            current_price = float(market.get("현재가") or 0)
+        except (TypeError, ValueError):
+            current_price = 0.0
+        if accepted and current_price <= 0:
+            reasons.append("현재가 검증 통과인데 현재가 없음")
+        if not accepted and current_price > 0:
+            reasons.append("현재가 검증 거부인데 현재가가 게시됨")
 
     if prediction.get("엔진버전") != EXPECTED_ENGINE_VERSION:
         reasons.append("주가예측 엔진버전 불일치")

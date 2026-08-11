@@ -1,7 +1,7 @@
 """업종 적응형 가치평가 프로필 정적 검증."""
 
 from analyzers.valuation import FUTURE_GROWTH_CONFIG, VALUATION_PROFILES, calculate_value
-from collectors.company import VALUATION_INDUSTRIES, classify_dart_industry
+from collectors.company import VALUATION_INDUSTRIES, classify_dart_industry, classify_dart_industry_detail
 
 
 REQUIRED_PROFILE_FIELDS = {
@@ -99,6 +99,19 @@ def validate_profiles():
         if actual != expected:
             errors.append(f"DART {dart_code}: {actual} != {expected}")
 
+    # 투자산업과 KSIC 정보서비스 코드가 어긋나는 복합기업 회귀검증.
+    yg = classify_dart_industry_detail("631", "YG PLUS", "037270")
+    if yg.get("산업코드") != "media_entertainment" or yg.get("분류신뢰도", 0) < 95:
+        errors.append(f"YG PLUS 산업분류 오류: {yg}")
+
+    ambiguous_631 = classify_dart_industry_detail("631", "가상정보서비스", "999998")
+    if ambiguous_631.get("산업코드") == "software_platform":
+        errors.append(f"KSIC 631을 소프트웨어로 과잉분류: {ambiguous_631}")
+
+    explicit_platform = classify_dart_industry_detail("631", "클라우드플랫폼", "999997")
+    if explicit_platform.get("산업코드") != "software_platform":
+        errors.append(f"명시적 플랫폼 기업 분류 오류: {explicit_platform}")
+
     synthetic_financial = {
         "재무지표": {
             "ROE": 14.0,
@@ -127,7 +140,7 @@ def validate_profiles():
             company_info={
                 "가치평가산업코드": code,
                 "산업분류신뢰도": 95,
-                "산업프로필버전": "3.0.0",
+                "산업프로필버전": "3.0.1",
             },
         )
         low = result["보수적적정가"]

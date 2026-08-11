@@ -40,7 +40,7 @@ from collectors.fundamentals import get_fundamentals_bundle
 from collectors.global_market import get_global_market_bundle
 from collectors.history import get_history_bundle
 from collectors.industry import get_industry_bundle
-from collectors.market import get_market_data
+from collectors.market import finalize_market_data, get_market_data
 from collectors.news import get_company_news
 from collectors.technical import get_stock_technical_bundle
 from main import (
@@ -764,6 +764,14 @@ def analyze_one_stock(
             "배당": {},
             "자기주식": {},
         },
+    )
+
+    market = finalize_market_data(
+        market,
+        resolved_stock_code,
+        market_code=market_code,
+        fundamentals_bundle=fundamentals_bundle,
+        technical_bundle=technical_bundle,
     )
 
     fundamentals_analysis = safe_execute(

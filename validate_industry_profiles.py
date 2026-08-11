@@ -17,6 +17,9 @@ from pathlib import Path
 from collectors.industry import (
     INDUSTRY_PROFILES,
 )
+from collectors.company import (
+    VALUATION_INDUSTRIES,
+)
 
 
 EXPECTED_INDUSTRIES = {
@@ -191,12 +194,14 @@ def main() -> int:
             for industry_code, detail in (
                 industries.items()
             ):
-                if industry_code not in (
-                    EXPECTED_INDUSTRIES
-                ):
+                if industry_code not in VALUATION_INDUSTRIES:
                     errors.append(
-                        "매핑에 미지원 산업코드: "
+                        "가치평가에 미지원 산업코드: "
                         f"{industry_code}"
+                    )
+                elif industry_code not in EXPECTED_INDUSTRIES:
+                    warnings.append(
+                        f"{industry_code}: 가치평가 전용 매핑 · 실시간 산업 대표자산 모델은 미지원"
                     )
 
                 stock_codes = detail.get(
