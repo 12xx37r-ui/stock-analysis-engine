@@ -57,6 +57,13 @@ INDUSTRY_MAP_PATH = (
     / "industry_map.json"
 )
 
+PUBLISHED_STOCK_DIR = (
+    Path(__file__).resolve().parents[1]
+    / "data"
+    / "latest"
+    / "stocks"
+)
+
 DEFAULT_INDUSTRY_MAP = {
     "005930": "semiconductor",
     "000660": "semiconductor",
@@ -65,7 +72,7 @@ DEFAULT_INDUSTRY_MAP = {
     "089030": "semiconductor",
 }
 
-INDUSTRY_PROFILE_VERSION = "3.0.1"
+INDUSTRY_PROFILE_VERSION = "3.1.0"
 
 ELECTRONIC_COMPONENT_KEYWORDS = (
     "삼성전기", "mlcc", "적층세라믹", "카메라모듈", "전자부품",
@@ -76,10 +83,17 @@ SEMICONDUCTOR_KEYWORDS = (
 )
 MEDIA_ENTERTAINMENT_KEYWORDS = (
     "엔터테인먼트", "엔터", "스튜디오", "콘텐츠", "뮤직",
-    "음악", "음원", "음반", "아티스트", "미디어",
+    "음악", "음원", "음반", "아티스트", "미디어", "컬처",
 )
 SOFTWARE_PLATFORM_KEYWORDS = (
     "소프트웨어", "플랫폼", "클라우드", "인터넷", "솔루션", "게임",
+    "인포넷", "인증", "시큐리티",
+)
+BIOTECH_KEYWORDS = (
+    "바이오", "셀트리온", "생명과학", "유전체", "진단",
+)
+MEDICAL_DEVICE_KEYWORDS = (
+    "의료기기", "메디컬", "헬스테크", "의료ai", "의료 AI",
 )
 
 
@@ -106,6 +120,8 @@ VALUATION_INDUSTRIES = {
     "transportation",
     "real_estate",
     "healthcare",
+    "medical_devices",
+    "shipbuilding",
     "energy",
     "holding_company",
     "services",
@@ -119,57 +135,101 @@ def classify_dart_industry_detail(
     company_name: Any = "",
     stock_code: Any = "",
 ) -> Dict[str, Any]:
-    """OpenDART 업종코드와 기업명을 가치평가 프로필로 세분화한다.
+    """Classify a company into an investment/valuation industry profile.
 
-    26번 제조업 전체를 반도체로 몰던 기존 오류를 제거한다.
-    261은 반도체, 262~266은 전자부품·IT하드웨어로 분리한다.
+    Priority:
+    1) verified stock mapping for structurally ambiguous conglomerates,
+    2) precise KSIC subcategory,
+    3) strong company-name evidence,
+    4) broad KSIC major category,
+    5) conservative general fallback.
+
+    This prevents broad names such as "바이오" or coarse two-digit codes from
+    overriding a more precise OpenDART industry code.
     """
     code = "".join(character for character in safe_text(industry_code) if character.isdigit())
     name = safe_text(company_name).lower()
     stock = normalize_stock_code(stock_code)
 
-    manual = load_industry_map().get(stock, "none") if stock else "none"
-    if manual != "none":
+    def row(profile: str, source: str, confidence: int) -> Dict[str, Any]:
         return {
-            "산업코드": manual,
-            "분류출처": "수동 종목매핑",
-            "분류신뢰도": 100,
+            "산업코드": profile,
+            "분류출처": source,
+            "분류신뢰도": confidence,
             "산업프로필버전": INDUSTRY_PROFILE_VERSION,
         }
 
-    if any(keyword in name for keyword in ("지주", "홀딩스", "holdings")):
-        return {"산업코드": "holding_company", "분류출처": "기업명 키워드", "분류신뢰도": 86, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
-    if any(keyword in name for keyword in ELECTRONIC_COMPONENT_KEYWORDS):
-        return {"산업코드": "electronic_components", "분류출처": "전자부품 키워드", "분류신뢰도": 92, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
-    if any(keyword in name for keyword in SEMICONDUCTOR_KEYWORDS):
-        return {"산업코드": "semiconductor", "분류출처": "반도체 키워드", "분류신뢰도": 90, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
-    if any(keyword in name for keyword in ("배터리", "에너지솔루션", "리튬", "양극재", "전지")):
-        return {"산업코드": "battery", "분류출처": "기업명 키워드", "분류신뢰도": 88, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
-    if any(keyword in name for keyword in ("바이오", "셀트리온")):
-        return {"산업코드": "biotechnology", "분류출처": "기업명 키워드", "분류신뢰도": 86, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
-    if any(keyword in name for keyword in ("제약", "약품", "파마")):
-        return {"산업코드": "pharmaceutical", "분류출처": "기업명 키워드", "분류신뢰도": 86, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
-    if any(keyword in name for keyword in MEDIA_ENTERTAINMENT_KEYWORDS):
-        return {"산업코드": "media_entertainment", "분류출처": "미디어·엔터테인먼트 기업명 키워드", "분류신뢰도": 88, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
-    if any(keyword in name for keyword in SOFTWARE_PLATFORM_KEYWORDS):
-        return {"산업코드": "software_platform", "분류출처": "소프트웨어·플랫폼 기업명 키워드", "분류신뢰도": 86, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
-    if any(keyword in name for keyword in ("보험", "생명", "화재", "손해보험", "재보험")):
-        return {"산업코드": "insurance", "분류출처": "보험업 기업명 키워드", "분류신뢰도": 94, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
-
-    if len(code) < 2:
-        return {"산업코드": "general", "분류출처": "업종코드 미확보", "분류신뢰도": 35, "산업프로필버전": INDUSTRY_PROFILE_VERSION}
+    manual = load_industry_map().get(stock, "none") if stock else "none"
+    if manual != "none":
+        return row(manual, "검증 종목매핑", 100)
 
     prefix3 = code[:3]
-    major = int(code[:2])
-    if code[:5] in {"20422", "20423", "20424"}:
-        # KSIC 20422(치약·비누·세제), 20423(화장품), 20424(광택·가향)처럼
-        # 브랜드/생활소비재 성격이 강한 세부업종은 광범위한 화학·소재 배수를 쓰지 않는다.
-        result = "beauty_consumer"
-    elif prefix3 == "261":
-        result = "semiconductor"
-    elif prefix3 in {"262", "263", "264", "265", "266"}:
-        result = "electronic_components"
-    elif major == 30:
+    prefix4 = code[:4]
+    prefix5 = code[:5]
+    major = int(code[:2]) if len(code) >= 2 else None
+
+    # Precise KSIC rules. These are evaluated before generic name keywords.
+    if prefix5 in {"20422", "20423", "20424"}:
+        return row("beauty_consumer", "OpenDART KSIC 20422~20424", 94)
+    if prefix3 == "261":
+        return row("semiconductor", "OpenDART KSIC 261", 94)
+    if prefix3 in {"262", "263", "264", "265", "266"}:
+        return row("electronic_components", "OpenDART KSIC 262~266", 94)
+    if prefix3 == "271":
+        return row("medical_devices", "OpenDART KSIC 271 의료기기", 94)
+    if prefix3 == "311":
+        return row("shipbuilding", "OpenDART KSIC 311 선박·보트 건조", 94)
+    if prefix3 == "581":
+        return row("media_entertainment", "OpenDART KSIC 581 출판", 92)
+    if prefix3 == "582":
+        return row("software_platform", "OpenDART KSIC 582 소프트웨어 개발·공급", 94)
+    if prefix3 in {"591", "592", "601", "602"}:
+        return row("media_entertainment", "OpenDART KSIC 영화·음악·방송", 94)
+    if prefix4 in {"6311", "6312"} or prefix3 == "631":
+        return row("software_platform", "OpenDART KSIC 631 포털·호스팅·정보매개", 90)
+    if prefix3 == "639":
+        return row("services", "OpenDART KSIC 639 기타 정보서비스", 76)
+    if prefix5 == "64992":
+        # Financial holding companies are in the verified map. Unmapped 64992
+        # is treated as a generic holding company so non-financial groups are
+        # never valued with the bank/financial-holding model by default.
+        return row("holding_company", "OpenDART KSIC 64992 지주회사", 90)
+
+    # Strong name evidence is useful when DART has no code, or where a broad
+    # manufacturing/service code does not capture an obvious investment sector.
+    if any(keyword in name for keyword in ("지주", "홀딩스", "holdings")):
+        return row("holding_company", "기업명 지주회사 키워드", 86)
+    if any(keyword in name for keyword in MEDIA_ENTERTAINMENT_KEYWORDS):
+        return row("media_entertainment", "미디어·엔터테인먼트 기업명 키워드", 88)
+    if any(keyword in name for keyword in MEDICAL_DEVICE_KEYWORDS):
+        return row("medical_devices", "의료기기·헬스테크 기업명 키워드", 88)
+    if any(keyword in name for keyword in SEMICONDUCTOR_KEYWORDS):
+        return row("semiconductor", "반도체 기업명 키워드", 90)
+    if any(keyword in name for keyword in ("조선", "오션", "선박")):
+        return row("shipbuilding", "조선·해양 기업명 키워드", 92)
+    if any(keyword in name for keyword in ("배터리", "에너지솔루션", "리튬", "양극재", "전지")):
+        return row("battery", "배터리 기업명 키워드", 88)
+    if any(keyword in name for keyword in ("제약", "약품", "파마")):
+        return row("pharmaceutical", "제약 기업명 키워드", 86)
+    if any(keyword in name for keyword in BIOTECH_KEYWORDS):
+        # '바이오' alone can appear in non-biotech company names. When a precise
+        # non-health KSIC code is present, keep that code instead of overriding it.
+        if not code or major in {21, 70, 72, 86}:
+            return row("biotechnology", "바이오·생명과학 기업명 키워드", 88)
+    if any(keyword in name for keyword in SOFTWARE_PLATFORM_KEYWORDS):
+        if not code or major in {58, 62, 63}:
+            return row("software_platform", "소프트웨어·플랫폼 기업명 키워드", 86)
+    if (
+        "보험" in name or "화재" in name or "손해" in name or "재보험" in name
+        or name.endswith("생명") or "생명보험" in name
+    ):
+        return row("insurance", "보험업 기업명 키워드", 94)
+
+    if major is None:
+        return row("general", "업종코드 미확보", 35)
+
+    # Broad KSIC major-category fallback.
+    if major == 30:
         result = "automotive"
     elif major == 21:
         result = "pharmaceutical"
@@ -185,16 +245,15 @@ def classify_dart_industry_detail(
         result = "consumer_discretionary"
     elif major in {45, 46, 47}:
         result = "retail"
-    elif major in {58, 59, 60}:
+    elif major in {59, 60}:
         result = "media_entertainment"
+    elif major == 58:
+        result = "services"
     elif major == 61:
         result = "telecom"
     elif major == 62:
         result = "software_platform"
     elif major == 63:
-        # KSIC 63(정보서비스)는 포털·호스팅뿐 아니라 실제 투자산업이
-        # 미디어/IP/서비스인 복합기업도 섞여 있다. 종목매핑·기업명 근거가
-        # 없으면 소프트웨어로 단정하지 않고 일반 서비스로 낮은 신뢰도로 둔다.
         result = "services"
     elif major in {35, 36, 37, 38, 39}:
         result = "utilities"
@@ -215,19 +274,11 @@ def classify_dart_industry_detail(
     else:
         result = "general"
 
-    exact_consumer = code[:5] in {"20422", "20423", "20424"}
-    return {
-        "산업코드": result,
-        "분류출처": "OpenDART 기업개황 업종코드 세분류",
-        "분류신뢰도": (
-            94 if exact_consumer
-            else 92 if prefix3 in {"261", "262", "263", "264", "265", "266"}
-            else 58 if major == 63 and result == "services"
-            else 72 if result != "general"
-            else 48
-        ),
-        "산업프로필버전": INDUSTRY_PROFILE_VERSION,
-    }
+    return row(
+        result,
+        "OpenDART 기업개황 업종코드 대분류 fallback",
+        76 if result != "general" else 48,
+    )
 
 
 def classify_dart_industry(
@@ -630,6 +681,39 @@ def load_industry_map() -> Dict[str, str]:
     return mapping
 
 
+def read_prior_published_dart_industry_code(stock_code: Any) -> str:
+    """Reuse only the raw OpenDART industry code from the last published stock JSON.
+
+    This is a zero-network resilience path. Old valuation classifications are never
+    reused; the raw code is passed through the current classifier again.
+    """
+    normalized = normalize_stock_code(stock_code)
+    if not normalized:
+        return ""
+
+    path = PUBLISHED_STOCK_DIR / f"{normalized}.json"
+    if not path.exists():
+        return ""
+
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(payload, dict):
+            return ""
+        lookup = payload.get("기업조회정보")
+        if not isinstance(lookup, dict):
+            lookup = {}
+        direct = safe_text(lookup.get("OpenDART업종코드"))
+        if direct:
+            return direct
+        overview = lookup.get("OpenDART기업개황")
+        if isinstance(overview, dict):
+            return safe_text(overview.get("업종코드"))
+    except Exception:
+        return ""
+
+    return ""
+
+
 def infer_industry_code(
     stock_code: Any,
 ) -> str:
@@ -683,9 +767,15 @@ def resolve_company(
             overview = get_company_overview(
                 result.get("DART기업코드")
             )
+            live_industry_code = safe_text(overview.get("업종코드"))
+            prior_industry_code = ""
+            if not live_industry_code:
+                prior_industry_code = read_prior_published_dart_industry_code(normalized)
+            effective_industry_code = live_industry_code or prior_industry_code
+
             mapped_industry = infer_industry_code(normalized)
             classification = classify_dart_industry_detail(
-                overview.get("업종코드"),
+                effective_industry_code,
                 result.get("기업명"),
                 normalized,
             )
@@ -707,9 +797,21 @@ def resolve_company(
                     "산업분류신뢰도": classification["분류신뢰도"],
                     "산업프로필버전": classification["산업프로필버전"],
                     "OpenDART기업개황": overview,
-                    "OpenDART업종코드": overview.get("업종코드", ""),
+                    "OpenDART업종코드": effective_industry_code,
+                    "이전게시업종코드재사용": bool(prior_industry_code and not live_industry_code),
+                    "산업분류원본": (
+                        "OpenDART 실시간 기업개황"
+                        if live_industry_code
+                        else "이전 게시 JSON의 OpenDART 원본 업종코드"
+                        if prior_industry_code
+                        else classification["분류출처"]
+                    ),
                     "데이터출처": (
                         "금융감독원 OpenDART"
+                        if live_industry_code
+                        else "OpenDART + 이전 게시 원본업종 로컬 fallback"
+                        if prior_industry_code
+                        else "금융감독원 OpenDART"
                     ),
                 }
             )
