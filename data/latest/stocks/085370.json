@@ -2,7 +2,7 @@
   "기업명": "루트로닉",
   "DART기업코드": "00549925",
   "KIS종목코드": "085370",
-  "산업코드": "industrial",
+  "산업코드": "medical_devices",
   "기업조회정보": {
     "기업명": "루트로닉",
     "DART기업코드": "00549925",
@@ -10,11 +10,11 @@
     "최종변경일": "20240328",
     "수집상태": "정상",
     "응답메시지": "",
-    "산업코드": "industrial",
-    "가치평가산업코드": "industrial",
-    "산업분류출처": "OpenDART 기업개황 업종코드 세분류",
-    "산업분류신뢰도": 72,
-    "산업프로필버전": "3.0.0",
+    "산업코드": "medical_devices",
+    "가치평가산업코드": "medical_devices",
+    "산업분류출처": "수동 종목매핑",
+    "산업분류신뢰도": 100,
+    "산업프로필버전": "3.1.0",
     "OpenDART기업개황": {
       "수집상태": "정상",
       "응답코드": "000",
@@ -27,9 +27,11 @@
       "홈페이지": "www.lutronic.com"
     },
     "OpenDART업종코드": "27199",
+    "이전게시업종코드재사용": false,
+    "산업분류원본": "OpenDART 실시간 기업개황",
     "데이터출처": "금융감독원 OpenDART"
   },
-  "생성시각": "2026-08-08T07:27:04.059393",
+  "생성시각": "2026-08-14T22:05:15.267255",
   "재무분석": {
     "재무분석모형버전": "financial-quality-v2.0.0",
     "재무지표": {
@@ -92,6 +94,7 @@
     }
   },
   "시장정보": {
+    "종목코드": "085370",
     "현재가": 0.0,
     "전일대비": 0.0,
     "등락률": 0.0,
@@ -109,9 +112,9 @@
       "기관순매수": 0.0,
       "개인순매수": 0.0
     },
-    "현재가수집상태": "실패",
-    "현재가응답메시지": "KIS 현재가·거래량 실패 / Yahoo 보완도 실패: 085370.KS: 유효가격 없음 / 085370.KQ: HTTPError: 404 Client Error: Not Found for url: https://query1.finance.yahoo.com/v8/finance/chart/085370.KQ?range=5d&interval=1d&includePrePost=false&events=div%2Csplits",
-    "데이터출처": "한국투자증권 KIS",
+    "현재가수집상태": "현재가 확인 불가",
+    "현재가응답메시지": "검증 가능한 최신 가격 없음",
+    "데이터출처": "현재가 검증 실패",
     "과거데이터": {
       "가격추세": {
         "종가": 0.0,
@@ -141,57 +144,84 @@
       },
       "프로그램매매": {
         "프로그램순매수수량5일": 0.0,
-        "프로그램순매수수량20일": 0.0,
+        "프로그램순매수수량20일": -69425.0,
         "프로그램순매수금액5일": 0.0,
-        "프로그램순매수금액20일": 0.0
+        "프로그램순매수금액20일": -2547800550.0
       },
       "수집상태": {
-        "전체수집상태": "실패",
-        "가격데이터상태": "실패",
-        "가격응답상태": "KIS_DISABLED",
-        "가격응답메시지": "GitHub KIS 호출 비활성화 · GAS 중앙 토큰 사용",
+        "전체수집상태": "부분성공",
+        "가격데이터상태": "데이터없음",
+        "가격응답상태": "0",
+        "가격응답메시지": "정상처리 되었습니다.",
         "가격데이터개수": 0,
         "가격데이터출처": "한국투자증권 KIS",
         "가격최초일": "",
         "가격최종일": "",
         "누적수급데이터상태": "실패",
-        "누적수급응답상태": "KIS_DISABLED",
-        "누적수급응답메시지": "GitHub KIS 호출 비활성화 · GAS 중앙 토큰 사용",
+        "누적수급응답상태": "0",
+        "누적수급응답메시지": "정상처리 되었습니다.",
         "누적수급데이터개수": 0,
-        "누적수급조회기준일": "20260807",
+        "누적수급조회기준일": "20260803",
         "누적수급최초일": "",
         "누적수급최종일": "",
-        "프로그램데이터상태": "실패",
-        "프로그램응답상태": "KIS_DISABLED",
-        "프로그램응답메시지": "GitHub KIS 호출 비활성화 · GAS 중앙 토큰 사용",
-        "프로그램데이터개수": 0
+        "프로그램데이터상태": "정상",
+        "프로그램응답상태": "0",
+        "프로그램응답메시지": "정상처리 되었습니다.",
+        "프로그램데이터개수": 30
       },
       "수집오류": [
         {
           "항목": "가격추세",
-          "응답상태": "KIS_DISABLED",
-          "응답메시지": "GitHub KIS 호출 비활성화 · GAS 중앙 토큰 사용"
+          "응답상태": "0",
+          "응답메시지": "정상처리 되었습니다."
         },
         {
           "항목": "누적수급",
-          "응답상태": "KIS_DISABLED",
-          "응답메시지": "GitHub KIS 호출 비활성화 · GAS 중앙 토큰 사용"
-        },
-        {
-          "항목": "프로그램매매",
-          "응답상태": "KIS_DISABLED",
-          "응답메시지": "GitHub KIS 호출 비활성화 · GAS 중앙 토큰 사용"
+          "응답상태": "0",
+          "응답메시지": "정상처리 되었습니다."
         }
       ],
       "데이터출처": "한국투자증권 KIS"
-    }
+    },
+    "가격진단": {
+      "가격스키마버전": "3.0.0",
+      "종목코드": "085370",
+      "시장구분": "",
+      "거래시장": "KRX",
+      "가격": 0.0,
+      "가격기준일": "",
+      "가격기준시각": "",
+      "수집시각": "2026-08-15T07:05:15+09:00",
+      "가격수집시각": "2026-08-15T07:05:15+09:00",
+      "가격출처": "",
+      "가격종류": "",
+      "실시간가종가애프터마켓": "",
+      "조정주가여부": false,
+      "캐시사용여부": false,
+      "캐시생성시각": "",
+      "캐시버전": "3.0.0",
+      "가격신선도": "검증 전",
+      "검증상태": "거부",
+      "최종채택": false,
+      "거부사유": [
+        "검증 가능한 최신 가격 없음"
+      ],
+      "발행주식수": 0,
+      "시가총액": 0.0,
+      "가격곱하기발행주식수": 0.0,
+      "시가총액일관성결과": "검증 불가",
+      "발행주식수검증결과": "검증 불가",
+      "기업행위의심여부": false,
+      "시장상태": "장마감"
+    },
+    "가격후보진단": []
   },
   "공시정보": {
     "수집상태": "정상",
     "응답코드": "013",
     "응답메시지": "조회된 데이타가 없습니다.",
-    "조회시작일": "20260410",
-    "조회종료일": "20260808",
+    "조회시작일": "20260417",
+    "조회종료일": "20260815",
     "공시개수": 0,
     "최근공시": [],
     "분석": {
@@ -218,16 +248,16 @@
         "단위": "KRW/USD",
         "수집상태": "정상",
         "응답메시지": "",
-        "현재값": 1407.449951,
-        "전일값": 1422.300049,
-        "1일변화율": -1.04409,
-        "5일변화율": -1.967681,
-        "20일변화율": -6.074825,
-        "MA5": 1421.568018,
-        "MA20": 1456.222498,
-        "현재값대비MA20": -3.349251,
-        "최종관측시각UTC": "2026-08-07T21:20:17+00:00",
-        "데이터지연시간": 10.11,
+        "현재값": 1416.47998,
+        "전일값": 1416.849976,
+        "1일변화율": -0.026114,
+        "5일변화율": 0.673773,
+        "20일변화율": -4.767414,
+        "MA5": 1415.856006,
+        "MA20": 1438.263007,
+        "현재값대비MA20": -1.514537,
+        "최종관측시각UTC": "2026-08-14T20:59:52+00:00",
+        "데이터지연시간": 1.078,
         "데이터개수": 68
       },
       "S&P500": {
@@ -237,17 +267,17 @@
         "단위": "index",
         "수집상태": "정상",
         "응답메시지": "",
-        "현재값": 7757.640137,
-        "전일값": 7709.959961,
-        "1일변화율": 0.618423,
-        "5일변화율": 3.577169,
-        "20일변화율": 2.405817,
-        "MA5": 7705.633984,
-        "MA20": 7525.406958,
-        "현재값대비MA20": 3.085988,
-        "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 17.948,
-        "데이터개수": 63
+        "현재값": 7785.759766,
+        "전일값": 7798.990234,
+        "1일변화율": -0.169643,
+        "5일변화율": 0.362477,
+        "20일변화율": 3.210274,
+        "MA5": 7762.912012,
+        "MA20": 7588.294458,
+        "현재값대비MA20": 2.602236,
+        "최종관측시각UTC": "2026-08-14T13:30:00+00:00",
+        "데이터지연시간": 8.576,
+        "데이터개수": 60
       },
       "나스닥": {
         "자산명": "나스닥",
@@ -256,17 +286,17 @@
         "단위": "index",
         "수집상태": "정상",
         "응답메시지": "",
-        "현재값": 26690.619141,
-        "전일값": 26348.349609,
-        "1일변화율": 1.299017,
-        "5일변화율": 5.189475,
-        "20일변화율": 1.556258,
-        "MA5": 26380.259766,
-        "MA20": 25672.52793,
-        "현재값대비MA20": 3.965684,
-        "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 17.948,
-        "데이터개수": 63
+        "현재값": 26729.164062,
+        "전일값": 26803.029297,
+        "1일변화율": -0.275585,
+        "5일변화율": 0.144414,
+        "20일변화율": 2.383093,
+        "MA5": 26634.298438,
+        "MA20": 25886.99502,
+        "현재값대비MA20": 3.253251,
+        "최종관측시각UTC": "2026-08-14T13:30:00+00:00",
+        "데이터지연시간": 8.576,
+        "데이터개수": 60
       },
       "반도체지수": {
         "자산명": "반도체지수",
@@ -275,17 +305,17 @@
         "단위": "index",
         "수집상태": "정상",
         "응답메시지": "",
-        "현재값": 12356.790039,
-        "전일값": 12048.69043,
-        "1일변화율": 2.557121,
-        "5일변화율": 9.245005,
-        "20일변화율": -4.707045,
-        "MA5": 12004.793945,
-        "MA20": 11864.973926,
-        "현재값대비MA20": 4.145109,
-        "최종관측시각UTC": "2026-08-07T13:30:00+00:00",
-        "데이터지연시간": 17.948,
-        "데이터개수": 63
+        "현재값": 12417.049805,
+        "전일값": 12456.0,
+        "1일변화율": -0.312702,
+        "5일변화율": 0.487665,
+        "20일변화율": -1.933985,
+        "MA5": 12272.951953,
+        "MA20": 11878.830908,
+        "현재값대비MA20": 4.530908,
+        "최종관측시각UTC": "2026-08-14T13:30:00+00:00",
+        "데이터지연시간": 8.576,
+        "데이터개수": 60
       },
       "VIX": {
         "자산명": "VIX",
@@ -294,17 +324,17 @@
         "단위": "index",
         "수집상태": "정상",
         "응답메시지": "",
-        "현재값": 14.9,
-        "전일값": 15.15,
-        "1일변화율": -1.650165,
-        "5일변화율": -6.816762,
-        "20일변화율": -0.864938,
-        "MA5": 15.644,
-        "MA20": 17.1645,
-        "현재값대비MA20": -13.192929,
-        "최종관측시각UTC": "2026-08-07T07:00:00+00:00",
-        "데이터지연시간": 24.448,
-        "데이터개수": 65
+        "현재값": 14.25,
+        "전일값": 14.63,
+        "1일변화율": -2.597403,
+        "5일변화율": -4.362414,
+        "20일변화율": -13.636364,
+        "MA5": 14.834,
+        "MA20": 16.706,
+        "현재값대비MA20": -14.701305,
+        "최종관측시각UTC": "2026-08-14T07:00:00+00:00",
+        "데이터지연시간": 15.076,
+        "데이터개수": 62
       },
       "미국10년물": {
         "자산명": "미국10년물",
@@ -313,17 +343,17 @@
         "단위": "percent",
         "수집상태": "정상",
         "응답메시지": "",
-        "현재값": 4.66,
-        "전일값": 4.67,
-        "1일변화율": -0.214138,
-        "5일변화율": -1.79136,
-        "20일변화율": 1.991685,
-        "MA5": 4.652,
-        "MA20": 4.63245,
-        "현재값대비MA20": 0.594715,
-        "최종관측시각UTC": "2026-08-07T12:20:00+00:00",
-        "데이터지연시간": 19.115,
-        "데이터개수": 64
+        "현재값": 4.696,
+        "전일값": 4.641,
+        "1일변화율": 1.185096,
+        "5일변화율": 0.772538,
+        "20일변화율": 0.0,
+        "MA5": 4.6804,
+        "MA20": 0.0,
+        "현재값대비MA20": 0.0,
+        "최종관측시각UTC": "2026-08-14T12:20:00+00:00",
+        "데이터지연시간": 9.742,
+        "데이터개수": 16
       },
       "미국5년물": {
         "자산명": "미국5년물",
@@ -333,16 +363,16 @@
         "수집상태": "정상",
         "응답메시지": "",
         "현재값": 4.362,
-        "전일값": 4.389,
-        "1일변화율": -0.615173,
-        "5일변화율": -2.197311,
-        "20일변화율": 1.25348,
-        "MA5": 4.3616,
-        "MA20": 4.36195,
-        "현재값대비MA20": 0.001146,
-        "최종관측시각UTC": "2026-08-07T12:20:00+00:00",
-        "데이터지연시간": 19.115,
-        "데이터개수": 64
+        "전일값": 4.313,
+        "1일변화율": 1.136095,
+        "5일변화율": 0.0,
+        "20일변화율": 0.0,
+        "MA5": 4.368,
+        "MA20": 0.0,
+        "현재값대비MA20": 0.0,
+        "최종관측시각UTC": "2026-08-14T12:20:00+00:00",
+        "데이터지연시간": 9.742,
+        "데이터개수": 16
       },
       "미국13주": {
         "자산명": "미국13주",
@@ -351,123 +381,123 @@
         "단위": "percent",
         "수집상태": "정상",
         "응답메시지": "",
-        "현재값": 3.71,
-        "전일값": 3.732,
-        "1일변화율": -0.589498,
-        "5일변화율": 0.760459,
-        "20일변화율": 0.405957,
-        "MA5": 3.7194,
-        "MA20": 3.7237,
-        "현재값대비MA20": -0.367912,
-        "최종관측시각UTC": "2026-08-07T12:20:00+00:00",
-        "데이터지연시간": 19.115,
-        "데이터개수": 64
+        "현재값": 3.697,
+        "전일값": 3.705,
+        "1일변화율": -0.215922,
+        "5일변화율": -0.350405,
+        "20일변화율": 0.0,
+        "MA5": 3.7114,
+        "MA20": 0.0,
+        "현재값대비MA20": 0.0,
+        "최종관측시각UTC": "2026-08-14T12:20:00+00:00",
+        "데이터지연시간": 9.742,
+        "데이터개수": 16
       }
     },
     "분석": {
       "분석상태": "정상",
-      "단기신호": 39.87,
-      "단기판정": "긍정",
+      "단기신호": 16.25,
+      "단기판정": "중립",
       "단기데이터품질": 100.0,
       "단기요소별평가": [
         {
           "요소": "원달러",
-          "신호": 41.15,
-          "판정": "긍정",
+          "신호": 14.45,
+          "판정": "중립",
           "데이터품질": 100.0,
           "가중치": 20.0,
-          "설명": "5일 변화 -1.97%"
+          "설명": "5일 변화 0.67%"
         },
         {
           "요소": "S&P500",
-          "신호": 35.71,
-          "판정": "긍정",
+          "신호": 16.83,
+          "판정": "중립",
           "데이터품질": 100.0,
           "가중치": 15.0,
-          "설명": "5일 변화 3.58%"
+          "설명": "5일 변화 0.36%"
         },
         {
           "요소": "나스닥",
-          "신호": 46.9,
-          "판정": "긍정",
+          "신호": 14.43,
+          "판정": "중립",
           "데이터품질": 100.0,
           "가중치": 20.0,
-          "설명": "5일 변화 5.19%"
+          "설명": "5일 변화 0.14%"
         },
         {
           "요소": "반도체지수",
-          "신호": 39.42,
-          "판정": "긍정",
+          "신호": 6.56,
+          "판정": "중립",
           "데이터품질": 100.0,
           "가중치": 25.0,
-          "설명": "5일 변화 9.25%"
+          "설명": "5일 변화 0.49%"
         },
         {
           "요소": "VIX",
-          "신호": 35.23,
+          "신호": 31.54,
           "판정": "긍정",
           "데이터품질": 100.0,
           "가중치": 20.0,
-          "설명": "현재 14.90"
+          "설명": "현재 14.25"
         }
       ],
-      "중기신호": 23.02,
-      "중기판정": "긍정",
-      "중기데이터품질": 100.0,
+      "중기신호": 6.04,
+      "중기판정": "중립",
+      "중기데이터품질": 75.0,
       "중기요소별평가": [
         {
           "요소": "원달러",
-          "신호": 41.15,
-          "판정": "긍정",
+          "신호": 14.45,
+          "판정": "중립",
           "데이터품질": 100.0,
           "가중치": 25.0,
-          "설명": "20일 변화 -6.07%"
+          "설명": "20일 변화 -4.77%"
         },
         {
           "요소": "미국10년물",
-          "신호": 2.73,
+          "신호": -9.79,
           "판정": "중립",
-          "데이터품질": 100.0,
+          "데이터품질": 50.0,
           "가중치": 25.0,
-          "설명": "20일 변화 1.99%"
+          "설명": "20일 변화 0.00%"
         },
         {
           "요소": "미국5년물",
-          "신호": 10.4,
+          "신호": -5.68,
           "판정": "중립",
-          "데이터품질": 100.0,
+          "데이터품질": 50.0,
           "가중치": 15.0,
-          "설명": "20일 변화 1.25%"
+          "설명": "20일 변화 0.00%"
         },
         {
           "요소": "미국13주",
-          "신호": -1.12,
+          "신호": 2.83,
           "판정": "중립",
-          "데이터품질": 100.0,
+          "데이터품질": 50.0,
           "가중치": 10.0,
-          "설명": "20일 변화 0.41%"
+          "설명": "20일 변화 0.00%"
         },
         {
           "요소": "나스닥",
-          "신호": 46.9,
-          "판정": "긍정",
+          "신호": 14.43,
+          "판정": "중립",
           "데이터품질": 100.0,
           "가중치": 10.0,
-          "설명": "20일 변화 1.56%"
+          "설명": "20일 변화 2.38%"
         },
         {
           "요소": "반도체지수",
-          "신호": 39.42,
-          "판정": "긍정",
+          "신호": 6.56,
+          "판정": "중립",
           "데이터품질": 100.0,
           "가중치": 15.0,
-          "설명": "20일 변화 -4.71%"
+          "설명": "20일 변화 -1.93%"
         }
       ],
       "설명": "국내주식 기준으로 원달러·미국 주가지수·반도체지수·VIX·미국 금리의 방향을 -100~100 신호로 합성했습니다."
     },
     "수집오류": [],
-    "수집시각": "2026-08-08T16:26:54.033917+09:00",
+    "수집시각": "2026-08-15T07:04:32.350007+09:00",
     "데이터출처": "Yahoo Finance Chart API"
   },
   "기업기초데이터": {
@@ -702,23 +732,50 @@
       },
       "데이터출처": "금융감독원 OpenDART"
     },
-    "수집시각": "2026-08-08T16:26:59.725007+09:00",
+    "수집시각": "2026-08-15T07:04:38.183388+09:00",
     "데이터출처": "금융감독원 OpenDART"
   },
   "산업분석": {
     "전체수집상태": "미적용",
-    "산업코드": "industrial",
-    "산업명": "industrial",
+    "산업코드": "medical_devices",
+    "산업명": "medical_devices",
     "자산": {},
     "분석": {
       "분석상태": "미적용",
+      "산업명": "medical_devices",
       "중기산업선행": {},
       "장기산업사이클": {},
       "산업국면": "미분류"
     },
     "수집오류": [],
     "수집시각": "",
-    "데이터출처": "Yahoo Finance Chart API"
+    "데이터출처": ""
+  },
+  "산업환경브리지": {
+    "수집상태": "연결대기",
+    "사용가능": false,
+    "요청산업코드": "medical_devices",
+    "매핑산업코드": "medical_devices",
+    "산업명": "의료기기·헬스테크",
+    "생성시각UTC": "2026-08-14T11:08:50.839775+00:00",
+    "현재점수": 76.4,
+    "현재구간": "우호",
+    "3개월점수": 48.1,
+    "3개월구간": "중립",
+    "변화점수": -28.3,
+    "방향": "악화",
+    "품질점수": 45.0,
+    "개별종목방향보정점수": -0.0,
+    "보정최대절대값": 0.0,
+    "보정상한출처": "published bounded adjustment itself",
+    "보조사용허용": false,
+    "주신호사용허용": false,
+    "사용규칙": "기존 산업전망 current/future 값을 이 파일로 대체하되, 개별종목 주가방향에는 bounded_direction_adjustment_points만 보조 입력으로 사용합니다.",
+    "출처": "disk_cache",
+    "캐시모드": "disk_cache",
+    "소스나이시간": 10.93,
+    "HTTP호출수": 0,
+    "오류": "upstream auxiliary use not allowed"
   },
   "기술분석": {
     "수집상태": "실패",
@@ -755,7 +812,9 @@
     },
     "다이버전스": {
       "분석상태": "자료부족",
-      "계산방식": "RSI14(Wilder) + 확정 피벗 + Relative Volume(직전20봉) + 종가 가격구조 확인",
+      "계산방식": "RSI14(Wilder) + 우측1봉 확정 피벗 + 시간봉별 최근 대표 1신호 + 근접 Relative Volume + 가장 가까운 유효 스윙 종가 확인",
+      "엔진버전": "4.0-latest-one-per-timeframe",
+      "4시간봉집계": "KRX 09:00 KST anchor · 09:00-13:00 / 13:00-15:30",
       "미래데이터사용": false,
       "확정피벗사용": true,
       "시간봉": {
@@ -765,7 +824,14 @@
           "시간봉": "4시간봉",
           "관측봉수": 0,
           "탐색기간봉": 180,
-          "유효기간봉": 30,
+          "유효기간봉": 12,
+          "대표신호": {
+            "탐지": false,
+            "detected": false,
+            "상태": "미탐지",
+            "방향": "",
+            "사유": "분석 데이터 부족 · 0/80봉"
+          },
           "상승": {
             "탐지": false,
             "detected": false,
@@ -781,6 +847,7 @@
             "사유": "분석 데이터 부족 · 0/80봉"
           },
           "활성신호": [],
+          "과거신호": [],
           "사유": "분석 데이터 부족 · 0/80봉"
         },
         "일봉": {
@@ -789,7 +856,14 @@
           "시간봉": "일봉",
           "관측봉수": 0,
           "탐색기간봉": 150,
-          "유효기간봉": 20,
+          "유효기간봉": 10,
+          "대표신호": {
+            "탐지": false,
+            "detected": false,
+            "상태": "미탐지",
+            "방향": "",
+            "사유": "분석 데이터 부족 · 0/80봉"
+          },
           "상승": {
             "탐지": false,
             "detected": false,
@@ -805,6 +879,7 @@
             "사유": "분석 데이터 부족 · 0/80봉"
           },
           "활성신호": [],
+          "과거신호": [],
           "사유": "분석 데이터 부족 · 0/80봉"
         },
         "주봉": {
@@ -813,7 +888,14 @@
           "시간봉": "주봉",
           "관측봉수": 0,
           "탐색기간봉": 120,
-          "유효기간봉": 12,
+          "유효기간봉": 8,
+          "대표신호": {
+            "탐지": false,
+            "detected": false,
+            "상태": "미탐지",
+            "방향": "",
+            "사유": "분석 데이터 부족 · 0/52봉"
+          },
           "상승": {
             "탐지": false,
             "detected": false,
@@ -829,6 +911,7 @@
             "사유": "분석 데이터 부족 · 0/52봉"
           },
           "활성신호": [],
+          "과거신호": [],
           "사유": "분석 데이터 부족 · 0/52봉"
         },
         "월봉": {
@@ -838,6 +921,13 @@
           "관측봉수": 0,
           "탐색기간봉": 72,
           "유효기간봉": 6,
+          "대표신호": {
+            "탐지": false,
+            "detected": false,
+            "상태": "미탐지",
+            "방향": "",
+            "사유": "분석 데이터 부족 · 0/36봉"
+          },
           "상승": {
             "탐지": false,
             "detected": false,
@@ -853,11 +943,13 @@
             "사유": "분석 데이터 부족 · 0/36봉"
           },
           "활성신호": [],
+          "과거신호": [],
           "사유": "분석 데이터 부족 · 0/36봉"
         }
       },
       "활성신호": [],
-      "활성신호수": 0
+      "활성신호수": 0,
+      "대표신호원칙": "각 시간봉에서 4종 전체 중 가장 최근 확정 1개만 활성"
     },
     "수집오류": [
       "085370.KS: 최신 거래일이 오래되어 기술자료에서 제외",
@@ -874,17 +966,29 @@
         "링크": "https://news.google.com/rss/articles/CBMiakFVX3lxTE9ITEd4dGF4UVRtdHlMVzFoSncxSUhfQ3pwMThQcnA5aTI2Tkp5ekdvNDFUY1B1enJTX2JtS3lDNVozazk0UEhVaFZBbk94Mnh6Y2UwTmV0S3BjVXlmdU9iTnhPWTQtMmI2UHc?oc=5",
         "언론사": "ibtomato.com",
         "발행시각UTC": "2026-05-13T07:00:00+00:00",
-        "경과일": 87.02,
+        "경과일": 93.63,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
+      },
+      {
+        "제목": "[단독] 증권사서 샌 공개매수…친구의 친구까지 총 32억 챙겨",
+        "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE4waEdZWjcxSHBpOGFZZUMxUC1ZSzFZS09JYi04S0t5aHQ5OGhRcUVjYWNJOThPMDNaWFdCcmxIRmgza0UyRDYzV2tRTGRodWlNSHpsWTFBNjl0bjg?oc=5",
+        "언론사": "KBS 뉴스",
+        "발행시각UTC": "2026-01-21T08:00:00+00:00",
+        "경과일": 205.59,
+        "원점수": 5.0,
+        "최종점수": 1.75,
+        "매칭규칙": [
+          "매수"
+        ]
       },
       {
         "제목": "NH투자증권서 샌 '한앤컴퍼니 루트로닉 공개매수' 정보…37억 과징금·검찰 고발 : 알파경제TV",
         "링크": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9hZzM3bkhJUDFiTmJ4TWdIVXEtNG9PNUZrbUh2d0lKUng3M05XT1JXS0dOZEd1QUUtajBveHdDdzY2X0c1Wk5oUFpicUtQWm51QXg2b21jSFVkZ3I5UlVqM000QmcxS2pqU0lxTjVR?oc=5",
         "언론사": "알파경제",
         "발행시각UTC": "2026-01-22T08:00:00+00:00",
-        "경과일": 197.98,
+        "경과일": 204.59,
         "원점수": 5.0,
         "최종점수": 1.75,
         "매칭규칙": [
@@ -896,7 +1000,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiQ0FVX3lxTE1tNnVvRXN4UjlfWVhCRlpmUV8ybERkY1JuQmlRMUFjYndXc3JOd1QwUFotOU5nNnl6cC1kVDE1bVNoT1k?oc=5",
         "언론사": "지구인사이드",
         "발행시각UTC": "2026-02-23T08:00:00+00:00",
-        "경과일": 165.98,
+        "경과일": 172.59,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -906,7 +1010,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiTkFVX3lxTE9ZWHBPNmJMVFktSjhwUmtqMkNwaXd5YXdFR2w4bVVOZFFxeWEzajVIUE1faTBYNnhGckxyUW83MnhiOVhBY0ZhSTJGa202QQ?oc=5",
         "언론사": "전자신문",
         "발행시각UTC": "2025-09-02T07:00:00+00:00",
-        "경과일": 340.02,
+        "경과일": 346.63,
         "원점수": 16.0,
         "최종점수": 5.6,
         "매칭규칙": [
@@ -914,11 +1018,11 @@
         ]
       },
       {
-        "제목": "미용 의료기기로 새롭게 주목받는 루트로닉, 더 상승할까",
-        "링크": "https://news.google.com/rss/articles/CBMiSkFVX3lxTE1IRUtVa2ozbnJVTktaWjZaNTdnM2Nocmc2aVRXcTVNNUcyRG9SdUVsYTRza0VTY1pycFNjQW5rT2RmU1g5Q09EVEVn?oc=5",
-        "언론사": "브런치",
-        "발행시각UTC": "2026-02-04T08:00:00+00:00",
-        "경과일": 184.98,
+        "제목": "한앤컴퍼니, 레이저 의료기기 ‘루트로닉’ 9600억 인수",
+        "링크": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE5HQnNWdUQxQ2dsd1pEWXh5SFBxXzFPbWZOaW5mdFdkT2NRRDRFYURpV2t5LWFuVlNYZ2VWVW0wcGg0WGVkMC0zOTdrenFkRUxvZEZqaGdXVQ?oc=5",
+        "언론사": "바이오스펙테이터",
+        "발행시각UTC": "2023-06-09T07:00:00+00:00",
+        "경과일": 1162.63,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -928,17 +1032,7 @@
         "링크": "https://news.google.com/rss/articles/CBMia0FVX3lxTE05UFRNcFdiVHJKdmF2R3l2ZDNGU2JqdlNnZURRRUR6UG5ldkFBQzZUajJIRGVCXzV5UmpxRDgwbWFkSmlEWjA3ZEpFRENyMUNvTXJfTGpwdThVbmxYMlJHa18wcXdrMDdsbHZV?oc=5",
         "언론사": "히트뉴스",
         "발행시각UTC": "2023-07-22T07:00:00+00:00",
-        "경과일": 1113.02,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "한앤컴퍼니, 레이저 의료기기 ‘루트로닉’ 9600억 인수",
-        "링크": "https://news.google.com/rss/articles/CBMiV0FVX3lxTE5HQnNWdUQxQ2dsd1pEWXh5SFBxXzFPbWZOaW5mdFdkT2NRRDRFYURpV2t5LWFuVlNYZ2VWVW0wcGg0WGVkMC0zOTdrenFkRUxvZEZqaGdXVQ?oc=5",
-        "언론사": "바이오스펙테이터",
-        "발행시각UTC": "2023-06-09T07:00:00+00:00",
-        "경과일": 1156.02,
+        "경과일": 1119.63,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -948,7 +1042,7 @@
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE1LM1N6Ym1tMXJSa0IweDM3NTVtNDJMeVlsVXpabTVEWF9JZU5Gbmd0Uk82OE41bFNzTmFUdGJHMWI2YUh2NDJCM25XYjhYWWVIczlvR29MMUI1V0xkb0lUQTlQemJuRVpzbE1zUlk4WlA?oc=5",
         "언론사": "연합인포맥스",
         "발행시각UTC": "2023-08-13T07:00:00+00:00",
-        "경과일": 1091.02,
+        "경과일": 1097.63,
         "원점수": 5.0,
         "최종점수": 1.75,
         "매칭규칙": [
@@ -956,11 +1050,21 @@
         ]
       },
       {
-        "제목": "2000억 매출액 찍은 루트로닉, 올해는 3000억 간다",
-        "링크": "https://news.google.com/rss/articles/CBMibkFVX3lxTE02dF84dHFSYlhTallfVmtMWmVlQTV0Wi0xN2VoaGxCZlZ5NUxuSWJFYVY0S1hBeDY1ZnUxYUtRanV6WFlJQm1BQ1VPejhXOHVueEU1enNVcXJSQVBjWGtpaWtYak9nRVp1Vk9VSDF3?oc=5",
+        "제목": "외국계 사모펀드들도 탐내는 루트로닉의 매력포인트는",
+        "링크": "https://news.google.com/rss/articles/CBMibkFVX3lxTE4yeWdoMU9oTUxfSW9BUy0yVldVZmJTUjBQZzYxOWRObEdvTWlaUmpSY3M1TUI1b0xZdWZscmQzWVZZekFTWGhocnIyRVBJdDEzYXpyRmgxMkRvc1FDS2xmQWZIcHo4MFNCaHhsd1J3?oc=5",
         "언론사": "팜이데일리",
-        "발행시각UTC": "2023-02-27T08:00:00+00:00",
-        "경과일": 1257.98,
+        "발행시각UTC": "2023-04-28T07:00:00+00:00",
+        "경과일": 1204.63,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "한앤컴퍼니, 의료기기 기업 루트로닉 인수 추진",
+        "링크": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5Yd3U3MkdSSkxUQkFDTlJyaXpsUC11NDl2N2k2Zl93Zm1BMWtRZ2N2ZDhkeEJTUmhJTnF1Y3Q5LXZELTAzenJHekhtcFFpRjg?oc=5",
+        "언론사": "톱데일리",
+        "발행시각UTC": "2023-06-09T07:00:00+00:00",
+        "경과일": 1162.63,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -970,19 +1074,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiRkFVX3lxTFBFNDdKcXowZW1fanVYMlUzV1JkbC1VaXMzVmZVY1NCa0pBbExET09pejNveHdlVzQ0WW90Z1AtSHJiTURPN1E?oc=5",
         "언론사": "v.daum.net",
         "발행시각UTC": "2023-06-09T07:00:00+00:00",
-        "경과일": 1156.02,
-        "원점수": 5.0,
-        "최종점수": 1.75,
-        "매칭규칙": [
-          "매수"
-        ]
-      },
-      {
-        "제목": "루트로닉 거래량 급증, 한앤컴퍼니 공개매수 '청신호'",
-        "링크": "https://news.google.com/rss/articles/CBMiVEFVX3lxTFBqbjRZejdOdGF5bHo3cmZQVGprbkZuQ1FlekY4OVVraVpGeEFqQUpSTFQwbnotY2RsZjctZmVLQVp2V2RQRmlDUE9GX2dLSHgwYWhlMQ?oc=5",
-        "언론사": "헤럴드경제",
-        "발행시각UTC": "2023-06-14T07:00:00+00:00",
-        "경과일": 1151.02,
+        "경과일": 1162.63,
         "원점수": 5.0,
         "최종점수": 1.75,
         "매칭규칙": [
@@ -994,7 +1086,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNQW5FTHB6NmVtdldzYmdNdkJsTU8xZS1VSUoxWDFMelI5c0lBU0FuTm1LeGt0M0M5OE9ZZGYxek1HbTJYWWNDOEpmb1k1bzZGWVZkV2tkOW5ueUFOeGpZMU02QlFVSDhNRnNReGhHcGZJSDJrLVdNQkRWR0RZdVB0eUt2a0ZCOFp6?oc=5",
         "언론사": "글로벌이코노믹",
         "발행시각UTC": "2023-06-10T07:00:00+00:00",
-        "경과일": 1155.02,
+        "경과일": 1161.63,
         "원점수": 5.0,
         "최종점수": 1.75,
         "매칭규칙": [
@@ -1006,7 +1098,7 @@
         "링크": "https://news.google.com/rss/articles/CBMia0FVX3lxTE5hM1drWGVJeWgyeTBtcEJlekdUWlBWRWNIWDRPMzB1c0lia3MxUndod0RGQzM2RTlNcFFjWGtsZTFfT2ZFRndyenk1LWJ3TmV5TkJieEU2WVVCYjFMVElyUG9PbktPLV94eEhz0gFvQVVfeXFMUE9aUXBWTFNPYzk3LVZRWXNtU0xuLVZWR0tnWkpydUdubFNlVXRhZFM0OEJNLVFrZ216N2FfYzdlbmRvdUxnbU1nRnp0UjJlUGhOc3FCMWxWWUgydGZ6UnNYbUd4SWVpQko0Und6TUFj?oc=5",
         "언론사": "데일리인베스트",
         "발행시각UTC": "2023-03-09T08:00:00+00:00",
-        "경과일": 1247.98,
+        "경과일": 1254.59,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -1016,27 +1108,29 @@
         "링크": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5iODItUDdFdlpwMk5WU2pFS3lURnRoMHl6RmdPaXNIaTFJc0lobkxWZ291M0xpdXZ3aDdxbVFoSGRDVnlSX0l1V19vWWo1UEU?oc=5",
         "언론사": "딜사이트",
         "발행시각UTC": "2023-06-09T07:00:00+00:00",
-        "경과일": 1156.02,
+        "경과일": 1162.63,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
       },
       {
-        "제목": "국내 최대 미용기기社 루트로닉, 1조원에 사모펀드로 매각된다",
-        "링크": "https://news.google.com/rss/articles/CBMia0FVX3lxTFBNVUl6dVR5bFRMbjR1b3M3UU95eWR2TTVaeERJSXpNZEI4bkhRb3h0dEFNYkxWaWFZRXRVMDFvdjJoTVBiYjNKRHFhRVRwd25ZN01VYzFwWHlaWnNLRWdVTlBURkVwaDVTNmN3?oc=5",
-        "언론사": "메디파나뉴스",
+        "제목": "루트로닉, 공개매수 소식에 주가 급등",
+        "링크": "https://news.google.com/rss/articles/CBMiUEFVX3lxTFBRR3ZHUXFwdXRYckdidFZvQ2R3M2oyRFNlWERVT2hsUUlxcUFDZzRYaDB1ZjhmY2p3QUJPNENmeEJQWk1KaS1CUktpcDZlNzJ5?oc=5",
+        "언론사": "매일경제 마켓",
         "발행시각UTC": "2023-06-09T07:00:00+00:00",
-        "경과일": 1156.02,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
+        "경과일": 1162.63,
+        "원점수": 5.0,
+        "최종점수": 1.75,
+        "매칭규칙": [
+          "매수"
+        ]
       },
       {
-        "제목": "외국계 사모펀드들도 탐내는 루트로닉의 매력포인트는",
-        "링크": "https://news.google.com/rss/articles/CBMibkFVX3lxTE4yeWdoMU9oTUxfSW9BUy0yVldVZmJTUjBQZzYxOWRObEdvTWlaUmpSY3M1TUI1b0xZdWZscmQzWVZZekFTWGhocnIyRVBJdDEzYXpyRmgxMkRvc1FDS2xmQWZIcHo4MFNCaHhsd1J3?oc=5",
-        "언론사": "팜이데일리",
-        "발행시각UTC": "2023-04-28T07:00:00+00:00",
-        "경과일": 1198.02,
+        "제목": "한앤컴퍼니, 루트로닉 지분 100% 확보…27일 상장폐지",
+        "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9qV2k2ckViaW9aMkJmYkNQaEp3clVDMmdHMTdnX2pUcGRfQzQ5Q3VQdkVyRmhmbjVqSTFoeDVhdkdvTkIxUDVYOGQyOGQtOGZ3WUZ2UDV0cGdUVjduck15dlhRTW1sc25fNU9wYzhTOTY?oc=5",
+        "언론사": "연합인포맥스",
+        "발행시각UTC": "2023-10-18T07:00:00+00:00",
+        "경과일": 1031.63,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -1046,29 +1140,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiakFVX3lxTE1RQjJmM2l0d2owNmNqNVFsZEtfcl9XUGZ2bXhIdVoyOGE3RFR5aDl1QzhBTXZVS1lQbENhMnBkZGR1c1ZNTWFiM19GemN1ZXpUWWJNN3l6d0RYTnBNVXo3TTZocUQ4VGNrMmc?oc=5",
         "언론사": "ibtomato.com",
         "발행시각UTC": "2023-12-21T08:00:00+00:00",
-        "경과일": 960.98,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "[서치 e종목] '2분기 성장' 루트로닉, '더마브이' 해외 인허가로 주가 동력 얻나",
-        "링크": "https://news.google.com/rss/articles/CBMia0FVX3lxTE9Tc2IwWVl3bUVPVVJ0Z3oyTUdTdVYyLTktUWhGaktreFhkNzBWNnc0NUJLenJoSmI4QWdkWEVmX3NrYTN4TG9ramQzVFlTeFlTZHdla01FSEJDNzJmd2pBeWU1N2NsWks1Yklr0gFvQVVfeXFMT2tmbU53cks0a3V5T21nTy05OVlaSmtVWXZra1J3UnBOZXh0VVhDell5QlFvQnJBM0ZneDRQc29pbWZBOXowZklCMTgyeUloZ0QtN3NBTjVTRGYzbWlmX0NyYnlicFF3RUlMa3QwQkJN?oc=5",
-        "언론사": "데일리인베스트",
-        "발행시각UTC": "2022-08-16T07:00:00+00:00",
-        "경과일": 1453.02,
-        "원점수": 8.0,
-        "최종점수": 2.8,
-        "매칭규칙": [
-          "허가"
-        ]
-      },
-      {
-        "제목": "루트로닉, 5000억 매출액 로드맵 완성...집중·효율 방점",
-        "링크": "https://news.google.com/rss/articles/CBMibkFVX3lxTFA3MTJ0eW9paWgwYnFFNU1KR2dXNzNZalliSnp6RmJDS2xhZFpJQVFZOGk1RVNfM3VYRnRMNXRvZTlTT2J0eGtUQmhhdWloRXlzQTNnMkdmSE1LTXlEMjNNck9XVWhuU1VDR2hEcHBR?oc=5",
-        "언론사": "팜이데일리",
-        "발행시각UTC": "2022-07-22T07:00:00+00:00",
-        "경과일": 1478.02,
+        "경과일": 967.59,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -1078,7 +1150,49 @@
         "링크": "https://news.google.com/rss/articles/CBMibkFVX3lxTE0tMWhWU1JDQzRPeG1OQVBXRThtemxCZWt6bUJhNVpocUJzZWVDcjBMdlVEazRzV2hrclc3ZUk5ZjZseU5aNWw2QVlqZ1NuekdqYlBlQ0dWVnVPdFNUNTFIZ0tJUkFIY01YQnEyc2Vn?oc=5",
         "언론사": "팜이데일리",
         "발행시각UTC": "2023-06-10T07:00:00+00:00",
-        "경과일": 1155.02,
+        "경과일": 1161.63,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "[서치 e종목] '2분기 성장' 루트로닉, '더마브이' 해외 인허가로 주가 동력 얻나",
+        "링크": "https://news.google.com/rss/articles/CBMia0FVX3lxTE9Tc2IwWVl3bUVPVVJ0Z3oyTUdTdVYyLTktUWhGaktreFhkNzBWNnc0NUJLenJoSmI4QWdkWEVmX3NrYTN4TG9ramQzVFlTeFlTZHdla01FSEJDNzJmd2pBeWU1N2NsWks1Yklr0gFvQVVfeXFMT2tmbU53cks0a3V5T21nTy05OVlaSmtVWXZra1J3UnBOZXh0VVhDell5QlFvQnJBM0ZneDRQc29pbWZBOXowZklCMTgyeUloZ0QtN3NBTjVTRGYzbWlmX0NyYnlicFF3RUlMa3QwQkJN?oc=5",
+        "언론사": "데일리인베스트",
+        "발행시각UTC": "2022-08-16T07:00:00+00:00",
+        "경과일": 1459.63,
+        "원점수": 8.0,
+        "최종점수": 2.8,
+        "매칭규칙": [
+          "허가"
+        ]
+      },
+      {
+        "제목": "루트로닉 직원의 23%가 연구개발, 매출 10% 이상은 R&D에 투자",
+        "링크": "https://news.google.com/rss/articles/CBMiakFVX3lxTE81Z3RwYTRRdWJaNXJDT0ZPWUJuWFJVNTR6SUlrZnJLV2ZDUlZ6SWZDNnhZSWpJckIwRXFMWFJwazhCSzVuU0d3YV8wZWdLM3M3OF9jOE16ZWlZM0UyejJSR1B0bGxtYUhXbEE?oc=5",
+        "언론사": "고양신문",
+        "발행시각UTC": "2023-02-19T08:00:00+00:00",
+        "경과일": 1272.59,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "루트로닉, 5000억 매출액 로드맵 완성...집중·효율 방점",
+        "링크": "https://news.google.com/rss/articles/CBMibkFVX3lxTFA3MTJ0eW9paWgwYnFFNU1KR2dXNzNZalliSnp6RmJDS2xhZFpJQVFZOGk1RVNfM3VYRnRMNXRvZTlTT2J0eGtUQmhhdWloRXlzQTNnMkdmSE1LTXlEMjNNck9XVWhuU1VDR2hEcHBR?oc=5",
+        "언론사": "팜이데일리",
+        "발행시각UTC": "2022-07-22T07:00:00+00:00",
+        "경과일": 1484.63,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "국내 최대 미용기기社 루트로닉, 1조원에 사모펀드로 매각된다",
+        "링크": "https://news.google.com/rss/articles/CBMia0FVX3lxTFBNVUl6dVR5bFRMbjR1b3M3UU95eWR2TTVaeERJSXpNZEI4bkhRb3h0dEFNYkxWaWFZRXRVMDFvdjJoTVBiYjNKRHFhRVRwd25ZN01VYzFwWHlaWnNLRWdVTlBURkVwaDVTNmN3?oc=5",
+        "언론사": "메디파나뉴스",
+        "발행시각UTC": "2023-06-09T07:00:00+00:00",
+        "경과일": 1162.63,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -1088,49 +1202,7 @@
         "링크": "https://news.google.com/rss/articles/CBMigwFBVV95cUxPNHg0U0lBSElZS0pXYzlCcm14TlZPbjRDdUlmTW83eDBjMXh3YkU5VjRuNjFlNHRBRFpPa1RhSXFETDRMQm9GZ1kxcExua2tKanEzRjF1cFh3Q0lHZUdMMGxUeVFCbnotWXNYR1RVdDR0R01ZRXVHZmxzR2M4ZU9nQjhwMA?oc=5",
         "언론사": "팜이데일리",
         "발행시각UTC": "2021-08-06T07:00:00+00:00",
-        "경과일": 1828.02,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "루트로닉 직원의 23%가 연구개발, 매출 10% 이상은 R&D에 투자",
-        "링크": "https://news.google.com/rss/articles/CBMiakFVX3lxTE81Z3RwYTRRdWJaNXJDT0ZPWUJuWFJVNTR6SUlrZnJLV2ZDUlZ6SWZDNnhZSWpJckIwRXFMWFJwazhCSzVuU0d3YV8wZWdLM3M3OF9jOE16ZWlZM0UyejJSR1B0bGxtYUhXbEE?oc=5",
-        "언론사": "고양신문",
-        "발행시각UTC": "2023-02-19T08:00:00+00:00",
-        "경과일": 1265.98,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "루트로닉, 주가·거래량↑…한앤코 공개매수 기대감 높아져",
-        "링크": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFA3NzdmLUpKemRiUHpaNlRNOVdkVUpYMU5UUU5HazNxWmxkOEs0N1NURkVZRjNLUHNmN0JaNWdpTkhmSTM5MTJJbEE3eFNFVVU?oc=5",
-        "언론사": "톱데일리",
-        "발행시각UTC": "2023-06-14T07:00:00+00:00",
-        "경과일": 1151.02,
-        "원점수": 5.0,
-        "최종점수": 1.75,
-        "매칭규칙": [
-          "매수"
-        ]
-      },
-      {
-        "제목": "NH투자증권 이끌 윤병운, 오스템·루트로닉 등 ‘랜드마크 딜’ 주도한 정통 IB맨",
-        "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTE95cGplTmp4NWFLNmJ0NzRFcGcwSmFsSFdlOFBVME13UVc3VndKSl9GRXA5b3ZqYkc5QjNBem4wUUQzNkd4VmdPbTdwQ0NvNEhVWDlIZmtJdk5DLVhaN2xKb0U2c3ZjVHkxQUE4UQ?oc=5",
-        "언론사": "한경매거진&북",
-        "발행시각UTC": "2024-03-19T07:00:00+00:00",
-        "경과일": 872.02,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "루트로닉, 매출 서프라이즈 불구 아쉬운 수익성",
-        "링크": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9GNm44YUFYbGtOcEgta3BsQm55OHJ2TUJzVTNwRmwtYlN6Qko5VHo2TFlycWl5dFhHVkItVG1YWGk3aXJEUFNfODhCOWQ4cHRrTGRBbXp1Z1lMWUZMNHZBTlVXeW5YcGxZdDZ4MVZRVTFZRlFDMGc?oc=5",
-        "언론사": "인포스탁데일리",
-        "발행시각UTC": "2022-11-11T08:00:00+00:00",
-        "경과일": 1365.98,
+        "경과일": 1834.63,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -1140,7 +1212,61 @@
         "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE1aMVdUZ2kyelFvMm4tMmNjMHBYVW5Zbi0zSnZXUGswR2F0bVM0Ym84Qkc0VWI1S1Y1ejRKeWVmSTRjcFB0Mmh5aTIyQnFlS1VTekhJaWFaczNlUEtEc3g0UTdubEhJMEdY0gFsQVVfeXFMTndDaXNNblRNV25PaU12LUR0d2FITUxyX2ZyZjV5OS02N015V0Z5OC12TE9UU0YxMEJRdlB2VW9ubGs2aGR0cV84Vjd3R2QwMXE5MkUzY0JKdUxKOTM4U3dTVDhyMXNGREJrRm9m?oc=5",
         "언론사": "블로터",
         "발행시각UTC": "2025-06-27T07:00:00+00:00",
-        "경과일": 407.02,
+        "경과일": 413.63,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "루트로닉, 주가·거래량↑…한앤코 공개매수 기대감 높아져",
+        "링크": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFA3NzdmLUpKemRiUHpaNlRNOVdkVUpYMU5UUU5HazNxWmxkOEs0N1NURkVZRjNLUHNmN0JaNWdpTkhmSTM5MTJJbEE3eFNFVVU?oc=5",
+        "언론사": "톱데일리",
+        "발행시각UTC": "2023-06-14T07:00:00+00:00",
+        "경과일": 1157.63,
+        "원점수": 5.0,
+        "최종점수": 1.75,
+        "매칭규칙": [
+          "매수"
+        ]
+      },
+      {
+        "제목": "루트로닉, 이익구간 진입…지난해 사상 최대 영업이익",
+        "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE9mbkVreFloR25oSjVERXNMbzJPeDFhajM2MGpTaFZOa0d1MDNBVGlSQno1TUpVUmhLZ05POUh6YnV4b0FuOHJvUi15NUd1UnhNQ0hMaWxOUUZjbDZqUjRjUGtTdEdjX0NW?oc=5",
+        "언론사": "ibtomato.com",
+        "발행시각UTC": "2021-03-16T07:00:00+00:00",
+        "경과일": 1977.63,
+        "원점수": 20.0,
+        "최종점수": 7.0,
+        "매칭규칙": [
+          "사상 최대"
+        ]
+      },
+      {
+        "제목": "NH투자증권 이끌 윤병운, 오스템·루트로닉 등 ‘랜드마크 딜’ 주도한 정통 IB맨",
+        "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTE95cGplTmp4NWFLNmJ0NzRFcGcwSmFsSFdlOFBVME13UVc3VndKSl9GRXA5b3ZqYkc5QjNBem4wUUQzNkd4VmdPbTdwQ0NvNEhVWDlIZmtJdk5DLVhaN2xKb0U2c3ZjVHkxQUE4UQ?oc=5",
+        "언론사": "한경매거진&북",
+        "발행시각UTC": "2024-03-19T07:00:00+00:00",
+        "경과일": 878.63,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "루트로닉, 매출 서프라이즈 불구 아쉬운 수익성",
+        "링크": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9GNm44YUFYbGtOcEgta3BsQm55OHJ2TUJzVTNwRmwtYlN6Qko5VHo2TFlycWl5dFhHVkItVG1YWGk3aXJEUFNfODhCOWQ4cHRrTGRBbXp1Z1lMWUZMNHZBTlVXeW5YcGxZdDZ4MVZRVTFZRlFDMGc?oc=5",
+        "언론사": "인포스탁데일리",
+        "발행시각UTC": "2022-11-11T08:00:00+00:00",
+        "경과일": 1372.59,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "펀딩 '7부 능선' 넘은 한앤코, 투자집행 속도낸다",
+        "링크": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFBmbWdaalVOWTZtNTFtTW9ULVpnUmdnakQwYmtBNDdpUTRXdkktVEYxaW02czFZRVBGRTdFODlCY3paYUhNLUdIOXBhcUxSeE0?oc=5",
+        "언론사": "딜사이트",
+        "발행시각UTC": "2023-07-31T07:00:00+00:00",
+        "경과일": 1110.63,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -1150,64 +1276,42 @@
         "링크": "https://news.google.com/rss/articles/CBMiakFVX3lxTE1tc0Q1dThiRFk0UWVtYUJKNTdrZmRHb28wZnJzRm5TbVRoVWF4VXZOcmNCVjIzTC1YZVMxdUpMelk3bUo4MUpwd21JMjNYNE5qSEJlS2tUeGN4cElfa1pRY0RZM21QWjFhM1E?oc=5",
         "언론사": "의학신문",
         "발행시각UTC": "2021-08-11T07:00:00+00:00",
-        "경과일": 1823.02,
+        "경과일": 1829.63,
         "원점수": 35.0,
         "최종점수": 12.25,
         "매칭규칙": [
           "실적",
           "흑자전환"
         ]
-      },
-      {
-        "제목": "루트로닉, 실적 개선 기대감에 강세",
-        "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTE1iTlZzY29VU3BDb1ZqZUlKdHJMZDk4dEw0MlVhZ0lTcU4wSTZoNHlGNUgtZnR1S2MwTHZ6S0xtUW1BRm9Bay1ZVXNLZjJSY3c5dnVZeElHZElXVjZvN2tXSEQ5cVJ5LWRJcUNYeg?oc=5",
-        "언론사": "메디컬투데이",
-        "발행시각UTC": "2018-03-27T07:00:00+00:00",
-        "경과일": 3056.02,
-        "원점수": 16.0,
-        "최종점수": 5.6,
-        "매칭규칙": [
-          "실적"
-        ]
-      },
-      {
-        "제목": "한앤코, 루트로닉 지분 90% 확보…상폐 여부 주목[시그널]",
-        "링크": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE96bDV4MXVxeHVSZkkzTnlkYXpNdk1qX29OcHpNOUtZVGxhZUNKeEFxVFpsVjV0VDEycTlpQmEyUVpjWlhTNHdVQnZmS0FpV2syN1HSAVNBVV95cUxOcWg2ME0tTHVHLU9ESk5QNDRkM0cxSlM2bXRpNVloT3hFTkh6ZER1ZDFjWU04SjBFYlBPek9QX3p0MjFlSFBmN2tYVEcxTVNIVUlfYw?oc=5",
-        "언론사": "sedaily.com",
-        "발행시각UTC": "2023-08-10T07:00:00+00:00",
-        "경과일": 1094.02,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "마스크 벗으니 피부미용 활기…의료기기 3대장 실적 1위는 루트로닉",
-        "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTFBZTXVtRThDOHlkN2w2V0xNVFFkdUdoMWQtLWh2YUJzVHd4V016U2ZyN0J0dnVvZ3VubHpBSWE3R3BWSlNsdFYwd2Q5RjU4RXpURHpsUHZuajNqRDlLYTAyQmlRQ3RnRU8tTWFUTA?oc=5",
-        "언론사": "매경헬스",
-        "발행시각UTC": "2022-11-22T08:00:00+00:00",
-        "경과일": 1354.98,
-        "원점수": 16.0,
-        "최종점수": 5.6,
-        "매칭규칙": [
-          "실적"
-        ]
       }
     ],
     "분석": {
       "분석상태": "정상",
-      "신호": 15.88,
+      "신호": 14.96,
       "데이터품질": 88.0,
-      "판정": "긍정",
+      "판정": "중립",
       "긍정뉴스개수": 11,
       "부정뉴스개수": 0,
       "중립뉴스개수": 19,
       "긍정뉴스": [
         {
+          "제목": "[단독] 증권사서 샌 공개매수…친구의 친구까지 총 32억 챙겨",
+          "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE4waEdZWjcxSHBpOGFZZUMxUC1ZSzFZS09JYi04S0t5aHQ5OGhRcUVjYWNJOThPMDNaWFdCcmxIRmgza0UyRDYzV2tRTGRodWlNSHpsWTFBNjl0bjg?oc=5",
+          "언론사": "KBS 뉴스",
+          "발행시각UTC": "2026-01-21T08:00:00+00:00",
+          "경과일": 205.59,
+          "원점수": 5.0,
+          "최종점수": 1.75,
+          "매칭규칙": [
+            "매수"
+          ]
+        },
+        {
           "제목": "NH투자증권서 샌 '한앤컴퍼니 루트로닉 공개매수' 정보…37억 과징금·검찰 고발 : 알파경제TV",
           "링크": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9hZzM3bkhJUDFiTmJ4TWdIVXEtNG9PNUZrbUh2d0lKUng3M05XT1JXS0dOZEd1QUUtajBveHdDdzY2X0c1Wk5oUFpicUtQWm51QXg2b21jSFVkZ3I5UlVqM000QmcxS2pqU0lxTjVR?oc=5",
           "언론사": "알파경제",
           "발행시각UTC": "2026-01-22T08:00:00+00:00",
-          "경과일": 197.98,
+          "경과일": 204.59,
           "원점수": 5.0,
           "최종점수": 1.75,
           "매칭규칙": [
@@ -1219,7 +1323,7 @@
           "링크": "https://news.google.com/rss/articles/CBMiTkFVX3lxTE9ZWHBPNmJMVFktSjhwUmtqMkNwaXd5YXdFR2w4bVVOZFFxeWEzajVIUE1faTBYNnhGckxyUW83MnhiOVhBY0ZhSTJGa202QQ?oc=5",
           "언론사": "전자신문",
           "발행시각UTC": "2025-09-02T07:00:00+00:00",
-          "경과일": 340.02,
+          "경과일": 346.63,
           "원점수": 16.0,
           "최종점수": 5.6,
           "매칭규칙": [
@@ -1231,7 +1335,7 @@
           "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE1LM1N6Ym1tMXJSa0IweDM3NTVtNDJMeVlsVXpabTVEWF9JZU5Gbmd0Uk82OE41bFNzTmFUdGJHMWI2YUh2NDJCM25XYjhYWWVIczlvR29MMUI1V0xkb0lUQTlQemJuRVpzbE1zUlk4WlA?oc=5",
           "언론사": "연합인포맥스",
           "발행시각UTC": "2023-08-13T07:00:00+00:00",
-          "경과일": 1091.02,
+          "경과일": 1097.63,
           "원점수": 5.0,
           "최종점수": 1.75,
           "매칭규칙": [
@@ -1243,19 +1347,7 @@
           "링크": "https://news.google.com/rss/articles/CBMiRkFVX3lxTFBFNDdKcXowZW1fanVYMlUzV1JkbC1VaXMzVmZVY1NCa0pBbExET09pejNveHdlVzQ0WW90Z1AtSHJiTURPN1E?oc=5",
           "언론사": "v.daum.net",
           "발행시각UTC": "2023-06-09T07:00:00+00:00",
-          "경과일": 1156.02,
-          "원점수": 5.0,
-          "최종점수": 1.75,
-          "매칭규칙": [
-            "매수"
-          ]
-        },
-        {
-          "제목": "루트로닉 거래량 급증, 한앤컴퍼니 공개매수 '청신호'",
-          "링크": "https://news.google.com/rss/articles/CBMiVEFVX3lxTFBqbjRZejdOdGF5bHo3cmZQVGprbkZuQ1FlekY4OVVraVpGeEFqQUpSTFQwbnotY2RsZjctZmVLQVp2V2RQRmlDUE9GX2dLSHgwYWhlMQ?oc=5",
-          "언론사": "헤럴드경제",
-          "발행시각UTC": "2023-06-14T07:00:00+00:00",
-          "경과일": 1151.02,
+          "경과일": 1162.63,
           "원점수": 5.0,
           "최종점수": 1.75,
           "매칭규칙": [
@@ -1267,7 +1359,7 @@
       "설명": "최근 뉴스 제목의 실적·수주·투자·증자·소송 등 규칙과 시간가중치를 합성합니다."
     },
     "데이터출처": "Google News RSS",
-    "수집시각UTC": "2026-08-08T07:26:54.188003+00:00"
+    "수집시각UTC": "2026-08-14T22:04:32.533336+00:00"
   },
   "가치평가": {
     "가치평가계약버전": "4.0",
@@ -1282,6 +1374,8 @@
       "주식수원칙": "현재가·시가총액 미사용"
     },
     "미래성장모형버전": "1.0.0",
+    "자산사이클보정버전": "1.0.0",
+    "자산사이클보정적용": false,
     "산출상태": "산출불가",
     "최종값사용가능": false,
     "최종값출처": "Python 가치평가 계약 v4",
@@ -1317,12 +1411,12 @@
       "잠정실적미정량화": false,
       "정식보고서대체평가": false,
       "평가기준": "최신 정식보고서 기준",
-      "산업분류신뢰도": 72,
-      "산업프로필버전": "3.0.0",
+      "산업분류신뢰도": 100,
+      "산업프로필버전": "3.1.0",
       "극단적괴리": false
     },
-    "산업프로필버전": "3.0.0",
-    "산업분류신뢰도": 72,
+    "산업프로필버전": "3.1.0",
+    "산업분류신뢰도": 100,
     "정식재무기준분기키": 0,
     "유효재무기준분기키": 0,
     "잠정실적": {
@@ -1360,8 +1454,8 @@
     "TTM데이터품질": 0,
     "TTM잠정실적반영": false,
     "TTM현금흐름기준": "정식보고서 TTM",
-    "목표PER": 8.44,
-    "목표PBR": 0.75,
+    "목표PER": 12.44,
+    "목표PBR": 1.05,
     "암시PER": 0.0,
     "암시PBR": 0.0,
     "PER기준적정가": 0.0,
@@ -1376,7 +1470,6 @@
       "버전": "1.0.0",
       "사용가능": false,
       "차단사유": [
-        "미래성장모형 비대상 업종",
         "양(+)의 TTM·FY1·FY2 EPS 미확보",
         "TTM 데이터품질 70점 미만",
         "주식수 품질 75점 미만",
@@ -1390,17 +1483,46 @@
     },
     "복합기업대용가치합산": 0.0,
     "순현금주당가치": 0.0,
+    "기존V4재무적정가": 0.0,
+    "현재재무기초가치": 0.0,
+    "미래증분가치": 0.0,
+    "펀더멘털적정가": 0.0,
+    "적응형가치적용": false,
+    "적응형가치모형": {
+      "버전": "adaptive-fundamental-v1.0.0",
+      "현재가미사용": true,
+      "적용가능": false,
+      "현재재무기초가치": 0.0,
+      "미래총가치": 0.0,
+      "미래증분가치": 0.0,
+      "펀더멘털적정가": 0.0,
+      "현재기준PER": 12.92,
+      "현재EPS앵커": 0.0,
+      "이익급회복괴리": false,
+      "분기런레이트대정상화배수": 0.0,
+      "현재모형분산배수": 0.0,
+      "자산사이클보정버전": "1.0.0",
+      "자산사이클보정후보": false,
+      "자산사이클보정적용조건충족": false,
+      "자산앵커": 0.0,
+      "자산앵커개수": 0,
+      "자산앵커대현재이익가치배수": 0.0,
+      "품질": 55,
+      "근거": [],
+      "현재가치모형": []
+    },
     "재무적정가": 0.0,
     "기본적정가": 0.0,
     "보수적적정가": 0.0,
     "성장적정가": 0.0,
     "현재가대비": 0.0,
     "판단": "판정 보류",
-    "가치평가산업코드": "industrial",
-    "가치평가산업프로필": "산업재·기계·전기장비",
+    "가치평가산업코드": "medical_devices",
+    "가치평가산업프로필": "의료기기·헬스테크 성장형",
     "복합기업대용모형": false,
+    "복합기업대용모형최종반영": null,
     "진짜SOTP자료확보": null,
-    "산업분류출처": "OpenDART 기업개황 업종코드 세분류",
+    "산업분류출처": "수동 종목매핑",
     "OpenDART업종코드": "27199",
     "산업신호반영": false,
     "산업종합신호": 0.0,
@@ -1442,29 +1564,143 @@
       "DART 누적 분기자료를 단독 분기로 변환한 뒤 최근 4개 분기 TTM을 산출했습니다.",
       "KIS EPS·BPS·PER·PBR은 적정가 산식과 주식수 추정에서 제외하고 시장 진단에만 사용했습니다.",
       "현재가는 적정가 산식에 넣지 않고 계산 완료 후 괴리 검증에만 사용했습니다.",
-      "산업재·기계·전기장비 업종 프로필을 적용했습니다.",
+      "의료기기·헬스테크 성장형 업종 프로필을 적용했습니다.",
       "데이터 자격검사를 통과하지 못해 계산값은 진단용으로만 남기고 최종 적정가 사용을 차단했습니다."
     ]
+  },
+  "전략미래가치": {
+    "엔진버전": "0.3.1-strategic-forward-doublecount-sotp-guard",
+    "모드": "shadow",
+    "현재가미사용": true,
+    "시가총액미사용": true,
+    "시장PER_PBR미사용": true,
+    "기초가치": 0.0,
+    "기초가치출처": "현재-only 기초가치 없음",
+    "미래이중계산차단": true,
+    "미래증분추가허용": false,
+    "SOTP": {
+      "사용가능": false,
+      "검증상태": "차단",
+      "주당SOTP기초가치": 0.0,
+      "차단사유": [
+        "SOTP 감사상태 미검증",
+        "SOTP 기준일 없음",
+        "SOTP 통화 기준 없음",
+        "희석주식수 미확보",
+        "유효 사업부 2개 미만"
+      ],
+      "근거": [
+        "감사 가능한 2개 이상 사업부 원천자료가 없어 SOTP 비적용"
+      ]
+    },
+    "기존미래총가치": 0.0,
+    "원시미래총가치": 0.0,
+    "컨센서스미래가치보정": {
+      "적용": false,
+      "배수": 1.0
+    },
+    "원시미래증분가치": 0.0,
+    "미래가치인정률": 0.0,
+    "거시조정배수": 1.0,
+    "미래증분가치": 0.0,
+    "전략펀더멘털적정가": 0.0,
+    "미래성장가치표시": "미래성장가치 반영 낮음",
+    "미래성장가치표시문구": "미래성장가치 반영 낮음",
+    "근거신뢰도": 0.0,
+    "근거축": {
+      "기업실적가속": {
+        "점수": 0.0,
+        "품질": 12.0,
+        "사용가능": false,
+        "근거": [],
+        "입력": {
+          "분기매출YoY": 0.0,
+          "분기영업이익YoY": 0.0,
+          "분기순이익YoY": 0.0,
+          "FY1성장률": 0.0,
+          "구조적실적가속": false,
+          "실적전환강도": 0.0,
+          "향후이익대용신호": 0.0
+        }
+      },
+      "산업현재미래": {
+        "점수": 0.0,
+        "품질": 0.0,
+        "사용가능": false,
+        "근거": [
+          "검증 가능한 산업 선행/사이클 자료 없음"
+        ]
+      },
+      "시장기대_애널리스트": {
+        "점수": 0.0,
+        "품질": 0.0,
+        "사용가능": false,
+        "근거": [
+          "애널리스트 실적 컨센서스 자료 없음"
+        ],
+        "주의": "목표주가/현재주가를 임의 대용하지 않음",
+        "방식": "none"
+      },
+      "글로벌거시": {
+        "점수": 0.0,
+        "품질": 0.0,
+        "사용가능": false,
+        "조정배수": 1.0,
+        "근거": [
+          "글로벌 거시 엔진 통합판정 없음"
+        ]
+      }
+    },
+    "근거": [
+      "현재-only 기초가치가 없어 FY1/FY2·미래성장과의 이중계산 가능성을 차단",
+      "검증 가능한 산업 선행/사이클 자료 없음",
+      "애널리스트 실적 컨센서스 자료 없음",
+      "글로벌 거시 엔진 통합판정 없음",
+      "기업 자체 성장증거 약함 → 미래가치 최대 10% 인정",
+      "산업·시장기대 근거 동시 부족 → 미래가치 최대 12% 인정"
+    ],
+    "정책": {
+      "시장기대없음": "애널리스트 실적자료가 없으면 임의 목표주가/시장가로 대체하지 않음",
+      "시장기대있음": "외부 FY1 EPS/추정기관수/투자의견은 미래가치 근거로 사용하되 목표주가는 적정가에 직접 합산하지 않음",
+      "산업자료없음": "산업 선행자료가 없으면 산업 프리미엄 0점",
+      "산업시장기대모두부족": "미래증분가치 최대 12% 인정",
+      "산업만확인": "컨센서스 없으면 미래증분가치 최대 45% 인정",
+      "거시환경": "품질게이트 통과시에만 0.80~1.10 범위의 실현확률 조정; 새 가치를 만들지 않음",
+      "SOTP": "verified/audited 원천·기준일·통화·2개 이상 사업부 EV·희석주식수·순부채 원천이 모두 확인될 때만 진짜 SOTP 사용",
+      "미래이중계산": "현재-only 기초가치가 없으면 기존 혼합 재무적정가에 미래증분을 추가하지 않음"
+    }
+  },
+  "애널리스트컨센서스": {
+    "사용가능": false,
+    "수집상태": "미호출",
+    "출처": "not_needed"
+  },
+  "전략거시원천": {
+    "수집상태": "미호출",
+    "출처": "not_needed",
+    "캐시": "",
+    "캐시나이초": "",
+    "오류": ""
   },
   "주가예측": {
     "엔진버전": "6.8.0-valuation-contract-v4",
     "단기1~5일": {
       "기간": "1~5일",
-      "점수": 54,
-      "상승확률": 51,
+      "점수": 46,
+      "상승확률": 49,
       "판정": "중립",
-      "신뢰도": 21,
+      "신뢰도": 31,
       "신뢰도등급": "매우 낮음",
       "요소별평가": [
         {
           "요소": "파생시장·프로그램",
           "가중치": 30,
-          "신호": 0.0,
-          "신호판정": "중립",
-          "데이터품질": 0.0,
-          "점수기여": 0.0,
+          "신호": -35.0,
+          "신호판정": "부정",
+          "데이터품질": 35.0,
+          "점수기여": -10.5,
           "출처": "KIS 종목별 프로그램매매",
-          "설명": "5일 수량 0, 20일 수량 0, 5일 거래량대비 0.000%, 20일 거래량대비 0.000%"
+          "설명": "5일 수량 0, 20일 수량 -69425, 5일 거래량대비 0.000%, 20일 거래량대비 0.000%"
         },
         {
           "요소": "외국인·기관수급",
@@ -1489,42 +1725,42 @@
         {
           "요소": "환율·글로벌",
           "가중치": 15,
-          "신호": 39.87,
-          "신호판정": "긍정",
+          "신호": 16.25,
+          "신호판정": "중립",
           "데이터품질": 100.0,
-          "점수기여": 5.98,
+          "점수기여": 2.44,
           "출처": "Yahoo 글로벌시장 분석",
-          "설명": "분석상태 정상, 신호 39.87"
+          "설명": "분석상태 정상, 신호 16.25"
         },
         {
           "요소": "뉴스·공시",
           "가중치": 10,
-          "신호": 10.69,
+          "신호": 10.07,
           "신호판정": "중립",
           "데이터품질": 58.9,
-          "점수기여": 1.07,
+          "점수기여": 1.01,
           "출처": "OpenDART 최근 공시 + Google News RSS",
-          "설명": "분석상태 정상, 신호 10.69"
+          "설명": "분석상태 정상, 신호 10.07"
         }
       ],
       "미수집요소": [
-        "파생시장·프로그램",
         "외국인·기관수급",
         "기술·거래량"
       ],
       "약한대용지표": [
+        "파생시장·프로그램",
         "뉴스·공시"
       ],
       "근거": [
-        "환율·미국시장·반도체·VIX 환경이 우호적"
+        "시장 프로그램매매가 순매도 우위"
       ]
     },
     "중기1~8주": {
       "기간": "1~8주",
-      "점수": 52,
+      "점수": 51,
       "상승확률": 50,
       "판정": "중립",
-      "신뢰도": 21,
+      "신뢰도": 17,
       "신뢰도등급": "매우 낮음",
       "요소별평가": [
         {
@@ -1544,7 +1780,7 @@
           "신호판정": "중립",
           "데이터품질": 0.0,
           "점수기여": 0.0,
-          "출처": "반도체 산업 대표자산 합성",
+          "출처": "medical_devices 대표자산 합성",
           "설명": "산업국면 미분류"
         },
         {
@@ -1560,12 +1796,12 @@
         {
           "요소": "환율·금리·거시",
           "가중치": 15,
-          "신호": 23.02,
-          "신호판정": "긍정",
-          "데이터품질": 100.0,
-          "점수기여": 3.45,
+          "신호": 6.04,
+          "신호판정": "중립",
+          "데이터품질": 75.0,
+          "점수기여": 0.91,
           "출처": "Yahoo 환율·미국금리·글로벌시장",
-          "설명": "분석상태 정상, 신호 23.02"
+          "설명": "분석상태 정상, 신호 6.04"
         },
         {
           "요소": "가격추세",
@@ -1580,12 +1816,12 @@
         {
           "요소": "뉴스·공시",
           "가중치": 10,
-          "신호": 10.69,
+          "신호": 10.07,
           "신호판정": "중립",
           "데이터품질": 58.9,
-          "점수기여": 1.07,
+          "점수기여": 1.01,
           "출처": "OpenDART 최근 공시 + Google News RSS",
-          "설명": "분석상태 정상, 신호 10.69"
+          "설명": "분석상태 정상, 신호 10.07"
         }
       ],
       "미수집요소": [
@@ -1597,9 +1833,24 @@
       "약한대용지표": [
         "뉴스·공시"
       ],
-      "근거": [
-        "원달러·미국금리·글로벌 추세가 우호적"
-      ]
+      "근거": [],
+      "산업환경보조오버레이": {
+        "적용": false,
+        "보조전용": true,
+        "주신호사용허용": false,
+        "산업코드": "medical_devices",
+        "산업명": "의료기기·헬스테크",
+        "현재점수": 76.4,
+        "3개월점수": 48.1,
+        "변화점수": -28.3,
+        "방향": "악화",
+        "품질점수": 45.0,
+        "요청보정점수": -0.0,
+        "적용보정점수": 0.0,
+        "최대절대값": 0.0,
+        "출처": "disk_cache",
+        "사유": "upstream auxiliary use not allowed"
+      }
     },
     "장기6~18개월": {
       "기간": "6~18개월",
@@ -1626,7 +1877,7 @@
           "신호판정": "중립",
           "데이터품질": 0.0,
           "점수기여": 0.0,
-          "출처": "반도체 산업 대표자산 1년 추세",
+          "출처": "medical_devices 대표자산 1년 추세",
           "설명": "산업국면 미분류"
         },
         {
@@ -1690,11 +1941,11 @@
       "KIS일봉": false,
       "멀티타임프레임차트": false,
       "KIS누적수급": false,
-      "KIS프로그램매매": false,
+      "KIS프로그램매매": true,
       "현재가": false,
       "가격이력": false,
       "누적수급": false,
-      "프로그램매매": false,
+      "프로그램매매": true,
       "DART기본재무": true,
       "DART분기실적": false,
       "DART현금흐름": false,
@@ -1703,19 +1954,20 @@
       "기업뉴스": true,
       "글로벌시장": true,
       "산업선행지표": false,
+      "산업환경3개월보조": false,
       "산업사이클": false,
       "가치평가": true,
       "애널리스트컨센서스": false,
       "실제시장점유율": false,
       "지배구조정량평가": false
     },
-    "주의": "미수집 요소는 추정하지 않고 중립 처리한다. 파생시장·프로그램 요소에는 현재 종목별 프로그램매매만 반영하며 파생시장 데이터는 아직 미반영이다. 뉴스와 공시 신호는 제목 기반 규칙형 분석이다. 향후이익 방향은 최신 실적과 현금창출력 기반 대용지표이며 애널리스트 컨센서스는 아직 반영되지 않았다. 상승확률은 데이터 커버리지에 따라 50% 방향으로 축소된 모델 확률이다."
+    "주의": "미수집 요소는 추정하지 않고 중립 처리한다. 파생시장·프로그램 요소에는 현재 종목별 프로그램매매만 반영하며 파생시장 데이터는 아직 미반영이다. 뉴스와 공시 신호는 제목 기반 규칙형 분석이다. 향후이익 방향은 최신 실적과 현금창출력 기반 대용지표이며 애널리스트 컨센서스는 아직 반영되지 않았다. 산업환경 3개월 전망은 prospective OOS 통과 전 주신호로 승격하지 않고 upstream bounded 보정점수만 중기에 보조 적용한다. 3개월 전망을 6~18개월 산업사이클로 외삽하지 않는다. 상승확률은 데이터 커버리지에 따라 50% 방향으로 축소된 모델 확률이다."
   },
   "화면브리지": {
     "스키마버전": "2.0",
     "엔진버전": "6.8.0-valuation-contract-v4",
     "종목코드": "085370",
-    "생성시각": "2026-08-08T07:27:04.059393",
+    "생성시각": "2026-08-14T22:05:15.267255",
     "연결상태": "부분",
     "기술분석": {
       "수집상태": "실패",
@@ -1818,7 +2070,9 @@
       },
       "다이버전스": {
         "분석상태": "자료부족",
-        "계산방식": "RSI14(Wilder) + 확정 피벗 + Relative Volume(직전20봉) + 종가 가격구조 확인",
+        "계산방식": "RSI14(Wilder) + 우측1봉 확정 피벗 + 시간봉별 최근 대표 1신호 + 근접 Relative Volume + 가장 가까운 유효 스윙 종가 확인",
+        "엔진버전": "4.0-latest-one-per-timeframe",
+        "4시간봉집계": "KRX 09:00 KST anchor · 09:00-13:00 / 13:00-15:30",
         "미래데이터사용": false,
         "확정피벗사용": true,
         "시간봉": {
@@ -1828,7 +2082,14 @@
             "시간봉": "4시간봉",
             "관측봉수": 0,
             "탐색기간봉": 180,
-            "유효기간봉": 30,
+            "유효기간봉": 12,
+            "대표신호": {
+              "탐지": false,
+              "detected": false,
+              "상태": "미탐지",
+              "방향": "",
+              "사유": "분석 데이터 부족 · 0/80봉"
+            },
             "상승": {
               "탐지": false,
               "detected": false,
@@ -1844,6 +2105,7 @@
               "사유": "분석 데이터 부족 · 0/80봉"
             },
             "활성신호": [],
+            "과거신호": [],
             "사유": "분석 데이터 부족 · 0/80봉"
           },
           "일봉": {
@@ -1852,7 +2114,14 @@
             "시간봉": "일봉",
             "관측봉수": 0,
             "탐색기간봉": 150,
-            "유효기간봉": 20,
+            "유효기간봉": 10,
+            "대표신호": {
+              "탐지": false,
+              "detected": false,
+              "상태": "미탐지",
+              "방향": "",
+              "사유": "분석 데이터 부족 · 0/80봉"
+            },
             "상승": {
               "탐지": false,
               "detected": false,
@@ -1868,6 +2137,7 @@
               "사유": "분석 데이터 부족 · 0/80봉"
             },
             "활성신호": [],
+            "과거신호": [],
             "사유": "분석 데이터 부족 · 0/80봉"
           },
           "주봉": {
@@ -1876,7 +2146,14 @@
             "시간봉": "주봉",
             "관측봉수": 0,
             "탐색기간봉": 120,
-            "유효기간봉": 12,
+            "유효기간봉": 8,
+            "대표신호": {
+              "탐지": false,
+              "detected": false,
+              "상태": "미탐지",
+              "방향": "",
+              "사유": "분석 데이터 부족 · 0/52봉"
+            },
             "상승": {
               "탐지": false,
               "detected": false,
@@ -1892,6 +2169,7 @@
               "사유": "분석 데이터 부족 · 0/52봉"
             },
             "활성신호": [],
+            "과거신호": [],
             "사유": "분석 데이터 부족 · 0/52봉"
           },
           "월봉": {
@@ -1901,6 +2179,13 @@
             "관측봉수": 0,
             "탐색기간봉": 72,
             "유효기간봉": 6,
+            "대표신호": {
+              "탐지": false,
+              "detected": false,
+              "상태": "미탐지",
+              "방향": "",
+              "사유": "분석 데이터 부족 · 0/36봉"
+            },
             "상승": {
               "탐지": false,
               "detected": false,
@@ -1916,37 +2201,39 @@
               "사유": "분석 데이터 부족 · 0/36봉"
             },
             "활성신호": [],
+            "과거신호": [],
             "사유": "분석 데이터 부족 · 0/36봉"
           }
         },
         "활성신호": [],
-        "활성신호수": 0
+        "활성신호수": 0,
+        "대표신호원칙": "각 시간봉에서 4종 전체 중 가장 최근 확정 1개만 활성"
       },
       "사용가능": true
     },
     "예측": {
       "단기": {
         "기간": "1~5일",
-        "점수": 54,
-        "상승확률": 51,
+        "점수": 46,
+        "상승확률": 49,
         "판정": "중립",
-        "자료신뢰도": 21,
-        "신뢰도": 21,
+        "자료신뢰도": 31,
+        "신뢰도": 31,
         "자료신뢰도등급": "매우 낮음",
         "신뢰도등급": "매우 낮음",
         "요소별평가": [
           {
             "요소": "파생시장·프로그램",
-            "사용가능": false,
+            "사용가능": true,
             "가중치": 30.0,
-            "신호": 0.0,
-            "판정": "중립",
-            "신호판정": "중립",
-            "데이터상태": "미수집",
-            "데이터품질": 0.0,
-            "점수기여": 0.0,
+            "신호": -35.0,
+            "판정": "부정",
+            "신호판정": "부정",
+            "데이터상태": "정상",
+            "데이터품질": 35.0,
+            "점수기여": -10.5,
             "출처": "KIS 종목별 프로그램매매",
-            "설명": "5일 수량 0, 20일 수량 0, 5일 거래량대비 0.000%, 20일 거래량대비 0.000%"
+            "설명": "5일 수량 0, 20일 수량 -69425, 5일 거래량대비 0.000%, 20일 거래량대비 0.000%"
           },
           {
             "요소": "외국인·기관수급",
@@ -1978,42 +2265,41 @@
             "요소": "환율·글로벌",
             "사용가능": true,
             "가중치": 15.0,
-            "신호": 39.87,
-            "판정": "긍정",
-            "신호판정": "긍정",
+            "신호": 16.25,
+            "판정": "중립",
+            "신호판정": "중립",
             "데이터상태": "정상",
             "데이터품질": 100.0,
-            "점수기여": 5.98,
+            "점수기여": 2.44,
             "출처": "Yahoo 글로벌시장 분석",
-            "설명": "분석상태 정상, 신호 39.87"
+            "설명": "분석상태 정상, 신호 16.25"
           },
           {
             "요소": "뉴스·공시",
             "사용가능": true,
             "가중치": 10.0,
-            "신호": 10.69,
+            "신호": 10.07,
             "판정": "중립",
             "신호판정": "중립",
             "데이터상태": "정상",
             "데이터품질": 58.9,
-            "점수기여": 1.07,
+            "점수기여": 1.01,
             "출처": "OpenDART 최근 공시 + Google News RSS",
-            "설명": "분석상태 정상, 신호 10.69"
+            "설명": "분석상태 정상, 신호 10.07"
           }
         ],
         "미수집요소": [
-          "파생시장·프로그램",
           "외국인·기관수급",
           "기술·거래량"
         ]
       },
       "중기": {
         "기간": "1~8주",
-        "점수": 52,
+        "점수": 51,
         "상승확률": 50,
         "판정": "중립",
-        "자료신뢰도": 21,
-        "신뢰도": 21,
+        "자료신뢰도": 17,
+        "신뢰도": 17,
         "자료신뢰도등급": "매우 낮음",
         "신뢰도등급": "매우 낮음",
         "요소별평가": [
@@ -2040,7 +2326,7 @@
             "데이터상태": "미수집",
             "데이터품질": 0.0,
             "점수기여": 0.0,
-            "출처": "반도체 산업 대표자산 합성",
+            "출처": "medical_devices 대표자산 합성",
             "설명": "산업국면 미분류"
           },
           {
@@ -2060,14 +2346,14 @@
             "요소": "환율·금리·거시",
             "사용가능": true,
             "가중치": 15.0,
-            "신호": 23.02,
-            "판정": "긍정",
-            "신호판정": "긍정",
+            "신호": 6.04,
+            "판정": "중립",
+            "신호판정": "중립",
             "데이터상태": "정상",
-            "데이터품질": 100.0,
-            "점수기여": 3.45,
+            "데이터품질": 75.0,
+            "점수기여": 0.91,
             "출처": "Yahoo 환율·미국금리·글로벌시장",
-            "설명": "분석상태 정상, 신호 23.02"
+            "설명": "분석상태 정상, 신호 6.04"
           },
           {
             "요소": "가격추세",
@@ -2086,14 +2372,14 @@
             "요소": "뉴스·공시",
             "사용가능": true,
             "가중치": 10.0,
-            "신호": 10.69,
+            "신호": 10.07,
             "판정": "중립",
             "신호판정": "중립",
             "데이터상태": "정상",
             "데이터품질": 58.9,
-            "점수기여": 1.07,
+            "점수기여": 1.01,
             "출처": "OpenDART 최근 공시 + Google News RSS",
-            "설명": "분석상태 정상, 신호 10.69"
+            "설명": "분석상태 정상, 신호 10.07"
           }
         ],
         "미수집요소": [
@@ -2136,7 +2422,7 @@
             "데이터상태": "미수집",
             "데이터품질": 0.0,
             "점수기여": 0.0,
-            "출처": "반도체 산업 대표자산 1년 추세",
+            "출처": "medical_devices 대표자산 1년 추세",
             "설명": "산업국면 미분류"
           },
           {
@@ -2203,30 +2489,33 @@
     "요소상태": {
       "거시환경": {
         "사용가능": true,
-        "점수": 23.02,
-        "데이터품질": 100.0,
-        "판정": "긍정",
+        "점수": 6.04,
+        "데이터품질": 75.0,
+        "판정": "중립",
         "출처": "Yahoo Finance Chart API"
       },
       "산업선행지표": {
         "사용가능": false,
         "점수": 0.0,
+        "환경점수": null,
+        "현재환경점수": null,
         "데이터품질": 0.0,
         "판정": "중립",
-        "출처": "Yahoo Finance Chart API"
+        "출처": "",
+        "보조전용": false
       },
       "산업사이클": {
         "사용가능": false,
         "점수": 0.0,
         "데이터품질": 0.0,
         "판정": "중립",
-        "출처": "Yahoo Finance Chart API"
+        "출처": ""
       },
       "뉴스": {
         "사용가능": true,
-        "점수": 15.88,
+        "점수": 14.96,
         "데이터품질": 88.0,
-        "판정": "긍정",
+        "판정": "중립",
         "출처": "Google News RSS"
       },
       "기업공시": {
@@ -2244,17 +2533,42 @@
         "출처": "한국투자증권 KIS"
       },
       "프로그램매매": {
-        "사용가능": false,
-        "점수": 0.0,
-        "데이터품질": 0.0,
-        "판정": "중립",
+        "사용가능": true,
+        "점수": -10.5,
+        "데이터품질": 35.0,
+        "판정": "부정",
         "출처": "한국투자증권 KIS 종목별 프로그램매매"
       }
     },
+    "산업환경브리지": {
+      "수집상태": "연결대기",
+      "사용가능": false,
+      "요청산업코드": "medical_devices",
+      "매핑산업코드": "medical_devices",
+      "산업명": "의료기기·헬스테크",
+      "생성시각UTC": "2026-08-14T11:08:50.839775+00:00",
+      "현재점수": 76.4,
+      "현재구간": "우호",
+      "3개월점수": 48.1,
+      "3개월구간": "중립",
+      "변화점수": -28.3,
+      "방향": "악화",
+      "품질점수": 45.0,
+      "개별종목방향보정점수": -0.0,
+      "보정최대절대값": 0.0,
+      "보정상한출처": "published bounded adjustment itself",
+      "보조사용허용": false,
+      "주신호사용허용": false,
+      "사용규칙": "기존 산업전망 current/future 값을 이 파일로 대체하되, 개별종목 주가방향에는 bounded_direction_adjustment_points만 보조 입력으로 사용합니다.",
+      "출처": "disk_cache",
+      "캐시모드": "disk_cache",
+      "소스나이시간": 10.93,
+      "HTTP호출수": 0,
+      "오류": "upstream auxiliary use not allowed"
+    },
     "검증오류": [
       "산업선행지표 미연결",
-      "산업사이클 미연결",
-      "프로그램매매 미연결"
+      "산업사이클 미연결"
     ]
   }
 }
