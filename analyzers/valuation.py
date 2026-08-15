@@ -398,7 +398,7 @@ VALUATION_ENGINE_VERSION = "6.8.0-valuation-contract-v4"
 INDUSTRY_PROFILE_VERSION = "3.1.0"
 DATA_QUALIFICATION_VERSION = "1.1.0"
 VALUATION_MODEL_REVISION = "future-growth-v1.1.0-price-independent"
-FUTURE_GROWTH_MODEL_VERSION = "1.0.0"
+FUTURE_GROWTH_MODEL_VERSION = "1.1.0"
 ASSET_CYCLE_ANCHOR_VERSION = "1.0.0"
 
 # 장부가치·잔여이익이 의미 있는 자산집약 업종에서 일시적인 이익 훼손이
@@ -912,38 +912,67 @@ def build_future_growth_model(
     earnings_trough: bool,
     earnings_value: float,
 ) -> Dict[str, Any]:
+    """가격독립 FY3~FY4 미래가치 후보.
+
+    v1.1 정책:
+    - 데이터 자체가 부족한 경우만 hard block.
+    - 성장업종인데 현재 실적/산업국면이 나쁜 경우에는 미래가치를 0으로 삭제하지 않는다.
+    - 대신 제한사유를 남기고 모형 가중치(인정률)를 낮춘다.
+    - 이후 Strategic 모듈에서 기업/산업/컨센서스 근거에 따라 미래증분 인정률을 한 번 더 적용한다.
+    """
     config = safe_dict(FUTURE_GROWTH_CONFIG.get(profile_code))
-    blocked: List[str] = []
+    hard_blocked: List[str] = []
+    limited: List[str] = []
     evidence: List[str] = []
 
     if not config or not profile.get("growth"):
-        blocked.append("미래성장모형 비대상 업종")
-    if min(ttm_eps, fy1_eps, fy2_eps) <= 0:
-        blocked.append("양(+)의 TTM·FY1·FY2 EPS 미확보")
+        hard_blocked.append("미래성장모형 비대상 업종")
+
+    # FY3/FY4 투영의 최소 입력. TTM 자체가 적자/0이어도 정상화·FY1·FY2가
+    # 양수면 회복 시나리오는 계산할 수 있다.
+    if max(ttm_eps, normalized_eps) <= 0 or fy1_eps <= 0 or fy2_eps <= 0:
+        hard_blocked.append("양(+)의 정상화·FY1·FY2 EPS 최소입력 미확보")
+
     if safe_float(ttm_quality) < 70:
-        blocked.append("TTM 데이터품질 70점 미만")
+        hard_blocked.append("TTM 데이터품질 70점 미만")
     if safe_float(share_quality) < 75:
-        blocked.append("주식수 품질 75점 미만")
+        hard_blocked.append("주식수 품질 75점 미만")
+
+    # 아래 항목은 미래가치를 '0'으로 만들지 않고 인정률을 낮추는 조건이다.
+    if ttm_eps <= 0:
+        limited.append("TTM EPS 비양수 · 정상화/FY1/FY2 기준 제한투영")
     if negative_transition:
-        blocked.append("실적 급하락 전환")
+        limited.append("실적 급하락 전환")
     if earnings_trough:
-        blocked.append("이익저점 국면은 회복가치 모형 우선")
+        limited.append("이익저점 국면 · 회복가치 우선")
     if operating_margin <= 0.03 or net_margin <= 0.015:
-        blocked.append("영업·순이익률 성장모형 최소기준 미달")
+        limited.append("영업·순이익률 성장모형 최소기준 미달")
     if safe_float(industry.get("long")) < -35.0:
-        blocked.append("장기 산업사이클 과도한 역풍")
-    if ttm_eps > 0 and normalized_eps > 0 and ttm_eps / normalized_eps > 2.8 and profile.get("cyclical"):
-        blocked.append("사이클 고점 이익 영구화 위험")
+        limited.append("장기 산업사이클 과도한 역풍")
+    if (
+        ttm_eps > 0
+        and normalized_eps > 0
+        and ttm_eps / normalized_eps > 2.8
+        and profile.get("cyclical")
+    ):
+        limited.append("사이클 고점 이익 영구화 위험")
 
     strong_evidence = bool(
         structural_acceleration
-        or (safe_float(quarter.get("revenue_yoy")) >= 8.0 and safe_float(quarter.get("operating_yoy")) >= 25.0 and safe_float(quarter.get("net_yoy")) >= 18.0)
+        or (
+            safe_float(quarter.get("revenue_yoy")) >= 8.0
+            and safe_float(quarter.get("operating_yoy")) >= 25.0
+            and safe_float(quarter.get("net_yoy")) >= 18.0
+        )
         or (earnings_signal >= 35.0 and forward_signal >= 35.0)
     )
     if not strong_evidence:
-        blocked.append("구조적 성장 증거 부족")
+        limited.append("구조적 성장 증거 부족")
+
     if structural_acceleration:
         evidence.append("매출·영업이익·순이익 동반 구조적 가속")
+    if safe_float(quarter.get("revenue_yoy")) >= 8.0:
+        evidence.append("최근 분기 매출 성장")
     if safe_float(quarter.get("operating_yoy")) >= 25.0:
         evidence.append("최근 분기 영업이익 고성장")
     if forward_signal >= 35.0:
@@ -951,15 +980,20 @@ def build_future_growth_model(
     if safe_float(industry.get("long")) >= 20.0:
         evidence.append("장기 산업사이클 우호")
 
-    if blocked:
+    if hard_blocked:
         return {
             "버전": FUTURE_GROWTH_MODEL_VERSION,
+            "대상업종": bool(config and profile.get("growth")),
             "사용가능": False,
-            "차단사유": list(dict.fromkeys(blocked)),
+            "상태": "차단",
+            "차단사유": list(dict.fromkeys(hard_blocked)),
+            "제한사유": list(dict.fromkeys(limited)),
             "선정근거": list(dict.fromkeys(evidence)),
             "가치": 0.0,
             "가중치": 0.0,
+            "모형인정률": 0.0,
             "품질": 0,
+            "현재가미사용": True,
         }
 
     revenue_q = clamp(safe_float(quarter.get("revenue_yoy")) / 100.0, -0.15, 0.25)
@@ -981,11 +1015,27 @@ def build_future_growth_model(
         + signal_growth * 0.05
         + industry_growth * 0.03
     )
-    fy3_growth = clamp(raw_fy3_growth, safe_float(config.get("min_growth"), 0.04), safe_float(config.get("fy3_cap"), 0.20))
-    long_anchor = clamp((operating_ann * 0.55 + net_ann * 0.45), 0.0, safe_float(config.get("fy4_cap"), 0.14))
+
+    # 제한상태에서는 무조건 양(+) 성장률을 강제하지 않는다.
+    soft_mode = bool(limited)
+    fy3_floor = -0.03 if soft_mode else safe_float(config.get("min_growth"), 0.04)
+    fy4_floor = -0.02 if soft_mode else safe_float(config.get("min_growth"), 0.04) * 0.70
+
+    fy3_growth = clamp(
+        raw_fy3_growth,
+        fy3_floor,
+        safe_float(config.get("fy3_cap"), 0.20),
+    )
+    long_anchor = clamp(
+        operating_ann * 0.55 + net_ann * 0.45,
+        -0.04 if soft_mode else 0.0,
+        safe_float(config.get("fy4_cap"), 0.14),
+    )
     fy4_growth = clamp(
-        fy3_growth * 0.62 + long_anchor * 0.18 + max(0.0, industry_growth) * 0.20,
-        safe_float(config.get("min_growth"), 0.04) * 0.70,
+        fy3_growth * 0.62
+        + long_anchor * 0.18
+        + industry_growth * 0.20,
+        fy4_floor,
         safe_float(config.get("fy4_cap"), 0.14),
     )
 
@@ -995,15 +1045,61 @@ def build_future_growth_model(
     fy4_eps_cap = eps_anchor * safe_float(config.get("eps_cap"), 2.0)
     fy4_eps = min(fy4_eps_raw, fy4_eps_cap)
 
-    exit_premium = clamp((fy4_growth - 0.08) * 16.0, -0.5, safe_float(config.get("exit_premium"), 2.0))
+    exit_premium = clamp(
+        (fy4_growth - 0.08) * 16.0,
+        -0.5,
+        safe_float(config.get("exit_premium"), 2.0),
+    )
     if structural_acceleration:
         exit_premium += 0.50
-    exit_per = clamp(target_per + exit_premium, max(6.0, target_per * 0.82), per_max)
-    discount_rate = clamp(cost_of_equity + (0.012 if profile.get("cyclical") else 0.008), 0.09, 0.14)
+
+    # 이익저점/급하락 상태의 현재 target PER에는 저점 ROE·마진 감점이 이미 반영돼 있다.
+    # FY4 회복가치에 같은 저점 감점을 중복 적용하지 않도록 업종 정상 PER을 하한 앵커로 둔다.
+    base_per = safe_float(profile.get("base_per"), target_per)
+    future_per_anchor = target_per
+    if earnings_trough or negative_transition:
+        future_per_anchor = max(target_per, base_per * 0.85)
+
+    exit_per = clamp(
+        future_per_anchor + exit_premium,
+        max(6.0, future_per_anchor * 0.82),
+        per_max,
+    )
+    discount_rate = clamp(
+        cost_of_equity + (0.012 if profile.get("cyclical") else 0.008),
+        0.09,
+        0.14,
+    )
     discount_years = 3.0
     raw_value = fy4_eps * exit_per / ((1.0 + discount_rate) ** discount_years)
-    value_cap = earnings_value * safe_float(config.get("value_cap"), 1.65) if earnings_value > 0 else raw_value
+    value_cap = (
+        earnings_value * safe_float(config.get("value_cap"), 1.65)
+        if earnings_value > 0
+        else raw_value
+    )
     future_value = min(raw_value, value_cap) if value_cap > 0 else raw_value
+
+    # 제한사유는 계산을 죽이지 않고 모형 가중치만 낮춘다.
+    recognition = 1.0
+    penalty_rules = [
+        (ttm_eps <= 0, 0.12),
+        (negative_transition, 0.18),
+        (earnings_trough, 0.15),
+        (operating_margin <= 0.03 or net_margin <= 0.015, 0.12),
+        (safe_float(industry.get("long")) < -35.0, 0.12),
+        (
+            ttm_eps > 0
+            and normalized_eps > 0
+            and ttm_eps / normalized_eps > 2.8
+            and profile.get("cyclical"),
+            0.15,
+        ),
+        (not strong_evidence, 0.15),
+    ]
+    for condition, penalty in penalty_rules:
+        if condition:
+            recognition -= penalty
+    recognition = clamp(recognition, 0.20, 1.0)
 
     quality = 35.0
     quality += clamp(ttm_quality, 0.0, 100.0) * 0.20
@@ -1011,13 +1107,23 @@ def build_future_growth_model(
     quality += 15.0 if structural_acceleration else 8.0
     quality += 5.0 if bool(quarter.get("잠정실적반영")) else 0.0
     quality += 5.0 if industry.get("available") else 0.0
-    quality = int(clamp(quality, 55.0, 92.0))
-    effective_weight = safe_float(config.get("weight"), 0.16) * quality / 100.0
+    if limited:
+        quality -= min(18.0, len(set(limited)) * 3.0)
+    quality = int(clamp(quality, 45.0, 92.0))
+
+    effective_weight = (
+        safe_float(config.get("weight"), 0.16)
+        * quality / 100.0
+        * recognition
+    )
 
     return {
         "버전": FUTURE_GROWTH_MODEL_VERSION,
+        "대상업종": True,
         "사용가능": future_value > 0,
+        "상태": "제한사용" if limited else "정상",
         "차단사유": [],
+        "제한사유": list(dict.fromkeys(limited)),
         "선정근거": list(dict.fromkeys(evidence)),
         "FY3성장률": fy3_growth * 100.0,
         "FY4성장률": fy4_growth * 100.0,
@@ -1031,6 +1137,7 @@ def build_future_growth_model(
         "상한적용": raw_value > future_value + 1e-9,
         "가치": future_value,
         "가중치": effective_weight,
+        "모형인정률": recognition * 100.0,
         "품질": quality,
         "현재가미사용": True,
     }
