@@ -582,11 +582,19 @@ def get_financial_periods(
     api_key: str,
     corp_code: str,
     maximum_success: int = 4,
+    minimum_annual_reports: int = 3,
 ) -> Dict[str, Any]:
     periods = []
     errors = []
+    fetched_keys = set()
 
+    # 1) 최근 분기/반기/연간을 기존 순서대로 확보한다.
     for year, report_code in candidate_periods():
+        key = (int(year), str(report_code))
+        if key in fetched_keys:
+            continue
+        fetched_keys.add(key)
+
         period = fetch_financial_period(
             api_key,
             corp_code,
@@ -607,7 +615,6 @@ def get_financial_periods(
 
         if period.get("수집상태") == "정상":
             periods.append(period)
-
             if len(periods) >= maximum_success:
                 break
         else:
@@ -615,24 +622,59 @@ def get_financial_periods(
                 {
                     "사업연도": year,
                     "보고서코드": report_code,
-                    "응답코드": period.get(
-                        "응답코드",
-                        "",
-                    ),
-                    "응답메시지": period.get(
-                        "응답메시지",
-                        "",
-                    ),
+                    "응답코드": period.get("응답코드", ""),
+                    "응답메시지": period.get("응답메시지", ""),
                 }
             )
 
+    # 2) 가치평가 정상화 EPS는 여러 경기연도의 연간 이익이 필요하다.
+    # 최근 6개 성공기간만 가져오면 분기자료가 많을 때 사업보고서가 1개뿐일 수 있다.
+    # 이미 받은 연간보고서는 재호출하지 않고 부족한 과거 사업보고서만 보강한다.
+    annual_count = sum(
+        str(row.get("보고서코드", "")) == "11011"
+        and row.get("수집상태") == "정상"
+        for row in periods
+    )
+    if annual_count < minimum_annual_reports:
+        current_year = datetime.now(KST).year
+        for year in range(current_year - 1, current_year - 6, -1):
+            if annual_count >= minimum_annual_reports:
+                break
+            key = (year, "11011")
+            if key in fetched_keys:
+                continue
+            fetched_keys.add(key)
+
+            period = fetch_financial_period(
+                api_key,
+                corp_code,
+                year,
+                "11011",
+            )
+            print(
+                "DART FINANCIAL ANNUAL HISTORY",
+                year,
+                period.get("수집상태"),
+                period.get("계정개수"),
+            )
+
+            if period.get("수집상태") == "정상":
+                periods.append(period)
+                annual_count += 1
+            else:
+                errors.append(
+                    {
+                        "사업연도": year,
+                        "보고서코드": "11011",
+                        "응답코드": period.get("응답코드", ""),
+                        "응답메시지": period.get("응답메시지", ""),
+                    }
+                )
+
     return {
-        "수집상태": (
-            "정상"
-            if periods
-            else "실패"
-        ),
+        "수집상태": "정상" if periods else "실패",
         "기간개수": len(periods),
+        "연간보고서개수": annual_count,
         "기간목록": periods,
         "수집오류": errors,
     }
