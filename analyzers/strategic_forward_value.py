@@ -19,7 +19,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 
-ENGINE_VERSION = "0.3.1-strategic-forward-doublecount-sotp-guard"
+ENGINE_VERSION = "0.4.0-strategic-forward-recognition-gate"
 
 
 def safe_float(value: Any, default: float = 0.0) -> float:
@@ -766,21 +766,71 @@ def build_strategic_forward_value(
     )
     macro = macro_axis(global_macro_context)
 
-    # 기존 미래성장모형은 가격독립적인 FY3/FY4 총가치 후보로만 활용한다.
-    future_model = valuation.get("미래성장모형", {}) if isinstance(valuation.get("미래성장모형"), dict) else {}
-    future_total = safe_float(future_model.get("가치")) if future_model.get("사용가능") is True else 0.0
+    # 기존 미래성장모형은 가격독립적인 FY3/FY4 총가치 후보로 활용한다.
+    future_model = (
+        valuation.get("미래성장모형", {})
+        if isinstance(valuation.get("미래성장모형"), dict)
+        else {}
+    )
+    future_total = (
+        safe_float(future_model.get("가치"))
+        if future_model.get("사용가능") is True
+        else 0.0
+    )
+    future_total_source = (
+        "FY3/FY4 미래성장모형"
+        if future_total > 0
+        else ""
+    )
+
     if future_total <= 0:
-        future_total = safe_float(adaptive.get("미래총가치"))
+        adaptive_total = safe_float(adaptive.get("미래총가치"))
+        if adaptive_total > 0:
+            future_total = adaptive_total
+            future_total_source = "적응형 미래총가치"
+
+    # 전략모형 정책:
+    # 성장업종에서 미래성장모형이 제한사용 상태이거나 FY3/FY4 총가치가
+    # 기존 기본가치보다 낮아 미래증분이 0이 되는 경우, 이미 가격독립 산식으로
+    # 계산된 '성장적정가'를 미래 총가치의 보조 시나리오로 사용할 수 있다.
+    # 이 값 자체를 전부 더하지 않고, 기본적정가와 성장적정가의 차이에
+    # 아래 evidence recognition factor를 적용한다.
+    growth_scenario = safe_float(valuation.get("성장적정가"))
+    base_scenario = safe_float(valuation.get("기본적정가"))
+    growth_target = future_model.get("대상업종") is True
+
+    use_growth_scenario_gap = bool(
+        growth_target
+        and growth_scenario > 0
+        and base_scenario > 0
+        and growth_scenario > base_scenario
+        and (
+            future_total <= base_scenario
+            or future_model.get("상태") == "제한사용"
+        )
+    )
+
+    if use_growth_scenario_gap:
+        future_total = max(future_total, growth_scenario)
+        future_total_source = "가격독립 성장적정가 시나리오"
 
     original_future_total = future_total
     future_total, consensus_future_adjustment = _consensus_adjusted_future_total(
         future_total, valuation, expectation
     )
 
-    # 미래가치를 실제로 더할 때만 current-only 기초가치를 승격한다.
-    # 미래후보가 0인 기업은 기존 재무적정가를 그대로 유지해 불필요한 기준가 교체를 막는다.
+    # 일반 FY3/FY4 총가치는 current-only base와 비교한다.
+    # 성장적정가 시나리오 fallback은 동일 valuation family의 base→growth
+    # 시나리오 간 격차이므로 기존 기본적정가를 기준으로 부분 인정한다.
     if not verified_sotp and future_total > 0:
-        if current_only_available and current_only_base > 0:
+        if use_growth_scenario_gap and legacy_base > 0:
+            strategic_base = legacy_base
+            base_source = "기존 기본적정가"
+            future_addition_allowed = True
+            double_count_reasons = [
+                "기본적정가와 성장적정가의 시나리오 격차만 미래증분 후보로 사용"
+            ]
+        elif current_only_available and current_only_base > 0:
             strategic_base = current_only_base
             base_source = current_only_source
             future_addition_allowed = True
@@ -833,6 +883,7 @@ def build_strategic_forward_value(
         "미래증분추가허용": bool(future_addition_allowed),
         "SOTP": sotp,
         "기존미래총가치": round(original_future_total, 2),
+        "미래총가치출처": future_total_source,
         "원시미래총가치": round(future_total, 2),
         "컨센서스미래가치보정": consensus_future_adjustment,
         "원시미래증분가치": round(raw_increment, 2),
@@ -854,8 +905,8 @@ def build_strategic_forward_value(
             "시장기대없음": "애널리스트 실적자료가 없으면 임의 목표주가/시장가로 대체하지 않음",
             "시장기대있음": "외부 FY1 EPS/추정기관수/투자의견은 미래가치 근거로 사용하되 목표주가는 적정가에 직접 합산하지 않음",
             "산업자료없음": "산업 선행자료가 없으면 산업 프리미엄 0점",
-            "산업시장기대모두부족": "미래증분가치 최대 12% 인정",
-            "산업만확인": "컨센서스 없으면 미래증분가치 최대 45% 인정",
+            "산업시장기대모두부족": "미래가치 후보는 유지하되 미래증분가치 최대 12% 인정",
+            "산업만확인": "컨센서스 없으면 미래가치 후보는 유지하되 미래증분가치 최대 45% 인정",
             "거시환경": "품질게이트 통과시에만 0.80~1.10 범위의 실현확률 조정; 새 가치를 만들지 않음",
             "SOTP": "verified/audited 원천·기준일·통화·2개 이상 사업부 EV·희석주식수·순부채 원천이 모두 확인될 때만 진짜 SOTP 사용",
             "미래이중계산": "현재-only 기초가치가 없으면 기존 혼합 재무적정가에 미래증분을 추가하지 않음",
