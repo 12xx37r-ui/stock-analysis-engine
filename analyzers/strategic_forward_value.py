@@ -790,8 +790,8 @@ def build_strategic_forward_value(
             future_total_source = "적응형 미래총가치"
 
     # 전략모형 정책:
-    # 성장업종에서 미래성장모형이 제한사용 상태이거나 FY3/FY4 총가치가
-    # 기존 기본가치보다 낮아 미래증분이 0이 되는 경우, 이미 가격독립 산식으로
+    # 성장업종에서 FY3/FY4 총가치가 기존 기본가치보다 낮아
+    # 미래증분이 0이 되는 경우에만, 이미 가격독립 산식으로
     # 계산된 '성장적정가'를 미래 총가치의 보조 시나리오로 사용할 수 있다.
     # 이 값 자체를 전부 더하지 않고, 기본적정가와 성장적정가의 차이에
     # 아래 evidence recognition factor를 적용한다.
@@ -804,10 +804,7 @@ def build_strategic_forward_value(
         and growth_scenario > 0
         and base_scenario > 0
         and growth_scenario > base_scenario
-        and (
-            future_total <= base_scenario
-            or future_model.get("상태") == "제한사용"
-        )
+        and future_total <= base_scenario
     )
 
     if use_growth_scenario_gap:
