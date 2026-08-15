@@ -830,16 +830,38 @@ def _annual_eps_series(periods: List[Dict[str, Any]], shares: float) -> List[Dic
     return rows
 
 
+def _signed_median(values: List[float]) -> float:
+    rows = sorted(
+        safe_float(value)
+        for value in values
+        if value not in (None, "", "-", "--")
+    )
+    if not rows:
+        return 0.0
+    n = len(rows)
+    if n % 2 == 1:
+        return rows[n // 2]
+    return (rows[n // 2 - 1] + rows[n // 2]) / 2.0
+
+
 def _normalized_eps(annual_eps: List[Dict[str, Any]], market_eps: float = 0.0) -> float:
     weights = (0.52, 0.30, 0.18, 0.10)
+    selected = annual_eps[:4]
     rows = [
         {"value": row.get("eps", 0.0), "weight": weights[index]}
-        for index, row in enumerate(annual_eps[:4])
+        for index, row in enumerate(selected)
     ]
-    normalized = weighted_average_signed(rows) or 0.0
-    # 손실연도도 그대로 포함한 DART 순이익÷발행주식수만 쓴다.
-    # 시장 EPS는 현재가/PER로 역산된 값일 수 있어 정상화 EPS에
-    # 혼합하지 않는다. 매개변수는 기존 호출 호환성만 위해 유지한다.
+    weighted = weighted_average_signed(rows) or 0.0
+
+    # 최근 한 해만 확보된 경우는 그 값을 그대로 사용한다.
+    # 2~4개 연간자료가 있으면 경기저점/고점 한 해에 과도하게 끌려가지 않도록
+    # 부호를 보존한 중앙값을 30% 섞는다. 현재가/시장 PER은 사용하지 않는다.
+    if len(selected) >= 2:
+        med = _signed_median([row.get("eps", 0.0) for row in selected])
+        normalized = weighted * 0.70 + med * 0.30
+    else:
+        normalized = weighted
+
     return normalized
 
 
@@ -1752,8 +1774,35 @@ def calculate_value(
         else 0.0
     )
 
-    # 중간 업황 회복 시 정상화 이익이 창출할 수 있는 가치. 현재가를 사용하지 않는다.
-    recovery_multiple = clamp(target_per * 0.90, per_min, per_max)
+    # 이익저점 국면 판정. 자산·그레이엄 가치가 이익가치보다 3배 이상 높고
+    # 성장·사이클 업종이면 현재 이익 한 시점이 기업가치를 과도하게 누르는 것으로 본다.
+    asset_to_earnings = pbr_value / earnings_value if pbr_value > 0 and earnings_value > 0 else 0.0
+    graham_to_earnings = graham_value / earnings_value if graham_value > 0 and earnings_value > 0 else 0.0
+    normalized_to_ttm = normalized_eps / ttm_eps if normalized_eps > 0 and ttm_eps > 0 else 0.0
+    earnings_trough = bool(
+        profile.get("cyclical")
+        and profile.get("growth")
+        and bps > 0
+        and (
+            (asset_to_earnings >= 3.0 and graham_to_earnings >= 2.0)
+            or normalized_to_ttm >= 1.80
+            or (ttm_eps <= 0 and normalized_eps > 0)
+        )
+    )
+
+    # 중간 업황 회복 시 정상화 이익이 창출할 수 있는 가치.
+    # 이익저점에서는 현재 저점의 ROE·마진·실적급락으로 이미 낮아진 target_per를
+    # 다시 정상화 EPS에 곱하면 저점 영향을 이중으로 반영하게 된다.
+    # 따라서 저점 회복가치는 업종 기본 PER을 중심으로 장기 산업신호만 제한적으로 반영한다.
+    if earnings_trough:
+        cycle_normal_per = safe_float(profile.get("base_per"), target_per)
+        cycle_normal_per += clamp(industry["signal"] / 100.0 * 1.2, -1.2, 1.2)
+        if debt_ratio > 2.0 and profile_code not in {"finance", "insurance"}:
+            cycle_normal_per -= 1.0
+        recovery_multiple = clamp(cycle_normal_per, per_min, per_max)
+    else:
+        recovery_multiple = clamp(target_per * 0.90, per_min, per_max)
+
     normalized_recovery_value = (
         normalized_eps * recovery_multiple
         if normalized_eps > 0
@@ -1813,22 +1862,6 @@ def calculate_value(
             safe_float(complex_config.get("max_multiple"), per_max),
         )
         complex_proxy_value = fy1_eps * complex_multiple + max(0.0, net_cash_per_share) * 0.75
-
-    # 이익저점 국면 판정. 자산·그레이엄 가치가 이익가치보다 3배 이상 높고
-    # 성장·사이클 업종이면 현재 이익 한 시점이 기업가치를 과도하게 누르는 것으로 본다.
-    asset_to_earnings = pbr_value / earnings_value if pbr_value > 0 and earnings_value > 0 else 0.0
-    graham_to_earnings = graham_value / earnings_value if graham_value > 0 and earnings_value > 0 else 0.0
-    normalized_to_ttm = normalized_eps / ttm_eps if normalized_eps > 0 and ttm_eps > 0 else 0.0
-    earnings_trough = bool(
-        profile.get("cyclical")
-        and profile.get("growth")
-        and bps > 0
-        and (
-            (asset_to_earnings >= 3.0 and graham_to_earnings >= 2.0)
-            or normalized_to_ttm >= 1.80
-            or (ttm_eps <= 0 and normalized_eps > 0)
-        )
-    )
 
     future_growth_model = build_future_growth_model(
         profile_code=profile_code,
@@ -1955,7 +1988,34 @@ def calculate_value(
             basis_models.append(row)
 
     if len(basis_models) < 2:
-        basis_models = [row for row in valid_models if row["role"] != "하단"] or valid_models
+        if earnings_trough:
+            # 저점 필터가 1개 이하만 남겼다고 현재 이익가치/실적전환가를 전부 다시 넣으면
+            # 저점보정이 사실상 무효화된다. 독립 앵커(자산·그레이엄·정상화·잔여이익·FCF)
+            # 중 중앙값에 가까운 최대 4개를 사용해 반드시 하나의 기준가를 만든다.
+            trough_names = {
+                "정상화 회복가치",
+                "PBR 자산가치",
+                "그레이엄 결합가치",
+                "잔여이익가치",
+                "FCF 가치",
+            }
+            trough_candidates = [
+                row for row in valid_models
+                if row["name"] in trough_names and row["value"] > 0
+            ]
+            if trough_candidates:
+                trough_median = median([row["value"] for row in trough_candidates]) or 0.0
+                trough_candidates.sort(
+                    key=lambda row: abs(
+                        (row["value"] / trough_median) - 1.0
+                    ) if trough_median > 0 else 0.0
+                )
+                basis_models = trough_candidates[:4]
+            else:
+                basis_models = valid_models[:]
+        else:
+            basis_models = [row for row in valid_models if row["role"] != "하단"] or valid_models
+
         excluded_models = [row["name"] for row in valid_models if row not in basis_models]
 
     weighted_value = weighted_average(basis_models) or 0.0
@@ -2134,7 +2194,9 @@ def calculate_value(
         if review
         else "정상"
     )
-    final_available = not fatal and not review and data_qualification.get("통과") is True
+    # 검토필요는 숫자를 숨기는 상태가 아니라 신뢰도 경고다.
+    # 데이터자격 미통과/주식수·EPS·기준가 부재 같은 fatal일 때만 최종값을 차단한다.
+    final_available = not fatal and data_qualification.get("통과") is True
 
     if gap > 25:
         judgment = "강한 저평가"
@@ -2147,7 +2209,7 @@ def calculate_value(
     else:
         judgment = "적정"
     if not final_available:
-        judgment = "판정 보류"
+        judgment = "산출불가"
 
     data_confidence = 30
     data_confidence += 18 if ttm.get("available") else 5 if periods else 0
@@ -2268,6 +2330,7 @@ def calculate_value(
         "발행주식수후보": share_info.get("candidates", []),
         "TTMEPS": round(ttm_eps, 2) if ttm_eps > 0 else 0.0,
         "정상화EPS": round(normalized_eps, 2) if normalized_eps > 0 else 0.0,
+        "정상화EPS연간자료개수": len(annual_eps),
         "분기런레이트EPS": round(run_rate_eps, 2) if run_rate_eps > 0 else 0.0,
         "FY1예상EPS": round(fy1_eps, 2) if fy1_eps > 0 else 0.0,
         "FY2예상EPS": round(fy2_eps, 2) if fy2_eps > 0 else 0.0,
@@ -2291,6 +2354,7 @@ def calculate_value(
         "PBR기준적정가": round(pbr_value, 2),
         "그레이엄가치": round(graham_value, 2),
         "정상화회복가치": round(normalized_recovery_value, 2),
+        "정상화회복PER": round(recovery_multiple, 2),
         "잔여이익가치": round(residual_value, 2),
         "FCF가치": round(fcf_value, 2),
         "실적전환보정가": round(transition_value, 2),
