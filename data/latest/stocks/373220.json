@@ -31,7 +31,7 @@
     "산업분류원본": "OpenDART 실시간 기업개황",
     "데이터출처": "금융감독원 OpenDART"
   },
-  "생성시각": "2026-08-15T14:43:25.643888",
+  "생성시각": "2026-08-15T14:58:08.919150",
   "재무분석": {
     "재무분석모형버전": "financial-quality-v2.0.0",
     "재무지표": {
@@ -194,7 +194,7 @@
     "가격종류": "KRX 종가",
     "가격기준일": "2026-08-14",
     "가격기준시각": "09:00:00",
-    "가격수집시각": "2026-08-15T23:42:41+09:00",
+    "가격수집시각": "2026-08-15T23:58:07+09:00",
     "가격진단": {
       "가격스키마버전": "3.0.0",
       "종목코드": "373220",
@@ -203,8 +203,8 @@
       "가격": 369500.0,
       "가격기준일": "2026-08-14",
       "가격기준시각": "09:00:00",
-      "수집시각": "2026-08-15T23:42:41+09:00",
-      "가격수집시각": "2026-08-15T23:42:41+09:00",
+      "수집시각": "2026-08-15T23:58:07+09:00",
+      "가격수집시각": "2026-08-15T23:58:07+09:00",
       "가격출처": "Yahoo Finance Chart API",
       "가격종류": "KRX 종가",
       "실시간가종가애프터마켓": "KRX 종가",
@@ -247,8 +247,8 @@
         "가격": 369500.0,
         "가격기준일": "2026-08-14",
         "가격기준시각": "09:00:00",
-        "수집시각": "2026-08-15T23:42:41+09:00",
-        "가격수집시각": "2026-08-15T23:42:41+09:00",
+        "수집시각": "2026-08-15T23:58:07+09:00",
+        "가격수집시각": "2026-08-15T23:58:07+09:00",
         "가격출처": "Yahoo Finance Chart API",
         "가격종류": "KRX 종가",
         "실시간가종가애프터마켓": "KRX 종가",
@@ -729,7 +729,7 @@
         "MA20": 1438.039008,
         "현재값대비MA20": -1.81073,
         "최종관측시각UTC": "2026-08-15T03:30:30+00:00",
-        "데이터지연시간": 11.203,
+        "데이터지연시간": 11.46,
         "데이터개수": 68
       },
       "S&P500": {
@@ -743,13 +743,13 @@
         "전일값": 7798.990234,
         "1일변화율": -0.169643,
         "5일변화율": 0.362477,
-        "20일변화율": 4.399081,
+        "20일변화율": 3.210274,
         "MA5": 7762.912012,
-        "MA20": 7584.995483,
-        "현재값대비MA20": 2.646861,
+        "MA20": 7588.294458,
+        "현재값대비MA20": 2.602236,
         "최종관측시각UTC": "2026-08-14T13:30:00+00:00",
-        "데이터지연시간": 25.212,
-        "데이터개수": 63
+        "데이터지연시간": 25.469,
+        "데이터개수": 60
       },
       "나스닥": {
         "자산명": "나스닥",
@@ -762,13 +762,13 @@
         "전일값": 26803.029297,
         "1일변화율": -0.2756,
         "5일변화율": 0.144399,
-        "20일변화율": 4.737102,
+        "20일변화율": 2.383078,
         "MA5": 26634.297656,
-        "MA20": 25848.521875,
-        "현재값대비MA20": 3.406919,
+        "MA20": 25886.994824,
+        "현재값대비MA20": 3.253237,
         "최종관측시각UTC": "2026-08-14T13:30:00+00:00",
-        "데이터지연시간": 25.212,
-        "데이터개수": 63
+        "데이터지연시간": 25.469,
+        "데이터개수": 60
       },
       "반도체지수": {
         "자산명": "반도체지수",
@@ -786,7 +786,7 @@
         "MA20": 11878.830908,
         "현재값대비MA20": 4.530908,
         "최종관측시각UTC": "2026-08-14T13:30:00+00:00",
-        "데이터지연시간": 25.212,
+        "데이터지연시간": 25.469,
         "데이터개수": 60
       },
       "VIX": {
@@ -800,13 +800,13 @@
         "전일값": 14.63,
         "1일변화율": -2.597403,
         "5일변화율": -4.362414,
-        "20일변화율": -24.080982,
+        "20일변화율": -13.636364,
         "MA5": 14.834,
-        "MA20": 16.6315,
-        "현재값대비MA20": -14.319213,
+        "MA20": 16.706,
+        "현재값대비MA20": -14.701305,
         "최종관측시각UTC": "2026-08-14T07:00:00+00:00",
-        "데이터지연시간": 31.712,
-        "데이터개수": 65
+        "데이터지연시간": 31.969,
+        "데이터개수": 62
       },
       "미국10년물": {
         "자산명": "미국10년물",
@@ -819,13 +819,13 @@
         "전일값": 4.641,
         "1일변화율": 1.185096,
         "5일변화율": 0.772538,
-        "20일변화율": 3.41335,
+        "20일변화율": 0.0,
         "MA5": 4.6804,
-        "MA20": 4.6601,
-        "현재값대비MA20": 0.770372,
+        "MA20": 0.0,
+        "현재값대비MA20": 0.0,
         "최종관측시각UTC": "2026-08-14T12:20:00+00:00",
-        "데이터지연시간": 26.378,
-        "데이터개수": 64
+        "데이터지연시간": 26.635,
+        "데이터개수": 16
       },
       "미국5년물": {
         "자산명": "미국5년물",
@@ -838,13 +838,13 @@
         "전일값": 4.313,
         "1일변화율": 1.136095,
         "5일변화율": 0.0,
-        "20일변화율": 2.082851,
+        "20일변화율": 0.0,
         "MA5": 4.368,
-        "MA20": 4.37925,
-        "현재값대비MA20": -0.393904,
+        "MA20": 0.0,
+        "현재값대비MA20": 0.0,
         "최종관측시각UTC": "2026-08-14T12:20:00+00:00",
-        "데이터지연시간": 26.378,
-        "데이터개수": 64
+        "데이터지연시간": 26.635,
+        "데이터개수": 16
       },
       "미국13주": {
         "자산명": "미국13주",
@@ -862,13 +862,13 @@
         "MA20": 3.72555,
         "현재값대비MA20": -0.766329,
         "최종관측시각UTC": "2026-08-14T12:20:00+00:00",
-        "데이터지연시간": 26.378,
+        "데이터지연시간": 26.635,
         "데이터개수": 64
       }
     },
     "분석": {
       "분석상태": "정상",
-      "단기신호": 19.2,
+      "단기신호": 17.21,
       "단기판정": "중립",
       "단기데이터품질": 100.0,
       "단기요소별평가": [
@@ -882,16 +882,16 @@
         },
         {
           "요소": "S&P500",
-          "신호": 20.41,
-          "판정": "긍정",
+          "신호": 16.83,
+          "판정": "중립",
           "데이터품질": 100.0,
           "가중치": 15.0,
           "설명": "5일 변화 0.36%"
         },
         {
           "요소": "나스닥",
-          "신호": 21.68,
-          "판정": "긍정",
+          "신호": 14.43,
+          "판정": "중립",
           "데이터품질": 100.0,
           "가중치": 20.0,
           "설명": "5일 변화 0.14%"
@@ -913,9 +913,9 @@
           "설명": "현재 14.25"
         }
       ],
-      "중기신호": 1.48,
+      "중기신호": 7.68,
       "중기판정": "중립",
-      "중기데이터품질": 100.0,
+      "중기데이터품질": 80.0,
       "중기요소별평가": [
         {
           "요소": "원달러",
@@ -927,19 +927,19 @@
         },
         {
           "요소": "미국10년물",
-          "신호": -21.67,
-          "판정": "부정",
-          "데이터품질": 100.0,
+          "신호": -9.79,
+          "판정": "중립",
+          "데이터품질": 50.0,
           "가중치": 25.0,
-          "설명": "20일 변화 3.41%"
+          "설명": "20일 변화 0.00%"
         },
         {
           "요소": "미국5년물",
-          "신호": -10.77,
+          "신호": -5.68,
           "판정": "중립",
-          "데이터품질": 100.0,
+          "데이터품질": 50.0,
           "가중치": 15.0,
-          "설명": "20일 변화 2.08%"
+          "설명": "20일 변화 0.00%"
         },
         {
           "요소": "미국13주",
@@ -951,11 +951,11 @@
         },
         {
           "요소": "나스닥",
-          "신호": 21.68,
-          "판정": "긍정",
+          "신호": 14.43,
+          "판정": "중립",
           "데이터품질": 100.0,
           "가중치": 10.0,
-          "설명": "20일 변화 4.74%"
+          "설명": "20일 변화 2.38%"
         },
         {
           "요소": "반도체지수",
@@ -969,7 +969,7 @@
       "설명": "국내주식 기준으로 원달러·미국 주가지수·반도체지수·VIX·미국 금리의 방향을 -100~100 신호로 합성했습니다."
     },
     "수집오류": [],
-    "수집시각": "2026-08-15T23:42:41.951039+09:00",
+    "수집시각": "2026-08-15T23:58:07.348471+09:00",
     "데이터출처": "Yahoo Finance Chart API"
   },
   "기업기초데이터": {
@@ -1313,7 +1313,7 @@
       },
       "데이터출처": "금융감독원 OpenDART"
     },
-    "수집시각": "2026-08-15T23:43:24.118399+09:00",
+    "수집시각": "2026-08-15T23:58:08.243573+09:00",
     "데이터출처": "금융감독원 OpenDART"
   },
   "산업분석": {
@@ -1332,25 +1332,25 @@
         "전일값": 74.660004,
         "1일변화율": 0.763461,
         "5일변화율": 1.648427,
-        "20일변화율": 5.099192,
+        "20일변화율": 10.017558,
         "MA5": 74.790001,
-        "MA20": 70.9155,
-        "현재값대비MA20": 6.084006,
+        "MA20": 70.8655,
+        "현재값대비MA20": 6.158855,
         "최종관측시각UTC": "2026-08-14T13:30:00+00:00",
-        "데이터지연시간": 25.224,
-        "데이터개수": 248,
+        "데이터지연시간": 25.469,
+        "데이터개수": 251,
         "산업구간": "리튬·배터리ETF",
         "중기가중치": 20.0,
         "장기가중치": 20.0,
-        "60일변화율": -13.479004,
-        "120일변화율": 1.882458,
-        "MA60": 77.124833,
-        "MA120": 77.487916,
-        "현재값대비MA60": -2.456835,
-        "현재값대비MA120": -2.91389,
-        "20일평균거래량": 195565.0,
-        "60일평균거래량": 351306.6667,
-        "거래량비율20대60": 0.556679
+        "60일변화율": -8.009288,
+        "120일변화율": 1.965308,
+        "MA60": 76.431667,
+        "MA120": 77.381833,
+        "현재값대비MA60": -1.572206,
+        "현재값대비MA120": -2.780794,
+        "20일평균거래량": 199090.0,
+        "60일평균거래량": 340193.3333,
+        "거래량비율20대60": 0.585226
       },
       "배터리소재ETF": {
         "자산명": "배터리소재ETF",
@@ -1368,7 +1368,7 @@
         "MA20": 14.7202,
         "현재값대비MA20": 4.869501,
         "최종관측시각UTC": "2026-08-14T13:30:00+00:00",
-        "데이터지연시간": 25.224,
+        "데이터지연시간": 25.469,
         "데이터개수": 251,
         "산업구간": "배터리소재ETF",
         "중기가중치": 15.0,
@@ -1399,7 +1399,7 @@
         "MA20": 121.754499,
         "현재값대비MA20": 11.823378,
         "최종관측시각UTC": "2026-08-14T13:30:00+00:00",
-        "데이터지연시간": 25.224,
+        "데이터지연시간": 25.469,
         "데이터개수": 251,
         "산업구간": "리튬소재",
         "중기가중치": 15.0,
@@ -1430,7 +1430,7 @@
         "MA20": 329.139499,
         "현재값대비MA20": 3.989339,
         "최종관측시각UTC": "2026-08-14T13:30:00+00:00",
-        "데이터지연시간": 25.224,
+        "데이터지연시간": 25.469,
         "데이터개수": 251,
         "산업구간": "전기차수요",
         "중기가중치": 10.0,
@@ -1461,7 +1461,7 @@
         "MA20": 336450.0,
         "현재값대비MA20": 9.823154,
         "최종관측시각UTC": "2026-08-14T00:00:00+00:00",
-        "데이터지연시간": 38.724,
+        "데이터지연시간": 38.969,
         "데이터개수": 243,
         "산업구간": "배터리셀",
         "중기가중치": 15.0,
@@ -1492,7 +1492,7 @@
         "MA20": 430875.0,
         "현재값대비MA20": 19.75631,
         "최종관측시각UTC": "2026-08-14T00:00:00+00:00",
-        "데이터지연시간": 38.724,
+        "데이터지연시간": 38.969,
         "데이터개수": 243,
         "산업구간": "배터리셀",
         "중기가중치": 15.0,
@@ -1523,7 +1523,7 @@
         "MA20": 106480.0,
         "현재값대비MA20": 9.598047,
         "최종관측시각UTC": "2026-08-14T00:00:00+00:00",
-        "데이터지연시간": 38.724,
+        "데이터지연시간": 38.969,
         "데이터개수": 243,
         "산업구간": "양극재",
         "중기가중치": 10.0,
@@ -1544,7 +1544,7 @@
       "산업코드": "battery",
       "산업명": "2차전지",
       "중기산업선행": {
-        "신호": 23.81,
+        "신호": 25.56,
         "데이터품질": 100.0,
         "판정": "긍정",
         "요소별평가": [
@@ -1552,12 +1552,12 @@
             "자산명": "리튬배터리ETF",
             "심볼": "LIT",
             "산업구간": "리튬·배터리ETF",
-            "신호": 9.69,
+            "신호": 18.45,
             "판정": "중립",
             "데이터품질": 100.0,
             "가중치": 20.0,
-            "20일변화율": 5.099192,
-            "120일변화율": 1.882458
+            "20일변화율": 10.017558,
+            "120일변화율": 1.965308
           },
           {
             "자산명": "배터리소재ETF",
@@ -1628,7 +1628,7 @@
         ]
       },
       "장기산업사이클": {
-        "신호": -41.65,
+        "신호": -40.71,
         "데이터품질": 100.0,
         "판정": "부정",
         "요소별평가": [
@@ -1636,12 +1636,12 @@
             "자산명": "리튬배터리ETF",
             "심볼": "LIT",
             "산업구간": "리튬·배터리ETF",
-            "신호": -32.25,
+            "신호": -27.52,
             "판정": "부정",
             "데이터품질": 100.0,
             "가중치": 20.0,
-            "20일변화율": 5.099192,
-            "120일변화율": 1.882458
+            "20일변화율": 10.017558,
+            "120일변화율": 1.965308
           },
           {
             "자산명": "배터리소재ETF",
@@ -1718,18 +1718,18 @@
         "MA120상회비율": 14.3
       },
       "상대강도": {
-        "산업평균20일수익률": 7.29,
+        "산업평균20일수익률": 8.0,
         "기준시장": "나스닥",
-        "기준시장20일수익률": 4.74,
-        "기준시장대비초과수익률": 2.56,
-        "나스닥20일수익률": 4.74,
-        "나스닥대비초과수익률": 2.56,
+        "기준시장20일수익률": 2.38,
+        "기준시장대비초과수익률": 5.61,
+        "나스닥20일수익률": 2.38,
+        "나스닥대비초과수익률": 5.61,
         "비교사용": true
       },
       "설명": "리튬·배터리 ETF와 소재·셀·전기차 대표기업의 가격추세를 합성합니다."
     },
     "수집오류": [],
-    "수집시각": "2026-08-15T23:43:25.642424+09:00",
+    "수집시각": "2026-08-15T23:58:08.917686+09:00",
     "데이터출처": "Yahoo Finance Chart API"
   },
   "산업환경브리지": {
@@ -1754,7 +1754,7 @@
     "사용규칙": "기존 산업전망 current/future 값을 이 파일로 대체하되, 개별종목 주가방향에는 bounded_direction_adjustment_points만 보조 입력으로 사용합니다.",
     "출처": "disk_cache",
     "캐시모드": "disk_cache",
-    "소스나이시간": 0.45,
+    "소스나이시간": 0.7,
     "HTTP호출수": 0,
     "오류": "upstream auxiliary use not allowed"
   },
@@ -4134,7 +4134,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiVEFVX3lxTFBxMnd2Wl9uQkpoYlRGNi1ILXBwX3ZwNU9aYjlVb2JnekFxaEhoQjhhT2NkUlQwSVlsMHlob0xBZGR4UERRc245bkFuVTdRUXUzYzdMWA?oc=5",
         "언론사": "v.daum.net",
         "발행시각UTC": "2026-08-13T06:37:07+00:00",
-        "경과일": 2.34,
+        "경과일": 2.35,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4144,9 +4144,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE5TTFQ4UEkwcERhNzRUZ2c5TWpNc3J6MVR2VEJqanFRVUFPMWFDbk8tVXRYdTlBQnh0RU51TlQ0cVpTc3FCWGJJQUg0WS0xbXNUNlV4ZGV1WFdEUTV3VXhvRVAybjY?oc=5",
         "언론사": "PRESS9",
         "발행시각UTC": "2026-08-12T03:35:49+00:00",
-        "경과일": 3.46,
+        "경과일": 3.47,
         "원점수": 12.0,
-        "최종점수": 11.08,
+        "최종점수": 11.07,
         "매칭규칙": [
           "수주"
         ]
@@ -4156,7 +4156,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiWEFVX3lxTFBLX3g4c2VlYkdaa2g1Y3ktQnhxOEhVVGlBQnBWeldUb0VTNHRTVGdBYV84ZmdfbUpNMm5uc3Qta0xqWmp0aHR6NjlncF9rVmw2UHQzWml4YkzSAVhBVV95cUxQS194OHNlZWJHWmtoNWN5LUJ4cThIVVRpQUJwVnpXVG9FUzR0U1RnQWFfOGZnX21KTTJubnN0LWtMalpqdGh0ejY5Z3Bfa1ZsNlB0M1ppeGJM?oc=5",
         "언론사": "아주경제",
         "발행시각UTC": "2026-08-13T10:49:24+00:00",
-        "경과일": 2.16,
+        "경과일": 2.17,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4166,9 +4166,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBIc3N2c0JVaHQ5cFNUMDNSWEppc3ZkWnpiNFU4N2VHSlprNnl5Z0tFa1NVODFkSHJYOWw3LWlrM2M0MDI5Y3djaTFqQVZpNkZHWlJ0aWp3NG9tUFQ0bEJVMlZiajNqaUtO?oc=5",
         "언론사": "씽크풀 AI",
         "발행시각UTC": "2026-08-13T09:54:24+00:00",
-        "경과일": 2.2,
+        "경과일": 2.21,
         "원점수": 16.0,
-        "최종점수": 15.22,
+        "최종점수": 15.21,
         "매칭규칙": [
           "실적"
         ]
@@ -4178,39 +4178,39 @@
         "링크": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE03bUZoeGNFcVgwenNHd3dsa29VMEVLRDhwYnZ1S1E1UFFxdTRVZ194SHdILVZRQVdMbGRhN2dETGE1SExKeTgzbkl5NjRyVGU5QXRQTEpZX3dTSEpoOHpFRUJsaklZZw?oc=5",
         "언론사": "디일렉",
         "발행시각UTC": "2026-07-30T07:00:00+00:00",
-        "경과일": 16.32,
+        "경과일": 16.33,
         "원점수": 16.0,
-        "최종점수": 10.2,
+        "최종점수": 10.19,
         "매칭규칙": [
           "실적"
         ]
-      },
-      {
-        "제목": "LG엔솔 김동명 사장, 상반기 보수 8.1억원…공장 가동률 52.8%로 상승",
-        "링크": "https://news.google.com/rss/articles/CBMieEFVX3lxTE9ScjdXNEVQd0lxcWhfcDhEdDk5cVB1UGM2RmxSX25PYUpUMXNfV3Vwenk4SThLX296NEF0R3RvbHh4MmdvdnNMMjVhWjhGeXNkbzl0VXFadlBVMHo3dTNIVkQ4MGNDYVptUFg4d0Vneld4OU1yNGNDNNIBeEFVX3lxTE9ScjdXNEVQd0lxcWhfcDhEdDk5cVB1UGM2RmxSX25PYUpUMXNfV3Vwenk4SThLX296NEF0R3RvbHh4MmdvdnNMMjVhWjhGeXNkbzl0VXFadlBVMHo3dTNIVkQ4MGNDYVptUFg4d0Vneld4OU1yNGNDNA?oc=5",
-        "언론사": "뉴시스",
-        "발행시각UTC": "2026-08-13T02:39:24+00:00",
-        "경과일": 2.5,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
       },
       {
         "제목": "GM 전기차와 ESS 전략 재편 향방 주목, LG에너지솔루션 역할 커지고 삼성SDI는 축소 가닥",
         "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE5GakhIVlQyU1VxdGx5YkFqX2dXN05QV2NTeTI5UkVQTUJuV3FLSDZlbnhnNnJCWThJRWN3dzZhb2RhblNfMVlkVVNPNmx5QlBsQWh3UGszYjJiNmttd3ZYOHVKWUNCVFhXSnRNejkybU9JVHM?oc=5",
         "언론사": "비즈니스포스트",
         "발행시각UTC": "2026-08-12T05:34:33+00:00",
-        "경과일": 3.38,
+        "경과일": 3.39,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
       },
       {
-        "제목": "김동명 LG엔솔 사장, 상반기 보수 8억…R&D 투자는 반기 기준 '역대 최대'",
+        "제목": "LG엔솔 김동명 사장, 상반기 보수 8.1억원…공장 가동률 52.8%로 상승",
+        "링크": "https://news.google.com/rss/articles/CBMieEFVX3lxTE9ScjdXNEVQd0lxcWhfcDhEdDk5cVB1UGM2RmxSX25PYUpUMXNfV3Vwenk4SThLX296NEF0R3RvbHh4MmdvdnNMMjVhWjhGeXNkbzl0VXFadlBVMHo3dTNIVkQ4MGNDYVptUFg4d0Vneld4OU1yNGNDNNIBeEFVX3lxTE9ScjdXNEVQd0lxcWhfcDhEdDk5cVB1UGM2RmxSX25PYUpUMXNfV3Vwenk4SThLX296NEF0R3RvbHh4MmdvdnNMMjVhWjhGeXNkbzl0VXFadlBVMHo3dTNIVkQ4MGNDYVptUFg4d0Vneld4OU1yNGNDNA?oc=5",
+        "언론사": "뉴시스",
+        "발행시각UTC": "2026-08-13T02:39:24+00:00",
+        "경과일": 2.51,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "김동명 LG엔솔 사장, 상반기 보수 8억…R&D 투자는 반기 기준 '역대 최대' - m-i.kr",
         "링크": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE5NZGExZThJQ2lSVHBaaTBDN1FTNXduVFU1MHpGWmlpakNzNjMzYnNDOGFwRkdPbHdqMlVsOHIyZFRyaExwd1RCUEJlOC1yNHdHRzFEdVNoRWJSeUg2MVBJUFNJUzA?oc=5",
-        "언론사": "매일일보",
+        "언론사": "m-i.kr",
         "발행시각UTC": "2026-08-13T08:25:33+00:00",
-        "경과일": 2.26,
+        "경과일": 2.27,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4220,7 +4220,7 @@
         "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTFB5dG9QQzdVRkItOWpFYkRHVjFyNzdCUjZESlAySklLWmxJV2dRSXdBdHZxMnBhaGNfTGhuNnZYdXp4Rmg3MDFqNlMwd0U3d0J2SlN6NVBERndZOU9GeV9aNENkbUhIVjd2blVwaw?oc=5",
         "언론사": "파이낸스투데이",
         "발행시각UTC": "2026-08-12T01:57:00+00:00",
-        "경과일": 3.53,
+        "경과일": 3.54,
         "원점수": 12.0,
         "최종점수": 11.06,
         "매칭규칙": [
@@ -4232,7 +4232,7 @@
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE05Zjl1ZVgzVVYyWUhtbV9rYWpTX0ctaTZ3U0JBRDEtQWoxQzBOSkVFZ09RZjdOZVV4YUJhaE82UktXeDVnOVlUQzUzVlVidHhDcmVCdHQ1NTRaOXg0SzFIS3N1WmJ4ZGtKOHk1STYxbkI?oc=5",
         "언론사": "연합인포맥스",
         "발행시각UTC": "2026-05-31T07:00:00+00:00",
-        "경과일": 76.32,
+        "경과일": 76.33,
         "원점수": 12.0,
         "최종점수": 4.2,
         "매칭규칙": [
@@ -4240,44 +4240,31 @@
         ]
       },
       {
-        "제목": "LG에너지솔루션, 상반기 가동률 52.8%…\"4년 연속 하락하다가 첫 반등\"",
-        "링크": "https://news.google.com/rss/articles/CBMidEFVX3lxTE1qZTNXLTlONUNVU2FMMXdFWEktMGVvV0NPRDduMkZfZHpsNzh2eEp5MEV5U2dfclpObExEaU91SFFleWVhMEhTOF9DU2JuV09BOFFpenQxczdleG16LTFSMDl3ZGJFc2RTSlRXUGtObTV5VFlu?oc=5",
-        "언론사": "파이낸셜포스트",
-        "발행시각UTC": "2026-08-13T06:05:58+00:00",
-        "경과일": 2.36,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
         "제목": "LG엔솔, 공장 가동률 52.8%로 상승…김동명 사장 상반기 보수 8.1억",
         "링크": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE1GY2VyMXJRMl9FZjJBUnNxUXNUQzY3NGpCTEEzWmI4VlMwc3d2M3JXNjB3Y1cyTXBGdm1PbUhETUlpVENBNGFkclB5dTkwWjl6cUZWa1lsS3V3MGpaSldIMV9Cck7SAWpBVV95cUxNazF5NUVKbndyMFpySWJaTXdtcFZId0VFUlR2UVk4QWd4dGRKWld4eW1DZ0g2VzdaZl9WZzVRNS1sWHE0czI2LS1VM003ZTZpUFFVRjhyaGFDMExDcmxIbk4zZjU0bHhLcnp3?oc=5",
         "언론사": "뉴스1",
         "발행시각UTC": "2026-08-13T09:01:27+00:00",
-        "경과일": 2.24,
+        "경과일": 2.25,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
       },
       {
-        "제목": "LG에너지솔루션 4분기 흑자전환 전망에도 시장 우려는 여전 : 김동명 진짜 과제는 '실적과 재무건전성 동반 개선'",
-        "링크": "https://news.google.com/rss/articles/CBMiV0FVX3lxTFB6S3Nkam8tUndlMFJFUEIwbnctN2JGT0tQRXBzNG84ZUlOWnRBVVI3aFQ4ajlISWlFMWctdjNEUlFHVEt4dXNIRDktWjBUU0VlSXNxeFZwUQ?oc=5",
-        "언론사": "허프포스트코리아",
-        "발행시각UTC": "2026-08-12T07:21:58+00:00",
-        "경과일": 3.31,
-        "원점수": 35.0,
-        "최종점수": 32.43,
-        "매칭규칙": [
-          "실적",
-          "흑자전환"
-        ]
+        "제목": "LG에너지솔루션, 상반기 가동률 52.8%…\"4년 연속 하락하다가 첫 반등\"",
+        "링크": "https://news.google.com/rss/articles/CBMidEFVX3lxTE1qZTNXLTlONUNVU2FMMXdFWEktMGVvV0NPRDduMkZfZHpsNzh2eEp5MEV5U2dfclpObExEaU91SFFleWVhMEhTOF9DU2JuV09BOFFpenQxczdleG16LTFSMDl3ZGJFc2RTSlRXUGtObTV5VFlu?oc=5",
+        "언론사": "파이낸셜포스트",
+        "발행시각UTC": "2026-08-13T06:05:58+00:00",
+        "경과일": 2.37,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
       },
       {
         "제목": "LG에너지솔루션, 2026년 1분기 실적발표 컨퍼런스콜 전문",
         "링크": "https://news.google.com/rss/articles/CBMiZkFVX3lxTFBYMGtoVUlybDFfaldTWE85NUVHQmk3R09IR1VlUnlFbEdJTkEzcU5MTXVSVGdkb0VuT0V6M29pUWhsenNfNHlQSFJ6V240U3JxekJPSE1MOXBxWEcxYXJ0MHVoYnphQQ?oc=5",
         "언론사": "디일렉",
         "발행시각UTC": "2026-04-30T07:00:00+00:00",
-        "경과일": 107.32,
+        "경과일": 107.33,
         "원점수": 16.0,
         "최종점수": 5.6,
         "매칭규칙": [
@@ -4285,11 +4272,21 @@
         ]
       },
       {
+        "제목": "LG에너지솔루션, 2Q 영업흑자 전환…AMPC 혜택 빼면 적자(종합)",
+        "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE1MMEttZVJGWGlPeTdJczBwYnFfNnA5eWZXY3Q5T0oyelRVbjZWcEgxM3pvRHgxcTZQMkpzMXRRakRsUGk5Qkt6eDl3dTkyUGk3LXlhZXMzb2l6Ulhjd3ZrR3U2WEQ1eWp1aWdlQXY0elA?oc=5",
+        "언론사": "연합인포맥스",
+        "발행시각UTC": "2026-07-07T07:00:00+00:00",
+        "경과일": 39.33,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
         "제목": "LG에너지솔루션, ESS 10조 수주 보도 해명...\"유럽·일본과 추가 공급 논의 중\"",
         "링크": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE9yY1FjSkNTQnhsVnhub3ZZOTUyZjI0cjFSSklUQXlaM04zLU5iMVQxbm5ERDFpRExvc1dlaFlGdlJwNzRXOFZreXljSQ?oc=5",
         "언론사": "v.daum.net",
         "발행시각UTC": "2026-08-12T07:43:29+00:00",
-        "경과일": 3.29,
+        "경과일": 3.3,
         "원점수": 12.0,
         "최종점수": 11.12,
         "매칭규칙": [
@@ -4297,43 +4294,24 @@
         ]
       },
       {
-        "제목": "LG에너지솔루션, 2Q 영업흑자 전환…AMPC 혜택 빼면 적자(종합)",
-        "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE1MMEttZVJGWGlPeTdJczBwYnFfNnA5eWZXY3Q5T0oyelRVbjZWcEgxM3pvRHgxcTZQMkpzMXRRakRsUGk5Qkt6eDl3dTkyUGk3LXlhZXMzb2l6Ulhjd3ZrR3U2WEQ1eWp1aWdlQXY0elA?oc=5",
-        "언론사": "연합인포맥스",
-        "발행시각UTC": "2026-07-07T07:00:00+00:00",
-        "경과일": 39.32,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
+        "제목": "LG에너지솔루션 4분기 흑자전환 전망에도 시장 우려는 여전 : 김동명 진짜 과제는 '실적과 재무건전성 동반 개선'",
+        "링크": "https://news.google.com/rss/articles/CBMiV0FVX3lxTFB6S3Nkam8tUndlMFJFUEIwbnctN2JGT0tQRXBzNG84ZUlOWnRBVVI3aFQ4ajlISWlFMWctdjNEUlFHVEt4dXNIRDktWjBUU0VlSXNxeFZwUQ?oc=5",
+        "언론사": "허프포스트코리아",
+        "발행시각UTC": "2026-08-12T07:21:58+00:00",
+        "경과일": 3.32,
+        "원점수": 35.0,
+        "최종점수": 32.42,
+        "매칭규칙": [
+          "실적",
+          "흑자전환"
+        ]
       },
       {
         "제목": "LG에너지솔루션, ESS 10조 수주 보도 재해명…“추가 계약 구체적 사항 미확정”",
         "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE5vcm95UW91aHVwdVZCOFhFdkJweEFaRngyS0x2TS1qUXNlNWRXcm9DdlFjbkFKZnRvek55NGJjQnZ5VVJXcm9BdUpnNzR4R0g0eE9sSjRndENaV0V2cm03dUFKbHFNeGtu?oc=5",
         "언론사": "CBC뉴스",
         "발행시각UTC": "2026-08-12T01:38:36+00:00",
-        "경과일": 3.54,
-        "원점수": 12.0,
-        "최종점수": 11.05,
-        "매칭규칙": [
-          "수주"
-        ]
-      },
-      {
-        "제목": "캐즘 완화에 ESS까지…LG엔솔, 상반기 가동률 52.8%",
-        "링크": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE1fWnYwTFppc213QnZHWnRua3A2bFJwdFZQNG5ST3B5Q1lkdnFyNUhKdXhCUTRfOXdCWlp1UDJMRDlvdmtMczN1bEZHYkx4Vm5XWnc?oc=5",
-        "언론사": "노컷뉴스",
-        "발행시각UTC": "2026-08-13T06:33:00+00:00",
-        "경과일": 2.34,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "LG에너지솔루션, ESS 10조 수주 보도 관련 입장 밝혀",
-        "링크": "https://news.google.com/rss/articles/CBMickFVX3lxTFB1UXotRXVoaENEbFpfMjc2WE5JcjFKam1YOUpFazM0YUhZTXRTcTRIWWpKbXFncFdOTVdlUFV3Nmh3cmlRZng4UEVwY3NvbGtONFhLd2dIYmZhb1Q5b1lXRHdjdERHYkdOdXQxS3MxRVk4QQ?oc=5",
-        "언론사": "톱스타뉴스",
-        "발행시각UTC": "2026-08-12T01:28:49+00:00",
-        "경과일": 3.55,
+        "경과일": 3.56,
         "원점수": 12.0,
         "최종점수": 11.05,
         "매칭규칙": [
@@ -4345,27 +4323,29 @@
         "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE51OXgxbC1MNVRCTkJRT2xPUnNWWi1WQllzeEpKa2M4RENxUnFacUVmYVZlYjhVSjB1N19vR3hTeW9XUUkwTDg1Y1BnR2tEMFhwY21tOG13aFRfMl96SlEwRUR0Ml9kMUVh?oc=5",
         "언론사": "테크월드",
         "발행시각UTC": "2026-08-13T02:00:00+00:00",
-        "경과일": 2.53,
+        "경과일": 2.54,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
       },
       {
-        "제목": "김동명 LG엔솔 사장, 상반기 8.1억 수령…공장 가동률 50% 돌파",
-        "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE9KTmRwM3ZYSEJTcFliSENpUnp2Y0pXcHFQVUttY2E2X29RVm9CNEViNEJhbTF2SXhzUkM2TDducWg4aHEtSjFlaEQ0cFc1YWlRTkU3U1lFeTVTd9IBVEFVX3lxTFB6Yi1JWWhGQUpMMkJkaDA2VGZYbHBwSm8zanBib2FuQTFKQjlQaEFWNENJVnkzZlYzbG5HZXROOHh6ZmdDTjBQanY2MHYtdVRydHV0SA?oc=5",
-        "언론사": "더팩트",
-        "발행시각UTC": "2026-08-13T08:01:53+00:00",
-        "경과일": 2.28,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
+        "제목": "LG에너지솔루션, ESS 10조 수주 보도 관련 입장 밝혀",
+        "링크": "https://news.google.com/rss/articles/CBMickFVX3lxTFB1UXotRXVoaENEbFpfMjc2WE5JcjFKam1YOUpFazM0YUhZTXRTcTRIWWpKbXFncFdOTVdlUFV3Nmh3cmlRZng4UEVwY3NvbGtONFhLd2dIYmZhb1Q5b1lXRHdjdERHYkdOdXQxS3MxRVk4QQ?oc=5",
+        "언론사": "톱스타뉴스",
+        "발행시각UTC": "2026-08-12T01:28:49+00:00",
+        "경과일": 3.56,
+        "원점수": 12.0,
+        "최종점수": 11.05,
+        "매칭규칙": [
+          "수주"
+        ]
       },
       {
-        "제목": "LG에너지솔루션 투자분석 2026. 08. 09",
-        "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE1sVzB4cWhtaUQzUkM5MFUtQ0xWNl9iemptbXMwSEtMVXhSLW9iMV9KaDdvbUdPWUVyWTU2X3AwY3J4Rl9vU3JCc0pKWF90MmtaZk5iWW90VExaNHVZNjA0UVpmZkY4alFwQWVKWDY4MWhnbnM?oc=5",
-        "언론사": "주달",
-        "발행시각UTC": "2026-08-09T10:42:34+00:00",
-        "경과일": 6.17,
+        "제목": "캐즘 완화에 ESS까지…LG엔솔, 상반기 가동률 52.8%",
+        "링크": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE1fWnYwTFppc213QnZHWnRua3A2bFJwdFZQNG5ST3B5Q1lkdnFyNUhKdXhCUTRfOXdCWlp1UDJMRDlvdmtMczN1bEZHYkx4Vm5XWnc?oc=5",
+        "언론사": "노컷뉴스",
+        "발행시각UTC": "2026-08-13T06:33:00+00:00",
+        "경과일": 2.35,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4375,17 +4355,27 @@
         "링크": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQVWQtYVFWVUM2TDUtS3J2TzNVWVFqcjRMNnRvY3JUbk5ZNUlUVkIxVHh6N1RKN0dpcUluRGE4TFVhelhpbDJiNW56bHpGNGFjdXJSdGFnejd0YjVQdnNBbWlQYnVNSHh5MVBQM1g2endkdjA2VDRlZ1ZDMkNqUFN3eg?oc=5",
         "언론사": "edaily.co.kr",
         "발행시각UTC": "2026-08-13T05:21:03+00:00",
-        "경과일": 2.39,
+        "경과일": 2.4,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
       },
       {
-        "제목": "[LG에너지솔루션] LG에너지솔루션 주가 전망, AI 데이터센터가 새 돌파구 될까?(2026년_2Q)",
-        "링크": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNUjFLMEluRV96MHdGOWJOWUJzMnp6SFNla1NKNlBxTnJPdko0Qk82TlRpSVZZWHBqVWU4RWl1c1EwNnpoN0dJTFdsNmtFS0dCOGc3VXJxaVFuRnZrbzBlZlc4OHFJM3hxVUVFNTk5Y2tUeUlHTnRaQzdkTHRDcVFUSUVZQVhfcjhU?oc=5",
-        "언론사": "네이버 프리미엄콘텐츠",
-        "발행시각UTC": "2026-07-30T07:00:00+00:00",
-        "경과일": 16.32,
+        "제목": "김동명 LG엔솔 사장, 상반기 8.1억 수령…공장 가동률 50% 돌파",
+        "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE9KTmRwM3ZYSEJTcFliSENpUnp2Y0pXcHFQVUttY2E2X29RVm9CNEViNEJhbTF2SXhzUkM2TDducWg4aHEtSjFlaEQ0cFc1YWlRTkU3U1lFeTVTd9IBVEFVX3lxTFB6Yi1JWWhGQUpMMkJkaDA2VGZYbHBwSm8zanBib2FuQTFKQjlQaEFWNENJVnkzZlYzbG5HZXROOHh6ZmdDTjBQanY2MHYtdVRydHV0SA?oc=5",
+        "언론사": "더팩트",
+        "발행시각UTC": "2026-08-13T08:01:53+00:00",
+        "경과일": 2.29,
+        "원점수": 0.0,
+        "최종점수": 0.0,
+        "매칭규칙": []
+      },
+      {
+        "제목": "LG에너지솔루션 투자분석 2026. 08. 09",
+        "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE1sVzB4cWhtaUQzUkM5MFUtQ0xWNl9iemptbXMwSEtMVXhSLW9iMV9KaDdvbUdPWUVyWTU2X3AwY3J4Rl9vU3JCc0pKWF90MmtaZk5iWW90VExaNHVZNjA0UVpmZkY4alFwQWVKWDY4MWhnbnM?oc=5",
+        "언론사": "주달",
+        "발행시각UTC": "2026-08-09T10:42:34+00:00",
+        "경과일": 6.18,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4395,31 +4385,9 @@
         "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE40ZF9wSi1ROERrcDNpN3hlZWJTbmxEaGJVOGh5Q3poT0pyZFlxN1k5VnRSUmh1VVJ5MUFTVkg5UEd4WFRSOGhpR2VPX25HUGwzbjFTYUdPajhzV0NVRHN1S19VVHlsNmJBc0ZNQWtJRjVoMWs?oc=5",
         "언론사": "마켓인",
         "발행시각UTC": "2026-06-02T07:00:00+00:00",
-        "경과일": 74.32,
+        "경과일": 74.33,
         "원점수": 12.0,
         "최종점수": 4.2,
-        "매칭규칙": [
-          "수주"
-        ]
-      },
-      {
-        "제목": "세방리튬배터리, LG엔솔과 1.8조원 북미 ESS 공급 협력",
-        "링크": "https://news.google.com/rss/articles/CBMiZkFVX3lxTFBFYVZJbG9aeUJScWVFWjkwaEJRRjF5NlRiWXJiUFZDdnN3cl9ZSnZVSTRjeWxPM180ZHc0VW1iVkpsNEV5NkkxVnRZLW1qWmVrRjRRZGNIcmhMQU1SQVI1TkExUUpSUQ?oc=5",
-        "언론사": "디일렉",
-        "발행시각UTC": "2026-06-15T07:00:00+00:00",
-        "경과일": 61.32,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
-      },
-      {
-        "제목": "LG에너지솔루션, ESS 10조 수주 보도 해명…\"유럽·일본과 추가 공급 논의 중\"",
-        "링크": "https://news.google.com/rss/articles/CBMiU0FVX3lxTE1jOC1qNlo0d1FreTI4NVpiNTN2WGNEVEN1cmNhcDgzaDFMeFhPY0xRTkpMSDZMMGZXdnhWbm8zTHhORzJ2cEdSeTRfUG9pQ0Nwd3hF?oc=5",
-        "언론사": "네이트",
-        "발행시각UTC": "2026-08-12T07:43:00+00:00",
-        "경과일": 3.29,
-        "원점수": 12.0,
-        "최종점수": 11.12,
         "매칭규칙": [
           "수주"
         ]
@@ -4429,49 +4397,88 @@
         "링크": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE56WXFfa1RxaTBXbWxVYXJtTE5OdVlVOGQ5dWh5aHA2ei1rc3ZONDdYclRKdm9tUVJKOHI3TUk0LXZuWFhOYzhWazkxQmxMMnlwc0FEZEUyNzZoNk1HMDVr?oc=5",
         "언론사": "조세일보",
         "발행시각UTC": "2026-07-31T07:00:00+00:00",
-        "경과일": 15.32,
+        "경과일": 15.33,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
       },
       {
-        "제목": "[리포트 브리핑]LG에너지솔루션, '늦어진 만큼 선명해진 회복' 목표가 500,000원 - 신한투자증권",
-        "링크": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE42SDdqc1d0SVA4amZRLVluM2preV9YM0ZiVUNyNGV4RG9ON1pwNzdaRkFjTkhpOHZURUFLMUJFOHNXRUJmd0hfcW4zV08tWGk0cmNta2lPZGFScVU1?oc=5",
-        "언론사": "뉴스핌",
-        "발행시각UTC": "2026-07-31T07:00:00+00:00",
-        "경과일": 15.32,
+        "제목": "세방리튬배터리, LG엔솔과 1.8조원 북미 ESS 공급 협력",
+        "링크": "https://news.google.com/rss/articles/CBMiZkFVX3lxTFBFYVZJbG9aeUJScWVFWjkwaEJRRjF5NlRiWXJiUFZDdnN3cl9ZSnZVSTRjeWxPM180ZHc0VW1iVkpsNEV5NkkxVnRZLW1qWmVrRjRRZGNIcmhMQU1SQVI1TkExUUpSUQ?oc=5",
+        "언론사": "디일렉",
+        "발행시각UTC": "2026-06-15T07:00:00+00:00",
+        "경과일": 61.33,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
       },
       {
-        "제목": "[리포트 브리핑]LG에너지솔루션, '90 - 20 = 70' 목표가 560,000원 - IBK투자증권",
-        "링크": "https://news.google.com/rss/articles/CBMiXEFVX3lxTFBnMjlEeXliNVM4T0laWl9aOTBHSWNISHhZMDA5QkIzU0VYblNicVctcl92MFduQXJYclN2R2YxVlk2YkRHWUh3TlQyRjlnSERaRlJObl9uellHcTNW?oc=5",
-        "언론사": "뉴스핌",
+        "제목": "LG엔솔 '10조 ESS 수주설'에…\"상당수 계약 체결\"",
+        "링크": "https://news.google.com/rss/articles/CBMia0FVX3lxTE1tdDR0eEZrQXUzWVZ4NWVXSllvaGdVaDZxOVRmZF9UeHp2WWg5RnVJelJMazJaenBvZUVzR1FzTk5YR2hEZWNQUm1xdmh0aTZCMFM1UXVnek9SNGxMV2dSbTFWWFFOT2trZnBv?oc=5",
+        "언론사": "한국신용신문",
+        "발행시각UTC": "2026-08-12T02:02:00+00:00",
+        "경과일": 3.54,
+        "원점수": 12.0,
+        "최종점수": 11.06,
+        "매칭규칙": [
+          "수주"
+        ]
+      },
+      {
+        "제목": "끝 보이는 전기차 캐즘에 AI 투자 확대… ‘동반 흑자’ 배터리 3사, 하반기에도 훈풍 전망 - 조선비즈",
+        "링크": "https://news.google.com/rss/articles/CBMihAFBVV95cUxQSjBRR1ZLaTIwMjlfRDQwVmhEZ0ppNWU3bjJadGljU1oydmllNkVudUt5OXBTY3VIVFY2cUw5Q1dXaFI1WnFsb29VNks4cjBJQVhxMFhOc20wd2pPejJWMVZRMENWcDVlSEcxem9Tc1pjLThQcU92T052REQzb0p3X2x4d3PSAZgBQVVfeXFMT0tkQ1dGY05zTXZOSTVXVld6S05wa2NIeG5CazRWVko3WXRGS0NBWGM4aFhJMHVGRHprMzNKVDVubXhicW5tYUF1SGRkeUh2bk5Ub0FpdG1oRFlhRDhEMC1mTXkzTmsyaFJEY2NpSGR3cUgtY25uQXI0a1NGem5SWmRKSXRRc2F4UGZWOU1tTV9yUmdIcjU1MXI?oc=5",
+        "언론사": "Chosunbiz",
+        "발행시각UTC": "2026-08-03T07:00:00+00:00",
+        "경과일": 12.33,
+        "원점수": 8.0,
+        "최종점수": 5.81,
+        "매칭규칙": [
+          "투자 확대"
+        ]
+      },
+      {
+        "제목": "iM증권, LG에너지솔루션 목표가 55만원으로 하향…“ESS가 하반기 실적 회복 열쇠”",
+        "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5jWUxVM0VCc1BkWFJ3VWoxODJ4NWlJX3h5Z241YU1wa2pRMlFiT3Zhdi16R3N4Y241Y2Ytb2VLb0JOYzJ3RkxvRTdUcmt5TFpXemdDZWpvd0FXZw?oc=5",
+        "언론사": "브릿지경제",
         "발행시각UTC": "2026-07-31T07:00:00+00:00",
-        "경과일": 15.32,
-        "원점수": 0.0,
-        "최종점수": 0.0,
-        "매칭규칙": []
+        "경과일": 15.33,
+        "원점수": 8.0,
+        "최종점수": 5.27,
+        "매칭규칙": [
+          "실적",
+          "하향"
+        ]
+      },
+      {
+        "제목": "LG에너지솔루션 실적 뜯어보니...배터리의 다음 엔진은 ESS였다",
+        "링크": "https://news.google.com/rss/articles/CBMib0FVX3lxTE9VSjd2dzV1b0oycnAyS2Z0ZjVqdGRtdE5NSF84S0kzOU9HY0ZSOEE3bmdTb0FxcmRsdjlEdmMzMElLWFI4ZEljMElEQTNhOXpkd25oNDNIeV9vY09obndIVGMwR3kzbHhPY2xJRWFUbw?oc=5",
+        "언론사": "비즈체크",
+        "발행시각UTC": "2026-07-30T01:37:37+00:00",
+        "경과일": 16.56,
+        "원점수": 16.0,
+        "최종점수": 10.11,
+        "매칭규칙": [
+          "실적"
+        ]
       }
     ],
     "분석": {
       "분석상태": "정상",
-      "신호": 51.87,
+      "신호": 59.78,
       "데이터품질": 88.0,
       "판정": "매우 긍정",
-      "긍정뉴스개수": 12,
+      "긍정뉴스개수": 15,
       "부정뉴스개수": 0,
-      "중립뉴스개수": 18,
+      "중립뉴스개수": 15,
       "긍정뉴스": [
         {
           "제목": "LG에너지솔루션, 'ESS 10조 수주' 보도 해명…“추가 공급 논의 중”",
           "링크": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE5TTFQ4UEkwcERhNzRUZ2c5TWpNc3J6MVR2VEJqanFRVUFPMWFDbk8tVXRYdTlBQnh0RU51TlQ0cVpTc3FCWGJJQUg0WS0xbXNUNlV4ZGV1WFdEUTV3VXhvRVAybjY?oc=5",
           "언론사": "PRESS9",
           "발행시각UTC": "2026-08-12T03:35:49+00:00",
-          "경과일": 3.46,
+          "경과일": 3.47,
           "원점수": 12.0,
-          "최종점수": 11.08,
+          "최종점수": 11.07,
           "매칭규칙": [
             "수주"
           ]
@@ -4481,9 +4488,9 @@
           "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBIc3N2c0JVaHQ5cFNUMDNSWEppc3ZkWnpiNFU4N2VHSlprNnl5Z0tFa1NVODFkSHJYOWw3LWlrM2M0MDI5Y3djaTFqQVZpNkZHWlJ0aWp3NG9tUFQ0bEJVMlZiajNqaUtO?oc=5",
           "언론사": "씽크풀 AI",
           "발행시각UTC": "2026-08-13T09:54:24+00:00",
-          "경과일": 2.2,
+          "경과일": 2.21,
           "원점수": 16.0,
-          "최종점수": 15.22,
+          "최종점수": 15.21,
           "매칭규칙": [
             "실적"
           ]
@@ -4493,9 +4500,9 @@
           "링크": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE03bUZoeGNFcVgwenNHd3dsa29VMEVLRDhwYnZ1S1E1UFFxdTRVZ194SHdILVZRQVdMbGRhN2dETGE1SExKeTgzbkl5NjRyVGU5QXRQTEpZX3dTSEpoOHpFRUJsaklZZw?oc=5",
           "언론사": "디일렉",
           "발행시각UTC": "2026-07-30T07:00:00+00:00",
-          "경과일": 16.32,
+          "경과일": 16.33,
           "원점수": 16.0,
-          "최종점수": 10.2,
+          "최종점수": 10.19,
           "매칭규칙": [
             "실적"
           ]
@@ -4505,7 +4512,7 @@
           "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTFB5dG9QQzdVRkItOWpFYkRHVjFyNzdCUjZESlAySklLWmxJV2dRSXdBdHZxMnBhaGNfTGhuNnZYdXp4Rmg3MDFqNlMwd0U3d0J2SlN6NVBERndZOU9GeV9aNENkbUhIVjd2blVwaw?oc=5",
           "언론사": "파이낸스투데이",
           "발행시각UTC": "2026-08-12T01:57:00+00:00",
-          "경과일": 3.53,
+          "경과일": 3.54,
           "원점수": 12.0,
           "최종점수": 11.06,
           "매칭규칙": [
@@ -4517,7 +4524,7 @@
           "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE05Zjl1ZVgzVVYyWUhtbV9rYWpTX0ctaTZ3U0JBRDEtQWoxQzBOSkVFZ09RZjdOZVV4YUJhaE82UktXeDVnOVlUQzUzVlVidHhDcmVCdHQ1NTRaOXg0SzFIS3N1WmJ4ZGtKOHk1STYxbkI?oc=5",
           "언론사": "연합인포맥스",
           "발행시각UTC": "2026-05-31T07:00:00+00:00",
-          "경과일": 76.32,
+          "경과일": 76.33,
           "원점수": 12.0,
           "최종점수": 4.2,
           "매칭규칙": [
@@ -4529,7 +4536,7 @@
       "설명": "최근 뉴스 제목의 실적·수주·투자·증자·소송 등 규칙과 시간가중치를 합성합니다."
     },
     "데이터출처": "Google News RSS",
-    "수집시각UTC": "2026-08-15T14:42:42.209073+00:00"
+    "수집시각UTC": "2026-08-15T14:58:07.585719+00:00"
   },
   "가치평가": {
     "가치평가계약버전": "4.0",
@@ -4629,31 +4636,31 @@
     "TTMEPS": 0.0,
     "정상화EPS": 345.31,
     "분기런레이트EPS": 0.0,
-    "FY1예상EPS": 330.27,
-    "FY2예상EPS": 320.21,
+    "FY1예상EPS": 330.44,
+    "FY2예상EPS": 320.48,
     "FY3예상EPS": 0.0,
     "FY4예상EPS": 0.0,
-    "평가EPS": 322.97,
-    "선행EPS": 330.27,
-    "FY1성장률": -4.35,
-    "FY2성장률": -3.05,
+    "평가EPS": 323.13,
+    "선행EPS": 330.44,
+    "FY1성장률": -4.31,
+    "FY2성장률": -3.01,
     "FY3성장률": 0.0,
     "FY4성장률": 0.0,
     "TTM기준기간": "2025Q3~2026Q2",
     "TTM데이터품질": 86,
     "TTM잠정실적반영": true,
     "TTM현금흐름기준": "최근 정식보고서 TTM 유지",
-    "목표PER": 9.01,
+    "목표PER": 9.02,
     "목표PBR": 1.13,
-    "암시PER": 151.75,
+    "암시PER": 151.86,
     "암시PBR": 0.38,
-    "PER기준적정가": 2908.51,
-    "PBR기준적정가": 145934.15,
-    "그레이엄가치": 31142.0,
-    "정상화회복가치": 2798.74,
+    "PER기준적정가": 2913.88,
+    "PBR기준적정가": 146124.18,
+    "그레이엄가치": 31146.05,
+    "정상화회복가치": 2802.55,
     "잔여이익가치": 0.0,
     "FCF가치": 0.0,
-    "실적전환보정가": 2667.97,
+    "실적전환보정가": 2669.03,
     "미래성장가치": 0.0,
     "미래성장모형": {
       "버전": "1.0.0",
@@ -4673,30 +4680,30 @@
     },
     "복합기업대용가치합산": 0.0,
     "순현금주당가치": 30642.47,
-    "기존V4재무적정가": 49011.41,
-    "현재재무기초가치": 42832.13,
+    "기존V4재무적정가": 49068.57,
+    "현재재무기초가치": 42876.55,
     "미래증분가치": 0.0,
-    "펀더멘털적정가": 42832.13,
+    "펀더멘털적정가": 42876.55,
     "적응형가치적용": false,
     "적응형가치모형": {
       "버전": "adaptive-fundamental-v1.0.0",
       "현재가미사용": true,
       "적용가능": false,
-      "현재재무기초가치": 42832.130077822105,
+      "현재재무기초가치": 42876.55250611461,
       "미래총가치": 0.0,
       "미래증분가치": 0.0,
-      "펀더멘털적정가": 42832.130077822105,
+      "펀더멘털적정가": 42876.55250611461,
       "현재기준PER": 12.873016586659338,
       "현재EPS앵커": 345.3119658119658,
       "이익급회복괴리": false,
       "분기런레이트대정상화배수": 0.0,
-      "현재모형분산배수": 32.8295533068605,
+      "현재모형분산배수": 32.87230256262543,
       "자산사이클보정버전": "1.0.0",
       "자산사이클보정후보": false,
       "자산사이클보정적용조건충족": false,
-      "자산앵커": 88822.75,
+      "자산앵커": 88917.76,
       "자산앵커개수": 2,
-      "자산앵커대현재이익가치배수": 19.982,
+      "자산앵커대현재이익가치배수": 20.003,
       "품질": 57,
       "근거": [],
       "현재가치모형": [
@@ -4707,7 +4714,7 @@
         },
         {
           "모형": "순자산 기반가치",
-          "값": 145934.15,
+          "값": 146124.18,
           "가중치": 0.18
         },
         {
@@ -4717,11 +4724,11 @@
         }
       ]
     },
-    "재무적정가": 49011.41,
-    "기본적정가": 49011.41,
-    "보수적적정가": 12610.49,
-    "성장적정가": 75967.68,
-    "현재가대비": -86.74,
+    "재무적정가": 49068.57,
+    "기본적정가": 49068.57,
+    "보수적적정가": 12613.85,
+    "성장적정가": 76056.28,
+    "현재가대비": -86.72,
     "판단": "판정 보류",
     "가치평가산업코드": "battery",
     "가치평가산업프로필": "2차전지 성장·사이클",
@@ -4731,15 +4738,15 @@
     "산업분류출처": "수동 종목매핑",
     "OpenDART업종코드": "28202",
     "산업신호반영": true,
-    "산업종합신호": -18.74,
+    "산업종합신호": -17.52,
     "산업국면": "하락사이클 내 반등",
     "실적전환방향": "실적 급하락 전환",
     "실적전환강도": 37.77,
     "구조적실적가속": false,
     "가치평가국면": "이익저점·회복가치 혼합",
     "이익저점보정": true,
-    "자산대비이익가치배수": 50.175,
-    "그레이엄대비이익가치배수": 10.707,
+    "자산대비이익가치배수": 50.148,
+    "그레이엄대비이익가치배수": 10.689,
     "분기매출성장률": 0.0,
     "분기영업이익성장률": 0.0,
     "분기순이익성장률": 0.0,
@@ -4748,40 +4755,40 @@
     "가치신뢰도": 54,
     "가치신뢰도등급": "D",
     "가치신뢰도정의": "자료완전성과 모형합의도이며 실제 적중률이 아님",
-    "모형분산배수": 54.699,
-    "전체모형분산배수": 54.699,
+    "모형분산배수": 54.748,
+    "전체모형분산배수": 54.748,
     "모형상세": [
       {
         "모형": "현재 이익가치",
-        "값": 2908.51,
+        "값": 2913.88,
         "기본가중치": 0.1,
         "역할": "보조",
         "기준가반영": true
       },
       {
         "모형": "실적전환 가치",
-        "값": 2667.97,
+        "값": 2669.03,
         "기본가중치": 0.12,
         "역할": "보조",
         "기준가반영": true
       },
       {
         "모형": "정상화 회복가치",
-        "값": 2798.74,
+        "값": 2802.55,
         "기본가중치": 0.2,
         "역할": "기준",
         "기준가반영": true
       },
       {
         "모형": "PBR 자산가치",
-        "값": 145934.15,
+        "값": 146124.18,
         "기본가중치": 0.28,
         "역할": "기준",
         "기준가반영": true
       },
       {
         "모형": "그레이엄 결합가치",
-        "값": 31142.0,
+        "값": 31146.05,
         "기본가중치": 0.18,
         "역할": "기준",
         "기준가반영": true
@@ -4811,7 +4818,7 @@
     "현재가미사용": true,
     "시가총액미사용": true,
     "시장PER_PBR미사용": true,
-    "기초가치": 49011.41,
+    "기초가치": 49068.57,
     "기초가치출처": "기존 라이브 재무적정가",
     "미래이중계산차단": true,
     "미래증분추가허용": false,
@@ -4837,10 +4844,10 @@
       "배수": 1.0
     },
     "원시미래증분가치": 0.0,
-    "미래가치인정률": 4.31,
+    "미래가치인정률": 4.6,
     "거시조정배수": 1.0,
     "미래증분가치": 0.0,
-    "전략펀더멘털적정가": 49011.41,
+    "전략펀더멘털적정가": 49068.57,
     "미래성장가치표시": "미래성장가치 반영 낮음",
     "미래성장가치표시문구": "미래성장가치 반영 낮음",
     "근거신뢰도": 72.0,
@@ -4854,22 +4861,22 @@
           "분기매출YoY": 0.0,
           "분기영업이익YoY": 0.0,
           "분기순이익YoY": 0.0,
-          "FY1성장률": -4.35,
+          "FY1성장률": -4.31,
           "구조적실적가속": false,
           "실적전환강도": 37.77,
           "향후이익대용신호": -60.09
         }
       },
       "산업현재미래": {
-        "점수": 12.97,
+        "점수": 14.14,
         "품질": 100.0,
         "사용가능": true,
         "근거": [
           "대상기업 자체 주가를 산업 성장근거에서 제외"
         ],
         "입력": {
-          "중기산업신호": 22.89,
-          "장기산업신호": -42.57,
+          "중기산업신호": 24.95,
+          "장기산업신호": -41.46,
           "MA20상회비율": null,
           "MA120상회비율": null,
           "기준시장대비초과수익률": null,
@@ -4971,22 +4978,22 @@
         {
           "요소": "환율·글로벌",
           "가중치": 15,
-          "신호": 19.2,
+          "신호": 17.21,
           "신호판정": "중립",
           "데이터품질": 100.0,
-          "점수기여": 2.88,
+          "점수기여": 2.58,
           "출처": "Yahoo 글로벌시장 분석",
-          "설명": "분석상태 정상, 신호 19.20"
+          "설명": "분석상태 정상, 신호 17.21"
         },
         {
           "요소": "뉴스·공시",
           "가중치": 10,
-          "신호": 31.17,
+          "신호": 35.49,
           "신호판정": "긍정",
           "데이터품질": 72.6,
-          "점수기여": 3.12,
+          "점수기여": 3.55,
           "출처": "OpenDART 최근 공시 + Google News RSS",
-          "설명": "분석상태 정상, 신호 31.17"
+          "설명": "분석상태 정상, 신호 35.49"
         }
       ],
       "미수집요소": [
@@ -5001,11 +5008,11 @@
     },
     "중기1~8주": {
       "기간": "1~8주",
-      "점수": 45,
-      "상승확률": 47,
+      "점수": 46,
+      "상승확률": 48,
       "판정": "중립",
-      "신뢰도": 80,
-      "신뢰도등급": "높음",
+      "신뢰도": 77,
+      "신뢰도등급": "보통",
       "요소별평가": [
         {
           "요소": "분기실적",
@@ -5020,10 +5027,10 @@
         {
           "요소": "산업선행지표",
           "가중치": 25,
-          "신호": 23.81,
+          "신호": 25.56,
           "신호판정": "긍정",
           "데이터품질": 100.0,
-          "점수기여": 5.95,
+          "점수기여": 6.39,
           "출처": "2차전지 대표자산 합성",
           "설명": "산업국면 하락사이클 내 반등"
         },
@@ -5040,12 +5047,12 @@
         {
           "요소": "환율·금리·거시",
           "가중치": 15,
-          "신호": 1.48,
+          "신호": 7.68,
           "신호판정": "중립",
-          "데이터품질": 100.0,
-          "점수기여": 0.22,
+          "데이터품질": 80.0,
+          "점수기여": 1.15,
           "출처": "Yahoo 환율·미국금리·글로벌시장",
-          "설명": "분석상태 정상, 신호 1.48"
+          "설명": "분석상태 정상, 신호 7.68"
         },
         {
           "요소": "가격추세",
@@ -5060,12 +5067,12 @@
         {
           "요소": "뉴스·공시",
           "가중치": 10,
-          "신호": 31.17,
+          "신호": 35.49,
           "신호판정": "긍정",
           "데이터품질": 72.6,
-          "점수기여": 3.12,
+          "점수기여": 3.55,
           "출처": "OpenDART 최근 공시 + Google News RSS",
-          "설명": "분석상태 정상, 신호 31.17"
+          "설명": "분석상태 정상, 신호 35.49"
         }
       ],
       "미수집요소": [
@@ -5117,10 +5124,10 @@
         {
           "요소": "산업사이클",
           "가중치": 25,
-          "신호": -41.65,
+          "신호": -40.71,
           "신호판정": "부정",
           "데이터품질": 100.0,
-          "점수기여": -10.41,
+          "점수기여": -10.18,
           "출처": "2차전지 대표자산 1년 추세",
           "설명": "산업국면 하락사이클 내 반등"
         },
@@ -5132,7 +5139,7 @@
           "데이터품질": 100.0,
           "점수기여": -20.0,
           "출처": "내부 가치평가",
-          "설명": "현재가 대비 -86.74%, 판단 판정 보류"
+          "설명": "현재가 대비 -86.72%, 판단 판정 보류"
         },
         {
           "요소": "경쟁력·시장점유율",
@@ -5210,7 +5217,7 @@
     "스키마버전": "2.0",
     "엔진버전": "6.8.0-valuation-contract-v4",
     "종목코드": "373220",
-    "생성시각": "2026-08-15T14:43:25.643888",
+    "생성시각": "2026-08-15T14:58:08.919150",
     "연결상태": "부분",
     "기술분석": {
       "수집상태": "정상",
@@ -6582,27 +6589,27 @@
             "요소": "환율·글로벌",
             "사용가능": true,
             "가중치": 15.0,
-            "신호": 19.2,
+            "신호": 17.21,
             "판정": "중립",
             "신호판정": "중립",
             "데이터상태": "정상",
             "데이터품질": 100.0,
-            "점수기여": 2.88,
+            "점수기여": 2.58,
             "출처": "Yahoo 글로벌시장 분석",
-            "설명": "분석상태 정상, 신호 19.20"
+            "설명": "분석상태 정상, 신호 17.21"
           },
           {
             "요소": "뉴스·공시",
             "사용가능": true,
             "가중치": 10.0,
-            "신호": 31.17,
+            "신호": 35.49,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
             "데이터품질": 72.6,
-            "점수기여": 3.12,
+            "점수기여": 3.55,
             "출처": "OpenDART 최근 공시 + Google News RSS",
-            "설명": "분석상태 정상, 신호 31.17"
+            "설명": "분석상태 정상, 신호 35.49"
           }
         ],
         "미수집요소": [
@@ -6612,13 +6619,13 @@
       },
       "중기": {
         "기간": "1~8주",
-        "점수": 45,
-        "상승확률": 47,
+        "점수": 46,
+        "상승확률": 48,
         "판정": "중립",
-        "자료신뢰도": 80,
-        "신뢰도": 80,
-        "자료신뢰도등급": "높음",
-        "신뢰도등급": "높음",
+        "자료신뢰도": 77,
+        "신뢰도": 77,
+        "자료신뢰도등급": "보통",
+        "신뢰도등급": "보통",
         "요소별평가": [
           {
             "요소": "분기실적",
@@ -6637,12 +6644,12 @@
             "요소": "산업선행지표",
             "사용가능": true,
             "가중치": 25.0,
-            "신호": 23.81,
+            "신호": 25.56,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
             "데이터품질": 100.0,
-            "점수기여": 5.95,
+            "점수기여": 6.39,
             "출처": "2차전지 대표자산 합성",
             "설명": "산업국면 하락사이클 내 반등"
           },
@@ -6663,14 +6670,14 @@
             "요소": "환율·금리·거시",
             "사용가능": true,
             "가중치": 15.0,
-            "신호": 1.48,
+            "신호": 7.68,
             "판정": "중립",
             "신호판정": "중립",
             "데이터상태": "정상",
-            "데이터품질": 100.0,
-            "점수기여": 0.22,
+            "데이터품질": 80.0,
+            "점수기여": 1.15,
             "출처": "Yahoo 환율·미국금리·글로벌시장",
-            "설명": "분석상태 정상, 신호 1.48"
+            "설명": "분석상태 정상, 신호 7.68"
           },
           {
             "요소": "가격추세",
@@ -6689,14 +6696,14 @@
             "요소": "뉴스·공시",
             "사용가능": true,
             "가중치": 10.0,
-            "신호": 31.17,
+            "신호": 35.49,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
             "데이터품질": 72.6,
-            "점수기여": 3.12,
+            "점수기여": 3.55,
             "출처": "OpenDART 최근 공시 + Google News RSS",
-            "설명": "분석상태 정상, 신호 31.17"
+            "설명": "분석상태 정상, 신호 35.49"
           }
         ],
         "미수집요소": [
@@ -6730,12 +6737,12 @@
             "요소": "산업사이클",
             "사용가능": true,
             "가중치": 25.0,
-            "신호": -41.65,
+            "신호": -40.71,
             "판정": "부정",
             "신호판정": "부정",
             "데이터상태": "정상",
             "데이터품질": 100.0,
-            "점수기여": -10.41,
+            "점수기여": -10.18,
             "출처": "2차전지 대표자산 1년 추세",
             "설명": "산업국면 하락사이클 내 반등"
           },
@@ -6750,7 +6757,7 @@
             "데이터품질": 100.0,
             "점수기여": -20.0,
             "출처": "내부 가치평가",
-            "설명": "현재가 대비 -86.74%, 판단 판정 보류"
+            "설명": "현재가 대비 -86.72%, 판단 판정 보류"
           },
           {
             "요소": "경쟁력·시장점유율",
@@ -6800,14 +6807,14 @@
     "요소상태": {
       "거시환경": {
         "사용가능": true,
-        "점수": 1.48,
-        "데이터품질": 100.0,
+        "점수": 7.68,
+        "데이터품질": 80.0,
         "판정": "중립",
         "출처": "Yahoo Finance Chart API"
       },
       "산업선행지표": {
         "사용가능": true,
-        "점수": 23.81,
+        "점수": 25.56,
         "환경점수": null,
         "현재환경점수": null,
         "데이터품질": 100.0,
@@ -6817,14 +6824,14 @@
       },
       "산업사이클": {
         "사용가능": true,
-        "점수": -41.65,
+        "점수": -40.71,
         "데이터품질": 100.0,
         "판정": "부정",
         "출처": "Yahoo Finance Chart API"
       },
       "뉴스": {
         "사용가능": true,
-        "점수": 51.87,
+        "점수": 59.78,
         "데이터품질": 88.0,
         "판정": "매우 긍정",
         "출처": "Google News RSS"
@@ -6873,7 +6880,7 @@
       "사용규칙": "기존 산업전망 current/future 값을 이 파일로 대체하되, 개별종목 주가방향에는 bounded_direction_adjustment_points만 보조 입력으로 사용합니다.",
       "출처": "disk_cache",
       "캐시모드": "disk_cache",
-      "소스나이시간": 0.45,
+      "소스나이시간": 0.7,
       "HTTP호출수": 0,
       "오류": "upstream auxiliary use not allowed"
     },
