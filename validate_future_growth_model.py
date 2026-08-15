@@ -188,21 +188,26 @@ def main():
     assert "미래성장모형 비대상 업종" in non_growth["차단사유"]
 
     downturn = direct_model(negative_transition=True)
-    assert downturn["사용가능"] is False
-    assert "실적 급하락 전환" in downturn["차단사유"]
+    assert downturn["사용가능"] is True
+    assert downturn["상태"] == "제한사용"
+    assert "실적 급하락 전환" in downturn["제한사유"]
+    assert 0 < downturn["모형인정률"] < 100
 
     trough = direct_model(earnings_trough=True)
-    assert trough["사용가능"] is False
-    assert "이익저점 국면은 회복가치 모형 우선" in trough["차단사유"]
+    assert trough["사용가능"] is True
+    assert trough["상태"] == "제한사용"
+    assert "이익저점 국면 · 회복가치 우선" in trough["제한사유"]
+    assert 0 < trough["모형인정률"] < 100
 
     peak = direct_model(ttm_eps=32_000, normalized_eps=10_000)
-    assert peak["사용가능"] is False
-    assert "사이클 고점 이익 영구화 위험" in peak["차단사유"]
+    assert peak["사용가능"] is True
+    assert peak["상태"] == "제한사용"
+    assert "사이클 고점 이익 영구화 위험" in peak["제한사유"]
 
-    print("FUTURE GROWTH MODEL V1: PASS")
+    print("FUTURE GROWTH MODEL V1.1: PASS")
     print("- price-independent shares/fair value: PASS")
     print("- FY3/FY4 decay and caps: PASS")
-    print("- non-growth/downturn/trough/cycle-peak blocks: PASS")
+    print("- non-growth hard block + downturn/trough/cycle-peak soft recognition: PASS")
     print(
         "- Samsung Electro-Mechanics synthetic:",
         f"base={high_price['기본적정가']:,.0f}",
