@@ -318,7 +318,7 @@ def main() -> int:
     assert all(r["recognition_pct"] <= 12.0001 for r in no_external_expect)
 
     report = {
-        "engine_version": "0.3.1-strategic-forward-doublecount-sotp-guard",
+        "engine_version": "0.4.0-strategic-forward-recognition-gate",
         "validation_type": "cross-sectional + property/stress simulation; not historical predictive backtest",
         "universe_count": len(rows),
         "price_independence": True,
