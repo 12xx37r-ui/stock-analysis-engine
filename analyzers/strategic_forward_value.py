@@ -710,6 +710,58 @@ def _evidence_recognition_factor(
     return factor, reasons
 
 
+
+FUTURE_INCREMENT_CAP_POLICY_VERSION = "1.0.0"
+
+
+def _future_increment_cap_ratio(
+    *,
+    valuation: Dict[str, Any],
+    future_model: Dict[str, Any],
+    company: Dict[str, Any],
+    industry: Dict[str, Any],
+    expectation: Dict[str, Any],
+) -> Tuple[float, List[str]]:
+    """현재 재무기초가치 대비 최종 미래증분 상한.
+
+    미래가치 후보 계산은 유지하되, 좋은 신호가 여러 개 겹쳐도
+    현재가치보다 과도하게 큰 금액이 한 번에 붙는 것을 제한한다.
+    현재가·목표주가·시장가격은 사용하지 않는다.
+    """
+    status = str(future_model.get("상태") or "")
+    limited_reasons = [
+        str(x) for x in (future_model.get("제한사유") or [])
+        if str(x)
+    ]
+
+    ratio = 1.00
+    reasons: List[str] = ["기본 미래증분 상한 = 현재 재무기초가치의 100%"]
+
+    if status == "제한사용":
+        ratio = min(ratio, 0.70)
+        reasons.append("미래성장모형 제한사용 → 미래증분 상한 70%")
+
+    if any("사이클 고점 이익 영구화 위험" in r for r in limited_reasons):
+        ratio = min(ratio, 0.65)
+        reasons.append("사이클 고점 이익 영구화 위험 → 미래증분 상한 65%")
+
+    company_score = safe_float(company.get("점수")) if company.get("사용가능") else 0.0
+    industry_score = safe_float(industry.get("점수")) if industry.get("사용가능") else 0.0
+    expectation_score = safe_float(expectation.get("점수")) if expectation.get("사용가능") else 0.0
+    structural_acceleration = valuation.get("구조적실적가속") is True
+
+    if (
+        status != "제한사용"
+        and structural_acceleration
+        and company_score >= 70.0
+        and industry_score >= 60.0
+        and expectation_score >= 60.0
+    ):
+        ratio = 1.20
+        reasons = ["구조적 실적가속 + 기업·산업·시장기대 강세 → 미래증분 상한 120%"]
+
+    return clamp(ratio, 0.0, 1.20), reasons
+
 def future_value_label(base_value: float, future_increment: float) -> str:
     if base_value <= 0 or future_increment <= 0:
         return "미래성장가치 반영 낮음"
@@ -843,10 +895,28 @@ def build_strategic_forward_value(
     )
     evidence_factor, cap_reasons = _evidence_recognition_factor(company, industry, expectation)
     macro_modifier = safe_float(macro.get("조정배수"), 1.0)
-    recognized_increment = raw_increment * evidence_factor * macro_modifier
+    uncapped_recognized_increment = raw_increment * evidence_factor * macro_modifier
 
     # 거시가 우호적이어도 raw increment 이상으로 증폭시키지 않는다.
-    recognized_increment = min(recognized_increment, raw_increment)
+    uncapped_recognized_increment = min(uncapped_recognized_increment, raw_increment)
+
+    increment_cap_ratio, increment_cap_reasons = _future_increment_cap_ratio(
+        valuation=valuation,
+        future_model=future_model,
+        company=company,
+        industry=industry,
+        expectation=expectation,
+    )
+    increment_cap_value = (
+        strategic_base * increment_cap_ratio
+        if strategic_base > 0 and future_addition_allowed
+        else 0.0
+    )
+
+    recognized_increment = min(
+        uncapped_recognized_increment,
+        increment_cap_value if increment_cap_value > 0 else uncapped_recognized_increment,
+    )
     strategic_fair = strategic_base + recognized_increment if strategic_base > 0 else 0.0
 
     evidence_quality_parts = []
@@ -867,6 +937,7 @@ def build_strategic_forward_value(
     reasons.extend(expectation.get("근거", []))
     reasons.extend(macro.get("근거", []))
     reasons.extend(cap_reasons)
+    reasons.extend(increment_cap_reasons)
 
     return {
         "엔진버전": ENGINE_VERSION,
@@ -886,6 +957,14 @@ def build_strategic_forward_value(
         "원시미래증분가치": round(raw_increment, 2),
         "미래가치인정률": round(evidence_factor * 100.0, 2),
         "거시조정배수": round(macro_modifier, 4),
+        "상한적용전미래증분가치": round(uncapped_recognized_increment, 2),
+        "미래증분상한정책버전": FUTURE_INCREMENT_CAP_POLICY_VERSION,
+        "미래증분상한비율": round(increment_cap_ratio * 100.0, 2),
+        "미래증분상한금액": round(increment_cap_value, 2),
+        "미래증분상한적용": bool(
+            increment_cap_value > 0
+            and uncapped_recognized_increment > increment_cap_value + 1e-9
+        ),
         "미래증분가치": round(recognized_increment, 2),
         "전략펀더멘털적정가": round(strategic_fair, 2),
         "미래성장가치표시": label,
@@ -907,5 +986,6 @@ def build_strategic_forward_value(
             "거시환경": "품질게이트 통과시에만 0.80~1.10 범위의 실현확률 조정; 새 가치를 만들지 않음",
             "SOTP": "verified/audited 원천·기준일·통화·2개 이상 사업부 EV·희석주식수·순부채 원천이 모두 확인될 때만 진짜 SOTP 사용",
             "미래이중계산": "현재-only 기초가치가 없으면 기존 혼합 재무적정가에 미래증분을 추가하지 않음",
+            "미래증분상한": "현재가·목표주가와 무관하게 현재 재무기초가치 대비 미래증분 상한을 적용; 제한사용 70%, 사이클 고점 위험 65%, 구조적 가속 강증거 정상사용만 최대 120%",
         },
     }
