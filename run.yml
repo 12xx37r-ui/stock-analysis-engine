@@ -1,0 +1,132 @@
+name: run-engine
+
+on:
+  workflow_dispatch:
+    inputs:
+      stock_code:
+        description: "6자리 종목코드"
+        required: true
+        default: "005930"
+        type: string
+      industry_code:
+        description: "산업분석 코드"
+        required: true
+        default: "auto"
+        type: choice
+        options:
+          - auto
+          - semiconductor
+          - electronic_components
+          - automotive
+          - battery
+          - biotechnology
+          - construction
+          - finance
+          - none
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    env:
+      KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+      KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+      KIS_DISABLED: "0"
+      KIS_TOKEN_FILE: ".cache/kis_token.json"
+      KIS_TOKEN_REUSE_HOURS: "23"
+      DART_API_KEY: ${{ secrets.DART_API_KEY }}
+      STOCK_CODE: ${{ inputs.stock_code }}
+      INDUSTRY_CODE: ${{ inputs.industry_code }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: requirements.txt
+
+      - name: Verify KIS credentials and enable collection
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${KIS_APP_KEY:-}" || -z "${KIS_APP_SECRET:-}" ]]; then
+            echo "::error::KIS_APP_KEY 또는 KIS_APP_SECRET이 이 워크플로에 전달되지 않았습니다."
+            echo "::error::키가 저장되어 있다면 Repository secrets인지, Environment secrets라면 job에 environment가 지정됐는지 확인하십시오."
+            exit 1
+          fi
+          echo "KIS credentials detected: collection is forced ON (KIS_DISABLED=0)."
+          echo "The token is issued once per batch and reused for all stocks in this run."
+      - name: Build weekly cache key
+        id: cache-date
+        shell: bash
+        run: |
+          echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache OpenDART company list
+        uses: actions/cache@v5
+        with:
+          path: .cache/dart_corp_codes.json
+          key: dart-corp-codes-${{ runner.os }}-${{ steps.cache-date.outputs.week }}
+          restore-keys: |
+            dart-corp-codes-${{ runner.os }}-
+
+      - name: Build strategic macro cache slot
+        id: macro-cache-slot
+        shell: bash
+        run: |
+          hour=$(date -u +%H)
+          slot=$((10#$hour / 6))
+          echo "slot=$(date -u +%Y%m%d)-${slot}" >> "$GITHUB_OUTPUT"
+
+      - name: Cache strategic macro bundle
+        uses: actions/cache@v5
+        with:
+          path: .cache/strategic_macro_context.json
+          key: strategic-macro-${{ runner.os }}-${{ steps.macro-cache-slot.outputs.slot }}
+          restore-keys: |
+            strategic-macro-${{ runner.os }}-
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Validate industry profiles
+        run: |
+          python validate_industry_profiles.py
+      - name: Validate valuation profiles
+        run: python validate_valuation_profiles.py
+      - name: Validate valuation contract v4
+        run: python validate_valuation_contract.py
+      - name: Validate valuation data pipeline v4
+        run: python validate_valuation_pipeline_v4.py
+      - name: Validate insurance financials
+        run: python validate_insurance_financials.py
+      - name: Validate future growth valuation model
+        run: python validate_future_growth_model.py
+      - name: Validate signal bridge
+        run: python validate_signal_bridge.py
+
+      - name: Run engine
+        run: |
+          python main.py \
+            --stock-code "$STOCK_CODE" \
+            --industry-code "$INDUSTRY_CODE"
+
+      - name: Validate output
+        run: |
+          python validate_output.py \
+            --file "output/${STOCK_CODE}.json" \
+            --stock-code "$STOCK_CODE"
+
+      - name: Upload result
+        uses: actions/upload-artifact@v5
+        with:
+          name: stock-analysis-${{ inputs.stock_code }}
+          path: output/${{ inputs.stock_code }}.json
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,90 @@
+name: evaluate-forward-tests
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 0 * * 1"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forward-test-store
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: requirements.txt
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Validate valuation contract v4
+        run: python validate_valuation_contract.py
+      - name: Validate valuation data pipeline v4
+        run: python validate_valuation_pipeline_v4.py
+      - name: Validate insurance financials
+        run: python validate_insurance_financials.py
+
+      - name: Evaluate forward tests
+        run: |
+          python forward_test.py \
+            --evaluate-only \
+            --store data/forward_tests.json \
+            --report output/forward_test_report.json
+
+      - name: Validate forward tests
+        run: |
+          python validate_forward_test.py \
+            --store data/forward_tests.json \
+            --report output/forward_test_report.json
+
+      - name: Build calibration report
+        run: |
+          python calibration_monitor.py \
+            --store data/forward_tests.json \
+            --report output/calibration_report.json
+
+      - name: Validate calibration report
+        run: |
+          python validate_calibration_report.py \
+            --report output/calibration_report.json
+
+      - name: Commit evaluated store
+        shell: bash
+        run: |
+          if git diff --quiet -- data/forward_tests.json; then
+            echo "No matured forward-test records."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data/forward_tests.json
+          git commit -m "chore: evaluate forward tests [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Upload forward-test report
+        uses: actions/upload-artifact@v5
+        with:
+          name: forward-test-report-${{ github.run_number }}
+          path: |
+            output/forward_test_report.json
+            output/calibration_report.json
+          if-no-files-found: error
+          retention-days: 90

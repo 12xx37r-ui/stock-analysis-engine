@@ -1,0 +1,104 @@
+name: refresh-published-stocks
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "갱신할 기존 엔진 캐시 최대 종목 수"
+        required: true
+        default: "20"
+        type: string
+  schedule:
+    - cron: "40 21 * * 1-5"  # 평일 06:40 KST
+
+permissions:
+  contents: write
+
+concurrency:
+  group: published-stock-feed
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      DART_API_KEY: ${{ secrets.DART_API_KEY }}
+      KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+      KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+      KIS_DISABLED: "0"
+      KIS_TOKEN_FILE: ".cache/kis_token.json"
+      KIS_TOKEN_REUSE_HOURS: "23"
+      LIMIT: ${{ inputs.limit || '20' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: requirements.txt
+      - name: Verify KIS credentials and enable collection
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${KIS_APP_KEY:-}" || -z "${KIS_APP_SECRET:-}" ]]; then
+            echo "::error::KIS_APP_KEY 또는 KIS_APP_SECRET이 이 워크플로에 전달되지 않았습니다."
+            echo "::error::키가 저장되어 있다면 Repository secrets인지, Environment secrets라면 job에 environment가 지정됐는지 확인하십시오."
+            exit 1
+          fi
+          echo "KIS credentials detected: collection is forced ON (KIS_DISABLED=0)."
+          echo "The token is issued once per batch and reused for all stocks in this run."
+      - name: Build DART cache key
+        id: dart-cache-date
+        shell: bash
+        run: echo "day=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+      - name: Cache OpenDART responses
+        uses: actions/cache@v5
+        with:
+          path: |
+            .cache/dart_corp_codes.json
+            .cache/dart_api
+          key: dart-api-${{ runner.os }}-${{ steps.dart-cache-date.outputs.day }}-${{ github.run_id }}
+          restore-keys: |
+            dart-api-${{ runner.os }}-${{ steps.dart-cache-date.outputs.day }}-
+            dart-api-${{ runner.os }}-
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Validate industry profiles
+        run: python validate_industry_profiles.py
+      - name: Validate valuation profiles
+        run: python validate_valuation_profiles.py
+      - name: Validate valuation contract v4
+        run: python validate_valuation_contract.py
+      - name: Validate valuation data pipeline v4
+        run: python validate_valuation_pipeline_v4.py
+      - name: Validate insurance financials
+        run: python validate_insurance_financials.py
+      - name: Validate future growth valuation model
+        run: python validate_future_growth_model.py
+      - name: Validate published cache coherence
+        run: python validate_cache_coherence.py
+      - name: Refresh existing background cache
+        run: python refresh_published_stocks.py --limit "$LIMIT"
+      - name: Validate active latest index
+        run: python validate_latest_index.py --latest-root data/latest
+      - name: Commit refreshed cache
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/latest/index.json data/latest/valuation_audit.json data/latest/stocks
+          if git diff --cached --quiet; then
+            echo "No background-cache changes."
+            exit 0
+          fi
+          git commit -m "chore: refresh published stock cache [skip ci]"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
