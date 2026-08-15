@@ -483,14 +483,18 @@ def get_industry_environment(industry_code: Any, aliases: Optional[Iterable[Any]
         and max_adjustment >= 0.0
     )
 
-    usable = bool(numeric_valid and allowed_aux and quality_score >= MIN_QUALITY_SCORE)
+    display_usable = bool(
+        numeric_valid
+        and quality_score >= MIN_QUALITY_SCORE
+    )
+    usable = bool(display_usable and allowed_aux)
     error = ""
     if not numeric_valid:
         error = "bridge profile numeric contract invalid"
-    elif not allowed_aux:
-        error = "upstream auxiliary use not allowed"
     elif quality_score < MIN_QUALITY_SCORE:
         error = f"quality below threshold: {quality_score:.1f} < {MIN_QUALITY_SCORE:.1f}"
+    elif not allowed_aux:
+        error = "upstream auxiliary use not allowed"
 
     bounded_adjustment = None
     if adjustment is not None and max_adjustment is not None:
@@ -499,6 +503,10 @@ def get_industry_environment(industry_code: Any, aliases: Optional[Iterable[Any]
     return {
         "수집상태": "정상" if usable else "연결대기",
         "사용가능": usable,
+        "자료표시가능": display_usable,
+        "표시상태": "정상" if display_usable else "연결대기",
+        "모형사용가능": usable,
+        "모형사용상태": "정상" if usable else "검증대기",
         "요청산업코드": requested,
         "매핑산업코드": profile_key,
         "산업명": str(profile.get("industry_label") or profile_key),
