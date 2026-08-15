@@ -186,7 +186,10 @@ def clean_account_name(
 ACCOUNT_ALIASES = {
     "매출": (
         "매출액",
+        "수익",
         "수익(매출액)",
+        "고객과의계약에서생기는수익",
+        "고객과의계약에서생기는수익(매출액)",
         "영업수익",
         "보험수익",
         "보험서비스수익",
@@ -258,41 +261,49 @@ ACCOUNT_ALIASES = {
     ),
 }
 
+# OpenDART 전체재무제표는 account_nm과 함께 XBRL 표준 account_id를 제공한다.
+# 표시명이 회사별로 달라도 표준 ID가 있으면 이를 먼저 사용한다.
+ACCOUNT_ID_ALIASES = {
+    "매출": (
+        "ifrs-full_Revenue",
+        "ifrs_Revenue",
+    ),
+    "영업이익": (
+        "dart_OperatingIncomeLoss",
+        "ifrs-full_ProfitLossFromOperatingActivities",
+    ),
+    "순이익": (
+        "ifrs-full_ProfitLoss",
+        "ifrs_ProfitLoss",
+    ),
+}
 
-def find_account_value(
+
+def find_account_match(
     rows: List[Dict[str, Any]],
     aliases: Iterable[str],
     statement_types: Optional[Iterable[str]] = None,
     cumulative: bool = True,
-) -> float:
-    aliases_clean = {
-        clean_account_name(alias)
-        for alias in aliases
+    account_ids: Optional[Iterable[str]] = None,
+) -> Optional[Dict[str, Any]]:
+    aliases_clean = {clean_account_name(alias) for alias in aliases}
+    ids_clean = {
+        safe_text(account_id)
+        for account_id in (account_ids or ())
+        if safe_text(account_id)
     }
-
-    allowed_types = (
-        set(statement_types)
-        if statement_types
-        else None
-    )
-
+    allowed_types = set(statement_types) if statement_types else None
     candidates = []
 
     for row in rows:
-        statement_type = safe_text(
-            row.get("sj_div")
-        )
-
-        if (
-            allowed_types is not None
-            and statement_type not in allowed_types
-        ):
+        statement_type = safe_text(row.get("sj_div"))
+        if allowed_types is not None and statement_type not in allowed_types:
             continue
 
-        account_name = clean_account_name(
-            row.get("account_nm")
-        )
+        account_name = clean_account_name(row.get("account_nm"))
+        account_id = safe_text(row.get("account_id"))
 
+        id_match = bool(account_id and account_id in ids_clean)
         exact_match = account_name in aliases_clean
         partial_match = any(
             len(alias) >= 4 and (
@@ -303,55 +314,59 @@ def find_account_value(
             for alias in aliases_clean
         )
 
-        if not exact_match and not partial_match:
+        if not id_match and not exact_match and not partial_match:
             continue
 
         if cumulative:
-            value = safe_float(
-                row.get(
-                    "thstrm_add_amount"
-                )
-            )
-
-            if value == 0:
-                value = safe_float(
-                    row.get(
-                        "thstrm_amount"
-                    )
-                )
+            raw = row.get("thstrm_add_amount")
+            value = safe_float(raw)
+            # 분/반기 IS/CIS 누적필드가 비어 있는 경우에만 당기금액 fallback.
+            # 0은 실제 값일 수 있으므로 0이라고 fallback하지 않는다.
+            if raw in (None, ""):
+                value = safe_float(row.get("thstrm_amount"))
         else:
-            value = safe_float(
-                row.get(
-                    "thstrm_amount"
-                )
-            )
+            value = safe_float(row.get("thstrm_amount"))
 
-        candidates.append(
-            {
-                "value": value,
-                "exact": exact_match,
-                "order": safe_float(
-                    row.get("ord"),
-                    999999,
-                ),
-            }
-        )
+        candidates.append({
+            "value": value,
+            "id_match": id_match,
+            "exact": exact_match,
+            "partial": partial_match,
+            "order": safe_float(row.get("ord"), 999999),
+            "account_id": account_id,
+            "account_nm": safe_text(row.get("account_nm")),
+            "statement_type": statement_type,
+        })
 
     if not candidates:
-        return 0.0
+        return None
 
     candidates.sort(
         key=lambda item: (
+            0 if item.get("id_match") else 1,
             0 if item.get("exact") else 1,
+            0 if item.get("partial") else 1,
             item["order"],
         )
     )
+    return candidates[0]
 
-    for candidate in candidates:
-        if candidate["value"] != 0:
-            return candidate["value"]
 
-    return candidates[0]["value"]
+def find_account_value(
+    rows: List[Dict[str, Any]],
+    aliases: Iterable[str],
+    statement_types: Optional[Iterable[str]] = None,
+    cumulative: bool = True,
+    account_ids: Optional[Iterable[str]] = None,
+) -> float:
+    match = find_account_match(
+        rows,
+        aliases,
+        statement_types=statement_types,
+        cumulative=cumulative,
+        account_ids=account_ids,
+    )
+    return safe_float(match.get("value")) if match else 0.0
 
 
 def parse_financial_period(
@@ -363,6 +378,7 @@ def parse_financial_period(
     message: str,
 ) -> Dict[str, Any]:
     metrics: Dict[str, float] = {}
+    metric_matches: Dict[str, Optional[Dict[str, Any]]] = {}
 
     for key, aliases in ACCOUNT_ALIASES.items():
         if key in {
@@ -395,12 +411,15 @@ def parse_financial_period(
             )
             cumulative = True
 
-        metrics[key] = find_account_value(
+        match = find_account_match(
             rows,
             aliases,
             statement_types=statement_types,
             cumulative=cumulative,
+            account_ids=ACCOUNT_ID_ALIASES.get(key, ()),
         )
+        metric_matches[key] = match
+        metrics[key] = safe_float(match.get("value")) if match else 0.0
 
     capex = abs(
         metrics["유형자산취득"]
@@ -413,6 +432,39 @@ def parse_financial_period(
         - capex
     )
 
+    period_status = (
+        "정상"
+        if status == "000" and rows
+        else "실패"
+    )
+    validation_errors: List[str] = []
+
+    revenue_match = metric_matches.get("매출")
+    operating_match = metric_matches.get("영업이익")
+    net_match = metric_matches.get("순이익")
+
+    # 계정을 못 찾은 상태를 숫자 0의 정상 매출로 취급하지 않는다.
+    if (
+        status == "000"
+        and rows
+        and revenue_match is None
+        and (operating_match is not None or net_match is not None)
+    ):
+        period_status = "부분성공"
+        validation_errors.append(
+            "매출 계정을 확인하지 못해 해당 기간을 가치평가 입력에서 제외"
+        )
+
+    account_match_info = {}
+    for metric_name in ("매출", "영업이익", "순이익"):
+        matched = metric_matches.get(metric_name)
+        account_match_info[metric_name] = {
+            "확인": matched is not None,
+            "계정명": safe_text(matched.get("account_nm")) if matched else "",
+            "계정ID": safe_text(matched.get("account_id")) if matched else "",
+            "재무제표구분": safe_text(matched.get("statement_type")) if matched else "",
+        }
+
     return {
         "사업연도": year,
         "보고서코드": report_code,
@@ -421,14 +473,12 @@ def parse_financial_period(
             report_code,
         ),
         "연결구분": fs_div,
-        "수집상태": (
-            "정상"
-            if status == "000" and rows
-            else "실패"
-        ),
+        "수집상태": period_status,
         "응답코드": status,
         "응답메시지": message,
         "계정개수": len(rows),
+        "핵심계정매칭": account_match_info,
+        "지표검증오류": validation_errors,
         "지표": {
             "매출": metrics["매출"],
             "영업이익": metrics["영업이익"],
