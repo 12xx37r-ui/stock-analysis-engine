@@ -24,6 +24,10 @@ on:
           - finance
           - none
 
+concurrency:
+  group: run-engine-${{ inputs.stock_code }}
+  cancel-in-progress: true
+
 jobs:
   run:
     runs-on: ubuntu-latest
