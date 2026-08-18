@@ -3,7 +3,7 @@ name: refresh-universe-catalog
 on:
   workflow_dispatch:
   schedule:
-    - cron: "20 21 * * *"  # 06:20 KST
+    - cron: "20 17 * * *"  # 02:20 KST; staggered away from Fed/Korea full runs
 
 permissions:
   contents: write
