@@ -4,6 +4,8 @@
 잘못 채택되는 회귀를 차단한다.
 """
 
+
+from datetime import datetime
 from analyzers.valuation import calculate_value
 from collectors.fundamentals import parse_stock_total_rows
 
@@ -101,6 +103,7 @@ def main():
         industry_analysis,
         {"산업코드": "semiconductor"},
         company_info,
+        valuation_as_of=datetime(2026, 8, 20),
     )
 
     assert value["가치평가계약버전"] == "4.0"
@@ -125,6 +128,7 @@ def main():
         industry_analysis,
         {"산업코드": "semiconductor"},
         company_info,
+        valuation_as_of=datetime(2026, 8, 20),
     )
     assert no_kis_value["최종값사용가능"] is True, no_kis_value["이상치검사"]
     assert no_kis_value["발행주식수추정"] == 6_780_323_572
@@ -132,12 +136,43 @@ def main():
     assert no_kis_value["BPS"] > 0
     assert no_kis_value["기본적정가"] > 0
 
+    # 산출보류 계약 회귀검증:
+    # 같은 계산값이 존재해도 정식 재무가 법정 제출시한보다 오래된 시점에는
+    # 전체 분석을 실패시키지 않고 진단용 적정가 + 산출보류 상태를 반환해야 한다.
+    # 이 상태는 publish/일반 재무 조회가 가능한 정상 JSON 계약이다.
+    stale_value = calculate_value(
+        financial,
+        market,
+        fundamentals_analysis,
+        fundamentals_bundle,
+        industry_analysis,
+        {"산업코드": "semiconductor"},
+        company_info,
+        valuation_as_of=datetime(2026, 8, 21),
+    )
+    assert stale_value["산출상태"] == "산출보류", stale_value
+    assert stale_value["최종값사용가능"] is False, stale_value
+    assert stale_value["기본적정가"] > 0, stale_value
+    stale_qualification = stale_value["데이터자격검사"]
+    assert stale_qualification["통과"] is False, stale_qualification
+    assert stale_qualification["중단사유"], stale_qualification
+    assert any(
+        "정식 재무보고서가 법정 제출시한 기준 최신분기보다 오래됨" in str(reason)
+        for reason in stale_qualification["중단사유"]
+    ), stale_qualification
+
     print("VALUATION CONTRACT V4: PASS")
     print(
         "KIS-disabled regression:",
         f"shares={no_kis_value['발행주식수추정']:,}",
         f"TTM EPS={no_kis_value['TTMEPS']:,.0f}",
         f"fair={no_kis_value['기본적정가']:,.0f}",
+    )
+    print(
+        "Stale-formal-period regression:",
+        f"status={stale_value['산출상태']}",
+        f"usable={stale_value['최종값사용가능']}",
+        f"diagnostic fair={stale_value['기본적정가']:,.0f}",
     )
     print(
         "Samsung regression:",

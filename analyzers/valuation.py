@@ -1542,9 +1542,10 @@ def build_data_qualification(
     model_count: int,
     price: float,
     basic: float,
+    as_of: Optional[Any] = None,
 ) -> Dict[str, Any]:
     formal_key = latest_period_key(periods)
-    expected_key = expected_formal_period_key()
+    expected_key = expected_formal_period_key(as_of)
     provisional_key = int(safe_float(provisional.get("기간키"), 0))
     provisional_detected = bool(provisional.get("접수번호"))
     provisional_usable = provisional.get("사용가능") is True
@@ -1639,6 +1640,8 @@ def calculate_value(
     industry_analysis: Optional[Dict[str, Any]] = None,
     industry_bundle: Optional[Dict[str, Any]] = None,
     company_info: Optional[Dict[str, Any]] = None,
+    *,
+    valuation_as_of: Optional[Any] = None,
 ) -> Dict[str, Any]:
     financial = safe_dict(financial)
     market = safe_dict(market)
@@ -2251,6 +2254,7 @@ def calculate_value(
         model_count=len(valid_models),
         price=price,
         basic=basic,
+        as_of=valuation_as_of,
     )
 
     abnormal_reasons: List[str] = []
