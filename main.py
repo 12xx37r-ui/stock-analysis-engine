@@ -1574,7 +1574,7 @@ def main():
             company_name=company,
         ),
         {
-            "엔진버전": "0.5.0-industry-eligibility-unrealized-growth-gate",
+            "엔진버전": "0.6.0-three-layer-future-value-gate",
             "모드": "shadow",
             "전략펀더멘털적정가": 0.0,
             "원시미래증분가치": 0.0,
