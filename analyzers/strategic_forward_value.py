@@ -21,7 +21,7 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 from analyzers.valuation import build_standalone_quarters
 
 
-ENGINE_VERSION = "0.7.0-quarterly-acceleration-quality-gate"
+ENGINE_VERSION = "0.7.1-dynamic-unrealized-growth-floor"
 
 
 def safe_float(value: Any, default: float = 0.0) -> float:
@@ -470,13 +470,33 @@ def unrealized_growth_axis(valuation: Dict[str, Any], expectation: Dict[str, Any
     fy3_eps = safe_float(future_model.get("FY3EPS"))
     fy4_eps = safe_float(future_model.get("FY4EPS"))
 
+    # 기본 하한은 기존 정책(15%)을 유지한다. 다만 FY1 이후 이익 성장 여지가 거의
+    # 남지 않았고 현재 이익이 역사적 정상화 수준을 크게 상회하는 경우에는,
+    # "이미 실현된 성장"에 미래가치를 강제로 15% 남기는 오류를 피하기 위해 하한을 낮춘다.
+    runrate_to_normalized = safe_float(adaptive.get("분기런레이트대정상화배수"))
+    forward_targets = [v for v in (fy3_eps, fy4_eps) if v > 0]
+    max_forward_eps = max(forward_targets) if forward_targets else 0.0
+    forward_room = (
+        max(0.0, max_forward_eps / fy1_eps - 1.0)
+        if fy1_eps > 0 and max_forward_eps > 0
+        else None
+    )
+    unrealized_floor = 0.15
+    floor_reason = "일반 미반영성장 하한 15%"
+    if forward_room is not None and runrate_to_normalized >= 3.0 and forward_room <= 0.08:
+        unrealized_floor = 0.05
+        floor_reason = "FY1 이후 성장여지 8% 이하 + 현재 이익 과열 → 미반영성장 하한 5%"
+    if forward_room is not None and runrate_to_normalized >= 6.0 and forward_room <= 0.03:
+        unrealized_floor = 0.03
+        floor_reason = "FY1 이후 성장여지 3% 이하 + 극단적 이익 과열 → 미반영성장 하한 3%"
+
     def remaining(target: float) -> Optional[float]:
         if current_eps <= 0 or target <= current_eps:
             return None
         if fy1_eps <= 0:
             return 0.55
         already = clamp((fy1_eps - current_eps) / (target - current_eps), 0.0, 1.0)
-        return clamp(1.0 - already, 0.15, 1.0)
+        return clamp(1.0 - already, unrealized_floor, 1.0)
 
     r3 = remaining(fy3_eps)
     r4 = remaining(fy4_eps)
@@ -493,14 +513,17 @@ def unrealized_growth_axis(valuation: Dict[str, Any], expectation: Dict[str, Any
         reason = "FY1에 이미 반영된 성장과 FY3·FY4까지 남은 성장을 분리"
 
     return {
-        "미반영성장비율": round(clamp(factor, 0.15, 1.0), 4),
+        "미반영성장비율": round(clamp(factor, unrealized_floor, 1.0), 4),
         "사용가능": usable,
-        "근거": [reason],
+        "근거": [reason, floor_reason],
         "입력": {
             "현재EPS앵커": round(current_eps, 4),
             "FY1EPS앵커": round(fy1_eps, 4),
             "FY3EPS": round(fy3_eps, 4),
             "FY4EPS": round(fy4_eps, 4),
+            "FY1이후최대성장여지": round(forward_room * 100.0, 2) if forward_room is not None else None,
+            "분기런레이트대정상화배수": round(runrate_to_normalized, 4),
+            "적용하한": round(unrealized_floor * 100.0, 2),
         },
     }
 

@@ -1575,7 +1575,7 @@ def main():
             company_name=company,
         ),
         {
-            "엔진버전": "0.7.0-quarterly-acceleration-quality-gate",
+            "엔진버전": "0.7.1-dynamic-unrealized-growth-floor",
             "모드": "shadow",
             "전략펀더멘털적정가": 0.0,
             "원시미래증분가치": 0.0,
