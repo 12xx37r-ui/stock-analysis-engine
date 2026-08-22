@@ -226,6 +226,16 @@ ACCOUNT_ALIASES = {
     "자산총계": (
         "자산총계",
     ),
+    "유동자산": (
+        "유동자산",
+        "유동자산합계",
+        "총유동자산",
+    ),
+    "유동부채": (
+        "유동부채",
+        "유동부채합계",
+        "총유동부채",
+    ),
     "부채총계": (
         "부채총계",
     ),
@@ -275,6 +285,14 @@ ACCOUNT_ID_ALIASES = {
     "순이익": (
         "ifrs-full_ProfitLoss",
         "ifrs_ProfitLoss",
+    ),
+    "유동자산": (
+        "ifrs-full_CurrentAssets",
+        "ifrs_CurrentAssets",
+    ),
+    "유동부채": (
+        "ifrs-full_CurrentLiabilities",
+        "ifrs_CurrentLiabilities",
     ),
 }
 
@@ -383,6 +401,8 @@ def parse_financial_period(
     for key, aliases in ACCOUNT_ALIASES.items():
         if key in {
             "자산총계",
+            "유동자산",
+            "유동부채",
             "부채총계",
             "자본총계",
             "현금및현금성자산",
@@ -484,6 +504,8 @@ def parse_financial_period(
             "영업이익": metrics["영업이익"],
             "순이익": metrics["순이익"],
             "자산총계": metrics["자산총계"],
+            "유동자산": metrics["유동자산"],
+            "유동부채": metrics["유동부채"],
             "부채총계": metrics["부채총계"],
             "자본총계": metrics["자본총계"],
             "현금및현금성자산": (

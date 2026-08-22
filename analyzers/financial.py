@@ -12,7 +12,7 @@ import math
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 
-FINANCIAL_ANALYSIS_REVISION = "financial-quality-v2.0.0"
+FINANCIAL_ANALYSIS_REVISION = "financial-quality-v2.1.0-current-ratio"
 FINANCIAL_SECTOR_CODES = {"finance", "insurance"}
 
 
@@ -85,6 +85,8 @@ ACCOUNT_ALIASES: Dict[str, Tuple[str, ...]] = {
     ),
     "equity": ("자본총계", "지배기업소유주지분", "지배기업의소유주에게귀속되는자본"),
     "debt": ("부채총계",),
+    "current_assets": ("유동자산", "유동자산합계", "총유동자산"),
+    "current_liabilities": ("유동부채", "유동부채합계", "총유동부채"),
 }
 
 
@@ -273,17 +275,26 @@ def analyze_financial(data: Dict[str, Any], industry_code: str = "none") -> Dict
     net = find_account(data, ACCOUNT_ALIASES["net"])
     equity = find_account(data, ACCOUNT_ALIASES["equity"])
     debt = find_account(data, ACCOUNT_ALIASES["debt"])
+    current_assets = find_account(data, ACCOUNT_ALIASES["current_assets"])
+    current_liabilities = find_account(data, ACCOUNT_ALIASES["current_liabilities"])
 
     sales_now, sales_prev, sales_old = _amounts(revenue)
     op_now, op_prev, op_old = _amounts(operating)
     net_now, net_prev, net_old = _amounts(net)
     equity_now, equity_prev, equity_old = _amounts(equity)
     debt_now, _, _ = _amounts(debt)
+    current_assets_now, _, _ = _amounts(current_assets)
+    current_liabilities_now, _, _ = _amounts(current_liabilities)
 
     roe = (net_now / equity_now * 100.0) if equity_now else 0.0
     debt_ratio = (debt_now / equity_now * 100.0) if equity_now else 0.0
     op_margin = (op_now / sales_now * 100.0) if sales_now else 0.0
     net_margin = (net_now / sales_now * 100.0) if sales_now else 0.0
+    current_ratio = (
+        current_assets_now / current_liabilities_now * 100.0
+        if current_liabilities_now > 0
+        else None
+    )
 
     sales_growth = growth(sales_now, sales_old)
     op_growth = growth(op_now, op_old)
@@ -334,6 +345,11 @@ def analyze_financial(data: Dict[str, Any], industry_code: str = "none") -> Dict
         "재무지표": {
             "ROE": round(roe, 2),
             "부채비율": round(debt_ratio, 2),
+            "유동비율": (
+                None
+                if industry_code in FINANCIAL_SECTOR_CODES
+                else round(current_ratio, 2) if current_ratio is not None else None
+            ),
             "영업이익률": round(op_margin, 2),
             "순이익률": round(net_margin, 2),
         },
@@ -353,6 +369,11 @@ def analyze_financial(data: Dict[str, Any], industry_code: str = "none") -> Dict
                 if industry_code in FINANCIAL_SECTOR_CODES
                 else "부채비율은 회사가 가진 자기 돈 대비 빚의 규모입니다. 낮을수록 경기 침체에도 버틸 힘이 있습니다."
             ),
+            "유동비율": (
+                "금융·보험업은 유동자산·유동부채 구조가 일반 제조업과 달라 일반기업 유동비율 기준으로 평가하지 않습니다."
+                if industry_code in FINANCIAL_SECTOR_CODES
+                else "유동비율은 유동자산을 유동부채로 나눈 값입니다. 100% 이상이면 1년 안에 현금화 가능한 자산이 단기부채보다 많다는 뜻입니다."
+            ),
             "영업이익률": "영업이익률은 본업에서 발생한 수익 대비 영업이익의 비율입니다.",
         },
         "원본": {
@@ -369,6 +390,10 @@ def analyze_financial(data: Dict[str, Any], industry_code: str = "none") -> Dict
             "자본전기": equity_prev,
             "자본전전기": equity_old,
             "부채": debt_now,
+            "유동자산": current_assets_now,
+            "유동부채": current_liabilities_now,
+            "유동자산계정명": current_assets.get("account_nm") if current_assets else "",
+            "유동부채계정명": current_liabilities.get("account_nm") if current_liabilities else "",
             "매출계정명": revenue.get("account_nm") if revenue else "",
             "영업이익계정명": operating.get("account_nm") if operating else "",
             "순이익계정명": net.get("account_nm") if net else "",
