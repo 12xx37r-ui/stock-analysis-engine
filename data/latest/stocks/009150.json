@@ -31,7 +31,7 @@
     "산업분류원본": "OpenDART 실시간 기업개황",
     "데이터출처": "금융감독원 OpenDART"
   },
-  "생성시각": "2026-08-22T06:53:40.251591",
+  "생성시각": "2026-08-22T06:57:15.923542",
   "재무분석": {
     "재무분석모형버전": "financial-quality-v2.0.0",
     "재무지표": {
@@ -195,7 +195,7 @@
     "가격종류": "KRX 종가",
     "가격기준일": "2026-08-21",
     "가격기준시각": "09:00:00",
-    "가격수집시각": "2026-08-22T15:52:45+09:00",
+    "가격수집시각": "2026-08-22T15:57:14+09:00",
     "가격진단": {
       "가격스키마버전": "3.0.0",
       "종목코드": "009150",
@@ -204,8 +204,8 @@
       "가격": 1316000.0,
       "가격기준일": "2026-08-21",
       "가격기준시각": "09:00:00",
-      "수집시각": "2026-08-22T15:52:45+09:00",
-      "가격수집시각": "2026-08-22T15:52:45+09:00",
+      "수집시각": "2026-08-22T15:57:14+09:00",
+      "가격수집시각": "2026-08-22T15:57:14+09:00",
       "가격출처": "Yahoo Finance Chart API",
       "가격종류": "KRX 종가",
       "실시간가종가애프터마켓": "KRX 종가",
@@ -248,8 +248,8 @@
         "가격": 1316000.0,
         "가격기준일": "2026-08-21",
         "가격기준시각": "09:00:00",
-        "수집시각": "2026-08-22T15:52:45+09:00",
-        "가격수집시각": "2026-08-22T15:52:45+09:00",
+        "수집시각": "2026-08-22T15:57:14+09:00",
+        "가격수집시각": "2026-08-22T15:57:14+09:00",
         "가격출처": "Yahoo Finance Chart API",
         "가격종류": "KRX 종가",
         "실시간가종가애프터마켓": "KRX 종가",
@@ -788,7 +788,7 @@
         "MA20": 1419.707007,
         "현재값대비MA20": -2.522139,
         "최종관측시각UTC": "2026-08-22T03:30:33+00:00",
-        "데이터지연시간": 3.37,
+        "데이터지연시간": 3.445,
         "데이터개수": 68
       },
       "S&P500": {
@@ -807,7 +807,7 @@
         "MA20": 7644.426001,
         "현재값대비MA20": 0.391712,
         "최종관측시각UTC": "2026-08-21T13:30:00+00:00",
-        "데이터지연시간": 17.379,
+        "데이터지연시간": 17.454,
         "데이터개수": 63
       },
       "나스닥": {
@@ -826,7 +826,7 @@
         "MA20": 26066.704395,
         "현재값대비MA20": 0.436406,
         "최종관측시각UTC": "2026-08-21T13:30:00+00:00",
-        "데이터지연시간": 17.379,
+        "데이터지연시간": 17.454,
         "데이터개수": 63
       },
       "반도체지수": {
@@ -845,7 +845,7 @@
         "MA20": 11846.646484,
         "현재값대비MA20": -0.897101,
         "최종관측시각UTC": "2026-08-21T13:30:00+00:00",
-        "데이터지연시간": 17.379,
+        "데이터지연시간": 17.454,
         "데이터개수": 63
       },
       "VIX": {
@@ -864,7 +864,7 @@
         "MA20": 16.0035,
         "현재값대비MA20": -5.45818,
         "최종관측시각UTC": "2026-08-21T07:00:00+00:00",
-        "데이터지연시간": 23.879,
+        "데이터지연시간": 23.954,
         "데이터개수": 65
       },
       "미국10년물": {
@@ -883,7 +883,7 @@
         "MA20": 4.6727,
         "현재값대비MA20": 1.397478,
         "최종관측시각UTC": "2026-08-21T12:20:00+00:00",
-        "데이터지연시간": 18.546,
+        "데이터지연시간": 18.621,
         "데이터개수": 64
       },
       "미국5년물": {
@@ -902,7 +902,7 @@
         "MA20": 4.375,
         "현재값대비MA20": 1.119994,
         "최종관측시각UTC": "2026-08-21T12:20:00+00:00",
-        "데이터지연시간": 18.546,
+        "데이터지연시간": 18.621,
         "데이터개수": 64
       },
       "미국13주": {
@@ -921,7 +921,7 @@
         "MA20": 3.71235,
         "현재값대비MA20": -0.063301,
         "최종관측시각UTC": "2026-08-21T12:20:00+00:00",
-        "데이터지연시간": 18.546,
+        "데이터지연시간": 18.621,
         "데이터개수": 64
       }
     },
@@ -1028,7 +1028,7 @@
       "설명": "국내주식 기준으로 원달러·미국 주가지수·반도체지수·VIX·미국 금리의 방향을 -100~100 신호로 합성했습니다."
     },
     "수집오류": [],
-    "수집시각": "2026-08-22T15:52:45.907347+09:00",
+    "수집시각": "2026-08-22T15:57:15.045958+09:00",
     "데이터출처": "Yahoo Finance Chart API"
   },
   "기업기초데이터": {
@@ -1426,7 +1426,7 @@
       },
       "데이터출처": "금융감독원 OpenDART"
     },
-    "수집시각": "2026-08-22T15:53:39.776966+09:00",
+    "수집시각": "2026-08-22T15:57:15.873623+09:00",
     "데이터출처": "금융감독원 OpenDART"
   },
   "산업분석": {
@@ -1494,7 +1494,7 @@
     "사용규칙": "기존 산업전망 current/future 값을 이 파일로 대체하되, 개별종목 주가방향에는 bounded_direction_adjustment_points만 보조 입력으로 사용합니다.",
     "출처": "https://raw.githubusercontent.com/12xx37r-ui/KOREA_INDUSTRY_ENVIRONMENT_ENGINE/main/output/stock_prediction_bridge.json",
     "캐시모드": "http_304_cache",
-    "소스나이시간": 0.39,
+    "소스나이시간": 0.46,
     "HTTP호출수": 1,
     "오류": "environment usable; stock-direction overlay awaiting upstream OOS validation"
   },
@@ -4374,7 +4374,7 @@
         "발행시각UTC": "2026-08-21T11:01:00+00:00",
         "경과일": 0.83,
         "원점수": 16.0,
-        "최종점수": 15.71,
+        "최종점수": 15.7,
         "매칭규칙": [
           "실적"
         ]
@@ -4426,7 +4426,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE1nOGp1b2tackNUejNId29yRExMWjdvalJZOWZHUEVPZDhTZVNCR0cxZThCREktTEhaZlRuTTd4WXUzOUhndXhFZkwwTVVTVkpKeEY2Si1ITk53XzZFN2V2SjhRMzNkUQ?oc=5",
         "언론사": "디일렉",
         "발행시각UTC": "2026-07-03T07:00:00+00:00",
-        "경과일": 49.99,
+        "경과일": 50.0,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4436,7 +4436,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFB6bkZ5UmNKMVUtN0xnNWFyVDNUc2Q2Y2FxcVdONloxVUFYNkZXMlVZVlQ4SDR5dU5pbHlFci1scmhvQU5vejFqbXRLdldiZEdfRVZiLW02SDMwZw?oc=5",
         "언론사": "한국경제",
         "발행시각UTC": "2026-08-06T07:00:00+00:00",
-        "경과일": 15.99,
+        "경과일": 16.0,
         "원점수": -8.0,
         "최종점수": -5.16,
         "매칭규칙": [
@@ -4448,7 +4448,7 @@
         "링크": "https://news.google.com/rss/articles/CBMic0FVX3lxTE84OWllclM3TUVkRTNDUXBfWHdWRDQ4Mml1RmhZazZYeFIyZmdVNnJaTnJ2dDlTRDZic1ZLYURQSFhmTFZNWTBXR0M0OWNFZkVXUzJVakxPZllzRW5ISElmTF9uMlhOdFJ6cm5UM1VpWGdMMEk?oc=5",
         "언론사": "비즈니스포스트",
         "발행시각UTC": "2026-08-18T08:57:44+00:00",
-        "경과일": 3.91,
+        "경과일": 3.92,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4458,7 +4458,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5zeGwzMFRPVDRwd2FjUkd2UmFCUTBuTVpKOFBCRUdkTjJjYzFobkNLdXY4N0RFTEtiOTNrdWR6Nmo0WlZMV2tJV3lmNHZwMnM?oc=5",
         "언론사": "v.daum.net",
         "발행시각UTC": "2026-08-18T07:03:36+00:00",
-        "경과일": 3.99,
+        "경과일": 4.0,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4478,7 +4478,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxObGVhV3pseEhnQlBidWtKQVRiSTNTbTRuMFRSMldqZ0pWQkpERnZtcmFHbGFQcFE3NGRaRHlMeTVZM1FOcmFDa1lzalVVWEszQ3BJRWdGdURLTWYzTjg5ZXZUNTBkY3JTLUI1c1I5SFd5eDl1NWlJZGFhRUtjeEVGekNxWjF6cmI20gGcAUFVX3lxTE9ScHEzMnNpWkd5TE15Z2g2WWZ5bmNxR2pVTWdmb3dQU1pCNXlvQzhNZ1poU3hGVUozU0xBS3BSeEFXREthYXIxYzlGZUZiUnE0bXFLaU05THdPY3o5QjBkb3FPOUNSUUMtMHQyaW1sWWRiM2ZxYlIyM3o0Rm9fc0JEOE9FWVh1OVR5RmVvenlkMG14RlFhaHkyNldjcQ?oc=5",
         "언론사": "Chosunbiz",
         "발행시각UTC": "2026-08-11T07:00:00+00:00",
-        "경과일": 10.99,
+        "경과일": 11.0,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4488,7 +4488,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE9ybGpyLTQ4Ylc0aXg2a0xGZWlRdDJjTFk2TzFXY0twRzhHOUtTU1BJNE5nOEt6d1BMajNqWjY1Vk9DU2l2emZ6VE1OcExvLVFLMWw1WQ?oc=5",
         "언론사": "매일경제",
         "발행시각UTC": "2026-08-21T02:30:02+00:00",
-        "경과일": 1.18,
+        "경과일": 1.19,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4498,7 +4498,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE9GMWV1Z1hpd3lGWlRSQXdMZXF0bGZtWndfYWhOT2FNMll0T1kwdFRxRXZPTmROMWhfZW1JTmsxYVFKVmtDQnN0VHdNUFNWLTdNUTRYVV9keDBfRTMzeE9uU2tXWUZ0UQ?oc=5",
         "언론사": "디일렉",
         "발행시각UTC": "2026-07-30T07:00:00+00:00",
-        "경과일": 22.99,
+        "경과일": 23.0,
         "원점수": 16.0,
         "최종점수": 7.82,
         "매칭규칙": [
@@ -4510,7 +4510,7 @@
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9HSWIzYjF2OXdNSDN5WVd6Mm1GSnFSbDRGQVczTzlIUzBScWZuRDBtbVdLMTdLc29Lb0FJWjBsYkFqNnpNRVJkM3U0N1BUMHMwWXJkamp3bkhRd1BKN3RvQWQzeUYwc0tjMFc3SWh3QVM?oc=5",
         "언론사": "연합인포맥스",
         "발행시각UTC": "2026-07-31T07:00:00+00:00",
-        "경과일": 21.99,
+        "경과일": 22.0,
         "원점수": -8.0,
         "최종점수": -4.09,
         "매칭규칙": [
@@ -4522,7 +4522,7 @@
         "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTE1NcVh2MUtFcVR3Q2YwVHgzZ0Jyd3g5WmxabW1tN3NVajJNOXNxOEFhbmR2dTRGVFhya3N6NGxlWWFFTHZpNW80eTB5M2FtSHVxZG5jTDR3STNwVzVsRGI1b25wTldZcENTbWdKStIBckFVX3lxTE4xYjRicFNZZmdka1FCM2JMM08wUU9lSGVlbDNGSTBCWDl3a1BFNUI1VVUtaFJlejJlVlhiMXJ4ZkJEbFdPRkVScThhc2JHMEczZUtsT1VHOTFSUVZtbU5ZWko2TDlMOW9UT0FuSnRNOHVIQQ?oc=5",
         "언론사": "머니투데이",
         "발행시각UTC": "2026-07-26T07:00:00+00:00",
-        "경과일": 26.99,
+        "경과일": 27.0,
         "원점수": 16.0,
         "최종점수": 6.4,
         "매칭규칙": [
@@ -4546,7 +4546,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNZGNoVUFxc3kzTjgwVkZ6RkJFRnZKVC0tWklUd0ViVVNmYzNKdkFLbzdjeVhuOE1HT0RWRTlLZkNpOTR1d2FUcTcyYlJpWUdIRS1WekF2UmJSTkg1UjVqWHUxVWlabWdsSXg2Zk1tUnZWQ3lNc0JpV0djSWdYNWI4VUw1Tl9meHFf0gGcAUFVX3lxTE53SklJbWR4QXRzSFY0STA2eTg1YWJiMHF1VEZvT2tNRHRWbXg0LXQtaUc4RElPaGM0VWxHYnpad1VBZm00aENiOXkyb1Zac05GZmk0TFNfemV0Q0piOWNqSUpzZzM4bHluOGNUeHlvSDQ2WW9qRnd0U0Z1cWx0N2U4RkJmWmJocjBiVTBPU1VBX3lZTHk5WUVWSlU3UQ?oc=5",
         "언론사": "Chosunbiz",
         "발행시각UTC": "2026-07-31T07:00:00+00:00",
-        "경과일": 21.99,
+        "경과일": 22.0,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4556,7 +4556,7 @@
         "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9DQVFYVjAzVnY3bEc1VVZjWllMNmFfbk5mTXY4TU9mc3RkX3hkNk5VSFJ1eUxUVUxoQUpZSmIyakxMTm12S1dsdG1ORmdyNjM5TWpqMnFNT2tMdHVzelVndmVfbmF4TUd3a250N3g4VXY?oc=5",
         "언론사": "연합인포맥스",
         "발행시각UTC": "2026-07-30T07:00:00+00:00",
-        "경과일": 22.99,
+        "경과일": 23.0,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4566,7 +4566,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFB2OFNfZnpZbEhTZTN5Qkt1VWl0a3dnWjBGNUVpQlp0T1EyMnhmWElMNGhPcUVqNGRuZkxON2szU0tzRjVqYy1fZ3FLUDZDZEEzRU10NTdzQ1pmaWvSAWBBVV95cUxOcmoyTFdORmtfU0lTMnoxbV9nQVh3anFkWWJGOFhmSTFVLUpWRm9ZcUlTR2JGdXpyQlJnMWN3eEE0ZTdyUUxBdU9qSkIxcGhsdklJdkNIYWMtM1pvTG02Z2c?oc=5",
         "언론사": "연합뉴스",
         "발행시각UTC": "2026-07-31T07:00:00+00:00",
-        "경과일": 21.99,
+        "경과일": 22.0,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4576,9 +4576,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFAwV3c0WGYtUEw3YWU1bWQ3OHZwM3pxaFkzUlNCMWxvQThtdDdJOF9IaGpFa3FlQUNwRGsxWVVKT3VvSU5Cb0c1S0tWTjdxamlURWNrVnhJODBDcFHSAWBBVV95cUxPVUdsM3RQekFFa3NTQ2IxSHQtQkdtZ3dNdzRyVmd1SlVuTmpxa19haGl4eE1LTTg3cVcxUzFFSWRsTlI4REhQMXpkbDgzTWJjUkRBLXZFN2Z1QTZwVTdReUg?oc=5",
         "언론사": "연합뉴스",
         "발행시각UTC": "2026-07-30T07:00:00+00:00",
-        "경과일": 22.99,
+        "경과일": 23.0,
         "원점수": 35.0,
-        "최종점수": 17.12,
+        "최종점수": 17.11,
         "매칭규칙": [
           "실적",
           "최대 실적"
@@ -4589,7 +4589,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE8zbUFsdXRIaUE4dTR4QzdUY0ZJcDdsWDJkWW1Bd0lOdFdUbkxNN20zc0dLLW5qUk1mRVc2RU9IM09yZnhHTFNhUDVqOTR3dXpaU3E2Zy1ZTFFkVm1BMV9wX3JQWW9Tdw?oc=5",
         "언론사": "디일렉",
         "발행시각UTC": "2026-08-19T10:09:51+00:00",
-        "경과일": 2.86,
+        "경과일": 2.87,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4599,7 +4599,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBaYWNLSXNlcW9BazM0dzZoMjllUVV4aFFfdUd6YUN0ZW5TdHR1T1RQeUVpc1Y5d2dfM19iYkJRNkI3MnRsdVBJUlppeWlQclR2c3hTY1BzTHJCTWVwVXQ3M0FoYzRqNENu?oc=5",
         "언론사": "CEO스코어데일리",
         "발행시각UTC": "2026-07-21T07:00:00+00:00",
-        "경과일": 31.99,
+        "경과일": 32.0,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4609,7 +4609,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE9VR1hES3Rkc1RiV0c0OWphNEVCNkZneElpX2NzSUFQRnp1VWMtdTVmcHBjSUwxYnlrbFh4X1d4bGJuRTRGQmJ1VWswbWVYTmVMOVQ5Q1JLT0FMTmxFeldKNUdnSHVsRFk?oc=5",
         "언론사": "CEO스코어데일리",
         "발행시각UTC": "2026-08-19T08:56:44+00:00",
-        "경과일": 2.91,
+        "경과일": 2.92,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4629,7 +4629,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE1UUWIycnVhZzlJLWMySzc4eVBlR3JEbjlJcTB6cWM3alNxOGZWQ0FsTlFJSHFsYkFBQ0xkSy1XbUdrY3dHR3ZneDZWWFhvTUZqUGc?oc=5",
         "언론사": "서울경제",
         "발행시각UTC": "2026-07-14T07:00:00+00:00",
-        "경과일": 38.99,
+        "경과일": 39.0,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4639,7 +4639,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE03SFRpNk1KTXA1dEVWRTZXVmpPV2dweGtLeGF1S3k0a3NVcDBaSDRYVWpQdVdDUDJXTFF6VmNidFEtVWRQZUV1WkZpS0lSdFZSdFE?oc=5",
         "언론사": "매일경제 마켓",
         "발행시각UTC": "2026-08-05T07:00:00+00:00",
-        "경과일": 16.99,
+        "경과일": 17.0,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4649,7 +4649,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE9HN2Z6ZWRRbHRfM01CQVZfN3U0ckVUWDZNREFyZFBEUU5mUTVtMFI4ZGxScmliSHotTU9YSExaNExyeUZoYmM3M2R0N3dDdzg?oc=5",
         "언론사": "v.daum.net",
         "발행시각UTC": "2026-07-31T07:00:00+00:00",
-        "경과일": 21.99,
+        "경과일": 22.0,
         "원점수": 0.0,
         "최종점수": 0.0,
         "매칭규칙": []
@@ -4659,7 +4659,7 @@
         "링크": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTFBFOThzOEd2cEdFTERfRXZ6ZVdxVFBFa1RkbklNRnZyOFQ3RUhxSVdwR0EtSFZETE9JSExMQXBBa2ptUk1EeVJjX25wcDJXVTVhNDI3d3NJcEZQcDl1X051UXR3WFhYa2c?oc=5",
         "언론사": "세종의소리",
         "발행시각UTC": "2026-06-29T07:00:00+00:00",
-        "경과일": 53.99,
+        "경과일": 54.0,
         "원점수": 10.0,
         "최종점수": 3.5,
         "매칭규칙": [
@@ -4671,9 +4671,9 @@
         "링크": "https://news.google.com/rss/articles/CBMiggFBVV95cUxQX1hMNGRPeHctQjNhR1RocUs3YlJTTVI5N1FzR1dCSTdmc1BQVnVhLWtWay10UldsYkh2R25CMl9BX1hfc0hKNVkza0g3T1NpZ3l3NDNUempGOERSMjFpU3dBTGczdGZfdFdpZExoTlRZZUFxYl9GQ21wVkh1ZXg4N0lB0gGWAUFVX3lxTE5faHhDQW5kWEZ0WkM0YkpHSlFYR3dOWU9UU3BCVWJ6ajZhaGxaQ2dGOVFUNGM4X0FZRmZ5SFhhR0RyMEpMM04yZG5Ea3dQYmlQMTBPUlMzLU1pNlI2YnF2ODhSa3RTNXJpWTFTMWpOVlhFeFVJb2g5d01XeFNkTmRZOS1oeW1JS0l4djJqbkdjbHhLZ2d6dw?oc=5",
         "언론사": "Chosunbiz",
         "발행시각UTC": "2026-07-30T07:00:00+00:00",
-        "경과일": 22.99,
+        "경과일": 23.0,
         "원점수": 15.0,
-        "최종점수": 7.34,
+        "최종점수": 7.33,
         "매칭규칙": [
           "공급계약"
         ]
@@ -4691,7 +4691,7 @@
     ],
     "분석": {
       "분석상태": "정상",
-      "신호": 16.98,
+      "신호": 16.97,
       "데이터품질": 88.0,
       "판정": "긍정",
       "긍정뉴스개수": 7,
@@ -4705,7 +4705,7 @@
           "발행시각UTC": "2026-08-21T11:01:00+00:00",
           "경과일": 0.83,
           "원점수": 16.0,
-          "최종점수": 15.71,
+          "최종점수": 15.7,
           "매칭규칙": [
             "실적"
           ]
@@ -4715,7 +4715,7 @@
           "링크": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE9GMWV1Z1hpd3lGWlRSQXdMZXF0bGZtWndfYWhOT2FNMll0T1kwdFRxRXZPTmROMWhfZW1JTmsxYVFKVmtDQnN0VHdNUFNWLTdNUTRYVV9keDBfRTMzeE9uU2tXWUZ0UQ?oc=5",
           "언론사": "디일렉",
           "발행시각UTC": "2026-07-30T07:00:00+00:00",
-          "경과일": 22.99,
+          "경과일": 23.0,
           "원점수": 16.0,
           "최종점수": 7.82,
           "매칭규칙": [
@@ -4727,7 +4727,7 @@
           "링크": "https://news.google.com/rss/articles/CBMibEFVX3lxTE1NcVh2MUtFcVR3Q2YwVHgzZ0Jyd3g5WmxabW1tN3NVajJNOXNxOEFhbmR2dTRGVFhya3N6NGxlWWFFTHZpNW80eTB5M2FtSHVxZG5jTDR3STNwVzVsRGI1b25wTldZcENTbWdKStIBckFVX3lxTE4xYjRicFNZZmdka1FCM2JMM08wUU9lSGVlbDNGSTBCWDl3a1BFNUI1VVUtaFJlejJlVlhiMXJ4ZkJEbFdPRkVScThhc2JHMEczZUtsT1VHOTFSUVZtbU5ZWko2TDlMOW9UT0FuSnRNOHVIQQ?oc=5",
           "언론사": "머니투데이",
           "발행시각UTC": "2026-07-26T07:00:00+00:00",
-          "경과일": 26.99,
+          "경과일": 27.0,
           "원점수": 16.0,
           "최종점수": 6.4,
           "매칭규칙": [
@@ -4751,9 +4751,9 @@
           "링크": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFAwV3c0WGYtUEw3YWU1bWQ3OHZwM3pxaFkzUlNCMWxvQThtdDdJOF9IaGpFa3FlQUNwRGsxWVVKT3VvSU5Cb0c1S0tWTjdxamlURWNrVnhJODBDcFHSAWBBVV95cUxPVUdsM3RQekFFa3NTQ2IxSHQtQkdtZ3dNdzRyVmd1SlVuTmpxa19haGl4eE1LTTg3cVcxUzFFSWRsTlI4REhQMXpkbDgzTWJjUkRBLXZFN2Z1QTZwVTdReUg?oc=5",
           "언론사": "연합뉴스",
           "발행시각UTC": "2026-07-30T07:00:00+00:00",
-          "경과일": 22.99,
+          "경과일": 23.0,
           "원점수": 35.0,
-          "최종점수": 17.12,
+          "최종점수": 17.11,
           "매칭규칙": [
             "실적",
             "최대 실적"
@@ -4778,7 +4778,7 @@
           "링크": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFB6bkZ5UmNKMVUtN0xnNWFyVDNUc2Q2Y2FxcVdONloxVUFYNkZXMlVZVlQ4SDR5dU5pbHlFci1scmhvQU5vejFqbXRLdldiZEdfRVZiLW02SDMwZw?oc=5",
           "언론사": "한국경제",
           "발행시각UTC": "2026-08-06T07:00:00+00:00",
-          "경과일": 15.99,
+          "경과일": 16.0,
           "원점수": -8.0,
           "최종점수": -5.16,
           "매칭규칙": [
@@ -4790,7 +4790,7 @@
           "링크": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9HSWIzYjF2OXdNSDN5WVd6Mm1GSnFSbDRGQVczTzlIUzBScWZuRDBtbVdLMTdLc29Lb0FJWjBsYkFqNnpNRVJkM3U0N1BUMHMwWXJkamp3bkhRd1BKN3RvQWQzeUYwc0tjMFc3SWh3QVM?oc=5",
           "언론사": "연합인포맥스",
           "발행시각UTC": "2026-07-31T07:00:00+00:00",
-          "경과일": 21.99,
+          "경과일": 22.0,
           "원점수": -8.0,
           "최종점수": -4.09,
           "매칭규칙": [
@@ -4801,7 +4801,7 @@
       "설명": "최근 뉴스 제목의 실적·수주·투자·증자·소송 등 규칙과 시간가중치를 합성합니다."
     },
     "데이터출처": "Google News RSS",
-    "수집시각UTC": "2026-08-22T06:52:46.021397+00:00"
+    "수집시각UTC": "2026-08-22T06:57:15.216885+00:00"
   },
   "가치평가": {
     "가치평가계약버전": "4.0",
@@ -5162,61 +5162,74 @@
     },
     "확인된선행재무가치": 71309.99,
     "선행재무반영후기초가치": 256997.18,
-    "미래가치인정률": 40.0,
-    "미래가치인정산업근거출처": "기존산업사이클",
+    "미래가치인정률": 63.74,
+    "미래가치인정산업근거출처": "산업환경현재향후",
     "미래가치인정산업근거": {
-      "점수": 2.27,
-      "품질": 0.0,
-      "사용가능": false
+      "점수": 47.49,
+      "품질": 57.0,
+      "사용가능": true
     },
     "미래가치자격": {
-      "등급": "제한 대상",
-      "점수": 40.32,
-      "최대인정률": 0.4,
+      "등급": "정상 대상",
+      "점수": 58.83,
+      "최대인정률": 0.8,
       "사용가능": true,
-      "산업환경검증": false,
+      "산업환경검증": true,
       "사이클감점": 0.0,
       "구성점수": {
-        "산업향후": 0.0,
-        "기업산업수혜도": 62.29,
-        "기업성장증거": 70.97,
+        "산업향후": 47.49,
+        "기업산업수혜도": 64.12,
+        "기업성장증거": 81.13,
         "미반영성장": 39.43,
-        "데이터품질": 92.78
+        "데이터품질": 80.85
       },
       "근거": [
-        "미래가치 자격 제한 대상",
-        "산업향후 0.0·수혜도 62.3·기업성장 71.0·미반영 39.4",
-        "산업환경 3개월 품질 미달 → 기존 산업사이클로 대체하고 고성장 승격 금지"
+        "미래가치 자격 정상 대상",
+        "산업향후 47.5·수혜도 64.1·기업성장 81.1·미반영 39.4"
       ]
     },
     "산업환경기회": {
-      "점수": 0.0,
-      "품질": 0.0,
-      "사용가능": false,
-      "기회배수": 1.0,
-      "국면": "미검증",
-      "근거": [
-        "검증 가능한 산업환경 현재·향후값 부족"
-      ],
+      "점수": 47.49,
+      "품질": 57.0,
+      "사용가능": true,
+      "기회배수": 0.9925,
+      "국면": "중립",
+      "근거": [],
       "입력": {
-        "현재점수": null,
-        "3개월점수": null,
-        "변화점수": 0.0
+        "현재점수": 49.5,
+        "3개월점수": 47.6,
+        "변화점수": -1.9,
+        "개선폭점수": 45.25
       }
     },
     "실적가속품질": {
-      "점수": 50.0,
-      "품질": 0.0,
-      "사용가능": false,
-      "지속가능성배수": 0.9,
+      "점수": 100.0,
+      "품질": 100.0,
+      "사용가능": true,
+      "지속가능성배수": 1.05,
       "기저효과위험": false,
       "이익단독급등": false,
-      "연속성점수": 0.0,
-      "비교분기수": 0,
+      "연속성점수": 100.0,
+      "비교분기수": 2,
       "근거": [
-        "단독분기 이력 부족 → 기존 성장증거만 사용"
+        "전년동기 매출 성장 동반",
+        "전년동기 영업이익 가속",
+        "직전분기 대비 매출·영업이익 동반 개선",
+        "영업이익률 전년동기 대비 개선",
+        "최근 비교분기 성장 지속성 확인"
       ],
-      "입력": {}
+      "입력": {
+        "최신기간키": 8106,
+        "매출YoY": 24.15,
+        "영업이익YoY": 106.74,
+        "순이익YoY": 139.22,
+        "매출QoQ": 7.73,
+        "영업이익QoQ": 56.95,
+        "순이익QoQ": 29.92,
+        "영업이익률": 12.74,
+        "영업이익률YoY변화": 5.09,
+        "영업이익률QoQ변화": 3.99
+      }
     },
     "미반영성장": {
       "미반영성장비율": 0.3943,
@@ -5238,31 +5251,31 @@
     "사이클지속가능성": {
       "지속가능성배수": 1.0,
       "근거": [
-        "특별한 사이클 감쇠 신호 없음"
+        "매출·마진 동반 및 연속 성장으로 지속가능성 보강"
       ],
       "입력": {
         "분기런레이트대정상화배수": 1.927,
-        "실적가속지속가능성": 0.9
+        "실적가속지속가능성": 1.05
       }
     },
-    "산업기회배수": 1.0,
+    "산업기회배수": 0.9925,
     "미반영성장비율": 39.43,
     "사이클지속가능성배수": 1.0,
     "거시조정배수": 1.0,
-    "상한적용전미래증분가치": 33314.54,
+    "상한적용전미래증분가치": 52689.42,
     "미래증분상한정책버전": "1.0.0",
     "미래증분상한비율": 100.0,
     "미래증분상한금액": 185687.19,
     "미래증분상한적용": false,
-    "미실현미래성장가치": 33314.54,
-    "미래증분가치": 104624.53,
-    "전략펀더멘털적정가": 290311.72,
-    "미래성장가치표시": "미래성장가치 반영 낮음",
-    "미래성장가치표시문구": "미래성장가치 반영 낮음 · +33,315원",
+    "미실현미래성장가치": 52689.42,
+    "미래증분가치": 123999.41,
+    "전략펀더멘털적정가": 309686.6,
+    "미래성장가치표시": "미래성장가치 반영 보통",
+    "미래성장가치표시문구": "미래성장가치 반영 보통 · +52,689원",
     "근거신뢰도": 62.0,
     "근거축": {
       "기업실적가속": {
-        "점수": 70.97,
+        "점수": 81.13,
         "품질": 85.55,
         "사용가능": true,
         "근거": [
@@ -5279,7 +5292,7 @@
           "구조적실적가속": false,
           "실적전환강도": 105.33,
           "향후이익대용신호": 77.01,
-          "실적가속품질점수": 50.0
+          "실적가속품질점수": 100.0
         }
       },
       "기존산업사이클": {
@@ -5298,42 +5311,40 @@
         }
       },
       "산업환경현재향후": {
-        "점수": 0.0,
-        "품질": 0.0,
-        "사용가능": false,
-        "기회배수": 1.0,
-        "국면": "미검증",
-        "근거": [
-          "검증 가능한 산업환경 현재·향후값 부족"
-        ],
+        "점수": 47.49,
+        "품질": 57.0,
+        "사용가능": true,
+        "기회배수": 0.9925,
+        "국면": "중립",
+        "근거": [],
         "입력": {
-          "현재점수": null,
-          "3개월점수": null,
-          "변화점수": 0.0
+          "현재점수": 49.5,
+          "3개월점수": 47.6,
+          "변화점수": -1.9,
+          "개선폭점수": 45.25
         }
       },
       "미래가치기업분류": {
-        "등급": "제한 대상",
-        "점수": 40.32,
-        "최대인정률": 0.4,
+        "등급": "정상 대상",
+        "점수": 58.83,
+        "최대인정률": 0.8,
         "사용가능": true,
-        "산업환경검증": false,
+        "산업환경검증": true,
         "사이클감점": 0.0,
         "구성점수": {
-          "산업향후": 0.0,
-          "기업산업수혜도": 62.29,
-          "기업성장증거": 70.97,
+          "산업향후": 47.49,
+          "기업산업수혜도": 64.12,
+          "기업성장증거": 81.13,
           "미반영성장": 39.43,
-          "데이터품질": 92.78
+          "데이터품질": 80.85
         },
         "근거": [
-          "미래가치 자격 제한 대상",
-          "산업향후 0.0·수혜도 62.3·기업성장 71.0·미반영 39.4",
-          "산업환경 3개월 품질 미달 → 기존 산업사이클로 대체하고 고성장 승격 금지"
+          "미래가치 자격 정상 대상",
+          "산업향후 47.5·수혜도 64.1·기업성장 81.1·미반영 39.4"
         ]
       },
       "기업산업수혜도": {
-        "점수": 62.29,
+        "점수": 64.12,
         "사용가능": true,
         "검증방식": "대용지표",
         "근거": [
@@ -5371,11 +5382,11 @@
       "사이클지속가능성": {
         "지속가능성배수": 1.0,
         "근거": [
-          "특별한 사이클 감쇠 신호 없음"
+          "매출·마진 동반 및 연속 성장으로 지속가능성 보강"
         ],
         "입력": {
           "분기런레이트대정상화배수": 1.927,
-          "실적가속지속가능성": 0.9
+          "실적가속지속가능성": 1.05
         }
       },
       "시장기대_애널리스트": {
@@ -5419,15 +5430,12 @@
       "외부 FY1 EPS 컨센서스가 내부 전망보다 상향",
       "다수 추정기관의 실적 컨센서스 확보",
       "애널리스트 투자의견 기대 강함",
-      "검증 가능한 산업환경 현재·향후값 부족",
-      "미래가치 자격 제한 대상",
-      "산업향후 0.0·수혜도 62.3·기업성장 71.0·미반영 39.4",
-      "산업환경 3개월 품질 미달 → 기존 산업사이클로 대체하고 고성장 승격 금지",
+      "미래가치 자격 정상 대상",
+      "산업향후 47.5·수혜도 64.1·기업성장 81.1·미반영 39.4",
       "FY1에 이미 반영된 성장과 FY3·FY4까지 남은 성장을 분리",
       "일반 미반영성장 하한 15%",
-      "특별한 사이클 감쇠 신호 없음",
+      "매출·마진 동반 및 연속 성장으로 지속가능성 보강",
       "거시 통합판정 품질게이트 미통과 → 가치조정 미적용",
-      "컨센서스는 있으나 산업근거 부족 → 미래가치 최대 40% 인정",
       "기본 미래증분 상한 = 현재 재무기초가치의 100%"
     ],
     "정책": {
@@ -5460,13 +5468,13 @@
     "현재가미사용": true,
     "목표주가직접가치미사용": true,
     "캐시": "disk",
-    "캐시나이초": 68446.4
+    "캐시나이초": 68662.1
   },
   "전략거시원천": {
     "수집상태": "정상",
     "출처": "disk_cache",
     "캐시": "disk",
-    "캐시나이초": 13492.6,
+    "캐시나이초": 13708.3,
     "오류": ""
   },
   "주가예측": {
@@ -5522,12 +5530,12 @@
         {
           "요소": "뉴스·공시",
           "가중치": 10,
-          "신호": 22.41,
+          "신호": 22.4,
           "신호판정": "긍정",
           "데이터품질": 78.1,
           "점수기여": 2.24,
           "출처": "OpenDART 최근 공시 + Google News RSS",
-          "설명": "분석상태 정상, 신호 22.41"
+          "설명": "분석상태 정상, 신호 22.40"
         }
       ],
       "미수집요소": [
@@ -5600,12 +5608,12 @@
         {
           "요소": "뉴스·공시",
           "가중치": 10,
-          "신호": 22.41,
+          "신호": 22.4,
           "신호판정": "긍정",
           "데이터품질": 78.1,
           "점수기여": 2.24,
           "출처": "OpenDART 최근 공시 + Google News RSS",
-          "설명": "분석상태 정상, 신호 22.41"
+          "설명": "분석상태 정상, 신호 22.40"
         }
       ],
       "미수집요소": [
@@ -5750,7 +5758,7 @@
     "스키마버전": "2.0",
     "엔진버전": "6.8.0-valuation-contract-v4",
     "종목코드": "009150",
-    "생성시각": "2026-08-22T06:53:40.251591",
+    "생성시각": "2026-08-22T06:57:15.923542",
     "연결상태": "부분",
     "기술분석": {
       "수집상태": "정상",
@@ -7633,14 +7641,14 @@
             "요소": "뉴스·공시",
             "사용가능": true,
             "가중치": 10.0,
-            "신호": 22.41,
+            "신호": 22.4,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
             "데이터품질": 78.1,
             "점수기여": 2.24,
             "출처": "OpenDART 최근 공시 + Google News RSS",
-            "설명": "분석상태 정상, 신호 22.41"
+            "설명": "분석상태 정상, 신호 22.40"
           }
         ],
         "미수집요소": [
@@ -7727,14 +7735,14 @@
             "요소": "뉴스·공시",
             "사용가능": true,
             "가중치": 10.0,
-            "신호": 22.41,
+            "신호": 22.4,
             "판정": "긍정",
             "신호판정": "긍정",
             "데이터상태": "정상",
             "데이터품질": 78.1,
             "점수기여": 2.24,
             "출처": "OpenDART 최근 공시 + Google News RSS",
-            "설명": "분석상태 정상, 신호 22.41"
+            "설명": "분석상태 정상, 신호 22.40"
           }
         ],
         "미수집요소": [
@@ -7863,7 +7871,7 @@
       },
       "뉴스": {
         "사용가능": true,
-        "점수": 16.98,
+        "점수": 16.97,
         "데이터품질": 88.0,
         "판정": "긍정",
         "출처": "Google News RSS"
@@ -7916,7 +7924,7 @@
       "사용규칙": "기존 산업전망 current/future 값을 이 파일로 대체하되, 개별종목 주가방향에는 bounded_direction_adjustment_points만 보조 입력으로 사용합니다.",
       "출처": "https://raw.githubusercontent.com/12xx37r-ui/KOREA_INDUSTRY_ENVIRONMENT_ENGINE/main/output/stock_prediction_bridge.json",
       "캐시모드": "http_304_cache",
-      "소스나이시간": 0.39,
+      "소스나이시간": 0.46,
       "HTTP호출수": 1,
       "오류": "environment usable; stock-direction overlay awaiting upstream OOS validation"
     },
