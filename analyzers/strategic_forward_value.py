@@ -19,7 +19,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 
-ENGINE_VERSION = "0.4.0-strategic-forward-recognition-gate"
+ENGINE_VERSION = "0.5.0-industry-eligibility-unrealized-growth-gate"
 
 
 def safe_float(value: Any, default: float = 0.0) -> float:
@@ -258,6 +258,236 @@ def industry_growth_axis(
             "대상기업자체행제외": self_removed,
             "제외행수": max(mid_removed_count, long_removed_count),
         },
+    }
+
+
+
+
+def industry_environment_opportunity_axis(environment: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    """산업환경 엔진의 현재/3개월/개선폭을 미래가치 *자격*에 사용한다.
+
+    이 축은 독립적으로 새 가치를 만들지 않는다. 이미 가격독립적으로 계산된
+    ``원시미래증분가치``의 인정 자격과 실현 가능성만 제한적으로 조정한다.
+    """
+    env = environment or {}
+    usable = env.get("사용가능") is True or env.get("모형사용가능") is True
+    current = safe_float(env.get("현재점수"), -1.0)
+    future = safe_float(env.get("3개월점수"), -1.0)
+    delta = safe_float(env.get("변화점수"), future - current if current >= 0 and future >= 0 else 0.0)
+    quality = _bounded_quality(env.get("품질점수"), 0.0)
+
+    if not usable or current < 0 or future < 0 or quality < 55.0:
+        return {
+            "점수": 0.0, "품질": round(quality, 2), "사용가능": False,
+            "기회배수": 1.0, "국면": "미검증",
+            "근거": ["검증 가능한 산업환경 현재·향후값 부족"],
+            "입력": {"현재점수": None if current < 0 else current, "3개월점수": None if future < 0 else future, "변화점수": delta},
+        }
+
+    # 개선폭은 -20p 이하=0, 0p=50, +20p 이상=100으로 매핑한다.
+    improvement = clamp(50.0 + delta * 2.5, 0.0, 100.0)
+    score = clamp(current * 0.25 + future * 0.50 + improvement * 0.25, 0.0, 100.0)
+
+    if current >= 70.0 and future >= 70.0 and delta >= 3.0:
+        regime = "활황·추가개선"
+    elif future >= 65.0 and delta >= 8.0:
+        regime = "개선가속"
+    elif current >= 70.0 and delta <= -6.0:
+        regime = "활황·둔화"
+    elif future >= 60.0:
+        regime = "우호"
+    elif future < 45.0 and delta <= 0.0:
+        regime = "약세"
+    else:
+        regime = "중립"
+
+    # 산업환경은 미래가치를 생성하지 않고 최대 ±15%의 기회배수만 제공한다.
+    opportunity_modifier = clamp(0.85 + score / 100.0 * 0.30, 0.85, 1.15)
+    if regime == "활황·둔화":
+        opportunity_modifier = min(opportunity_modifier, 1.00)
+    elif regime == "약세":
+        opportunity_modifier = min(opportunity_modifier, 0.90)
+
+    reasons: List[str] = []
+    if regime in {"활황·추가개선", "개선가속"}:
+        reasons.append("산업환경 현재·향후값이 우호적이고 개선폭도 양호")
+    elif regime == "활황·둔화":
+        reasons.append("현재 산업은 활황이나 향후 둔화 신호")
+    elif regime == "약세":
+        reasons.append("산업환경 약세로 미래가치 확대 제한")
+
+    return {
+        "점수": round(score, 2),
+        "품질": round(quality, 2),
+        "사용가능": True,
+        "기회배수": round(opportunity_modifier, 4),
+        "국면": regime,
+        "근거": reasons,
+        "입력": {
+            "현재점수": round(current, 2),
+            "3개월점수": round(future, 2),
+            "변화점수": round(delta, 2),
+            "개선폭점수": round(improvement, 2),
+        },
+    }
+
+
+def unrealized_growth_axis(valuation: Dict[str, Any], expectation: Dict[str, Any]) -> Dict[str, Any]:
+    """FY3/FY4 성장 중 FY1·현재 이익에 아직 반영되지 않은 비율을 추정한다.
+
+    미래성장모형의 총 성장 자체를 다시 평가하는 것이 아니라, 이미 현재 재무기초가치와
+    FY1에 들어온 성장을 제거해 경제적 이중계산을 줄이는 장치다.
+    """
+    future_model = valuation.get("미래성장모형", {}) if isinstance(valuation.get("미래성장모형"), dict) else {}
+    adaptive = valuation.get("적응형가치모형", {}) if isinstance(valuation.get("적응형가치모형"), dict) else {}
+    current_eps = safe_float(adaptive.get("현재EPS앵커"))
+    if current_eps <= 0:
+        current_eps = safe_float(valuation.get("TTM_EPS"))
+    internal_fy1 = safe_float(valuation.get("FY1예상EPS"))
+    inp = expectation.get("입력", {}) if isinstance(expectation.get("입력"), dict) else {}
+    external_fy1 = safe_float(inp.get("외부FY1EPS")) if expectation.get("사용가능") else 0.0
+    # 외부 컨센서스가 있으면 과도한 단일 추정치를 피하기 위해 내부값과 중간값을 사용한다.
+    if external_fy1 > 0 and internal_fy1 > 0:
+        fy1_eps = (external_fy1 + internal_fy1) / 2.0
+    else:
+        fy1_eps = external_fy1 if external_fy1 > 0 else internal_fy1
+    fy3_eps = safe_float(future_model.get("FY3EPS"))
+    fy4_eps = safe_float(future_model.get("FY4EPS"))
+
+    def remaining(target: float) -> Optional[float]:
+        if current_eps <= 0 or target <= current_eps:
+            return None
+        if fy1_eps <= 0:
+            return 0.55
+        already = clamp((fy1_eps - current_eps) / (target - current_eps), 0.0, 1.0)
+        return clamp(1.0 - already, 0.15, 1.0)
+
+    r3 = remaining(fy3_eps)
+    r4 = remaining(fy4_eps)
+    values = [(r3, 0.60), (r4, 0.40)]
+    usable_values = [(v, w) for v, w in values if v is not None]
+    if not usable_values:
+        factor = 0.50
+        usable = False
+        reason = "현재/FY1/FY3·FY4 EPS 연결고리 부족 → 미반영성장 50% 보수 가정"
+    else:
+        denom = sum(w for _, w in usable_values)
+        factor = sum(v * w for v, w in usable_values) / denom
+        usable = True
+        reason = "FY1에 이미 반영된 성장과 FY3·FY4까지 남은 성장을 분리"
+
+    return {
+        "미반영성장비율": round(clamp(factor, 0.15, 1.0), 4),
+        "사용가능": usable,
+        "근거": [reason],
+        "입력": {
+            "현재EPS앵커": round(current_eps, 4),
+            "FY1EPS앵커": round(fy1_eps, 4),
+            "FY3EPS": round(fy3_eps, 4),
+            "FY4EPS": round(fy4_eps, 4),
+        },
+    }
+
+
+def cycle_sustainability_axis(valuation: Dict[str, Any], industry_env_axis: Dict[str, Any]) -> Dict[str, Any]:
+    """사이클 고점 이익의 영구화를 막는 연속형 지속가능성 계수."""
+    future_model = valuation.get("미래성장모형", {}) if isinstance(valuation.get("미래성장모형"), dict) else {}
+    adaptive = valuation.get("적응형가치모형", {}) if isinstance(valuation.get("적응형가치모형"), dict) else {}
+    limited_reasons = [str(x) for x in (future_model.get("제한사유") or []) if str(x)]
+    run_rate_ratio = safe_float(adaptive.get("분기런레이트대정상화배수"), 1.0)
+    factor = 1.0
+    reasons: List[str] = []
+
+    if any("사이클 고점 이익 영구화 위험" in x for x in limited_reasons):
+        factor *= 0.70
+        reasons.append("사이클 고점 이익 영구화 위험 감쇠")
+    if run_rate_ratio >= 6.0:
+        factor *= 0.60
+        reasons.append("분기 런레이트가 정상화 이익의 6배 이상")
+    elif run_rate_ratio >= 3.0:
+        factor *= 0.72
+        reasons.append("분기 런레이트가 정상화 이익의 3배 이상")
+    elif run_rate_ratio >= 2.0:
+        factor *= 0.85
+        reasons.append("분기 런레이트가 정상화 이익을 크게 상회")
+
+    if industry_env_axis.get("사용가능") is True:
+        delta = safe_float(_analysis_dict(industry_env_axis, "입력").get("변화점수"))
+        current = safe_float(_analysis_dict(industry_env_axis, "입력").get("현재점수"))
+        if current >= 70.0 and delta <= -6.0:
+            factor *= 0.85
+            reasons.append("산업 활황 이후 향후 둔화 예상")
+
+    return {
+        "지속가능성배수": round(clamp(factor, 0.30, 1.0), 4),
+        "근거": reasons or ["특별한 사이클 감쇠 신호 없음"],
+        "입력": {"분기런레이트대정상화배수": round(run_rate_ratio, 4)},
+    }
+
+
+def future_value_eligibility_axis(
+    *,
+    valuation: Dict[str, Any],
+    company: Dict[str, Any],
+    industry: Dict[str, Any],
+    industry_env: Dict[str, Any],
+    expectation: Dict[str, Any],
+) -> Dict[str, Any]:
+    """미래가치를 줄 기업인지 먼저 분류하는 자격 게이트.
+
+    시장점유율/사업부 매출비중 데이터가 없으므로 '선도기업'을 임의 판정하지 않는다.
+    대신 미래성장모형 대상업종 여부와 기업 실적·컨센서스를 수혜 적합도의 검증 대용치로 쓴다.
+    """
+    future_model = valuation.get("미래성장모형", {}) if isinstance(valuation.get("미래성장모형"), dict) else {}
+    target = future_model.get("대상업종") is True and future_model.get("사용가능") is True
+    c = safe_float(company.get("점수")) if company.get("사용가능") else 0.0
+    i = safe_float(industry.get("점수")) if industry.get("사용가능") else 0.0
+    e = safe_float(expectation.get("점수")) if expectation.get("사용가능") else 0.0
+    env = safe_float(industry_env.get("점수")) if industry_env.get("사용가능") else 0.0
+    fmq = _bounded_quality(future_model.get("품질"), 0.0)
+
+    if not target:
+        return {
+            "등급": "비대상", "점수": 0.0, "최대인정률": 0.05, "사용가능": False,
+            "근거": ["검증된 미래성장모형 대상기업이 아님"],
+        }
+
+    env_available = industry_env.get("사용가능") is True
+    score = (env * 0.40 if env_available else i * 0.25) + c * 0.25 + i * 0.10 + e * 0.15 + fmq * 0.10
+    if not env_available:
+        score = min(score, 62.0)
+
+    env_input = _analysis_dict(industry_env, "입력")
+    env_future = safe_float(env_input.get("3개월점수"), -1.0)
+    env_delta = safe_float(env_input.get("변화점수"), 0.0)
+
+    # 산업 약세/둔화와 기업 성장증거 부족이 겹치면 뜬금없는 미래가치 부여를 차단한다.
+    if env_available and env_future < 45.0 and env_delta <= 0.0 and c < 45.0:
+        grade, cap = "비대상", 0.08
+    elif score >= 75.0 and env_available and c >= 50.0:
+        grade, cap = "고성장 대상", 1.00
+    elif score >= 58.0:
+        grade, cap = "정상 대상", 0.75
+    elif score >= 38.0:
+        grade, cap = "제한 대상", 0.40
+    else:
+        grade, cap = "비대상", 0.10
+
+    reasons = [f"미래가치 자격 {grade}"]
+    if env_available:
+        reasons.extend(industry_env.get("근거", []))
+    else:
+        reasons.append("산업환경 엔진 미검증 → 고성장 등급 승격 금지")
+    if c < 25.0:
+        reasons.append("기업 자체 성장증거 약함")
+
+    return {
+        "등급": grade,
+        "점수": round(clamp(score, 0.0, 100.0), 2),
+        "최대인정률": round(cap, 4),
+        "사용가능": grade != "비대상",
+        "산업환경검증": env_available,
+        "근거": list(dict.fromkeys(reasons)),
     }
 
 
@@ -781,6 +1011,7 @@ def build_strategic_forward_value(
     financial: Optional[Dict[str, Any]] = None,
     fundamentals_analysis: Optional[Dict[str, Any]] = None,
     industry_analysis: Optional[Dict[str, Any]] = None,
+    industry_environment: Optional[Dict[str, Any]] = None,
     global_macro_context: Optional[Dict[str, Any]] = None,
     segment_data: Optional[Dict[str, Any]] = None,
     external_consensus: Optional[Dict[str, Any]] = None,
@@ -791,6 +1022,7 @@ def build_strategic_forward_value(
     financial = financial or {}
     fundamentals_analysis = fundamentals_analysis or {}
     industry_analysis = industry_analysis or {}
+    industry_environment = industry_environment or {}
 
     adaptive = valuation.get("적응형가치모형", {}) if isinstance(valuation.get("적응형가치모형"), dict) else {}
     current_only_base, current_only_source, current_only_available, double_count_reasons = _select_current_only_base(valuation)
@@ -817,6 +1049,7 @@ def build_strategic_forward_value(
         fundamentals_analysis, valuation=valuation, external_consensus=external_consensus
     )
     macro = macro_axis(global_macro_context)
+    industry_env = industry_environment_opportunity_axis(industry_environment)
 
     # 기존 미래성장모형은 가격독립적인 FY3/FY4 총가치 후보로 활용한다.
     future_model = (
@@ -824,6 +1057,12 @@ def build_strategic_forward_value(
         if isinstance(valuation.get("미래성장모형"), dict)
         else {}
     )
+    eligibility = future_value_eligibility_axis(
+        valuation=valuation, company=company, industry=industry,
+        industry_env=industry_env, expectation=expectation,
+    )
+    unrealized = unrealized_growth_axis(valuation, expectation)
+    sustainability = cycle_sustainability_axis(valuation, industry_env)
     future_total = (
         safe_float(future_model.get("가치"))
         if future_model.get("사용가능") is True
@@ -894,10 +1133,22 @@ def build_strategic_forward_value(
         else 0.0
     )
     evidence_factor, cap_reasons = _evidence_recognition_factor(company, industry, expectation)
+    eligibility_cap = safe_float(eligibility.get("최대인정률"), 0.10)
+    evidence_factor = min(evidence_factor, eligibility_cap)
+    industry_opportunity_modifier = safe_float(industry_env.get("기회배수"), 1.0)
+    unrealized_factor = safe_float(unrealized.get("미반영성장비율"), 0.50)
+    sustainability_factor = safe_float(sustainability.get("지속가능성배수"), 1.0)
     macro_modifier = safe_float(macro.get("조정배수"), 1.0)
-    uncapped_recognized_increment = raw_increment * evidence_factor * macro_modifier
+    uncapped_recognized_increment = (
+        raw_increment
+        * evidence_factor
+        * industry_opportunity_modifier
+        * unrealized_factor
+        * sustainability_factor
+        * macro_modifier
+    )
 
-    # 거시가 우호적이어도 raw increment 이상으로 증폭시키지 않는다.
+    # 어떤 보정도 원시 미래증분 자체를 넘어 새 가치를 만들 수 없다.
     uncapped_recognized_increment = min(uncapped_recognized_increment, raw_increment)
 
     increment_cap_ratio, increment_cap_reasons = _future_increment_cap_ratio(
@@ -935,6 +1186,10 @@ def build_strategic_forward_value(
     reasons.extend(company.get("근거", []))
     reasons.extend(industry.get("근거", []))
     reasons.extend(expectation.get("근거", []))
+    reasons.extend(industry_env.get("근거", []))
+    reasons.extend(eligibility.get("근거", []))
+    reasons.extend(unrealized.get("근거", []))
+    reasons.extend(sustainability.get("근거", []))
     reasons.extend(macro.get("근거", []))
     reasons.extend(cap_reasons)
     reasons.extend(increment_cap_reasons)
@@ -956,6 +1211,13 @@ def build_strategic_forward_value(
         "컨센서스미래가치보정": consensus_future_adjustment,
         "원시미래증분가치": round(raw_increment, 2),
         "미래가치인정률": round(evidence_factor * 100.0, 2),
+        "미래가치자격": eligibility,
+        "산업환경기회": industry_env,
+        "미반영성장": unrealized,
+        "사이클지속가능성": sustainability,
+        "산업기회배수": round(industry_opportunity_modifier, 4),
+        "미반영성장비율": round(unrealized_factor * 100.0, 2),
+        "사이클지속가능성배수": round(sustainability_factor, 4),
         "거시조정배수": round(macro_modifier, 4),
         "상한적용전미래증분가치": round(uncapped_recognized_increment, 2),
         "미래증분상한정책버전": FUTURE_INCREMENT_CAP_POLICY_VERSION,
@@ -972,7 +1234,11 @@ def build_strategic_forward_value(
         "근거신뢰도": round(evidence_quality, 2),
         "근거축": {
             "기업실적가속": company,
-            "산업현재미래": industry,
+            "기존산업사이클": industry,
+            "산업환경현재향후": industry_env,
+            "미래가치기업분류": eligibility,
+            "미반영성장": unrealized,
+            "사이클지속가능성": sustainability,
             "시장기대_애널리스트": expectation,
             "글로벌거시": macro,
         },
@@ -986,6 +1252,9 @@ def build_strategic_forward_value(
             "거시환경": "품질게이트 통과시에만 0.80~1.10 범위의 실현확률 조정; 새 가치를 만들지 않음",
             "SOTP": "verified/audited 원천·기준일·통화·2개 이상 사업부 EV·희석주식수·순부채 원천이 모두 확인될 때만 진짜 SOTP 사용",
             "미래이중계산": "현재-only 기초가치가 없으면 기존 혼합 재무적정가에 미래증분을 추가하지 않음",
+            "미래가치자격": "산업환경 현재·향후·개선폭과 기업 성장증거로 비대상/제한/정상/고성장 대상을 먼저 분류",
+            "미반영성장": "FY1에 이미 반영된 성장은 제외하고 FY3·FY4까지 남은 성장만 증분가치로 인정",
+            "사이클지속성": "사이클 고점·과도한 분기 런레이트는 연속형 지속가능성 배수로 감쇠",
             "미래증분상한": "현재가·목표주가와 무관하게 현재 재무기초가치 대비 미래증분 상한을 적용; 제한사용 70%, 사이클 고점 위험 65%, 구조적 가속 강증거 정상사용만 최대 120%",
         },
     }
