@@ -18,8 +18,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
+from analyzers.valuation import build_standalone_quarters
 
-ENGINE_VERSION = "0.6.0-three-layer-future-value-gate"
+
+ENGINE_VERSION = "0.7.0-quarterly-acceleration-quality-gate"
 
 
 def safe_float(value: Any, default: float = 0.0) -> float:
@@ -55,9 +57,118 @@ def _analysis_dict(container: Dict[str, Any], key: str) -> Dict[str, Any]:
     return value if isinstance(value, dict) else {}
 
 
+
+def _safe_growth_rate(current: float, previous: float, *, base_floor: float = 0.0) -> Optional[float]:
+    current = safe_float(current)
+    previous = safe_float(previous)
+    if previous == 0 or abs(previous) <= max(0.0, base_floor):
+        return None
+    return (current / previous - 1.0) * 100.0
+
+
+def earnings_acceleration_quality_axis(
+    fundamentals_bundle: Dict[str, Any],
+    valuation: Dict[str, Any],
+) -> Dict[str, Any]:
+    """직전분기/전년동기 급등이 구조적 가속인지 기저효과인지 판별한다."""
+    periods_block = fundamentals_bundle.get("재무기간", {}) if isinstance(fundamentals_bundle, dict) else {}
+    periods = periods_block.get("기간목록", []) if isinstance(periods_block, dict) else []
+    if not isinstance(periods, list) or not periods:
+        return {"점수":50.0,"품질":0.0,"사용가능":False,"지속가능성배수":0.90,
+                "기저효과위험":False,"이익단독급등":False,"연속성점수":0.0,"비교분기수":0,
+                "근거":["단독분기 이력 부족 → 기존 성장증거만 사용"],"입력":{}}
+    try:
+        quarters=[q for q in build_standalone_quarters(periods) if q.get("단독분기변환") is True]
+    except Exception:
+        quarters=[]
+    if len(quarters)<2:
+        return {"점수":50.0,"품질":20.0,"사용가능":False,"지속가능성배수":0.90,
+                "기저효과위험":False,"이익단독급등":False,"연속성점수":0.0,"비교분기수":0,
+                "근거":["비교 가능한 단독분기 2개 미만"],"입력":{}}
+
+    by_key={int(q.get("기간키",0)):q for q in quarters if int(q.get("기간키",0))>0}
+    latest=quarters[0]; latest_key=int(latest.get("기간키",0))
+    previous=by_key.get(latest_key-1); year_ago=by_key.get(latest_key-4)
+    def metrics(row):
+        return row.get("지표",{}) if isinstance(row,dict) and isinstance(row.get("지표"),dict) else {}
+    lm,pm,ym=metrics(latest),metrics(previous),metrics(year_ago)
+    rev,op,net=(safe_float(lm.get(k)) for k in ("매출","영업이익","순이익"))
+    prev_rev,prev_op,prev_net=(safe_float(pm.get(k)) for k in ("매출","영업이익","순이익"))
+    yoy_rev0,yoy_op0,yoy_net0=(safe_float(ym.get(k)) for k in ("매출","영업이익","순이익"))
+
+    qoq_rev=_safe_growth_rate(rev,prev_rev) if previous else None
+    qoq_op=_safe_growth_rate(op,prev_op,base_floor=abs(prev_rev)*0.003) if previous else None
+    qoq_net=_safe_growth_rate(net,prev_net,base_floor=abs(prev_rev)*0.003) if previous else None
+    yoy_rev=_safe_growth_rate(rev,yoy_rev0) if year_ago else None
+    yoy_op=_safe_growth_rate(op,yoy_op0,base_floor=abs(yoy_rev0)*0.003) if year_ago else None
+    yoy_net=_safe_growth_rate(net,yoy_net0,base_floor=abs(yoy_rev0)*0.003) if year_ago else None
+
+    op_margin=(op/rev*100.0) if rev>0 else None
+    prev_margin=(prev_op/prev_rev*100.0) if previous and prev_rev>0 else None
+    yoy_margin=(yoy_op0/yoy_rev0*100.0) if year_ago and yoy_rev0>0 else None
+    margin_qoq=(op_margin-prev_margin) if op_margin is not None and prev_margin is not None else None
+    margin_yoy=(op_margin-yoy_margin) if op_margin is not None and yoy_margin is not None else None
+
+    base_effect=bool(year_ago and yoy_rev0>0 and abs(yoy_op0)/yoy_rev0<0.025 and yoy_op is not None and yoy_op>=100.0)
+    profit_only=bool(yoy_op is not None and yoy_op>=60.0 and yoy_rev is not None and yoy_rev<5.0 and (margin_yoy is None or margin_yoy>=2.0))
+
+    comparable=[]
+    for q in quarters[:4]:
+        k=int(q.get("기간키",0)); older=by_key.get(k-4)
+        if not older: continue
+        a,b=metrics(q),metrics(older)
+        ar,ao=safe_float(a.get("매출")),safe_float(a.get("영업이익"))
+        br,bo=safe_float(b.get("매출")),safe_float(b.get("영업이익"))
+        gr=_safe_growth_rate(ar,br); go=_safe_growth_rate(ao,bo,base_floor=abs(br)*0.003)
+        if gr is not None and go is not None: comparable.append((gr,go))
+    continuity=(sum(1 for gr,go in comparable if gr>0 and go>0)/len(comparable)*100.0) if comparable else 0.0
+
+    score=50.0
+    if yoy_rev is not None: score += clamp(yoy_rev,-20,30)*0.45
+    if yoy_op is not None: score += clamp(yoy_op,-50,100)*0.16
+    if qoq_rev is not None: score += clamp(qoq_rev,-20,20)*0.20
+    if qoq_op is not None: score += clamp(qoq_op,-40,60)*0.10
+    if margin_yoy is not None: score += clamp(margin_yoy,-5,8)*2.0
+    if margin_qoq is not None: score += clamp(margin_qoq,-4,5)*1.0
+    if comparable: score += (continuity-50.0)*0.20
+    if base_effect: score -= 18.0
+    if profit_only: score -= 12.0
+    score=clamp(score,0.0,100.0)
+
+    quality=clamp(35.0+min(len(quarters),6)*7.5+(15.0 if year_ago else 0.0)+(5.0 if previous else 0.0),0.0,100.0)
+    sustain=1.0
+    if base_effect: sustain*=0.78
+    if profit_only: sustain*=0.82
+    if comparable and continuity<50.0: sustain*=0.88
+    if yoy_rev is not None and yoy_op is not None and yoy_rev>=10 and yoy_op>=25 and (margin_yoy or 0)>=0:
+        sustain=min(1.05,sustain*1.05)
+    sustain=clamp(sustain,0.55,1.05)
+
+    reasons=[]
+    if yoy_rev is not None and yoy_rev>=10: reasons.append("전년동기 매출 성장 동반")
+    if yoy_op is not None and yoy_op>=30: reasons.append("전년동기 영업이익 가속")
+    if qoq_rev is not None and qoq_rev>0 and qoq_op is not None and qoq_op>0: reasons.append("직전분기 대비 매출·영업이익 동반 개선")
+    if margin_yoy is not None and margin_yoy>=1.0: reasons.append("영업이익률 전년동기 대비 개선")
+    if comparable and continuity>=66.0: reasons.append("최근 비교분기 성장 지속성 확인")
+    if base_effect: reasons.append("낮은 전년 이익기저로 YoY 과대확대 가능성 감쇠")
+    if profit_only: reasons.append("매출 동반 없는 이익 급등 감쇠")
+    if not reasons: reasons.append("최근 실적가속은 중립 수준")
+    return {"점수":round(score,2),"품질":round(quality,2),"사용가능":quality>=55.0,
+            "지속가능성배수":round(sustain,4),"기저효과위험":base_effect,"이익단독급등":profit_only,
+            "연속성점수":round(continuity,2),"비교분기수":len(comparable),"근거":reasons,
+            "입력":{"최신기간키":latest_key,
+                    "매출YoY":None if yoy_rev is None else round(yoy_rev,2),"영업이익YoY":None if yoy_op is None else round(yoy_op,2),
+                    "순이익YoY":None if yoy_net is None else round(yoy_net,2),"매출QoQ":None if qoq_rev is None else round(qoq_rev,2),
+                    "영업이익QoQ":None if qoq_op is None else round(qoq_op,2),"순이익QoQ":None if qoq_net is None else round(qoq_net,2),
+                    "영업이익률":None if op_margin is None else round(op_margin,2),
+                    "영업이익률YoY변화":None if margin_yoy is None else round(margin_yoy,2),
+                    "영업이익률QoQ변화":None if margin_qoq is None else round(margin_qoq,2)}}
+
+
 def company_growth_axis(
     valuation: Dict[str, Any],
     fundamentals_analysis: Dict[str, Any],
+    acceleration_quality: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """실제 실적/재무자료에서 확인되는 성장 가속도.
 
@@ -84,6 +195,10 @@ def company_growth_axis(
     score += _positive_score(transition, 120.0) * 0.07
     score += _positive_score(forward_signal, 80.0) * 0.05
     score = clamp(score, 0.0, 100.0)
+    acceleration_quality = acceleration_quality or {}
+    if acceleration_quality.get("사용가능") is True:
+        acceleration_score = clamp(safe_float(acceleration_quality.get("점수"), 50.0), 0.0, 100.0)
+        score = clamp(score * 0.65 + acceleration_score * 0.35, 0.0, 100.0)
 
     ttm_quality = _bounded_quality(valuation.get("TTM데이터품질"), 0.0)
     data_confidence = _bounded_quality(valuation.get("데이터신뢰도"), 0.0)
@@ -114,6 +229,7 @@ def company_growth_axis(
             "구조적실적가속": structural,
             "실적전환강도": transition,
             "향후이익대용신호": forward_signal,
+            "실적가속품질점수": safe_float((acceleration_quality or {}).get("점수"), 0.0),
         },
     }
 
@@ -389,7 +505,7 @@ def unrealized_growth_axis(valuation: Dict[str, Any], expectation: Dict[str, Any
     }
 
 
-def cycle_sustainability_axis(valuation: Dict[str, Any], industry_env_axis: Dict[str, Any]) -> Dict[str, Any]:
+def cycle_sustainability_axis(valuation: Dict[str, Any], industry_env_axis: Dict[str, Any], acceleration_quality: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """사이클 고점 이익의 영구화를 막는 연속형 지속가능성 계수."""
     future_model = valuation.get("미래성장모형", {}) if isinstance(valuation.get("미래성장모형"), dict) else {}
     adaptive = valuation.get("적응형가치모형", {}) if isinstance(valuation.get("적응형가치모형"), dict) else {}
@@ -418,10 +534,20 @@ def cycle_sustainability_axis(valuation: Dict[str, Any], industry_env_axis: Dict
             factor *= 0.85
             reasons.append("산업 활황 이후 향후 둔화 예상")
 
+    acceleration_quality = acceleration_quality or {}
+    if acceleration_quality.get("사용가능") is True:
+        accel_sustain = clamp(safe_float(acceleration_quality.get("지속가능성배수"), 1.0), 0.55, 1.05)
+        factor *= accel_sustain
+        if accel_sustain < 0.95:
+            reasons.append("최근 실적급등의 기저효과·단발성 위험 감쇠")
+        elif accel_sustain > 1.0:
+            reasons.append("매출·마진 동반 및 연속 성장으로 지속가능성 보강")
+
     return {
         "지속가능성배수": round(clamp(factor, 0.30, 1.0), 4),
         "근거": reasons or ["특별한 사이클 감쇠 신호 없음"],
-        "입력": {"분기런레이트대정상화배수": round(run_rate_ratio, 4)},
+        "입력": {"분기런레이트대정상화배수": round(run_rate_ratio, 4),
+                 "실적가속지속가능성": round(safe_float(acceleration_quality.get("지속가능성배수"), 1.0),4)},
     }
 
 
@@ -539,7 +665,11 @@ def future_value_eligibility_axis(
 
     score = industry_future*0.35 + benefit_score*0.25 + company_score*0.20 + unrealized_score*0.15 + quality_score*0.05 - cycle_penalty
     score=clamp(score,0.0,100.0)
-    if score>=75 and env_available and benefit_score>=55 and company_score>=50:
+    # 미반영 성장률 하나만 높아서 약한 산업/약한 기업이 통과하지 못하게 최소자격을 둔다.
+    weak_core = (industry_future < 45.0 and company_score < 20.0) or (benefit_score < 40.0 and company_score < 20.0)
+    if weak_core:
+        grade,cap="비대상",0.10
+    elif score>=75 and env_available and benefit_score>=55 and company_score>=50:
         grade,cap="고성장 대상",1.20
     elif score>=58:
         grade,cap="정상 대상",0.80
@@ -1075,6 +1205,7 @@ def build_strategic_forward_value(
     valuation: Dict[str, Any],
     financial: Optional[Dict[str, Any]] = None,
     fundamentals_analysis: Optional[Dict[str, Any]] = None,
+    fundamentals_bundle: Optional[Dict[str, Any]] = None,
     industry_analysis: Optional[Dict[str, Any]] = None,
     industry_environment: Optional[Dict[str, Any]] = None,
     global_macro_context: Optional[Dict[str, Any]] = None,
@@ -1086,6 +1217,7 @@ def build_strategic_forward_value(
     """전략적 미래가치 Shadow 결과를 생성한다."""
     financial = financial or {}
     fundamentals_analysis = fundamentals_analysis or {}
+    fundamentals_bundle = fundamentals_bundle or {}
     industry_analysis = industry_analysis or {}
     industry_environment = industry_environment or {}
 
@@ -1108,7 +1240,8 @@ def build_strategic_forward_value(
         current_only_available = True
         double_count_reasons = ["검증된 SOTP 현재가치와 미래증분을 분리"]
 
-    company = company_growth_axis(valuation, fundamentals_analysis)
+    acceleration_quality = earnings_acceleration_quality_axis(fundamentals_bundle, valuation)
+    company = company_growth_axis(valuation, fundamentals_analysis, acceleration_quality)
     industry = industry_growth_axis(
         industry_analysis, stock_code=stock_code, company_name=company_name
     )
@@ -1125,7 +1258,7 @@ def build_strategic_forward_value(
         else {}
     )
     unrealized = unrealized_growth_axis(valuation, expectation)
-    sustainability = cycle_sustainability_axis(valuation, industry_env)
+    sustainability = cycle_sustainability_axis(valuation, industry_env, acceleration_quality)
     beneficiary = company_industry_benefit_axis(valuation, company, industry, expectation)
     eligibility = future_value_eligibility_axis(
         valuation=valuation, company=company, industry=industry,
@@ -1281,6 +1414,7 @@ def build_strategic_forward_value(
         "미래가치인정률": round(evidence_factor * 100.0, 2),
         "미래가치자격": eligibility,
         "산업환경기회": industry_env,
+        "실적가속품질": acceleration_quality,
         "미반영성장": unrealized,
         "사이클지속가능성": sustainability,
         "산업기회배수": round(industry_opportunity_modifier, 4),

@@ -73,7 +73,7 @@ def main() -> int:
         print("- Strategic Forward 필드 없음 · GitHub 저장소 루트 코드가 구버전일 가능성")
         return 1
     strategic_version = str(strategic.get("엔진버전") or "")
-    if strategic_version != "0.6.0-three-layer-future-value-gate":
+    if strategic_version != "0.7.0-quarterly-acceleration-quality-gate":
         print("PUBLISHED FEED VALIDATION: FAIL")
         print("- Strategic Forward 버전 불일치:", strategic_version or "미표기")
         return 1
