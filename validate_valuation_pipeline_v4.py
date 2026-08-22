@@ -1,6 +1,8 @@
 """가치평가 계약 v4 데이터 자격·전자부품·잠정실적 회귀검증."""
 from __future__ import annotations
 
+from datetime import datetime
+
 from analyzers.valuation import calculate_value
 from collectors.company import classify_dart_industry_detail
 from collectors.fundamentals import parse_stock_total_rows
@@ -57,7 +59,7 @@ def build_bundle(provisional):
     }
 
 
-def calculate(bundle, price=1_142_000):
+def calculate(bundle, price=1_142_000, valuation_as_of=datetime(2026, 8, 13)):
     company = {
         "기업명": "삼성전기",
         "종목코드": "009150",
@@ -92,6 +94,7 @@ def calculate(bundle, price=1_142_000):
         industry_analysis,
         {"산업코드": "electronic_components"},
         company,
+        valuation_as_of=valuation_as_of,
     )
 
 
