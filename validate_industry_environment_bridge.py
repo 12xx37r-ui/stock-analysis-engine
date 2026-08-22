@@ -58,8 +58,8 @@ def payload(generated_at=None, quality=73.7, allowed=True, adjustment=0.33):
 
 
 class FakeResponse:
-    def __init__(self, data):
-        self.status_code = 200
+    def __init__(self, data, status_code=200):
+        self.status_code = status_code
         self._data = data
         self.headers = {"ETag": '"test"'}
 
@@ -68,6 +68,11 @@ class FakeResponse:
 
     def json(self):
         return self._data
+
+
+class Fake304(FakeResponse):
+    def __init__(self):
+        super().__init__({}, status_code=304)
 
 
 def assert_true(condition, message):
@@ -124,15 +129,26 @@ def main():
             assert_true(pending_overlay.get("모형사용가능") is False, "unvalidated stock-direction overlay incorrectly enabled")
             os.environ.pop("INDUSTRY_ENV_BRIDGE_LOCAL_FILE", None)
 
-            # Simulate the next sequential subprocess in weekly_sampler: memory is
-            # empty, but the prior process already wrote the disk cache. It must
-            # reuse that cache without a second GitHub request.
+            # Simulate the next company-engine process: memory is empty, but the
+            # previous process wrote a disk cache. It MUST conditionally revalidate
+            # once so a just-published industry bridge cannot be hidden for hours.
             bridge.reset_runtime_cache_for_tests()
-            with patch("collectors.industry_environment.requests.get") as disk_network:
+            with patch("collectors.industry_environment.requests.get", return_value=Fake304()) as disk_network:
                 disk_reuse = bridge.get_industry_environment("semiconductor")
-            assert_true(disk_reuse.get("사용가능") is True, "disk cache reuse failed")
-            assert_true(disk_reuse.get("캐시모드") == "disk_cache", "disk cache mode not reported")
-            assert_true(disk_network.call_count == 0, "fresh disk cache triggered duplicate network call")
+            assert_true(disk_reuse.get("사용가능") is True, "disk cache revalidation failed")
+            assert_true(disk_reuse.get("캐시모드") == "http_304_cache", "conditional 304 cache mode not reported")
+            assert_true(disk_network.call_count == 1, "disk cache was reused without upstream revalidation")
+
+            # If upstream has a newer bridge, it must replace the disk payload
+            # immediately even when the local disk TTL has not expired.
+            newer = payload(quality=57.0)
+            newer["generated_at_utc"] = datetime.now(timezone.utc).isoformat()
+            bridge.reset_runtime_cache_for_tests()
+            with patch("collectors.industry_environment.requests.get", return_value=FakeResponse(newer)) as refresh_network:
+                refreshed = bridge.get_industry_environment("semiconductor")
+            assert_true(refreshed.get("품질점수") == 57.0, "new upstream bridge did not replace fresh disk cache")
+            assert_true(refreshed.get("캐시모드") == "network_refresh", "new upstream bridge refresh mode missing")
+            assert_true(refresh_network.call_count == 1, "new upstream bridge was not checked")
 
             bundle, analysis = bridge.build_environment_replacement("semiconductor", first)
             assert_true(bundle.get("전체수집상태") == "정상", "replacement bundle failed")
@@ -197,7 +213,7 @@ def main():
     print("- fresh schema/freshness/quality gate: PASS")
     print("- pharmaceutical -> biotechnology compatibility: PASS")
     print("- one HTTP request + memory reuse contract: PASS")
-    print("- fresh disk cache reuse across sequential-process simulation: PASS")
+    print("- disk cache conditional revalidation across processes: PASS")
     print("- ambiguous profile no-call guard: PASS")
     print("- 3M bridge kept out of primary mid/long axes: PASS")
     print("- bounded auxiliary overlay only: PASS")

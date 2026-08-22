@@ -3,7 +3,9 @@
 Design goals
 - Reuse one published ``stock_prediction_bridge.json`` instead of recollecting
   the same industry market inputs per stock.
-- Memory cache first, then disk TTL cache, then at most one HTTP request.
+- Memory cache first. Across processes, disk cache is conditionally revalidated
+  against the published bridge before reuse so a just-finished industry-engine run
+  is visible immediately to the next company run.
 - No retry loop. On failure, only a fresh last-known-good cache may be reused.
 - Reject stale/malformed/low-quality bridge data rather than inventing neutral
   values.
@@ -227,8 +229,10 @@ def _load_local_file(path_text: str) -> Dict[str, Any]:
 def get_industry_environment_bridge() -> Dict[str, Any]:
     """Load the published bridge with at most one network call per process.
 
-    A fresh disk cache also prevents duplicate calls across sequential subprocesses
-    in the weekly sampler workflow.
+    Memory reuse prevents duplicate calls inside one process. A disk cache is not
+    trusted solely because its TTL is fresh: every new process performs one cheap
+    conditional GET (ETag/Last-Modified) so a newly published industry-engine bridge
+    replaces stale disk data immediately.
     """
     global _NETWORK_CALLS
 
@@ -260,25 +264,17 @@ def get_industry_environment_bridge() -> Dict[str, Any]:
     disk = _read_json(CACHE_FILE)
     disk_payload = _cache_payload(disk)
     disk_age = _cache_age(disk, now)
-    if disk_payload and disk_age <= CACHE_TTL_SECONDS:
-        valid, shape_error = _validate_payload_shape(disk_payload)
-        fresh, source_age, stale_error = _payload_fresh_enough(disk_payload) if valid else (False, None, shape_error)
-        if valid and fresh:
-            _MEMORY.update({"at": now, "payload": disk_payload, "source": "disk_cache", "mode": "disk_cache"})
-            return _payload_result(
-                "정상",
-                "disk_cache",
-                "disk_cache",
-                disk_payload,
-                캐시나이초=round(disk_age, 1),
-                소스나이시간=round((source_age or 0.0) / 3600.0, 2),
-            )
 
+    # IMPORTANT: do not return a fresh disk cache here. The industry engine may
+    # have published a newer stock_prediction_bridge.json seconds after this
+    # cache was written. Each new company-engine process therefore revalidates
+    # the disk copy once against GitHub using ETag/Last-Modified. If unchanged,
+    # GitHub returns 304 and the cached payload is reused cheaply.
     url = os.getenv("INDUSTRY_ENV_BRIDGE_URL", DEFAULT_BRIDGE_URL).strip()
     if not url:
         return _payload_result("미사용", "disabled", "disabled", {}, 오류="bridge URL disabled")
 
-    headers = {"User-Agent": "StockAnalysisIndustryBridge/1.0"}
+    headers = {"User-Agent": "StockAnalysisIndustryBridge/1.1", "Cache-Control": "no-cache"}
     if isinstance(disk, dict):
         etag = str(disk.get("etag") or "").strip()
         last_modified = str(disk.get("last_modified") or "").strip()
