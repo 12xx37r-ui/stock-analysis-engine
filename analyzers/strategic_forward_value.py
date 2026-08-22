@@ -21,7 +21,7 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 from analyzers.valuation import build_standalone_quarters
 
 
-ENGINE_VERSION = "0.7.1-dynamic-unrealized-growth-floor"
+ENGINE_VERSION = "0.7.2-verified-industry-recognition"
 
 
 def safe_float(value: Any, default: float = 0.0) -> float:
@@ -1351,7 +1351,23 @@ def build_strategic_forward_value(
         if strategic_base > 0 and future_addition_allowed
         else 0.0
     )
-    evidence_factor, cap_reasons = _evidence_recognition_factor(company, industry, expectation)
+    # 미래가치 인정률의 산업근거는 검증된 현재·향후 산업환경 bridge를 우선 사용한다.
+    # 과거에는 eligibility는 industry_env를 사용하면서 recognition cap은 legacy industry만
+    # 사용해, 산업환경검증=true인데도 "산업근거 부족" 40% cap이 남는 불일치가 있었다.
+    if industry_env.get("사용가능") is True:
+        recognition_industry = {
+            "점수": safe_float(industry_env.get("점수")),
+            "품질": safe_float(industry_env.get("품질")),
+            "사용가능": True,
+        }
+        recognition_industry_source = "산업환경현재향후"
+    else:
+        recognition_industry = industry
+        recognition_industry_source = "기존산업사이클"
+
+    evidence_factor, cap_reasons = _evidence_recognition_factor(
+        company, recognition_industry, expectation
+    )
     eligibility_cap = safe_float(eligibility.get("최대인정률"), 0.10)
     evidence_factor = min(evidence_factor, eligibility_cap)
     industry_opportunity_modifier = safe_float(industry_env.get("기회배수"), 1.0)
@@ -1435,6 +1451,12 @@ def build_strategic_forward_value(
         "확인된선행재무가치": round(confirmed_forward_value, 2),
         "선행재무반영후기초가치": round(pre_future_base, 2),
         "미래가치인정률": round(evidence_factor * 100.0, 2),
+        "미래가치인정산업근거출처": recognition_industry_source,
+        "미래가치인정산업근거": {
+            "점수": round(safe_float(recognition_industry.get("점수")), 2),
+            "품질": round(safe_float(recognition_industry.get("품질")), 2),
+            "사용가능": bool(recognition_industry.get("사용가능") is True),
+        },
         "미래가치자격": eligibility,
         "산업환경기회": industry_env,
         "실적가속품질": acceleration_quality,
