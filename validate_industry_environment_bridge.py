@@ -90,7 +90,7 @@ def main():
         bridge.CACHE_TTL_SECONDS = 21600
         bridge.STALE_IF_ERROR_SECONDS = 432000
         bridge.MAX_SOURCE_AGE_SECONDS = 432000
-        bridge.MIN_QUALITY_SCORE = 60.0
+        bridge.MIN_QUALITY_SCORE = 50.0
         os.environ["INDUSTRY_ENV_BRIDGE_URL"] = "https://example.invalid/bridge.json"
 
         try:
@@ -113,6 +113,16 @@ def main():
             assert_true(first.get("주신호사용허용") is False, "primary use gate not preserved")
             assert_true(first.get("개별종목방향보정점수") == 0.33, "bounded adjustment changed")
             assert_true(first.get("보정최대절대값") == 0.33, "missing upstream max must not invent headroom")
+
+            # Quality-qualified environment context remains usable even when the
+            # stock-direction overlay is still blocked by upstream OOS validation.
+            pending_overlay_path = tmp_path / "pending_overlay.json"
+            pending_overlay_path.write_text(json.dumps(payload(quality=55.0, allowed=False), ensure_ascii=False), encoding="utf-8")
+            os.environ["INDUSTRY_ENV_BRIDGE_LOCAL_FILE"] = str(pending_overlay_path)
+            pending_overlay = bridge.get_industry_environment("semiconductor")
+            assert_true(pending_overlay.get("사용가능") is True, "quality-qualified environment context incorrectly blocked by OOS overlay gate")
+            assert_true(pending_overlay.get("모형사용가능") is False, "unvalidated stock-direction overlay incorrectly enabled")
+            os.environ.pop("INDUSTRY_ENV_BRIDGE_LOCAL_FILE", None)
 
             # Simulate the next sequential subprocess in weekly_sampler: memory is
             # empty, but the prior process already wrote the disk cache. It must
@@ -145,7 +155,7 @@ def main():
 
             # Low quality must not enter the stock model.
             low_path = tmp_path / "low.json"
-            low_path.write_text(json.dumps(payload(quality=59.9), ensure_ascii=False), encoding="utf-8")
+            low_path.write_text(json.dumps(payload(quality=49.9), ensure_ascii=False), encoding="utf-8")
             os.environ["INDUSTRY_ENV_BRIDGE_LOCAL_FILE"] = str(low_path)
             low = bridge.get_industry_environment("semiconductor")
             assert_true(low.get("사용가능") is False, "low-quality bridge incorrectly accepted")

@@ -31,7 +31,7 @@ DEFAULT_BRIDGE_URL = (
 CACHE_TTL_SECONDS = int(os.getenv("INDUSTRY_ENV_CACHE_TTL_SECONDS", "21600"))  # 6h
 STALE_IF_ERROR_SECONDS = int(os.getenv("INDUSTRY_ENV_STALE_IF_ERROR_SECONDS", "432000"))  # 120h
 MAX_SOURCE_AGE_SECONDS = int(os.getenv("INDUSTRY_ENV_MAX_SOURCE_AGE_SECONDS", "432000"))  # 120h
-MIN_QUALITY_SCORE = float(os.getenv("INDUSTRY_ENV_MIN_QUALITY_SCORE", "60"))
+MIN_QUALITY_SCORE = float(os.getenv("INDUSTRY_ENV_MIN_QUALITY_SCORE", "50"))
 CACHE_FILE = Path(os.getenv("INDUSTRY_ENV_CACHE_FILE", ".cache/industry_environment_bridge.json"))
 
 # Stock valuation profiles that are unambiguous equivalents of the new industry
@@ -483,30 +483,34 @@ def get_industry_environment(industry_code: Any, aliases: Optional[Iterable[Any]
         and max_adjustment >= 0.0
     )
 
+    # Contract-aligned environment gate: quality >= 50 is enough to use the
+    # current/3M industry environment as context/display. The stock-direction
+    # overlay remains separately gated by upstream OOS validation.
     display_usable = bool(
         numeric_valid
         and quality_score >= MIN_QUALITY_SCORE
     )
-    usable = bool(display_usable and allowed_aux)
+    environment_usable = display_usable
+    overlay_usable = bool(display_usable and allowed_aux)
     error = ""
     if not numeric_valid:
         error = "bridge profile numeric contract invalid"
     elif quality_score < MIN_QUALITY_SCORE:
         error = f"quality below threshold: {quality_score:.1f} < {MIN_QUALITY_SCORE:.1f}"
     elif not allowed_aux:
-        error = "upstream auxiliary use not allowed"
+        error = "environment usable; stock-direction overlay awaiting upstream OOS validation"
 
     bounded_adjustment = None
     if adjustment is not None and max_adjustment is not None:
         bounded_adjustment = _clamp(adjustment, -abs(max_adjustment), abs(max_adjustment))
 
     return {
-        "수집상태": "정상" if usable else "연결대기",
-        "사용가능": usable,
+        "수집상태": "정상" if environment_usable else "연결대기",
+        "사용가능": environment_usable,
         "자료표시가능": display_usable,
         "표시상태": "정상" if display_usable else "연결대기",
-        "모형사용가능": usable,
-        "모형사용상태": "정상" if usable else "검증대기",
+        "모형사용가능": overlay_usable,
+        "모형사용상태": "정상" if overlay_usable else "검증대기",
         "요청산업코드": requested,
         "매핑산업코드": profile_key,
         "산업명": str(profile.get("industry_label") or profile_key),
